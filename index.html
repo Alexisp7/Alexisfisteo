@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dr. A. Vargas — Física Teórica</title>
+  <title>Alexis R. Salvatierra — Física Teórica</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&amp;family=Inter:wght@300;400;500;600&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
@@ -202,26 +202,32 @@
       text-transform: uppercase;
       color: var(--gray);
       text-decoration: none;
-      padding: 0 20px;
-      transition: color 0.2s;
+      padding: 8px 20px;
       position: relative;
+      z-index: 0;
+      transition: color 0.28s ease;
+    }
+
+    /* Sliding black box behind nav link */
+    nav.main-nav a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--black);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: -1;
+    }
+
+    nav.main-nav a:hover::before,
+    nav.main-nav a.active::before {
+      transform: scaleX(1);
     }
 
     nav.main-nav a:hover,
     nav.main-nav a.active {
-      color: var(--black);
-    }
-
-    nav.main-nav a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--gold);
+      color: var(--white);
     }
 
     nav.main-nav .nav-sep {
@@ -233,6 +239,7 @@
       opacity: 0.7;
       user-select: none;
     }
+
 
     .header-border {
       height: 0.5px;
@@ -714,6 +721,30 @@
       transition: opacity 0.35s ease;
     }
 
+    /* Blue hover tint overlay on project cards */
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(13,71,161,0.55) 0%, rgba(21,101,192,0.38) 50%, rgba(0,30,80,0.62) 100%);
+      mix-blend-mode: multiply;
+      opacity: 0;
+      transition: opacity 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .project-card:hover::after {
+      opacity: 1;
+    }
+
+    /* Keep info-always and star above the blue overlay */
+    .project-info-always,
+    .project-star,
+    .project-greek-corner {
+      z-index: 2;
+    }
+
     .project-card:hover .project-overlay {
       opacity: 1;
     }
@@ -908,13 +939,13 @@
        DECORATIVE STRIP (Greek key pattern)
     ──────────────────────────────── */
     .greek-strip {
-      height: 8px;
+      height: 12px;
       background: var(--black);
       position: relative;
       overflow: hidden;
     }
 
-    .greek-strip::after {
+    .greek-strip::before {
       content: '';
       position: absolute;
       inset: 0;
@@ -923,15 +954,45 @@
         transparent 0px,
         transparent 2px,
         var(--gold) 2px,
-        var(--gold) 4px,
-        transparent 4px,
-        transparent 8px,
-        var(--gold) 8px,
+        var(--gold) 5px,
+        transparent 5px,
+        transparent 7px,
+        var(--gold) 7px,
         var(--gold) 10px,
         transparent 10px,
-        transparent 16px
+        transparent 14px,
+        var(--gold) 14px,
+        var(--gold) 17px,
+        transparent 17px,
+        transparent 24px
       );
-      opacity: 0.35;
+      opacity: 0.45;
+    }
+
+    .greek-strip::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.6;
+    }
+
+    /* Enhance project name color on hover */
+    .project-card:hover .project-name {
+      color: #a8d4ff;
+      transition: color 0.35s ease;
+    }
+
+    .project-card:hover .project-badge {
+      color: #90caff;
+      transition: color 0.35s ease;
+    }
+
+    /* Subtle scale on placeholder icon */
+    .project-card:hover .project-img-ph svg {
+      transform: scale(1.08);
+      transition: transform 0.5s ease;
     }
 
     /* ────────────────────────────────
@@ -1069,8 +1130,8 @@
       <div class="logo-group">
         <span class="logo-phi">Φ</span>
         <div class="site-logo">
-          <span class="site-logo-name">Dr. A. Vargas</span>
-          <span class="site-logo-subtitle">Física Teórica · UNAM</span>
+          <span class="site-logo-name">Alexis R. Salvatierra</span>
+          <span class="site-logo-subtitle">Física Teórica · UNMSM</span>
         </div>
       </div>
       <nav class="main-nav">
@@ -1094,16 +1155,16 @@
   ═══════════════════════════════════ -->
   <section class="hero">
     <div class="hero-text">
-      <p class="hero-eyebrow">Física Teórica &amp; Computacional</p>
-      <h1 class="hero-name">Adriana<br/><em>Vargas</em></h1>
+      <p class="hero-eyebrow">Física Teórica &amp; Computacional · UNMSM Perú</p>
+      <h1 class="hero-name">Alexis R.<br/><em>Salvatierra</em></h1>
       <div class="hero-title-line">
-        <span class="hero-title">Investigadora</span>
+        <span class="hero-title">Estudiante</span>
         <span class="title-sep">·</span>
-        <span class="hero-title">Docente</span>
+        <span class="hero-title">Investigador</span>
         <span class="title-sep">·</span>
-        <span class="hero-title">Innovadora</span>
+        <span class="hero-title">Desarrollador</span>
       </div>
-      <p class="hero-bio">Explorando las fronteras entre la mecánica cuántica, la computación y el mundo real. Ganadora de tres hackathones internacionales. Apasionada por hacer la física accesible y transformadora.</p>
+      <p class="hero-bio">Estudiante de física en la Universidad Nacional Mayor de San Marcos. Exploro las fronteras entre la mecánica cuántica, la computación y los sistemas complejos. Apasionado por hacer la física rigurosa y transformadora.</p>
       <div class="hero-stats">
         <div class="stat-item">
           <div class="stat-num">12</div>
@@ -1126,7 +1187,14 @@
     <div class="hero-image-wrap">
       <!-- Reemplaza src con tu URL de foto -->
       <div class="hero-photo">
-        <img src="img/hero.svg" alt="Foto principal" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        <div class="photo-ph">
+          <!-- SVG persona simple -->
+          <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:56px;height:56px;stroke:#C8A96E;stroke-width:1.2;fill:none">
+            <circle cx="28" cy="18" r="9"/>
+            <path d="M8 50c0-11.046 8.954-20 20-20s20 8.954 20 20"/>
+          </svg>
+          <span class="photo-ph-text">Tu foto aquí</span>
+        </div>
         <div class="corner-ornament tl"></div>
         <div class="corner-ornament tr"></div>
         <div class="corner-ornament bl"></div>
@@ -1248,32 +1316,107 @@
             Para usar tu imagen real, reemplaza el div.project-img-ph con:
             <img src="URL_DE_TU_IMAGEN" alt="QuantumSim" class="project-img" />
           -->
-          <img src="img/proj1.svg" alt="QuantumSim" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+          <div class="project-img-ph" style="background:linear-gradient(135deg,#0a0a1a 0%,#10103a 50%,#0a1a2a 100%);">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px;stroke:#2E2E5E;stroke-width:1.2">
+              <circle cx="24" cy="24" r="18"/>
+              <ellipse cx="24" cy="24" rx="18" ry="7"/>
+              <circle cx="24" cy="24" r="3" fill="#1A1A4A" stroke="#2E2E5E"/>
+            </svg>
+            <span class="ph-text">Imagen del proyecto</span>
+          </div>
+          <span class="project-greek-corner">Ω</span>
+          <span class="project-star">★ Destacado</span>
+          <div class="project-info-always">
+            <div class="project-badge">MIT Hackathon 2024 · 1.er lugar</div>
+            <div class="project-name">QuantumSim — Simulador de Circuitos Cuánticos en Tiempo Real</div>
+            <div class="project-year">2024</div>
+          </div>
         </div>
 
         <!-- PROYECTO 2: alto (tall) -->
         <div class="project-card tall">
-          <img src="img/proj2.svg" alt="GravLens" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+          <div class="project-img-ph" style="background:linear-gradient(160deg,#100a20 0%,#1e0a40 100%);">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#2A1A4A;stroke-width:1.2">
+              <path d="M24 4 L24 44 M4 24 L44 24"/>
+              <circle cx="24" cy="24" r="12"/>
+              <ellipse cx="24" cy="24" rx="6" ry="12"/>
+            </svg>
+            <span class="ph-text">Imagen del proyecto</span>
+          </div>
+          <div class="project-info-always">
+            <div class="project-badge">NASA SpaceApps · 1.er lugar</div>
+            <div class="project-name">GravLens — Visualizador de Lentes Gravitacionales</div>
+            <div class="project-year">2023</div>
+          </div>
         </div>
 
         <!-- PROYECTO 3: cuadrado -->
         <div class="project-card square">
-          <img src="img/proj3.svg" alt="ParticleNet" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+          <div class="project-img-ph" style="background:linear-gradient(135deg,#0d1117 0%,#1a2634 100%);">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#1A2E3A;stroke-width:1.2">
+              <rect x="8" y="8" width="32" height="32" rx="2"/>
+              <circle cx="17" cy="17" r="3"/><circle cx="31" cy="17" r="3"/>
+              <circle cx="24" cy="31" r="3"/>
+              <line x1="17" y1="17" x2="31" y2="17"/><line x1="17" y1="17" x2="24" y2="31"/><line x1="31" y1="17" x2="24" y2="31"/>
+            </svg>
+            <span class="ph-text">Imagen del proyecto</span>
+          </div>
+          <div class="project-info-always">
+            <div class="project-badge">CERN Datathon · Premio especial</div>
+            <div class="project-name">ParticleNet — IA para detección de partículas</div>
+            <div class="project-year">2023</div>
+          </div>
         </div>
 
         <!-- PROYECTO 4: cuadrado -->
         <div class="project-card square">
-          <img src="img/proj4.svg" alt="TopologyViz" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+          <div class="project-img-ph" style="background:linear-gradient(135deg,#13111c 0%,#21182a 100%);">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#2A1A3A;stroke-width:1.2">
+              <polygon points="24,6 42,18 42,30 24,42 6,30 6,18"/>
+              <circle cx="24" cy="24" r="6"/>
+            </svg>
+            <span class="ph-text">Imagen del proyecto</span>
+          </div>
+          <div class="project-info-always">
+            <div class="project-badge">Hack UNAM 2022 · 1.er lugar</div>
+            <div class="project-name">TopologyViz — Sistemas Topológicos</div>
+            <div class="project-year">2022</div>
+          </div>
         </div>
 
         <!-- PROYECTO 5: cuadrado -->
         <div class="project-card square">
-          <img src="img/proj5.svg" alt="PhysicsGPT" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+          <div class="project-img-ph" style="background:linear-gradient(135deg,#111111 0%,#1c2237 100%);">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#1A1A3A;stroke-width:1.2">
+              <path d="M8 28 Q14 10 24 16 Q34 22 40 10"/>
+              <circle cx="8" cy="28" r="3"/><circle cx="24" cy="16" r="3"/><circle cx="40" cy="10" r="3"/>
+              <path d="M8 36 Q24 32 40 36"/>
+            </svg>
+            <span class="ph-text">Imagen del proyecto</span>
+          </div>
+          <div class="project-info-always">
+            <div class="project-badge">AI for Science 2022 · Finalista</div>
+            <div class="project-name">PhysicsGPT — Tutor IA de Física</div>
+            <div class="project-year">2022</div>
+          </div>
         </div>
 
         <!-- PROYECTO 6: cuadrado -->
         <div class="project-card square">
-          <img src="img/proj6.svg" alt="WaveSim" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+          <div class="project-img-ph" style="background:linear-gradient(135deg,#0e0e18 0%,#181828 100%);">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#1A1A2E;stroke-width:1.2">
+              <path d="M6 24 Q12 14 24 14 Q36 14 42 24"/>
+              <path d="M6 24 Q12 34 24 34 Q36 34 42 24"/>
+              <line x1="24" y1="6" x2="24" y2="42"/>
+              <circle cx="24" cy="24" r="5"/>
+            </svg>
+            <span class="ph-text">Imagen del proyecto</span>
+          </div>
+          <div class="project-info-always">
+            <div class="project-badge">HackMIT 2021 · Finalista</div>
+            <div class="project-name">WaveSim — Óptica Cuántica Interactiva</div>
+            <div class="project-year">2021</div>
+          </div>
         </div>
 
       </div><!-- /projects-grid -->
@@ -1297,19 +1440,25 @@
         <div class="about-photo-col">
           <div class="about-photo">
             <!-- Reemplaza con tu imagen -->
-            <img src="img/about.svg" alt="Foto sobre mí" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+            <div class="photo-ph">
+              <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:56px;height:56px;stroke:#C8A96E;stroke-width:1;fill:none">
+                <circle cx="28" cy="18" r="9"/>
+                <path d="M8 50c0-11.046 8.954-20 20-20s20 8.954 20 20"/>
+              </svg>
+              <span class="photo-ph-text">Foto secundaria</span>
+            </div>
           </div>
           <div class="about-frame"></div>
         </div>
 
         <div class="about-text">
-          <p class="about-body">Soy física teórica con especialización en mecánica cuántica computacional. Mi trabajo combina la elegancia matemática de la física con el poder de la computación moderna para explorar fenómenos que antes eran inaccesibles a la experimentación directa.</p>
+          <p class="about-body">Soy estudiante de física en la Universidad Nacional Mayor de San Marcos (UNMSM), Lima, con especialización en física teórica y computacional. Mi formación combina el rigor matemático de la física cuántica con herramientas modernas de simulación y ciencia de datos.</p>
 
-          <p class="about-body">He tenido el privilegio de participar en hackathones internacionales donde la física se convierte en tecnología real. Cada proyecto es una oportunidad de demostrar que las ecuaciones pueden — y deben — cambiar el mundo.</p>
+          <p class="about-body">He participado en intercambios académicos internacionales — incluyendo una estancia en la UNAM bajo el Programa de Movilidad Universitaria — y en proyectos que van desde la mecánica cuántica de muchos cuerpos hasta redes neuronales aplicadas a sistemas físicos.</p>
 
           <blockquote class="about-quote">La física no es solo una ciencia — es el lenguaje con el que el universo se escribe a sí mismo.</blockquote>
 
-          <p class="about-body">Mi misión es tender puentes entre la física fundamental y sus aplicaciones tecnológicas, formando a la próxima generación de científicos e innovadores latinoamericanos.</p>
+          <p class="about-body">Mi misión es tender puentes entre la física fundamental y sus aplicaciones computacionales, aportando al desarrollo científico latinoamericano desde San Marcos.</p>
 
           <div class="skills-row">
             <span class="skill-tag accent">Mecánica Cuántica</span>
@@ -1339,8 +1488,8 @@
         <div class="footer-logo-group">
           <span class="footer-phi">Φ</span>
           <div>
-            <div class="footer-logo-name">Dr. A. Vargas</div>
-            <div class="footer-logo-sub">Física Teórica · UNAM</div>
+          <div class="footer-logo-name">Alexis R. Salvatierra</div>
+            <div class="footer-logo-sub">Física Teórica · UNMSM</div>
           </div>
         </div>
 
@@ -1360,15 +1509,15 @@
           </div>
           <div class="footer-col">
             <div class="footer-col-title">Contacto</div>
-            <a href="#">correo@unam.mx</a>
-            <a href="#">Oficina — Fac. Ciencias</a>
+            <a href="#">correo@unmsm.edu.pe</a>
+            <a href="#">Fac. Ciencias Físicas · Lima, Perú</a>
             <a href="#">Colaboraciones</a>
           </div>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <span class="footer-copy">© 2025 Adriana Vargas · Todos los derechos reservados</span>
+        <span class="footer-copy">© 2025 Alexis R. Salvatierra · Todos los derechos reservados</span>
         <span class="footer-greek">Φ · Σ · Ω · Δ · Λ · Π</span>
       </div>
     </div>

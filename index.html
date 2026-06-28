@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dr. A. Vargas — Física Teórica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&amp;family=Inter:wght@300;400;500;600&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --gold: #C8A96E;
+      --gold-light: #E8D5A3;
+      --black: #111111;
+      --dark: #1A1A1A;
+      --gray: #4A4A4A;
+      --gray-light: #7A7A7A;
+      --border: #E0DDD8;
+      --bg-off: #F7F6F3;
+      --bg-dark: #111111;
+      --white: #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .gold { color: var(--gold); }
+
+    hr.gold-line {
+      border: none;
+      height: 0.5px;
+      background: var(--gold);
+    }
+
+    hr.thin-line {
+      border: none;
+      height: 0.5px;
+      background: var(--border);
+    }
+
+    /* ────────────────────────────────
+       ORNAMENTOS GRIEGOS
+    ──────────────────────────────── */
+    .greek-ornament {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 0 auto 48px;
+      justify-content: flex-start;
+    }
+
+    .greek-ornament span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .greek-ornament::before,
+    .greek-ornament::after {
+      content: '';
+      flex: 0 0 40px;
+      height: 0.5px;
+      background: var(--gold);
+    }
+
+    .greek-ornament::before { flex: 0 0 0; }
+
+    /* Meandro griego (key pattern) como separador */
+    .meander-divider {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 32px 0;
+    }
+
+    .meander-line {
+      flex: 1;
+      height: 0.5px;
+      background: var(--border);
+    }
+
+    .meander-symbol {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--gold);
+      letter-spacing: 0.3em;
+    }
+
+    /* ────────────────────────────────
+       HEADER
+    ──────────────────────────────── */
+    .header {
+      background: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* Franja griega superior */
+    .header-greek-bar {
+      height: 4px;
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-greek-bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        90deg,
+        var(--gold) 0px,
+        var(--gold) 3px,
+        transparent 3px,
+        transparent 7px,
+        var(--gold) 7px,
+        var(--gold) 10px,
+        transparent 10px,
+        transparent 18px
+      );
+      opacity: 0.6;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .site-logo {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .site-logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--black);
+    }
+
+    .site-logo-subtitle {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    /* Logo symbol: phi */
+    .logo-phi {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--gold);
+      line-height: 1;
+      margin-right: 14px;
+      opacity: 0.85;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+    }
+
+    /* NAV */
+    nav.main-nav {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    nav.main-nav a {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      padding: 0 20px;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    nav.main-nav a:hover,
+    nav.main-nav a.active {
+      color: var(--black);
+    }
+
+    nav.main-nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    nav.main-nav .nav-sep {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 1;
+      opacity: 0.7;
+      user-select: none;
+    }
+
+    .header-border {
+      height: 0.5px;
+      background: var(--gold);
+    }
+
+    /* ────────────────────────────────
+       HERO
+    ──────────────────────────────── */
+    .hero {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 88px 48px 80px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-eyebrow::before {
+      content: 'Φ';
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.0;
+      color: var(--black);
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      font-weight: 500;
+      color: var(--dark);
+    }
+
+    .hero-title-line {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--gray);
+      letter-spacing: 0.02em;
+    }
+
+    .title-sep {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold);
+      font-size: 22px;
+    }
+
+    .hero-bio {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.85;
+      color: var(--gray);
+      max-width: 480px;
+      margin-bottom: 40px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      padding-top: 32px;
+      border-top: 0.5px solid var(--border);
+    }
+
+    .stat-item {}
+
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--black);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 5px;
+    }
+
+    .stat-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--gray-light);
+      margin-top: 2px;
+    }
+
+    /* Hero image */
+    .hero-image-wrap {
+      position: relative;
+    }
+
+    .hero-photo {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background: var(--bg-off);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-ph {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .photo-ph-icon {
+      width: 64px;
+      height: 64px;
+      border: 0.5px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 28px;
+    }
+
+    .photo-ph-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .hero-frame {
+      position: absolute;
+      top: -18px;
+      right: -18px;
+      bottom: 18px;
+      left: 18px;
+      border: 0.5px solid var(--gold);
+      z-index: -1;
+    }
+
+    /* Greek corner ornaments on photo */
+    .corner-ornament {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--gold);
+      border-style: solid;
+    }
+
+    .corner-ornament.tl {
+      top: 0; left: 0;
+      border-width: 1.5px 0 0 1.5px;
+    }
+
+    .corner-ornament.tr {
+      top: 0; right: 0;
+      border-width: 1.5px 1.5px 0 0;
+    }
+
+    .corner-ornament.bl {
+      bottom: 0; left: 0;
+      border-width: 0 0 1.5px 1.5px;
+    }
+
+    .corner-ornament.br {
+      bottom: 0; right: 0;
+      border-width: 0 1.5px 1.5px 0;
+    }
+
+    /* ────────────────────────────────
+       SECTION COMMON
+    ──────────────────────────────── */
+    .section {
+      padding: 88px 48px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      margin-bottom: 56px;
+    }
+
+    .section-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 0.5px;
+      background: var(--gold);
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--black);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+
+    .section-title em {
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    /* ────────────────────────────────
+       CURSOS
+    ──────────────────────────────── */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 0.5px solid var(--border);
+    }
+
+    .course-card {
+      padding: 36px 32px;
+      border: 0.5px solid var(--border);
+      position: relative;
+      transition: background 0.25s;
+      background: var(--white);
+    }
+
+    .course-card:hover {
+      background: var(--bg-off);
+    }
+
+    /* Greek key border top on hover */
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background 0.25s;
+    }
+
+    .course-card:hover::before {
+      background: var(--gold);
+    }
+
+    .course-icon-box {
+      width: 48px;
+      height: 48px;
+      border: 0.5px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      color: var(--gold);
+      position: relative;
+    }
+
+    .course-icon-box svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--gold);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    /* Corner dots on icon box */
+    .course-icon-box::before,
+    .course-icon-box::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--white);
+      border: 0.5px solid var(--gold);
+    }
+
+    .course-icon-box::before { top: -2px; right: -2px; }
+    .course-icon-box::after  { bottom: -2px; left: -2px; }
+
+    .course-level {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .course-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .course-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--gray);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .course-cta {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--black);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .course-cta::after {
+      content: '→';
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--gold);
+    }
+
+    /* ────────────────────────────────
+       PROYECTOS
+    ──────────────────────────────── */
+    .projects-wrap {
+      background: var(--bg-dark);
+      padding: 88px 0;
+    }
+
+    .projects-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .projects-inner .section-eyebrow {
+      color: var(--gold);
+    }
+
+    .projects-inner .section-eyebrow::before {
+      background: var(--gold);
+    }
+
+    .projects-inner .section-title {
+      color: var(--white);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: #222;
+    }
+
+    .project-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: #1A1A1A;
+    }
+
+    .project-card.square {
+      aspect-ratio: 1 / 1;
+    }
+
+    .project-card.wide {
+      grid-column: span 2;
+      aspect-ratio: 2 / 1;
+    }
+
+    .project-card.tall {
+      grid-row: span 2;
+      aspect-ratio: 1 / 2.01;
+    }
+
+    .project-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .project-card:hover .project-img {
+      transform: scale(1.04);
+    }
+
+    /* Placeholder cuando no hay imagen */
+    .project-img-ph {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      min-height: 280px;
+    }
+
+    .ph-icon {
+      font-size: 36px;
+      color: #2E2E2E;
+    }
+
+    .ph-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      color: #2E2E2E;
+      text-transform: uppercase;
+    }
+
+    .project-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.95) 40%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .project-card:hover .project-overlay {
+      opacity: 1;
+    }
+
+    /* Siempre visible: título en overlay permanente */
+    .project-info-always {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 28px;
+      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%);
+    }
+
+    .project-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .project-badge::before {
+      content: '◆';
+      font-size: 5px;
+    }
+
+    .project-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #FFFFFF;
+      line-height: 1.25;
+      margin-bottom: 5px;
+    }
+
+    .project-card.wide .project-name {
+      font-size: 26px;
+    }
+
+    .project-year {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.1em;
+    }
+
+    /* Star badge top-right */
+    .project-star {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.7);
+      border: 0.5px solid var(--gold);
+      padding: 5px 10px;
+    }
+
+    /* Greek ornament en esquina del proyecto featured */
+    .project-greek-corner {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      color: var(--gold);
+      opacity: 0.5;
+    }
+
+    /* ────────────────────────────────
+       SOBRE MÍ
+    ──────────────────────────────── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 88px;
+      align-items: start;
+    }
+
+    .about-photo-col { position: relative; }
+
+    .about-photo {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      background: var(--bg-off);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .about-frame {
+      position: absolute;
+      top: 18px;
+      left: -18px;
+      right: 18px;
+      bottom: -18px;
+      border: 0.5px solid var(--gold);
+      z-index: -1;
+    }
+
+    .about-text {}
+
+    .about-body {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.9;
+      color: var(--gray);
+      margin-bottom: 28px;
+    }
+
+    .about-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--black);
+      line-height: 1.4;
+      border-left: 1px solid var(--gold);
+      padding-left: 28px;
+      margin: 36px 0;
+    }
+
+    /* Greek quote marks */
+    .about-quote::before {
+      content: '«';
+      color: var(--gold);
+      font-style: normal;
+      font-size: 30px;
+      margin-right: 4px;
+      vertical-align: -3px;
+    }
+
+    .about-quote::after {
+      content: '»';
+      color: var(--gold);
+      font-style: normal;
+      font-size: 30px;
+      margin-left: 4px;
+      vertical-align: -3px;
+    }
+
+    .skills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 32px;
+    }
+
+    .skill-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      border: 0.5px solid var(--border);
+      padding: 7px 14px;
+      transition: all 0.2s;
+    }
+
+    .skill-tag:hover {
+      border-color: var(--gold);
+      color: var(--black);
+    }
+
+    .skill-tag.accent {
+      color: var(--gold);
+      border-color: var(--gold);
+      background: rgba(200,169,110,0.05);
+    }
+
+    /* ────────────────────────────────
+       DECORATIVE STRIP (Greek key pattern)
+    ──────────────────────────────── */
+    .greek-strip {
+      height: 8px;
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .greek-strip::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 2px,
+        var(--gold) 2px,
+        var(--gold) 4px,
+        transparent 4px,
+        transparent 8px,
+        var(--gold) 8px,
+        var(--gold) 10px,
+        transparent 10px,
+        transparent 16px
+      );
+      opacity: 0.35;
+    }
+
+    /* ────────────────────────────────
+       FOOTER
+    ──────────────────────────────── */
+    .footer-wrap {
+      background: var(--black);
+    }
+
+    .footer {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 56px 48px;
+    }
+
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding-bottom: 40px;
+      border-bottom: 0.5px solid #2A2A2A;
+      margin-bottom: 36px;
+    }
+
+    .footer-logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .footer-logo-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .footer-phi {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      color: var(--gold);
+      opacity: 0.4;
+      margin-right: 16px;
+    }
+
+    .footer-logo-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-links-col {
+      display: flex;
+      gap: 60px;
+    }
+
+    .footer-col-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .footer-col a {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: #5A5A5A;
+      text-decoration: none;
+      margin-bottom: 10px;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover { color: #AAAAAA; }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: #3A3A3A;
+    }
+
+    .footer-greek {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      color: var(--gold);
+      opacity: 0.3;
+      letter-spacing: 0.2em;
+    }
+
+    /* ────────────────────────────────
+       RESPONSIVE
+    ──────────────────────────────── */
+    @media (max-width: 900px) {
+      .header-inner { padding: 16px 24px; }
+      nav.main-nav { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 56px 24px; gap: 48px; }
+      .hero-name { font-size: 52px; }
+      .section { padding: 64px 24px; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr 1fr; }
+      .project-card.wide { grid-column: span 2; }
+      .project-card.tall { grid-row: span 1; aspect-ratio: 1/1; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-photo-col { max-width: 300px; }
+      .footer-top { flex-direction: column; gap: 40px; }
+      .footer-links-col { flex-direction: column; gap: 32px; }
+      .projects-inner { padding: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════
+       HEADER
+  ═══════════════════════════════════ -->
+  <header class="header">
+    <div class="header-greek-bar"></div>
+    <div class="header-inner">
+      <div class="logo-group">
+        <span class="logo-phi">Φ</span>
+        <div class="site-logo">
+          <span class="site-logo-name">Dr. A. Vargas</span>
+          <span class="site-logo-subtitle">Física Teórica · UNAM</span>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="#" class="active">Inicio</a>
+        <span class="nav-sep">|</span>
+        <a href="#cursos">Cursos</a>
+        <span class="nav-sep">|</span>
+        <a href="#proyectos">Proyectos</a>
+        <span class="nav-sep">|</span>
+        <a href="#publicaciones">Publicaciones</a>
+        <span class="nav-sep">|</span>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+    <div class="header-border"></div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════
+       HERO
+  ═══════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Física Teórica &amp; Computacional</p>
+      <h1 class="hero-name">Adriana<br/><em>Vargas</em></h1>
+      <div class="hero-title-line">
+        <span class="hero-title">Investigadora</span>
+        <span class="title-sep">·</span>
+        <span class="hero-title">Docente</span>
+        <span class="title-sep">·</span>
+        <span class="hero-title">Innovadora</span>
+      </div>
+      <p class="hero-bio">Explorando las fronteras entre la mecánica cuántica, la computación y el mundo real. Ganadora de tres hackathones internacionales. Apasionada por hacer la física accesible y transformadora.</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Cursos</div>
+          <div class="stat-sub">en portafolio</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">08</div>
+          <div class="stat-label">Proyectos</div>
+          <div class="stat-sub">publicados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3×</div>
+          <div class="stat-label">Hackathon</div>
+          <div class="stat-sub">1.er lugar</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-image-wrap">
+      <!-- Reemplaza src con tu URL de foto -->
+      <div class="hero-photo">
+        <img src="img/hero.svg" alt="Foto principal" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        <div class="corner-ornament tl"></div>
+        <div class="corner-ornament tr"></div>
+        <div class="corner-ornament bl"></div>
+        <div class="corner-ornament br"></div>
+      </div>
+      <div class="hero-frame"></div>
+    </div>
+  </section>
+
+  <hr class="gold-line"/>
+
+  <!-- ═══════════════════════════════════
+       CURSOS
+  ═══════════════════════════════════ -->
+  <section id="cursos">
+    <div class="section">
+      <div class="section-header">
+        <p class="section-eyebrow">Portafolio académico</p>
+        <h2 class="section-title">Cursos &amp; <em>Formación</em></h2>
+      </div>
+
+      <div class="courses-grid">
+
+        <!-- Curso 1 -->
+        <div class="course-card">
+          <div class="course-icon-box">
+            <!-- Átomo SVG -->
+            <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/><circle cx="12" cy="12" r="1.5" fill="#C8A96E" stroke="none"/></svg>
+          </div>
+          <p class="course-level">Avanzado · 48 hrs</p>
+          <h3 class="course-title">Mecánica Cuántica Moderna</h3>
+          <p class="course-desc">Principios variacionales, perturbaciones y entrelazamiento. Enfoque geométrico del espacio de Hilbert con aplicaciones actuales.</p>
+          <a href="#" class="course-cta">Ver curso</a>
+        </div>
+
+        <!-- Curso 2 -->
+        <div class="course-card">
+          <div class="course-icon-box">
+            <!-- CPU/chip SVG -->
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="7" y="7" width="10" height="10"/><line x1="7" y1="1" x2="7" y2="4"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="17" y1="1" x2="17" y2="4"/><line x1="7" y1="20" x2="7" y2="23"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="17" y1="20" x2="17" y2="23"/><line x1="1" y1="7" x2="4" y2="7"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="1" y1="17" x2="4" y2="17"/><line x1="20" y1="7" x2="23" y2="7"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="20" y1="17" x2="23" y2="17"/></svg>
+          </div>
+          <p class="course-level">Intermedio · 32 hrs</p>
+          <h3 class="course-title">Simulación Computacional</h3>
+          <p class="course-desc">Métodos de Monte Carlo, dinámica molecular y redes neuronales aplicadas a sistemas físicos complejos de alta dimensionalidad.</p>
+          <a href="#" class="course-cta">Ver curso</a>
+        </div>
+
+        <!-- Curso 3 -->
+        <div class="course-card">
+          <div class="course-icon-box">
+            <!-- Ondas SVG -->
+            <svg viewBox="0 0 24 24"><path d="M2 12 Q5 6 8 12 Q11 18 14 12 Q17 6 20 12 Q22 15 23 12"/></svg>
+          </div>
+          <p class="course-level">Fundamentos · 24 hrs</p>
+          <h3 class="course-title">Relatividad General</h3>
+          <p class="course-desc">Geometría diferencial, tensor de Riemann y soluciones de Schwarzschild. Ondas gravitacionales y agujeros negros.</p>
+          <a href="#" class="course-cta">Ver curso</a>
+        </div>
+
+        <!-- Curso 4 -->
+        <div class="course-card">
+          <div class="course-icon-box">
+            <!-- Gráfica SVG -->
+            <svg viewBox="0 0 24 24"><polyline points="2 20 7 12 11 16 16 8 22 4"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+          </div>
+          <p class="course-level">Avanzado · 40 hrs</p>
+          <h3 class="course-title">Física Estadística</h3>
+          <p class="course-desc">Transiciones de fase, renormalización y sistemas fuera del equilibrio. Enfoque moderno con simulaciones numéricas.</p>
+          <a href="#" class="course-cta">Ver curso</a>
+        </div>
+
+        <!-- Curso 5 -->
+        <div class="course-card">
+          <div class="course-icon-box">
+            <!-- Electro SVG -->
+            <svg viewBox="0 0 24 24"><path d="M12 2 L4 14 h7 L9 22 L20 10 h-7 Z"/></svg>
+          </div>
+          <p class="course-level">Intermedio · 28 hrs</p>
+          <h3 class="course-title">Electrodinámica Clásica</h3>
+          <p class="course-desc">Ecuaciones de Maxwell, radiación y óptica cuántica. Laboratorio virtual de simulación de campos electromagnéticos.</p>
+          <a href="#" class="course-cta">Ver curso</a>
+        </div>
+
+        <!-- Curso 6 -->
+        <div class="course-card">
+          <div class="course-icon-box">
+            <!-- Cristal SVG -->
+            <svg viewBox="0 0 24 24"><polygon points="12 2 22 8 22 16 12 22 2 16 2 8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8" x2="22" y2="8"/><line x1="2" y1="16" x2="22" y2="16"/></svg>
+          </div>
+          <p class="course-level">Especialización · 36 hrs</p>
+          <h3 class="course-title">Física del Estado Sólido</h3>
+          <p class="course-desc">Estructura de bandas, superconductividad y materiales cuánticos. Conexión directa con tecnologías emergentes del siglo XXI.</p>
+          <a href="#" class="course-cta">Ver curso</a>
+        </div>
+
+      </div><!-- /courses-grid -->
+    </div>
+  </section>
+
+  <hr class="gold-line"/>
+
+  <!-- ═══════════════════════════════════
+       PROYECTOS
+  ═══════════════════════════════════ -->
+  <section id="proyectos" class="projects-wrap">
+    <div class="projects-inner">
+      <div class="section-header">
+        <p class="section-eyebrow">Portafolio de innovación</p>
+        <h2 class="section-title">Proyectos <em>Ganadores</em></h2>
+      </div>
+    </div>
+
+    <div style="max-width:1280px;margin:0 auto;padding:0 48px;">
+      <div class="projects-grid">
+
+        <!-- PROYECTO DESTACADO: ancho -->
+        <div class="project-card wide">
+          <!--
+            Para usar tu imagen real, reemplaza el div.project-img-ph con:
+            <img src="URL_DE_TU_IMAGEN" alt="QuantumSim" class="project-img" />
+          -->
+          <img src="img/proj1.svg" alt="QuantumSim" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        </div>
+
+        <!-- PROYECTO 2: alto (tall) -->
+        <div class="project-card tall">
+          <img src="img/proj2.svg" alt="GravLens" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        </div>
+
+        <!-- PROYECTO 3: cuadrado -->
+        <div class="project-card square">
+          <img src="img/proj3.svg" alt="ParticleNet" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        </div>
+
+        <!-- PROYECTO 4: cuadrado -->
+        <div class="project-card square">
+          <img src="img/proj4.svg" alt="TopologyViz" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        </div>
+
+        <!-- PROYECTO 5: cuadrado -->
+        <div class="project-card square">
+          <img src="img/proj5.svg" alt="PhysicsGPT" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        </div>
+
+        <!-- PROYECTO 6: cuadrado -->
+        <div class="project-card square">
+          <img src="img/proj6.svg" alt="WaveSim" class="project-img" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        </div>
+
+      </div><!-- /projects-grid -->
+    </div>
+  </section>
+
+  <div class="greek-strip"></div>
+  <hr class="gold-line"/>
+
+  <!-- ═══════════════════════════════════
+       SOBRE MÍ
+  ═══════════════════════════════════ -->
+  <section id="sobre">
+    <div class="section">
+      <div class="section-header">
+        <p class="section-eyebrow">Perfil académico</p>
+        <h2 class="section-title">Sobre <em>mí</em></h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-photo-col">
+          <div class="about-photo">
+            <!-- Reemplaza con tu imagen -->
+            <img src="img/about.svg" alt="Foto sobre mí" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+          </div>
+          <div class="about-frame"></div>
+        </div>
+
+        <div class="about-text">
+          <p class="about-body">Soy física teórica con especialización en mecánica cuántica computacional. Mi trabajo combina la elegancia matemática de la física con el poder de la computación moderna para explorar fenómenos que antes eran inaccesibles a la experimentación directa.</p>
+
+          <p class="about-body">He tenido el privilegio de participar en hackathones internacionales donde la física se convierte en tecnología real. Cada proyecto es una oportunidad de demostrar que las ecuaciones pueden — y deben — cambiar el mundo.</p>
+
+          <blockquote class="about-quote">La física no es solo una ciencia — es el lenguaje con el que el universo se escribe a sí mismo.</blockquote>
+
+          <p class="about-body">Mi misión es tender puentes entre la física fundamental y sus aplicaciones tecnológicas, formando a la próxima generación de científicos e innovadores latinoamericanos.</p>
+
+          <div class="skills-row">
+            <span class="skill-tag accent">Mecánica Cuántica</span>
+            <span class="skill-tag accent">Computación Cuántica</span>
+            <span class="skill-tag accent">Relatividad General</span>
+            <span class="skill-tag">Python · Julia</span>
+            <span class="skill-tag">Machine Learning</span>
+            <span class="skill-tag">Física Estadística</span>
+            <span class="skill-tag">MATLAB · Mathematica</span>
+            <span class="skill-tag">C++ · Fortran</span>
+            <span class="skill-tag">Óptica Cuántica</span>
+            <span class="skill-tag">Sistemas Topológicos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="greek-strip"></div>
+
+  <!-- ═══════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════ -->
+  <footer class="footer-wrap" id="contacto">
+    <div class="footer">
+      <div class="footer-top">
+        <div class="footer-logo-group">
+          <span class="footer-phi">Φ</span>
+          <div>
+            <div class="footer-logo-name">Dr. A. Vargas</div>
+            <div class="footer-logo-sub">Física Teórica · UNAM</div>
+          </div>
+        </div>
+
+        <div class="footer-links-col">
+          <div class="footer-col">
+            <div class="footer-col-title">Académico</div>
+            <a href="#">ResearchGate</a>
+            <a href="#">Google Scholar</a>
+            <a href="#">ORCID</a>
+            <a href="#">Academia.edu</a>
+          </div>
+          <div class="footer-col">
+            <div class="footer-col-title">Portafolio</div>
+            <a href="#">GitHub</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">Devpost</a>
+          </div>
+          <div class="footer-col">
+            <div class="footer-col-title">Contacto</div>
+            <a href="#">correo@unam.mx</a>
+            <a href="#">Oficina — Fac. Ciencias</a>
+            <a href="#">Colaboraciones</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 Adriana Vargas · Todos los derechos reservados</span>
+        <span class="footer-greek">Φ · Σ · Ω · Δ · Λ · Π</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

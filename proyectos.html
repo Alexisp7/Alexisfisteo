@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Alexis R. Salvatierra — Física Teórica</title>
+  <title>Proyectos — Alexis R. Salvatierra</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&amp;family=Inter:wght@300;400;500;600&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
+
     *, *::before, *::after {
       margin: 0;
       padding: 0;
@@ -1190,13 +1191,84 @@
     .btn-show-more:hover { color:var(--white); }
     .btn-show-more .psi-btn { font-family:'Cormorant Garamond',serif; font-size:18px; font-style:italic; color:var(--gold); }
 
+  
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: var(--black); position:relative; overflow:hidden;
+      padding:72px 48px 64px; border-bottom:0.5px solid #222;
+    }
+    .page-hero-inner { max-width:1280px; margin:0 auto; position:relative; z-index:2; }
+    .page-hero-title {
+      font-family:'Cormorant Garamond',serif; font-size:64px; font-weight:700;
+      color:var(--white); letter-spacing:-0.02em; line-height:1.05; margin-bottom:16px;
+    }
+    .page-hero-title em { font-style:italic; font-weight:500; color:var(--gold); }
+    .page-hero-sub {
+      font-family:'Inter',sans-serif; font-size:15px; color:rgba(255,255,255,0.45);
+      max-width:560px; line-height:1.7;
+    }
+    .page-hero-ornament {
+      position:absolute; right:48px; top:50%; transform:translateY(-50%);
+      font-family:'Cormorant Garamond',serif; font-size:180px; font-weight:700;
+      font-style:italic; color:var(--gold); opacity:0.04; line-height:1;
+      user-select:none; z-index:1;
+    }
+    .page-hero .hero-eyebrow { color:var(--gold); }
+
+
+    .proj-detail-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:2px;
+      background:#222; margin:0 48px;
+    }
+    .proj-detail-card {
+      background:#141414; padding:48px 44px; position:relative;
+      border-bottom:1px solid #1e1e1e; transition:background 0.3s;
+    }
+    .proj-detail-card:hover { background:#1a1a1a; }
+    .proj-detail-year {
+      font-family:'Space Mono',monospace; font-size:8px; letter-spacing:0.28em;
+      color:rgba(200,169,110,0.5); text-transform:uppercase; margin-bottom:8px;
+    }
+    .proj-detail-award {
+      font-family:'Space Mono',monospace; font-size:8px; font-weight:700;
+      letter-spacing:0.22em; text-transform:uppercase; color:var(--gold);
+      margin-bottom:18px; display:flex; align-items:center; gap:7px;
+    }
+    .proj-detail-award::before { content:'◆'; font-size:5px; }
+    .proj-detail-name {
+      font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700;
+      color:#FFFFFF; line-height:1.1; margin-bottom:16px; letter-spacing:-0.01em;
+    }
+    .proj-detail-desc {
+      font-family:'Inter',sans-serif; font-size:13px; color:rgba(255,255,255,0.45);
+      line-height:1.8; margin-bottom:28px;
+    }
+    .proj-detail-tags { display:flex; flex-wrap:wrap; gap:7px; }
+    .proj-tag {
+      font-family:'Space Mono',monospace; font-size:8px; font-weight:700;
+      letter-spacing:0.15em; text-transform:uppercase;
+      color:rgba(200,169,110,0.6); border:0.5px solid rgba(200,169,110,0.2);
+      padding:5px 10px;
+    }
+    .proj-detail-link {
+      display:inline-flex; align-items:center; gap:8px; margin-top:24px;
+      font-family:'Space Mono',monospace; font-size:8px; font-weight:700;
+      letter-spacing:0.18em; text-transform:uppercase; color:var(--gold);
+      text-decoration:none; opacity:0.7; transition:opacity 0.2s;
+    }
+    .proj-detail-link:hover { opacity:1; }
+    .proj-detail-link::after { content:'→'; }
+    .proj-corner-greek {
+      position:absolute; top:20px; right:24px;
+      font-family:'Cormorant Garamond',serif; font-size:22px; font-style:italic;
+      color:var(--gold); opacity:0.12;
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════
-       HEADER
-  ═══════════════════════════════════ -->
   <header class="header">
     <div class="header-greek-bar"></div>
     <div class="header-inner">
@@ -1208,442 +1280,136 @@
         </div>
       </div>
       <nav class="main-nav">
-        <a href="index.html" class="active">Inicio</a>
-        <span class="nav-sep">|</span>
-        <a href="cursos.html">Cursos</a>
-        <span class="nav-sep">|</span>
-        <a href="proyectos.html">Proyectos</a>
-        <span class="nav-sep">|</span>
-        <a href="publicaciones.html">Publicaciones</a>
-        <span class="nav-sep">|</span>
-        <a href="#contacto">Contacto</a>
+        <a href="index.html">Inicio</a><span class="nav-sep">|</span><a href="cursos.html">Cursos</a><span class="nav-sep">|</span><a href="proyectos.html" class="active">Proyectos</a><span class="nav-sep">|</span><a href="publicaciones.html">Publicaciones</a><span class="nav-sep">|</span><a href="contacto.html">Contacto</a>
       </nav>
     </div>
     <div class="header-border"></div>
   </header>
 
-
-  <!-- ═══════════════════════════════════
-       HERO
-  ═══════════════════════════════════ -->
-  <section class="hero">
-    <div class="hero-text">
-      <p class="hero-eyebrow">Física Teórica &amp; Computacional · UNMSM Perú</p>
-      <h1 class="hero-name">Alexis R.<br/><em>Salvatierra</em></h1>
-      <div class="hero-title-line">
-        <span class="hero-title">Estudiante</span>
-        <span class="title-sep">·</span>
-        <span class="hero-title">Investigador</span>
-        <span class="title-sep">·</span>
-        <span class="hero-title">Desarrollador</span>
-      </div>
-      <p class="hero-bio">Estudiante de física en la Universidad Nacional Mayor de San Marcos. Exploro las fronteras entre la mecánica cuántica, la computación y los sistemas complejos. Apasionado por hacer la física rigurosa y transformadora.</p>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <div class="stat-num">12</div>
-          <div class="stat-label">Cursos</div>
-          <div class="stat-sub">en portafolio</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">08</div>
-          <div class="stat-label">Proyectos</div>
-          <div class="stat-sub">publicados</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">3×</div>
-          <div class="stat-label">Hackathon</div>
-          <div class="stat-sub">1.er lugar</div>
-        </div>
-      </div>
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="hero-eyebrow" style="margin-bottom:18px;">Portafolio de innovación</p>
+      <h1 class="page-hero-title">Proyectos <em>Ganadores</em></h1>
+      <p class="page-hero-sub">Competiciones internacionales, hackathons y proyectos de investigación aplicada.</p>
     </div>
-
-    <div class="hero-image-wrap">
-      <!-- Reemplaza src con tu URL de foto -->
-      <div class="hero-photo">
-        <div class="photo-ph">
-          <!-- SVG persona simple -->
-          <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:56px;height:56px;stroke:#C8A96E;stroke-width:1.2;fill:none">
-            <circle cx="28" cy="18" r="9"/>
-            <path d="M8 50c0-11.046 8.954-20 20-20s20 8.954 20 20"/>
-          </svg>
-          <span class="photo-ph-text">Tu foto aquí</span>
-        </div>
-        <div class="corner-ornament tl"></div>
-        <div class="corner-ornament tr"></div>
-        <div class="corner-ornament bl"></div>
-        <div class="corner-ornament br"></div>
-      </div>
-      <div class="hero-frame"></div>
-    </div>
+    <div class="page-hero-ornament">Ψ</div>
   </section>
-
   <hr class="gold-line"/>
 
-  <!-- ═══════════════════════════════════
-       CURSOS
-  ═══════════════════════════════════ -->
-  <section id="cursos">
-    <div class="section">
-      <div class="section-header">
-        <p class="section-eyebrow">Portafolio académico</p>
-        <h2 class="section-title">Cursos &amp; <em>Formación</em></h2>
-      </div>
-
-      <div class="courses-grid">
-
-        <!-- Curso 1 -->
-        <div class="course-card">
-          <div class="course-icon-box">
-            <!-- Átomo SVG -->
-            <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/><circle cx="12" cy="12" r="1.5" fill="#C8A96E" stroke="none"/></svg>
-          </div>
-          <p class="course-level">Avanzado · 48 hrs</p>
-          <h3 class="course-title">Mecánica Cuántica Moderna</h3>
-          <p class="course-desc">Principios variacionales, perturbaciones y entrelazamiento. Enfoque geométrico del espacio de Hilbert con aplicaciones actuales.</p>
-          <a href="cursos.html" class="course-cta">Ver curso</a>
-        </div>
-
-        <!-- Curso 2 -->
-        <div class="course-card">
-          <div class="course-icon-box">
-            <!-- CPU/chip SVG -->
-            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="7" y="7" width="10" height="10"/><line x1="7" y1="1" x2="7" y2="4"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="17" y1="1" x2="17" y2="4"/><line x1="7" y1="20" x2="7" y2="23"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="17" y1="20" x2="17" y2="23"/><line x1="1" y1="7" x2="4" y2="7"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="1" y1="17" x2="4" y2="17"/><line x1="20" y1="7" x2="23" y2="7"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="20" y1="17" x2="23" y2="17"/></svg>
-          </div>
-          <p class="course-level">Intermedio · 32 hrs</p>
-          <h3 class="course-title">Simulación Computacional</h3>
-          <p class="course-desc">Métodos de Monte Carlo, dinámica molecular y redes neuronales aplicadas a sistemas físicos complejos de alta dimensionalidad.</p>
-          <a href="cursos.html" class="course-cta">Ver curso</a>
-        </div>
-
-        <!-- Curso 3 -->
-        <div class="course-card">
-          <div class="course-icon-box">
-            <!-- Ondas SVG -->
-            <svg viewBox="0 0 24 24"><path d="M2 12 Q5 6 8 12 Q11 18 14 12 Q17 6 20 12 Q22 15 23 12"/></svg>
-          </div>
-          <p class="course-level">Fundamentos · 24 hrs</p>
-          <h3 class="course-title">Relatividad General</h3>
-          <p class="course-desc">Geometría diferencial, tensor de Riemann y soluciones de Schwarzschild. Ondas gravitacionales y agujeros negros.</p>
-          <a href="cursos.html" class="course-cta">Ver curso</a>
-        </div>
-
-        <!-- Curso 4 -->
-        <div class="course-card">
-          <div class="course-icon-box">
-            <!-- Gráfica SVG -->
-            <svg viewBox="0 0 24 24"><polyline points="2 20 7 12 11 16 16 8 22 4"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-          </div>
-          <p class="course-level">Avanzado · 40 hrs</p>
-          <h3 class="course-title">Física Estadística</h3>
-          <p class="course-desc">Transiciones de fase, renormalización y sistemas fuera del equilibrio. Enfoque moderno con simulaciones numéricas.</p>
-          <a href="cursos.html" class="course-cta">Ver curso</a>
-        </div>
-
-        <!-- Curso 5 -->
-        <div class="course-card">
-          <div class="course-icon-box">
-            <!-- Electro SVG -->
-            <svg viewBox="0 0 24 24"><path d="M12 2 L4 14 h7 L9 22 L20 10 h-7 Z"/></svg>
-          </div>
-          <p class="course-level">Intermedio · 28 hrs</p>
-          <h3 class="course-title">Electrodinámica Clásica</h3>
-          <p class="course-desc">Ecuaciones de Maxwell, radiación y óptica cuántica. Laboratorio virtual de simulación de campos electromagnéticos.</p>
-          <a href="cursos.html" class="course-cta">Ver curso</a>
-        </div>
-
-        <!-- Curso 6 -->
-        <div class="course-card">
-          <div class="course-icon-box">
-            <!-- Cristal SVG -->
-            <svg viewBox="0 0 24 24"><polygon points="12 2 22 8 22 16 12 22 2 16 2 8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8" x2="22" y2="8"/><line x1="2" y1="16" x2="22" y2="16"/></svg>
-          </div>
-          <p class="course-level">Especialización · 36 hrs</p>
-          <h3 class="course-title">Física del Estado Sólido</h3>
-          <p class="course-desc">Estructura de bandas, superconductividad y materiales cuánticos. Conexión directa con tecnologías emergentes del siglo XXI.</p>
-          <a href="cursos.html" class="course-cta">Ver curso</a>
-        </div>
-
-      </div><!-- /courses-grid -->
-      <div class="courses-show-more"><a href="cursos.html" class="btn-show-more"><span class="psi-btn">Ψ</span> Ver todos los cursos</a></div>
-    </div>
-  </section>
-
-  <hr class="gold-line"/>
-
-  <!-- ═══════════════════════════════════
-       PROYECTOS
-  ═══════════════════════════════════ -->
-  <section id="proyectos" class="projects-wrap">
-    <div class="projects-inner">
-      <div class="section-header">
-        <p class="section-eyebrow">Portafolio de innovación</p>
-        <h2 class="section-title">Proyectos <em>Ganadores</em></h2>
+  <section class="projects-wrap" style="padding-top:0;padding-bottom:0;">
+    <div class="projects-inner" style="padding-top:64px;padding-bottom:32px;">
+      <div class="section-header" style="margin-bottom:0;">
+        <p class="section-eyebrow">Innovación · Competición · Investigación</p>
       </div>
     </div>
+    <div class="proj-detail-grid">
 
-    <div style="max-width:1280px;margin:0 auto;padding:0 48px;">
-      <div class="projects-grid">
-
-        <!-- PROYECTO DESTACADO: ancho -->
-        <div class="project-card wide">
-          <!--
-            Para usar tu imagen real, reemplaza el div.project-img-ph con:
-            <img src="URL_DE_TU_IMAGEN" alt="QuantumSim" class="project-img" />
-          -->
-          <div class="project-img-ph" style="background:linear-gradient(135deg,#0a0a1a 0%,#10103a 50%,#0a1a2a 100%);">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px;stroke:#2E2E5E;stroke-width:1.2">
-              <circle cx="24" cy="24" r="18"/>
-              <ellipse cx="24" cy="24" rx="18" ry="7"/>
-              <circle cx="24" cy="24" r="3" fill="#1A1A4A" stroke="#2E2E5E"/>
-            </svg>
-            <span class="ph-text">Imagen del proyecto</span>
-          </div>
-          <span class="project-greek-corner">Ω</span>
-          <span class="project-star">★ Destacado</span>
-          <div class="project-curtain">
-            <div class="curtain-greek">Ψ · Ω · Δ</div>
-            <div class="curtain-badge">MIT Hackathon 2024 · 1.er lugar</div>
-            <div class="curtain-name">QuantumSim — Simulador de Circuitos Cuánticos</div>
-            <div class="curtain-desc">Simulador en tiempo real de circuitos cuánticos con visualización de estados de Bloch y operadores unitarios.</div>
-            <a href="proyectos.html" class="curtain-link">Explorar proyecto</a>
-          </div>
-
-          <div class="project-info-always">
-            <div class="project-badge">MIT Hackathon 2024 · 1.er lugar</div>
-            <div class="project-name">QuantumSim — Simulador de Circuitos Cuánticos en Tiempo Real</div>
-            <div class="project-year">2024</div>
-          </div>
+      <div class="proj-detail-card">
+        <span class="proj-corner-greek">Ψ</span>
+        <div class="proj-detail-year">2024</div>
+        <div class="proj-detail-award">MIT Hackathon 2024 · 1.er lugar</div>
+        <h2 class="proj-detail-name">QuantumSim</h2>
+        <p class="proj-detail-desc">Simulador en tiempo real de circuitos cuánticos arbitrarios con visualización de estados en la esfera de Bloch. Soporta 20+ compuertas, exporta a QASM y corre en navegador sin backend.</p>
+        <div class="proj-detail-tags">
+          <span class="proj-tag">Python</span><span class="proj-tag">Qiskit</span><span class="proj-tag">WebAssembly</span><span class="proj-tag">Mecánica Cuántica</span>
         </div>
+        <a href="#" class="proj-detail-link">Ver repositorio</a>
+      </div>
 
-        <!-- PROYECTO 2: alto (tall) -->
-        <div class="project-card tall">
-          <div class="project-img-ph" style="background:linear-gradient(160deg,#100a20 0%,#1e0a40 100%);">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#2A1A4A;stroke-width:1.2">
-              <path d="M24 4 L24 44 M4 24 L44 24"/>
-              <circle cx="24" cy="24" r="12"/>
-              <ellipse cx="24" cy="24" rx="6" ry="12"/>
-            </svg>
-            <span class="ph-text">Imagen del proyecto</span>
-          </div>
-          <div class="project-curtain">
-            <div class="curtain-greek">Λ · Σ · Π</div>
-            <div class="curtain-badge">NASA SpaceApps · 1.er lugar</div>
-            <div class="curtain-name">GravLens — Lentes Gravitacionales</div>
-            <div class="curtain-desc">Motor de ray-tracing geodésico sobre métricas de Schwarzschild para simular lentes gravitacionales.</div>
-            <a href="proyectos.html" class="curtain-link">Explorar proyecto</a>
-          </div>
-
-          <div class="project-info-always">
-            <div class="project-badge">NASA SpaceApps · 1.er lugar</div>
-            <div class="project-name">GravLens — Visualizador de Lentes Gravitacionales</div>
-            <div class="project-year">2023</div>
-          </div>
+      <div class="proj-detail-card">
+        <span class="proj-corner-greek">Λ</span>
+        <div class="proj-detail-year">2023</div>
+        <div class="proj-detail-award">NASA SpaceApps · 1.er lugar</div>
+        <h2 class="proj-detail-name">GravLens</h2>
+        <p class="proj-detail-desc">Motor de ray-tracing geodésico sobre métricas de Schwarzschild y Kerr. Simula la deflexión de luz por agujeros negros con parámetros físicos ajustables en tiempo real.</p>
+        <div class="proj-detail-tags">
+          <span class="proj-tag">C++</span><span class="proj-tag">OpenGL</span><span class="proj-tag">Relatividad General</span><span class="proj-tag">Ray Tracing</span>
         </div>
+        <a href="#" class="proj-detail-link">Ver repositorio</a>
+      </div>
 
-        <!-- PROYECTO 3: cuadrado -->
-        <div class="project-card square">
-          <div class="project-img-ph" style="background:linear-gradient(135deg,#0d1117 0%,#1a2634 100%);">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#1A2E3A;stroke-width:1.2">
-              <rect x="8" y="8" width="32" height="32" rx="2"/>
-              <circle cx="17" cy="17" r="3"/><circle cx="31" cy="17" r="3"/>
-              <circle cx="24" cy="31" r="3"/>
-              <line x1="17" y1="17" x2="31" y2="17"/><line x1="17" y1="17" x2="24" y2="31"/><line x1="31" y1="17" x2="24" y2="31"/>
-            </svg>
-            <span class="ph-text">Imagen del proyecto</span>
-          </div>
-          <div class="project-curtain">
-            <div class="curtain-greek">Θ · Φ · Ξ</div>
-            <div class="curtain-badge">CERN Datathon · Premio especial</div>
-            <div class="curtain-name">ParticleNet — IA para detección</div>
-            <div class="curtain-desc">Graph neural network para clasificación de trayectorias de partículas en colisionadores de alta energía.</div>
-            <a href="proyectos.html" class="curtain-link">Explorar proyecto</a>
-          </div>
-
-          <div class="project-info-always">
-            <div class="project-badge">CERN Datathon · Premio especial</div>
-            <div class="project-name">ParticleNet — IA para detección de partículas</div>
-            <div class="project-year">2023</div>
-          </div>
+      <div class="proj-detail-card">
+        <span class="proj-corner-greek">Θ</span>
+        <div class="proj-detail-year">2023</div>
+        <div class="proj-detail-award">CERN Datathon · Premio especial</div>
+        <h2 class="proj-detail-name">ParticleNet</h2>
+        <p class="proj-detail-desc">Graph neural network para clasificación de trayectorias de partículas en colisionadores de alta energía. Alcanza 94.2% de precisión sobre dataset abierto del LHC.</p>
+        <div class="proj-detail-tags">
+          <span class="proj-tag">PyTorch Geometric</span><span class="proj-tag">GNN</span><span class="proj-tag">LHC Data</span>
         </div>
+        <a href="#" class="proj-detail-link">Ver repositorio</a>
+      </div>
 
-        <!-- PROYECTO 4: cuadrado -->
-        <div class="project-card square">
-          <div class="project-img-ph" style="background:linear-gradient(135deg,#13111c 0%,#21182a 100%);">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#2A1A3A;stroke-width:1.2">
-              <polygon points="24,6 42,18 42,30 24,42 6,30 6,18"/>
-              <circle cx="24" cy="24" r="6"/>
-            </svg>
-            <span class="ph-text">Imagen del proyecto</span>
-          </div>
-          <div class="project-curtain">
-            <div class="curtain-greek">Ψ · Δ · Ω</div>
-            <div class="curtain-badge">Hack UNAM 2022 · 1.er lugar</div>
-            <div class="curtain-name">TopologyViz — Sistemas Topológicos</div>
-            <div class="curtain-desc">Visualizador interactivo de invariantes topológicos y estructuras de bandas en materiales 2D.</div>
-            <a href="proyectos.html" class="curtain-link">Explorar proyecto</a>
-          </div>
-
-          <div class="project-info-always">
-            <div class="project-badge">Hack UNAM 2022 · 1.er lugar</div>
-            <div class="project-name">TopologyViz — Sistemas Topológicos</div>
-            <div class="project-year">2022</div>
-          </div>
+      <div class="proj-detail-card">
+        <span class="proj-corner-greek">Ω</span>
+        <div class="proj-detail-year">2022</div>
+        <div class="proj-detail-award">Hack UNAM 2022 · 1.er lugar</div>
+        <h2 class="proj-detail-name">TopologyViz</h2>
+        <p class="proj-detail-desc">Visualizador interactivo de invariantes topológicos — número de Chern, invariante Z₂ — y estructuras de bandas en materiales 2D tipo grafeno y aislantes topológicos.</p>
+        <div class="proj-detail-tags">
+          <span class="proj-tag">Julia</span><span class="proj-tag">D3.js</span><span class="proj-tag">Topología</span><span class="proj-tag">Estado Sólido</span>
         </div>
+        <a href="#" class="proj-detail-link">Ver repositorio</a>
+      </div>
 
-        <!-- PROYECTO 5: cuadrado -->
-        <div class="project-card square">
-          <div class="project-img-ph" style="background:linear-gradient(135deg,#111111 0%,#1c2237 100%);">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#1A1A3A;stroke-width:1.2">
-              <path d="M8 28 Q14 10 24 16 Q34 22 40 10"/>
-              <circle cx="8" cy="28" r="3"/><circle cx="24" cy="16" r="3"/><circle cx="40" cy="10" r="3"/>
-              <path d="M8 36 Q24 32 40 36"/>
-            </svg>
-            <span class="ph-text">Imagen del proyecto</span>
-          </div>
-          <div class="project-curtain">
-            <div class="curtain-greek">Γ · Λ · Β</div>
-            <div class="curtain-badge">AI for Science 2022 · Finalista</div>
-            <div class="curtain-name">PhysicsGPT — Tutor IA de Física</div>
-            <div class="curtain-desc">LLM ajustado con corpus de física teórica para resolución de problemas universitarios paso a paso.</div>
-            <a href="proyectos.html" class="curtain-link">Explorar proyecto</a>
-          </div>
-
-          <div class="project-info-always">
-            <div class="project-badge">AI for Science 2022 · Finalista</div>
-            <div class="project-name">PhysicsGPT — Tutor IA de Física</div>
-            <div class="project-year">2022</div>
-          </div>
+      <div class="proj-detail-card">
+        <span class="proj-corner-greek">Γ</span>
+        <div class="proj-detail-year">2022</div>
+        <div class="proj-detail-award">AI for Science 2022 · Finalista</div>
+        <h2 class="proj-detail-name">PhysicsGPT</h2>
+        <p class="proj-detail-desc">LLM ajustado con fine-tuning sobre corpus LaTeX de física teórica. Resuelve problemas universitarios de mecánica cuántica y relatividad paso a paso con trazabilidad matemática.</p>
+        <div class="proj-detail-tags">
+          <span class="proj-tag">Python</span><span class="proj-tag">Transformers</span><span class="proj-tag">Fine-tuning</span><span class="proj-tag">LaTeX</span>
         </div>
+        <a href="#" class="proj-detail-link">Ver repositorio</a>
+      </div>
 
-        <!-- PROYECTO 6: cuadrado -->
-        <div class="project-card square">
-          <div class="project-img-ph" style="background:linear-gradient(135deg,#0e0e18 0%,#181828 100%);">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;stroke:#1A1A2E;stroke-width:1.2">
-              <path d="M6 24 Q12 14 24 14 Q36 14 42 24"/>
-              <path d="M6 24 Q12 34 24 34 Q36 34 42 24"/>
-              <line x1="24" y1="6" x2="24" y2="42"/>
-              <circle cx="24" cy="24" r="5"/>
-            </svg>
-            <span class="ph-text">Imagen del proyecto</span>
-          </div>
-          <div class="project-curtain">
-            <div class="curtain-greek">Ε · Η · Κ</div>
-            <div class="curtain-badge">HackMIT 2021 · Finalista</div>
-            <div class="curtain-name">WaveSim — Óptica Cuántica</div>
-            <div class="curtain-desc">Simulador de cavidades ópticas y estados de Fock con animaciones de función de Wigner en tiempo real.</div>
-            <a href="proyectos.html" class="curtain-link">Explorar proyecto</a>
-          </div>
-
-          <div class="project-info-always">
-            <div class="project-badge">HackMIT 2021 · Finalista</div>
-            <div class="project-name">WaveSim — Óptica Cuántica Interactiva</div>
-            <div class="project-year">2021</div>
-          </div>
+      <div class="proj-detail-card">
+        <span class="proj-corner-greek">Ε</span>
+        <div class="proj-detail-year">2021</div>
+        <div class="proj-detail-award">HackMIT 2021 · Finalista</div>
+        <h2 class="proj-detail-name">WaveSim</h2>
+        <p class="proj-detail-desc">Simulador de cavidades ópticas cuánticas y estados de Fock. Visualiza la función de Wigner en el espacio de fases con animaciones interactivas y parámetros físicos editables.</p>
+        <div class="proj-detail-tags">
+          <span class="proj-tag">Python</span><span class="proj-tag">QuTiP</span><span class="proj-tag">Óptica Cuántica</span><span class="proj-tag">WebGL</span>
         </div>
+        <a href="#" class="proj-detail-link">Ver repositorio</a>
+      </div>
 
-      </div><!-- /projects-grid -->
     </div>
   </section>
 
   <div class="greek-strip"></div>
-  <hr class="gold-line"/>
-
-  <!-- ═══════════════════════════════════
-       SOBRE MÍ
-  ═══════════════════════════════════ -->
-  <section id="sobre">
-    <div class="section">
-      <div class="section-header">
-        <p class="section-eyebrow">Perfil académico</p>
-        <h2 class="section-title">Sobre <em>mí</em></h2>
-      </div>
-
-      <div class="about-grid">
-        <div class="about-photo-col">
-          <div class="about-photo">
-            <!-- Reemplaza con tu imagen -->
-            <div class="photo-ph">
-              <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:56px;height:56px;stroke:#C8A96E;stroke-width:1;fill:none">
-                <circle cx="28" cy="18" r="9"/>
-                <path d="M8 50c0-11.046 8.954-20 20-20s20 8.954 20 20"/>
-              </svg>
-              <span class="photo-ph-text">Foto secundaria</span>
-            </div>
-          </div>
-          <div class="about-frame"></div>
-        </div>
-
-        <div class="about-text">
-          <p class="about-body">Soy estudiante de física en la Universidad Nacional Mayor de San Marcos (UNMSM), Lima, con especialización en física teórica y computacional. Mi formación combina el rigor matemático de la física cuántica con herramientas modernas de simulación y ciencia de datos.</p>
-
-          <p class="about-body">He participado en intercambios académicos internacionales — incluyendo una estancia en la UNAM bajo el Programa de Movilidad Universitaria — y en proyectos que van desde la mecánica cuántica de muchos cuerpos hasta redes neuronales aplicadas a sistemas físicos.</p>
-
-          <blockquote class="about-quote">La física no es solo una ciencia — es el lenguaje con el que el universo se escribe a sí mismo.</blockquote>
-
-          <p class="about-body">Mi misión es tender puentes entre la física fundamental y sus aplicaciones computacionales, aportando al desarrollo científico latinoamericano desde San Marcos.</p>
-
-          <div class="skills-row">
-            <span class="skill-tag accent">Mecánica Cuántica</span>
-            <span class="skill-tag accent">Computación Cuántica</span>
-            <span class="skill-tag accent">Relatividad General</span>
-            <span class="skill-tag">Python · Julia</span>
-            <span class="skill-tag">Machine Learning</span>
-            <span class="skill-tag">Física Estadística</span>
-            <span class="skill-tag">MATLAB · Mathematica</span>
-            <span class="skill-tag">C++ · Fortran</span>
-            <span class="skill-tag">Óptica Cuántica</span>
-            <span class="skill-tag">Sistemas Topológicos</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="greek-strip"></div>
-
-  <!-- ═══════════════════════════════════
-       FOOTER
-  ═══════════════════════════════════ -->
-  <footer class="footer-wrap" id="contacto">
+  <footer class="footer-wrap">
     <div class="footer">
       <div class="footer-top">
         <div class="footer-logo-group">
           <span class="footer-phi">Ψ</span>
           <div>
-          <div class="footer-logo-name">Alexis R. Salvatierra</div>
+            <div class="footer-logo-name">Alexis R. Salvatierra</div>
             <div class="footer-logo-sub">Física Teórica · UNMSM</div>
           </div>
         </div>
-
         <div class="footer-links-col">
           <div class="footer-col">
             <div class="footer-col-title">Académico</div>
-            <a href="#">ResearchGate</a>
-            <a href="#">Google Scholar</a>
-            <a href="#">ORCID</a>
-            <a href="#">Academia.edu</a>
+            <a href="#">ResearchGate</a><a href="#">Google Scholar</a><a href="#">ORCID</a>
           </div>
           <div class="footer-col">
             <div class="footer-col-title">Portafolio</div>
-            <a href="#">GitHub</a>
-            <a href="#">LinkedIn</a>
-            <a href="#">Devpost</a>
+            <a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">Devpost</a>
           </div>
           <div class="footer-col">
             <div class="footer-col-title">Contacto</div>
-            <a href="#">correo@unmsm.edu.pe</a>
-            <a href="#">Fac. Ciencias Físicas · Lima, Perú</a>
-            <a href="#">Colaboraciones</a>
+            <a href="contacto.html">correo@unmsm.edu.pe</a><a href="#">Lima, Perú</a>
           </div>
         </div>
       </div>
-
       <div class="footer-bottom">
         <span class="footer-copy">© 2025 Alexis R. Salvatierra · Todos los derechos reservados</span>
         <span class="footer-greek">Ψ · Σ · Ω · Δ · Λ · Π</span>
       </div>
     </div>
   </footer>
-
 </body>
 </html>

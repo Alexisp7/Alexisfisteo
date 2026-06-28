@@ -1,6 +1,6 @@
-# Blog de Física — Dr. A. Vargas
+# Blog de Física — Alexis R. Salvatierra
 
-Sitio web personal de portafolio académico. Diseño elegante blanco con acentos dorados y toques griegos.
+Sitio web personal de portafolio académico. 
 
 ## Estructura de archivos
 
@@ -17,11 +17,3 @@ img/
   proj6.svg         ← AMARILLO       → WaveSim (HackMIT 2021)
 ```
 
-## Cómo reemplazar las imágenes
-
-Sube tu imagen y renómbrala igual que el `.svg` que reemplaza, o edita el `src` en el HTML.
-
-## GitHub Pages
-
-En tu repo: **Settings → Pages → Branch: main → / (root)**
-"# Alexisfisteo" 

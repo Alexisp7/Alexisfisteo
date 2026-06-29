@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuantumQuipu — Alexis R. Salvatierra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --gold:#C8A96E; --gold-light:#E8D5A3; --black:#111111; --dark:#1A1A1A;
+      --gray:#4A4A4A; --gray-light:#7A7A7A; --border:#E0DDD8;
+      --bg-off:#F7F6F3; --bg-dark:#111111; --white:#FFFFFF;
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--white); color:var(--dark); font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased; }
+    hr.gold-line { border:none; height:0.5px; background:var(--gold); }
+
+    /* ── HEADER ── */
+    .header { background:var(--white); position:sticky; top:0; z-index:100; }
+    .header-greek-bar { height:4px; background:var(--black); position:relative; overflow:hidden; }
+    .header-greek-bar::after { content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(90deg,var(--gold) 0px,var(--gold) 3px,transparent 3px,transparent 7px,var(--gold) 7px,var(--gold) 10px,transparent 10px,transparent 18px); opacity:0.6; }
+    .header-inner { display:flex; align-items:center; justify-content:space-between; padding:20px 48px; max-width:1280px; margin:0 auto; }
+    .site-logo { display:flex; flex-direction:column; gap:3px; }
+    .site-logo-name { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600; letter-spacing:0.06em; color:var(--black); }
+    .site-logo-subtitle { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.28em; color:var(--gold); text-transform:uppercase; }
+    .logo-phi { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:400; color:var(--gold); line-height:1; margin-right:14px; opacity:0.85; }
+    .logo-group { display:flex; align-items:center; }
+    nav.main-nav { display:flex; align-items:center; gap:0; }
+    nav.main-nav a { font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--gray); text-decoration:none; padding:8px 20px; position:relative; z-index:0; transition:color 0.28s ease; }
+    nav.main-nav a::before { content:''; position:absolute; inset:0; background:var(--black); transform:scaleX(0); transform-origin:left center; transition:transform 0.28s cubic-bezier(0.4,0,0.2,1); z-index:-1; }
+    nav.main-nav a:hover::before, nav.main-nav a.active::before { transform:scaleX(1); }
+    nav.main-nav a:hover, nav.main-nav a.active { color:var(--white); }
+    nav.main-nav .nav-sep { font-family:'Cormorant Garamond',serif; color:var(--gold); font-size:18px; font-weight:300; line-height:1; opacity:0.7; user-select:none; }
+    .header-border { height:0.5px; background:var(--gold); }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb { max-width:1280px; margin:0 auto; padding:18px 48px; display:flex; align-items:center; gap:10px; }
+    .breadcrumb a { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--gray-light); text-decoration:none; transition:color 0.2s; }
+    .breadcrumb a:hover { color:var(--gold); }
+    .breadcrumb-sep { color:var(--border); font-size:12px; }
+    .breadcrumb-current { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); }
+
+    /* ── PROJECT HERO ── */
+    .proj-hero { background:var(--black); position:relative; overflow:hidden; padding:64px 48px 56px; }
+    .proj-hero-inner { max-width:1280px; margin:0 auto; position:relative; z-index:2; }
+    .proj-hero-eyebrow { font-family:'Space Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+    .proj-hero-eyebrow::before { content:''; width:28px; height:0.5px; background:var(--gold); display:block; }
+    .proj-hero-title { font-family:'Cormorant Garamond',serif; font-size:72px; font-weight:700; color:var(--white); letter-spacing:-0.02em; line-height:1.0; margin-bottom:8px; }
+    .proj-hero-title em { font-style:italic; font-weight:500; color:var(--gold); }
+    .proj-hero-subtitle { font-family:'Cormorant Garamond',serif; font-size:21px; font-weight:400; font-style:italic; color:rgba(255,255,255,0.42); margin-bottom:32px; max-width:720px; line-height:1.45; }
+    .proj-hero-meta { display:flex; gap:48px; padding-top:28px; border-top:0.5px solid #2A2A2A; flex-wrap:wrap; }
+    .proj-meta-label { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+    .proj-meta-value { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:500; color:var(--white); }
+    .proj-hero-ornament { position:absolute; right:40px; top:50%; transform:translateY(-50%); font-family:'Cormorant Garamond',serif; font-size:220px; font-weight:700; font-style:italic; color:var(--gold); opacity:0.03; line-height:1; user-select:none; z-index:1; letter-spacing:-0.05em; }
+
+    /* ── PDF BLOCK (alta relevancia, antes del collage) ── */
+    .pdf-featured {
+      background:var(--bg-off); border-bottom:0.5px solid var(--border);
+    }
+    .pdf-featured-inner {
+      max-width:1280px; margin:0 auto; padding:52px 48px;
+      display:flex; align-items:center; justify-content:space-between; gap:48px;
+    }
+    .pdf-featured-left {}
+    .pdf-featured-eyebrow {
+      font-family:'Space Mono',monospace; font-size:8px; font-weight:700;
+      letter-spacing:0.28em; text-transform:uppercase; color:var(--gold);
+      display:flex; align-items:center; gap:10px; margin-bottom:14px;
+    }
+    .pdf-featured-eyebrow::before { content:''; width:22px; height:0.5px; background:var(--gold); display:block; }
+    .pdf-featured-title {
+      font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:600;
+      color:var(--black); line-height:1.2; margin-bottom:8px; max-width:560px;
+    }
+    .pdf-featured-sub {
+      font-family:'Inter',sans-serif; font-size:13px; color:var(--gray-light);
+      margin-bottom:0; letter-spacing:0.01em;
+    }
+    .pdf-featured-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+    .btn-pdf-main {
+      display:inline-flex; align-items:center; gap:12px;
+      font-family:'Space Mono',monospace; font-size:9px; font-weight:700;
+      letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--white); background:var(--black);
+      border:0.5px solid var(--black); padding:16px 30px;
+      cursor:pointer; transition:background 0.25s; text-decoration:none; white-space:nowrap;
+    }
+    .btn-pdf-main:hover { background:#2a2a2a; }
+    .btn-pdf-main svg { width:14px; height:14px; stroke:currentColor; stroke-width:1.5; fill:none; opacity:0.7; }
+    .btn-pdf-ghost {
+      display:inline-flex; align-items:center; gap:10px;
+      font-family:'Space Mono',monospace; font-size:9px; font-weight:700;
+      letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--gray); border:0.5px solid var(--border);
+      padding:16px 22px; cursor:pointer; background:none;
+      transition:all 0.25s; text-decoration:none; white-space:nowrap;
+    }
+    .btn-pdf-ghost:hover { color:var(--black); border-color:var(--gold); }
+    .btn-pdf-ghost svg { width:13px; height:13px; stroke:currentColor; stroke-width:1.5; fill:none; }
+
+    /* ── COLLAGE ── */
+    .collage-section { background:var(--bg-dark); padding:0; }
+    .collage-grid {
+      display:grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 310px 210px;
+      gap:2px; background:#1a1a1a;
+    }
+    .collage-cell { position:relative; overflow:hidden; background:#0c0c14; }
+    .collage-cell.main { grid-row:span 2; }
+    .collage-cell img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.7s ease; }
+    .collage-cell:hover img { transform:scale(1.04); }
+    .collage-ph { width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; }
+    .collage-label { position:absolute; bottom:14px; left:16px; font-family:'Space Mono',monospace; font-size:7px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:rgba(200,169,110,0.45); }
+    .collage-corner { position:absolute; top:0;left:0;right:0;bottom:0; pointer-events:none; }
+    .collage-corner::before { content:''; position:absolute; top:12px;left:12px; width:18px;height:18px; border-top:0.5px solid rgba(200,169,110,0.25); border-left:0.5px solid rgba(200,169,110,0.25); }
+    .collage-corner::after  { content:''; position:absolute; bottom:12px;right:12px; width:18px;height:18px; border-bottom:0.5px solid rgba(200,169,110,0.25); border-right:0.5px solid rgba(200,169,110,0.25); }
+
+    /* ── PIPELINE STRIP ── */
+    .pipeline-strip {
+      background:var(--black); padding:32px 48px; border-bottom:0.5px solid #1e1e1e;
+    }
+    .pipeline-inner { max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:0; }
+    .pipeline-step {
+      display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; max-width:200px;
+    }
+    .pipeline-letter {
+      font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700;
+      font-style:italic; color:var(--gold); line-height:1;
+    }
+    .pipeline-name {
+      font-family:'Space Mono',monospace; font-size:7px; font-weight:700;
+      letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.45);
+      text-align:center;
+    }
+    .pipeline-arrow {
+      font-family:'Cormorant Garamond',serif; font-size:22px; color:rgba(200,169,110,0.25);
+      flex-shrink:0; padding:0 8px; margin-bottom:16px;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .content-wrap { max-width:1280px; margin:0 auto; padding:80px 48px; display:grid; grid-template-columns:1fr 360px; gap:88px; align-items:start; }
+    .content-section-eyebrow { font-family:'Space Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+    .content-section-eyebrow::before { content:''; width:28px; height:0.5px; background:var(--gold); display:block; }
+    .content-title { font-family:'Cormorant Garamond',serif; font-size:42px; font-weight:700; color:var(--black); line-height:1.08; letter-spacing:-0.02em; margin-bottom:32px; }
+    .content-title em { font-style:italic; font-weight:500; }
+    .content-body { font-family:'Inter',sans-serif; font-size:15px; color:var(--gray); line-height:1.9; margin-bottom:24px; }
+    .content-body strong { color:var(--dark); font-weight:600; }
+    .content-quote { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:500; font-style:italic; color:var(--black); line-height:1.45; border-left:1px solid var(--gold); padding-left:28px; margin:36px 0; }
+    .content-quote::before { content:'«'; color:var(--gold); font-style:normal; font-size:28px; margin-right:4px; vertical-align:-3px; }
+    .content-quote::after  { content:'»'; color:var(--gold); font-style:normal; font-size:28px; margin-left:4px;  vertical-align:-3px; }
+    .tech-row { display:flex; flex-wrap:wrap; gap:8px; margin:32px 0; }
+    .tech-tag { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); border:0.5px solid rgba(200,169,110,0.35); padding:7px 14px; background:rgba(200,169,110,0.04); }
+
+    /* ── SIDEBAR ── */
+    .sidebar-block { border:0.5px solid var(--border); padding:32px 28px; margin-bottom:2px; position:relative; }
+    .sidebar-block::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--gold); }
+    .sidebar-label { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:18px; }
+    .sidebar-award-main { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700; color:var(--black); line-height:1.1; margin-bottom:6px; }
+    .sidebar-award-event { font-family:'Inter',sans-serif; font-size:13px; color:var(--gray); margin-bottom:4px; }
+    .sidebar-year { font-family:'Space Mono',monospace; font-size:9px; color:var(--gold); letter-spacing:0.1em; }
+    .sidebar-list { list-style:none; }
+    .sidebar-list li { font-family:'Inter',sans-serif; font-size:13px; color:var(--gray); padding:10px 0; border-bottom:0.5px solid var(--border); display:flex; align-items:baseline; gap:10px; line-height:1.5; }
+    .sidebar-list li:last-child { border-bottom:none; }
+    .sidebar-list li::before { content:'◆'; color:var(--gold); font-size:5px; flex-shrink:0; margin-top:4px; }
+    .sidebar-link { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); text-decoration:none; display:flex; align-items:center; gap:8px; padding:12px 0; border-bottom:0.5px solid var(--border); transition:opacity 0.2s; opacity:0.75; }
+    .sidebar-link:hover { opacity:1; }
+    .sidebar-link:last-child { border-bottom:none; }
+    .sidebar-link::after { content:'→'; font-size:13px; }
+    .sidebar-greek { font-family:'Cormorant Garamond',serif; font-size:48px; font-weight:700; font-style:italic; color:var(--gold); opacity:0.12; text-align:right; margin-top:12px; user-select:none; }
+
+    /* ── GREEK STRIP ── */
+    .greek-strip { height:12px; background:var(--black); position:relative; overflow:hidden; }
+    .greek-strip::before { content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(90deg,transparent 0px,transparent 2px,var(--gold) 2px,var(--gold) 5px,transparent 5px,transparent 7px,var(--gold) 7px,var(--gold) 10px,transparent 10px,transparent 14px,var(--gold) 14px,var(--gold) 17px,transparent 17px,transparent 24px); opacity:0.45; }
+    .greek-strip::after { content:''; position:absolute; top:0;left:0;right:0; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); opacity:0.6; }
+
+    /* ── FOOTER ── */
+    .footer-wrap { background:var(--black); }
+    .footer { max-width:1280px; margin:0 auto; padding:56px 48px; }
+    .footer-top { display:flex; align-items:flex-start; justify-content:space-between; padding-bottom:40px; border-bottom:0.5px solid #2A2A2A; margin-bottom:36px; }
+    .footer-logo-name { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:600; color:var(--white); letter-spacing:0.04em; line-height:1; }
+    .footer-logo-sub { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.28em; color:var(--gold); text-transform:uppercase; margin-top:6px; }
+    .footer-phi { font-family:'Cormorant Garamond',serif; font-size:38px; color:var(--gold); opacity:0.4; margin-right:16px; }
+    .footer-logo-group { display:flex; align-items:center; }
+    .footer-links-col { display:flex; gap:60px; }
+    .footer-col-title { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+    .footer-col a { display:block; font-family:'Inter',sans-serif; font-size:13px; color:#5A5A5A; text-decoration:none; margin-bottom:10px; transition:color 0.2s; }
+    .footer-col a:hover { color:#AAAAAA; }
+    .footer-bottom { display:flex; align-items:center; justify-content:space-between; }
+    .footer-copy { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.12em; color:#3A3A3A; }
+    .footer-greek { font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--gold); opacity:0.3; letter-spacing:0.2em; }
+
+    /* ── PDF MODAL ── */
+    .pdf-modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.32s ease; }
+    .pdf-modal-backdrop.open { opacity:1; pointer-events:all; }
+    .pdf-modal { background:var(--black); border:0.5px solid #2A2A2A; width:90vw; max-width:1100px; height:90vh; display:flex; flex-direction:column; position:relative; transform:translateY(20px) scale(0.98); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); }
+    .pdf-modal-backdrop.open .pdf-modal { transform:translateY(0) scale(1); }
+    .pdf-modal::before { content:''; position:absolute; top:0;left:0;right:0; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+    .pdf-modal-bar { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:0.5px solid #222; flex-shrink:0; }
+    .pdf-modal-title { display:flex; align-items:center; gap:12px; }
+    .pdf-modal-psi { font-family:'Cormorant Garamond',serif; font-size:20px; font-style:italic; color:var(--gold); opacity:0.7; }
+    .pdf-modal-name { font-family:'Space Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.6); }
+    .pdf-modal-actions { display:flex; align-items:center; gap:8px; }
+    .pdf-btn { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; border:0.5px solid #2A2A2A; background:none; cursor:pointer; color:rgba(255,255,255,0.5); padding:8px 14px; transition:all 0.2s; display:inline-flex; align-items:center; gap:7px; text-decoration:none; }
+    .pdf-btn:hover { color:var(--white); border-color:rgba(200,169,110,0.4); }
+    .pdf-btn.close-btn { color:rgba(255,255,255,0.35); }
+    .pdf-btn.close-btn:hover { color:var(--white); border-color:#444; }
+    .pdf-btn svg { width:12px; height:12px; stroke:currentColor; stroke-width:1.5; fill:none; }
+    .pdf-viewer-wrap { flex:1; position:relative; overflow:hidden; background:#0a0a0a; }
+    .pdf-viewer-wrap iframe { width:100%; height:100%; border:none; display:block; }
+    .pdf-placeholder { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+    .pdf-placeholder-icon { width:64px; height:64px; border:0.5px solid #2A2A2A; display:flex; align-items:center; justify-content:center; }
+    .pdf-placeholder-icon svg { width:28px; height:28px; stroke:var(--gold); stroke-width:1; fill:none; opacity:0.5; }
+    .pdf-placeholder-text { font-family:'Space Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:#2A2A2A; }
+    .pdf-placeholder-sub { font-family:'Inter',sans-serif; font-size:12px; color:#2A2A2A; text-align:center; max-width:340px; line-height:1.6; }
+    .pdf-placeholder-link { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); text-decoration:none; border:0.5px solid rgba(200,169,110,0.3); padding:10px 20px; transition:all 0.2s; opacity:0.6; }
+    .pdf-placeholder-link:hover { opacity:1; }
+    .pdf-modal-footer { display:flex; align-items:center; justify-content:center; padding:10px 20px; border-top:0.5px solid #1a1a1a; flex-shrink:0; }
+    .pdf-page-info { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:0.15em; color:#2A2A2A; text-transform:uppercase; }
+
+    @media (max-width:900px) {
+      .header-inner { padding:16px 24px; }
+      nav.main-nav { display:none; }
+      .proj-hero { padding:48px 24px 40px; }
+      .proj-hero-title { font-size:44px; }
+      .proj-hero-meta { flex-direction:column; gap:24px; }
+      .proj-hero-ornament { display:none; }
+      .breadcrumb { padding:14px 24px; }
+      .pdf-featured-inner { flex-direction:column; align-items:flex-start; padding:40px 24px; }
+      .collage-grid { grid-template-columns:1fr 1fr; grid-template-rows:220px 180px 180px; }
+      .collage-cell.main { grid-row:span 1; grid-column:span 2; }
+      .pipeline-strip { padding:24px; }
+      .content-wrap { grid-template-columns:1fr; gap:48px; padding:56px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-greek-bar"></div>
+    <div class="header-inner">
+      <div class="logo-group">
+        <span class="logo-phi">Ψ</span>
+        <div class="site-logo">
+          <span class="site-logo-name">Alexis R. Salvatierra</span>
+          <span class="site-logo-subtitle">Física Teórica · UNMSM</span>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html">Inicio</a>
+        <span class="nav-sep">|</span>
+        <a href="cursos.html">Cursos</a>
+        <span class="nav-sep">|</span>
+        <a href="proyectos.html" class="active">Proyectos</a>
+        <span class="nav-sep">|</span>
+        <a href="publicaciones.html">Publicaciones</a>
+        <span class="nav-sep">|</span>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+    <div class="header-border"></div>
+  </header>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="index.html">Inicio</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="proyectos.html">Proyectos</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">QuantumQuipu</span>
+  </div>
+
+  <hr class="gold-line"/>
+
+  <!-- PROJECT HERO -->
+  <section class="proj-hero">
+    <div class="proj-hero-inner">
+      <p class="proj-hero-eyebrow">QuantumQuipu Hackathon · 2025 · Computación Cuántica Aplicada</p>
+      <h1 class="proj-hero-title">QuantumQuipu —<br/><em>Optimización de Rutas</em><br/>en Minería</h1>
+      <p class="proj-hero-subtitle">Formulación QUBO, mapeo al Hamiltoniano de Ising y resolución mediante el Eigensolver Cuántico Variacional (VQE) sobre datos reales de Mina Orcopampa, Arequipa</p>
+      <div class="proj-hero-meta">
+        <div class="proj-meta-item">
+          <div class="proj-meta-label">Año</div>
+          <div class="proj-meta-value">2025</div>
+        </div>
+        <div class="proj-meta-item">
+          <div class="proj-meta-label">Método</div>
+          <div class="proj-meta-value">QUBO → Ising → VQE</div>
+        </div>
+        <div class="proj-meta-item">
+          <div class="proj-meta-label">Framework</div>
+          <div class="proj-meta-value">Qiskit · Python</div>
+        </div>
+        <div class="proj-meta-item">
+          <div class="proj-meta-label">Caso real</div>
+          <div class="proj-meta-value">Mina Orcopampa</div>
+        </div>
+        <div class="proj-meta-item">
+          <div class="proj-meta-label">Colaboración</div>
+          <div class="proj-meta-value">Ronaldo &amp; Rodrigo</div>
+        </div>
+      </div>
+    </div>
+    <div class="proj-hero-ornament">Ω</div>
+  </section>
+
+  <!-- PDF BLOCK — alta relevancia -->
+  <div class="pdf-featured">
+    <div class="pdf-featured-inner">
+      <div class="pdf-featured-left">
+        <p class="pdf-featured-eyebrow">Documentación técnica</p>
+        <h2 class="pdf-featured-title">Optimización de Rutas en Minería — Presentación completa QuantumQuipu Hackathon</h2>
+        <p class="pdf-featured-sub">26 diapositivas · QUBO · Hamiltoniano de Ising · VQE · Mina Orcopampa, Arequipa · 2025</p>
+      </div>
+      <div class="pdf-featured-right">
+        <button class="btn-pdf-main" onclick="openPDF()">
+          <svg viewBox="0 0 16 16"><rect x="2" y="1" width="10" height="14" rx="1"/><path d="M5 5h6M5 8h6M5 11h3"/></svg>
+          Ver presentación
+        </button>
+        <a href="arch/Track 1.pdf" download class="btn-pdf-ghost">
+          <svg viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3"/><path d="M2 12h12"/></svg>
+          Descargar
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLLAGE IMAGE SECTION -->
+  <div class="collage-section">
+    <div class="collage-grid">
+
+      <!-- Cell 1: main — mapa satélite Orcopampa -->
+      <div class="collage-cell main">
+        <!-- <img src="img/orcopampa-satelite.jpg" alt="Mina Orcopampa vista satelital"> -->
+        <div class="collage-ph" style="background:radial-gradient(ellipse at 45% 40%, #0a180a 0%, #060e06 55%, #040804 100%);">
+          <img src="img/quantumquipu/titulo.png" class="project-img" alt="finanzas">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 2: QUBO matrix -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(140deg,#080814 0%,#0c0c20 100%);">
+          <img src="img/quantumquipu/qubo.png" class="project-img" alt="QUBO">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 3: VQE circuit diagram -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(160deg,#080818 0%,#0c0820 100%);">
+          <img src="img/quantumquipu/vqe.png" class="project-img" alt="VQE">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 4: Ising Hamiltonian / energy landscape -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(130deg,#060612 0%,#0a0818 100%);">
+          <img src="img/quantumquipu/optimizador.png" class="project-img" alt="optimizador">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 5: convergence / energy minimization -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(150deg,#080810 0%,#0c0a16 100%);">
+          <img src="img/quantumquipu/trayec.png" class="project-img" alt="trayec">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PIPELINE STRIP -->
+  <div class="pipeline-strip">
+    <div class="pipeline-inner">
+      <div class="pipeline-step">
+        <div class="pipeline-letter">Π</div>
+        <div class="pipeline-name">Problema de rutas<br/>Mina Orcopampa</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="pipeline-letter">Q</div>
+        <div class="pipeline-name">Formulación<br/>QUBO</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="pipeline-letter">Η</div>
+        <div class="pipeline-name">Hamiltoniano<br/>de Ising</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="pipeline-letter">Ψ</div>
+        <div class="pipeline-name">Ansatz<br/>VQE</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="pipeline-letter">Ε</div>
+        <div class="pipeline-name">E_min<br/>Ruta óptima</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <section>
+    <div class="content-wrap">
+
+      <!-- Left: text -->
+      <div class="content-main">
+        <p class="content-section-eyebrow">Descripción del proyecto</p>
+        <h2 class="content-title">Optimización combinatoria cuántica<br/><em>aplicada a rutas de transporte minero</em></h2>
+
+        <p class="content-body">
+          <strong>QuantumQuipu</strong> es un proyecto de computación cuántica aplicada que aborda el problema de optimización de rutas de camiones en operaciones mineras a tajo abierto. El caso de estudio es <strong>Mina Orcopampa</strong> (Castilla, Arequipa, 3 800 msnm), una mina subterránea de oro en operación desde 1967, modelada como un grafo de 8 nodos: Planta de procesamiento, dos junctions, Tajo, Botadero, Lixiviación, Baja ley y Relaves.
+        </p>
+
+        <p class="content-body">
+          El problema de encontrar la ruta de menor costo que visite los nodos requeridos se formula como un <strong>problema de optimización binaria cuadrática sin restricciones (QUBO)</strong>. Las variables binarias χ_{i,t} ∈ {0,1} codifican si el camión visita la ubicación <em>i</em> en el paso temporal <em>t</em>. La función de costo total incorpora tres términos: el costo de transición Q_C (distancias reales medidas en Google Earth), la restricción temporal Q_B (un solo lugar por paso de tiempo) y la restricción espacial Q_A (cada lugar visitado exactamente una vez).
+        </p>
+
+        <blockquote class="content-quote">
+          La superposición cuántica permite explorar simultáneamente todas las rutas posibles — lo que un computador clásico haría en 2ᴺ pasos, el circuito variacional lo aproxima en tiempo polinomial.
+        </blockquote>
+
+        <p class="content-body">
+          El paso central del proyecto es el <strong>mapeo al Hamiltoniano de Ising</strong>: la función de costo QUBO se reescribe en términos de variables de spin Z_{i,t} ∈ {−1, +1} mediante la sustitución estándar χ_{i,t} = (1 − Z_{i,t})/2. El resultado es el Hamiltoniano H = Z⊺JZ + h⊺Z, donde J es la matriz de acoplamiento entre spins (que codifica distancias y penalizaciones) y h es el vector de campos locales. Este Hamiltoniano se proyecta como operador cuántico Ĥ = Σ J_{kl} Ẑ_k ⊗ Ẑ_l + Σ h_k Ẑ_k.
+        </p>
+
+        <p class="content-body">
+          La minimización de la energía ⟨Ψ(θ)|Ĥ|Ψ(θ)⟩ se realiza con el <strong>Variational Quantum Eigensolver (VQE)</strong> implementado en <strong>Qiskit</strong>. El ansatz parametrizado |Ψ(θ)⟩ pasa por el circuito cuántico (compuertas de rotación θ_i + capa entrelazadora), se mide el valor esperado del Hamiltoniano en la etapa de medición, y un optimizador clásico actualiza los parámetros θ por descenso por gradiente hasta la convergencia a E_min.
+        </p>
+
+        <div class="tech-row">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Qiskit</span>
+          <span class="tech-tag">QUBO</span>
+          <span class="tech-tag">Hamiltoniano de Ising</span>
+          <span class="tech-tag">VQE</span>
+          <span class="tech-tag">Ansatz Variacional</span>
+          <span class="tech-tag">Descenso por Gradiente</span>
+          <span class="tech-tag">Google Earth</span>
+          <span class="tech-tag">Optimización Combinatoria</span>
+          <span class="tech-tag">Mina Orcopampa</span>
+        </div>
+      </div>
+
+      <!-- Right: sidebar -->
+      <div class="content-sidebar">
+
+        <div class="sidebar-block">
+          <div class="sidebar-label">Contexto</div>
+          <div class="sidebar-award-main">QuantumQuipu</div>
+          <div class="sidebar-award-event">Hackathon de Computación Cuántica</div>
+          <div class="sidebar-year">2025 · Perú</div>
+          <div class="sidebar-greek">Ω</div>
+        </div>
+
+        <div class="sidebar-block" style="margin-top:2px;">
+          <div class="sidebar-label">Modelo</div>
+          <ul class="sidebar-list">
+            <li>8 nodos: Planta, 2 junctions, Tajo, Botadero, Lixiviación, Baja ley, Relaves</li>
+            <li>Distancias reales medidas en Google Earth (72 m – 1.7 km)</li>
+            <li>Variables binarias χ_{i,t}: N×T qubits</li>
+            <li>Restricciones temporales y espaciales como penalizaciones QUBO (A ≫ B)</li>
+            <li>Mapeo Ising estándar: Z_k = (1 − 2x) / 1</li>
+            <li>Ansatz HEA / EfficientSU2 en Qiskit</li>
+          </ul>
+        </div>
+
+        <div class="sidebar-block" style="margin-top:2px;">
+          <div class="sidebar-label">Recursos</div>
+          <a href="#" class="sidebar-link">Repositorio GitHub</a>
+          <a href="#" class="sidebar-link">Notebook Qiskit</a>
+          <a href="#" class="sidebar-link">Devpost</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="greek-strip"></div>
+  <hr class="gold-line"/>
+
+  <!-- FOOTER -->
+  <footer class="footer-wrap" id="contacto">
+    <div class="footer">
+      <div class="footer-top">
+        <div class="footer-logo-group">
+          <span class="footer-phi">Ψ</span>
+          <div>
+            <div class="footer-logo-name">Alexis R. Salvatierra</div>
+            <div class="footer-logo-sub">Física Teórica · UNMSM</div>
+          </div>
+        </div>
+        <div class="footer-links-col">
+          <div class="footer-col">
+            <div class="footer-col-title">Académico</div>
+            <a href="#">ResearchGate</a>
+            <a href="#">Google Scholar</a>
+            <a href="#">ORCID</a>
+            <a href="#">Academia.edu</a>
+          </div>
+          <div class="footer-col">
+            <div class="footer-col-title">Portafolio</div>
+            <a href="#">GitHub</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">Devpost</a>
+          </div>
+          <div class="footer-col">
+            <div class="footer-col-title">Contacto</div>
+            <a href="#">correo@unmsm.edu.pe</a>
+            <a href="#">Fac. Ciencias Físicas · Lima, Perú</a>
+            <a href="#">Colaboraciones</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 Alexis R. Salvatierra · Todos los derechos reservados</span>
+        <span class="footer-greek">Ψ · Σ · Ω · Δ · Λ · Π</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- PDF MODAL -->
+  <div class="pdf-modal-backdrop" id="pdfBackdrop" onclick="closePDFOutside(event)">
+    <div class="pdf-modal" id="pdfModal">
+      <div class="pdf-modal-bar">
+        <div class="pdf-modal-title">
+          <span class="pdf-modal-psi">Ω</span>
+          <span class="pdf-modal-name">QuantumQuipu — Optimización de Rutas en Minería · 2025</span>
+        </div>
+        <div class="pdf-modal-actions">
+          <a href="arch/Track 1.pdf" download class="pdf-btn">
+            <svg viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3"/><path d="M2 12h12"/></svg>
+            Descargar
+          </a>
+          <a href="arch/Track 1.pdf" target="_blank" class="pdf-btn">
+            <svg viewBox="0 0 16 16"><path d="M10 2h4v4"/><path d="M6 10l8-8"/><path d="M14 9v5H2V3h5"/></svg>
+            Nueva pestaña
+          </a>
+          <button class="pdf-btn close-btn" onclick="closePDF()">
+            <svg viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
+            Cerrar
+          </button>
+        </div>
+      </div>
+      <div class="pdf-viewer-wrap" id="pdfViewerWrap">
+        <div class="pdf-placeholder" id="pdfPlaceholder">
+          <div class="pdf-placeholder-icon">
+            <svg viewBox="0 0 28 28"><rect x="3" y="1" width="18" height="26" rx="1.5"/><path d="M7 8h10M7 12h10M7 16h6"/><path d="M19 1v6h6"/></svg>
+          </div>
+          <div class="pdf-placeholder-text">Cargando presentación</div>
+          <div class="pdf-placeholder-sub">Coloca el archivo en <code style="color:#333;font-size:10px;">arch/Track 1.pdf</code> para activar el visor.</div>
+          <a href="arch/Track 1.pdf" target="_blank" class="pdf-placeholder-link">Abrir en nueva pestaña →</a>
+        </div>
+      </div>
+      <div class="pdf-modal-footer">
+        <span class="pdf-page-info">QuantumQuipu · QUBO → Ising → VQE · Mina Orcopampa · 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const backdrop = document.getElementById('pdfBackdrop');
+    const placeholder = document.getElementById('pdfPlaceholder');
+    const wrap = document.getElementById('pdfViewerWrap');
+    let iframeInserted = false;
+
+    function openPDF() {
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      if (!iframeInserted) {
+        iframeInserted = true;
+        const iframe = document.createElement('iframe');
+        iframe.src = 'arch/Track 1.pdf';  
+        iframe.title = 'QuantumQuipu — Optimización de Rutas en Minería';
+        iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;';
+        iframe.onload = () => { placeholder.style.display = 'none'; };
+        wrap.appendChild(iframe);
+      }
+    }
+
+    function closePDF() {
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function closePDFOutside(e) {
+      if (e.target === backdrop) closePDF();
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePDF(); });
+  </script>
+
+</body>
+</html>

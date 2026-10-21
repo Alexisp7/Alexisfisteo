@@ -1242,6 +1242,41 @@
       display:grid; grid-template-columns:repeat(3,1fr); gap:0;
       border:0.5px solid var(--border); margin-top:0;
     }
+    .pub-list { max-width:900px; }
+    .pub-item {
+      padding:40px 0; border-bottom:0.5px solid var(--border);
+      display:grid; grid-template-columns:64px 1fr; gap:32px; align-items:start;
+    }
+    .pub-num {
+      font-family:'Cormorant Garamond',serif; font-size:42px; font-weight:700;
+      color:var(--border); line-height:1; letter-spacing:-0.03em;
+    }
+    .pub-type {
+      font-family:'Space Mono',monospace; font-size:8px; font-weight:700;
+      letter-spacing:0.25em; text-transform:uppercase; color:var(--gold);
+      margin-bottom:10px;
+    }
+    .pub-title {
+      font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600;
+      color:var(--black); line-height:1.2; margin-bottom:10px;
+    }
+    .pub-venue {
+      font-family:'Inter',sans-serif; font-size:12px; color:var(--gray-light); margin-bottom:14px;
+    }
+    .pub-abstract {
+      font-family:'Inter',sans-serif; font-size:13px; color:var(--gray); line-height:1.75;
+      margin-bottom:16px;
+    }
+    .pub-links { display:flex; gap:20px; }
+    .pub-link {
+      font-family:'Space Mono',monospace; font-size:8px; font-weight:700;
+      letter-spacing:0.18em; text-transform:uppercase; color:var(--gold);
+      text-decoration:none; transition:opacity 0.2s; opacity:0.8;
+    }
+    .pub-link:hover { opacity:1; }
+    @media (max-width:640px) {
+      .pub-item { grid-template-columns:1fr; gap:12px; }
+    }
 
   </style>
 </head>
@@ -1384,6 +1419,88 @@
     </div>
   </section>
 
+  <section id="avances">
+    <div class="section">
+      <div class="section-header">
+        <p class="section-eyebrow">Trabajo de curso · UNMSM</p>
+        <h2 class="section-title">Avances &amp; <em>Trabajos</em></h2>
+      </div>
+      <div class="pub-list">
+
+        <div class="pub-item">
+          <div class="pub-num">01</div>
+          <div>
+            <div class="pub-type">Monografía · Termodinámica 2024</div>
+            <h3 class="pub-title">Radiación de Cuerpo Negro</h3>
+            <p class="pub-venue">Diciembre 2024 · 9 páginas</p>
+            <p class="pub-abstract">Reconstrucción del camino que llevó a Planck a su ley de radiación, desde los trabajos de Boltzmann, Wien, Rayleigh y Jeans. Se explica por qué fue necesario abandonar la idea clásica de energía continua y cómo la cuantización dio origen a la mecánica cuántica.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Radiacion_de_cuerpo_negro.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Radiacion_de_cuerpo_negro.pdf" download class="pub-link">Descargar →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="pub-item">
+          <div class="pub-num">02</div>
+          <div>
+            <div class="pub-type">Tarea · Electromagnetismo II · 2026</div>
+            <h3 class="pub-title">Electromagnetismo II: Tarea 1</h3>
+            <p class="pub-venue">Febrero 2026 · 8 páginas</p>
+            <p class="pub-abstract">Aplicación del teorema de Stokes en coordenadas esféricas: integral de línea de un campo azimutal sobre una circunferencia y verificación del resultado mediante el flujo del rotacional sobre un hemisferio.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Electromagnetismo_Tarea_1.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Electromagnetismo_Tarea_1.pdf" download class="pub-link">Descargar →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="pub-item">
+          <div class="pub-num">03</div>
+          <div>
+            <div class="pub-type">Tarea · Electromagnetismo II · 2026</div>
+            <h3 class="pub-title">Electromagnetismo II: Tarea 2</h3>
+            <p class="pub-venue">Febrero 2026 · 7 páginas</p>
+            <p class="pub-abstract">Solución de la ecuación de Laplace por separación de variables. Potencial entre dos planos infinitos con condiciones de frontera periódicas en x, con ajuste de constantes mediante funciones hiperbólicas.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Electromagnetismo_Tarea_2.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Electromagnetismo_Tarea_2.pdf" download class="pub-link">Descargar →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="pub-item">
+          <div class="pub-num">04</div>
+          <div>
+            <div class="pub-type">Tarea · Física Nuclear y Subnuclear · 2026</div>
+            <h3 class="pub-title">Física Nuclear y Subnuclear: Tarea 2</h3>
+            <p class="pub-venue">2026 · 4 páginas</p>
+            <p class="pub-abstract">Argumentos contra la existencia de electrones nucleares: estimación de la energía mínima con el principio de incertidumbre de Heisenberg, spin de núcleos según la paridad del número de nucleones y el caso del tritio.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Fisica_nuclear_Tarea_2.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Fisica_nuclear_Tarea_2.pdf" download class="pub-link">Descargar →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="pub-item">
+          <div class="pub-num">05</div>
+          <div>
+            <div class="pub-type">Tarea · Física Nuclear y Subnuclear · 2026</div>
+            <h3 class="pub-title">Física Nuclear y Subnuclear: Tarea 3</h3>
+            <p class="pub-venue">2026 · 3 páginas</p>
+            <p class="pub-abstract">Amplitud de dispersión en la primera aproximación de Born y su simplificación para un potencial central, reduciendo la integral tridimensional a una integral radial.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Fisica_nuclear_Tarea_3.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Fisica_nuclear_Tarea_3.pdf" download class="pub-link">Descargar →</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <hr class="gold-line"/>
   <div class="greek-strip"></div>
   <footer class="footer-wrap">
     <div class="footer">

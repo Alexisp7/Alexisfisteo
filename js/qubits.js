@@ -265,7 +265,7 @@
         ctx.lineTo(ex - 2.6 * Math.cos(a - 0.5), ey - 2.6 * Math.sin(a - 0.5));
         ctx.lineTo(ex - 2.6 * Math.cos(a + 0.5), ey - 2.6 * Math.sin(a + 0.5));
         ctx.closePath(); ctx.fill();
-        if (q.frozen && !q.masivo) label(q);
+        if (q.frozen) label(q);
       }
     }
 
@@ -281,11 +281,13 @@
         ctx.fillText('H', q.x + 7, q.y - 6.6);
       } else {
         var text = '|' + q.frozen + '⟩';
-        ctx.font = 'italic 600 13px "Cormorant Garamond", serif';
-        ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(255,255,255,0.92)';
-        ctx.strokeText(text, q.x + 11, q.y - 10);
+        // en el colapso masivo el ket va más pequeño para no amontonarse
+        var fs = q.masivo ? 10 : 13, off = q.masivo ? 9 : 11;
+        ctx.font = 'italic 600 ' + fs + 'px "Cormorant Garamond", serif';
+        ctx.lineWidth = q.masivo ? 2.5 : 3.5; ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+        ctx.strokeText(text, q.x + off, q.y - off);
         ctx.fillStyle = '#6B6B6B';
-        ctx.fillText(text, q.x + 11, q.y - 10);
+        ctx.fillText(text, q.x + off, q.y - off);
       }
       ctx.restore();
     }

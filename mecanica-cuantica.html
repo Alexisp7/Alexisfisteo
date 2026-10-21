@@ -1345,6 +1345,14 @@
     .sgx-control strong { color: #6E1A22; }
     .sgx-control input { accent-color: #5B3FC4; width: 100%; }
     .sgx--girado { border-top: 1px solid #EFE7D8; padding-top: 30px; }
+    .sgx-dibujo--alto { max-height: 440px; }
+    .sgx--y { border-top: 1px solid #EFE7D8; padding-top: 30px; }
+    .sgx-recuadro {
+      max-width: 720px; margin-top: 10px; padding: 22px 26px; background: #FBF7EF; border-left: 3px solid #C8A96E;
+      font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7; color: var(--gray);
+    }
+    .sgx-recuadro p + p { margin-top: 8px; }
+    .sgx-ecuacion { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px; color: #3B2F28; text-align: center; }
   </style>
 </head>
 <body>
@@ -1537,6 +1545,57 @@
           <input type="range" id="sgx-rango" min="0" max="180" step="1" value="0"/>
         </label>
         <p class="sgx-texto">Este es el experimento central: el segundo aparato mide el espín en otra dirección n̂, girada un ángulo θ respecto de z. Con θ = 0° todos salen |+n⟩, con θ = 90° la mitad y la mitad, y con θ = 180° todos salen |−n⟩. Entre esos casos la probabilidad depende solo del ángulo.</p>
+      </figure>
+      <figure class="sgx sgx--y">
+        <figcaption class="sgx-titulo"><span class="sgx-num">6</span> El aparato en el eje y</figcaption>
+        <svg class="sgx-dibujo sgx-dibujo--alto" viewBox="0 0 920 420" role="img" aria-label="Átomos filtrados en z o en x y luego medidos en el eje y: siempre mitad y mitad">
+          <rect x="22" y="84" width="46" height="32" rx="5" class="sg-pieza"/>
+          <text x="45" y="105" class="sgx-mini" text-anchor="middle">Ag</text>
+          <path d="M68 100 H130" class="sgx-haz" style="stroke-width:3"/>
+          <rect x="130" y="66" width="104" height="68" rx="6" class="sgx-caja"/>
+          <text x="182" y="108" class="sgx-eje" text-anchor="middle">SG z</text>
+          <path d="M234 86 Q280 86 320 100 H360" class="sgx-haz" style="stroke-width:3"/>
+          <path d="M234 114 Q294 114 354 140" class="sgx-haz" style="stroke-width:3"/>
+          <rect x="352" y="131" width="6" height="18" class="sgx-tapon"/>
+          <text x="248" y="78" class="sgx-mini">↑</text>
+          <text x="248" y="134" class="sgx-mini">↓</text>
+          <rect x="360" y="66" width="104" height="68" rx="6" class="sgx-caja"/>
+          <text x="400" y="108" class="sgx-eje" text-anchor="middle">SG y</text>
+          <circle cx="444" cy="100" r="8" class="sgx-eje-flecha"/><circle cx="444" cy="100" r="2" fill="#6E1A22"/>
+          <path d="M464 86 Q524 86 584 52" class="sgx-haz" style="stroke-width:3"/>
+          <path d="M464 114 Q524 114 584 148" class="sgx-haz" style="stroke-width:3"/>
+          <rect x="584" y="30" width="10" height="140" rx="2" class="sg-pantalla"/>
+          <text x="606" y="58" class="sgx-ket">|+y⟩</text><text x="606" y="78" class="sgx-pct">50%</text>
+          <text x="606" y="154" class="sgx-ket">|−y⟩</text><text x="606" y="174" class="sgx-pct">50%</text>
+          <rect x="22" y="304" width="46" height="32" rx="5" class="sg-pieza"/>
+          <text x="45" y="325" class="sgx-mini" text-anchor="middle">Ag</text>
+          <path d="M68 320 H130" class="sgx-haz" style="stroke-width:3"/>
+          <rect x="130" y="286" width="104" height="68" rx="6" class="sgx-caja"/>
+          <text x="182" y="328" class="sgx-eje" text-anchor="middle">SG x</text>
+          <path d="M234 306 Q280 306 320 320 H360" class="sgx-haz" style="stroke-width:3"/>
+          <path d="M234 334 Q294 334 354 360" class="sgx-haz" style="stroke-width:3"/>
+          <rect x="352" y="351" width="6" height="18" class="sgx-tapon"/>
+          <text x="248" y="298" class="sgx-mini">+</text>
+          <text x="248" y="354" class="sgx-mini">−</text>
+          <rect x="360" y="286" width="104" height="68" rx="6" class="sgx-caja"/>
+          <text x="400" y="328" class="sgx-eje" text-anchor="middle">SG y</text>
+          <circle cx="444" cy="320" r="8" class="sgx-eje-flecha"/><circle cx="444" cy="320" r="2" fill="#6E1A22"/>
+          <path d="M464 306 Q524 306 584 272" class="sgx-haz" style="stroke-width:3"/>
+          <path d="M464 334 Q524 334 584 368" class="sgx-haz" style="stroke-width:3"/>
+          <rect x="584" y="250" width="10" height="140" rx="2" class="sg-pantalla"/>
+          <text x="606" y="278" class="sgx-ket">|+y⟩</text><text x="606" y="298" class="sgx-pct">50%</text>
+          <text x="606" y="374" class="sgx-ket">|−y⟩</text><text x="606" y="394" class="sgx-pct">50%</text>
+          <text x="700" y="96" class="sgx-formula">desde |↑z⟩</text>
+          <text x="700" y="316" class="sgx-formula">desde |+x⟩</text>
+          <line x1="690" y1="210" x2="900" y2="210" class="fy-eje"/>
+        </svg>
+        <div class="sgx-recuadro">
+          <p>Venga de z o de x, al medir en y siempre sale mitad y mitad. Pero |+x⟩ ya es mitad |↑z⟩ y mitad |↓z⟩ con amplitudes reales:</p>
+          <p class="sgx-ecuacion">|±x⟩ = ( |↑⟩ ± |↓⟩ ) / √2</p>
+          <p>No queda ninguna combinación real que también esté a mitad de camino de |±x⟩. La única salida es usar números complejos:</p>
+          <p class="sgx-ecuacion">|±y⟩ = ( |↑⟩ ± <em>i</em> |↓⟩ ) / √2</p>
+          <p>Por eso las amplitudes de la mecánica cuántica son complejas.</p>
+        </div>
       </figure>
   </section>
 

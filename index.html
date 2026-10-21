@@ -1487,13 +1487,13 @@
   </footer>
 
   <script>
-    // El menú se desvanece al bajar y desaparece al llegar a Proyectos
+    // El menú se desvanece al bajar y desaparece antes de que los contadores lleguen arriba
     (function () {
       var header = document.querySelector('.header');
-      var target = document.getElementById('proyectos');
+      var target = document.querySelector('.hero-stats');
       if (!header || !target) return;
       function update() {
-        var end = target.offsetTop;
+        var end = target.getBoundingClientRect().top + window.scrollY - header.offsetHeight - 40;
         var t = end > 0 ? Math.min(Math.max(window.scrollY / end, 0), 1) : 0;
         header.style.opacity = String(1 - t);
         header.style.visibility = t >= 1 ? 'hidden' : 'visible';

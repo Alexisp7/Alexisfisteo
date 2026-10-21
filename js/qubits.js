@@ -35,7 +35,8 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       qubits = []; current = [];
       var row = 0, k = 0;
-      for (var y = DY / 2; y < h + DY; y += DY, row++) {
+      // solo filas completas, para que ninguna esfera quede cortada abajo
+      for (var y = DY / 2; y + R + 1 <= h; y += DY, row++) {
         for (var x = (row % 2 ? DX : DX / 2); x < w + DX; x += DX, k++) {
           qubits.push({
             x: x, y: y,

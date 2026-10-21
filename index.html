@@ -1261,6 +1261,14 @@
     .header-inner { justify-content: center; }
     nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; }
     @media (max-width: 640px) { nav.main-nav a { padding: 8px 10px; } }
+    @media (min-width: 901px) {
+      .projects-wrap { padding: 40px 0 48px; }
+      .projects-inner .section-header { margin-bottom: 24px; text-align: center; }
+      .projects-inner .section-eyebrow { justify-content: center; }
+      .projects-inner .section-title { font-size: 36px; }
+      .projects-grid { max-width: min(100%, calc((100vh - 270px) * 1.5)); margin: 0 auto; }
+      .project-img-ph { min-height: 0; }
+    }
   </style>
 </head>
 <body>

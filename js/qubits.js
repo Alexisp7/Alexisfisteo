@@ -8,10 +8,11 @@
 // Cada <canvas class="qubits-fondo"> cubre a su elemento padre, o solo
 // hasta el elemento que indique data-hasta. Se omiten las esferas que
 // tocarían texto o una nota, para que nada quede encima de las letras.
-// Con data-libre="x1 y1, x2 y2, ..." se deja sin esferas el polígono dado
-// en fracciones del ancho y del alto de la sección. Con data-linea="selector"
-// se traza una línea fina sobre ese elemento, solo de borde a borde de la
-// zona libre.
+// Con data-libre="d1 y1, d2 y2, ..." se deja sin esferas una zona simétrica:
+// cada par es la media anchura en píxeles desde el centro y la altura en
+// fracción de la sección, de arriba hacia abajo. Sus costados se trazan como
+// bordes negros. Con data-linea="selector" se traza una línea fina sobre ese
+// elemento, de borde a borde de la zona, con una compuerta H en el centro.
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
@@ -28,24 +29,46 @@
     var ctx = canvas.getContext('2d');
     var section = canvas.parentElement;
     var limit = canvas.getAttribute('data-hasta');
-    var free = (canvas.getAttribute('data-libre') || '').split(',').map(function (pair) {
+    var profile = (canvas.getAttribute('data-libre') || '').split(',').map(function (pair) {
       return pair.trim().split(/\s+/).map(Number);
     }).filter(function (p) { return p.length === 2 && !isNaN(p[0]) && !isNaN(p[1]); });
 
-    // la esfera queda fuera si su centro cae en el polígono o lo roza
+    // contorno de la zona libre: lado derecho de arriba a abajo y luego el
+    // izquierdo de abajo a arriba, en píxeles de la sección
+    function outline() {
+      var cx = w / 2;
+      var right = profile.map(function (p) { return [cx + p[0], p[1] * h]; });
+      var left = profile.map(function (p) { return [cx - p[0], p[1] * h]; }).reverse();
+      return right.concat(left);
+    }
+
+    // la esfera queda fuera si su centro cae en la zona o la roza
     function inFree(x, y) {
-      if (free.length < 3) return false;
-      var pts = free.map(function (p) { return [p[0] * w, p[1] * h]; });
-      var inside = false;
+      if (profile.length < 2) return false;
+      var pts = outline(), inside = false, m = R + 4;
       for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) {
         var a = pts[i], b = pts[j];
         if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) inside = !inside;
         var ex = b[0] - a[0], ey = b[1] - a[1];
         var t = Math.max(0, Math.min(1, ((x - a[0]) * ex + (y - a[1]) * ey) / (ex * ex + ey * ey || 1)));
         var dx = a[0] + t * ex - x, dy = a[1] + t * ey - y;
-        if (dx * dx + dy * dy < (R + 2) * (R + 2)) return true;
+        if (dx * dx + dy * dy < m * m) return true;
       }
       return inside;
+    }
+
+    function drawFrame() {
+      if (profile.length < 2) return;
+      var cx = w / 2;
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      [1, -1].forEach(function (side) {
+        ctx.beginPath();
+        profile.forEach(function (p, i) {
+          var x = cx + side * p[0], y = Math.min(Math.max(p[1] * h, 1.5), h - 1.5);
+          if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+        });
+        ctx.stroke();
+      });
     }
     var qubits = [], current = [], w = 0, h = 0, visible = false, raf = 0, last = 0;
 
@@ -78,9 +101,10 @@
 
     // extremos de la zona libre a la altura y
     function spanAt(y) {
-      var xs = [];
-      for (var i = 0, j = free.length - 1; i < free.length; j = i++) {
-        var a = [free[i][0] * w, free[i][1] * h], b = [free[j][0] * w, free[j][1] * h];
+      if (profile.length < 2) return null;
+      var pts = outline(), xs = [];
+      for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+        var a = pts[i], b = pts[j];
         if ((a[1] > y) !== (b[1] > y)) xs.push(a[0] + (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]));
       }
       return xs.length >= 2 ? [Math.min.apply(null, xs), Math.max.apply(null, xs)] : null;
@@ -176,10 +200,19 @@
 
     function draw(dt) {
       ctx.clearRect(0, 0, w, h);
+      drawFrame();
       var span = lineY !== null && spanAt(lineY);
       if (span) {
         ctx.strokeStyle = '#E0DDD8'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(span[0] + 16, lineY); ctx.lineTo(span[1] - 16, lineY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(span[0] + 32, lineY); ctx.lineTo(span[1] - 32, lineY); ctx.stroke();
+        // compuerta de Hadamard sobre el cable
+        var gx = w / 2, gs = 30;
+        ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 2.5;
+        ctx.fillRect(gx - gs / 2, lineY - gs / 2, gs, gs);
+        ctx.strokeRect(gx - gs / 2, lineY - gs / 2, gs, gs);
+        ctx.fillStyle = '#111'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = 'italic 600 20px "Cormorant Garamond", serif';
+        ctx.fillText('H', gx, lineY + 1);
       }
       for (var i = 0; i < qubits.length; i++) {
         var q = qubits[i];

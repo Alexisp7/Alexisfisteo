@@ -1308,6 +1308,13 @@
     .notas-wrap { position: relative; overflow: hidden; }
     .notas { position: relative; z-index: 1; }
     .qubits-fondo { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .nota--pronto { transform: rotate(-1.4deg) translateY(6px); }
+    .nota-sello {
+      position: absolute; top: 22px; right: -6px; transform: rotate(8deg);
+      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: #2563EB;
+      border: 1.5px solid #2563EB; padding: 6px 10px; background: rgba(255,253,247,0.9);
+    }
   </style>
 </head>
 <body>
@@ -1339,6 +1346,14 @@
         <p class="nota-texto">Tareas y trabajos resueltos de Electromagnetismo II, Física Nuclear y Subnuclear y Termodinámica.</p>
         <span class="nota-cta">Ver problemas</span>
       </a>
+
+      <article class="nota nota--pronto">
+        <span class="nota-alfiler" aria-hidden="true"></span>
+        <span class="nota-sello">Próximamente</span>
+        <p class="nota-etiqueta">Preguntas rápidas</p>
+        <h2 class="nota-titulo">FisiTok</h2>
+        <p class="nota-texto">Preguntas rápidas de física, cortas y al grano.</p>
+      </article>
 
     </div>
   </section>

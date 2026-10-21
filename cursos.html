@@ -1353,8 +1353,8 @@
   </footer>
   <script>
     // Teselado de qubits detrás de las notas de Cursos. Al pasar el mouse por
-    // una esfera se vuelve dorada y su flecha gira, junto con sus 3 vecinas
-    // más cercanas, cada una desfasada un tercio de vuelta.
+    // una esfera se vuelve dorada y su flecha gira de polo a polo, junto con
+    // sus 3 vecinas más cercanas, cada una desfasada un tercio de vuelta.
     (function () {
       var canvas = document.querySelector('.qubits-fondo');
       if (!canvas || !canvas.getContext) return;
@@ -1410,8 +1410,8 @@
         var now = performance.now();
         group.forEach(function (q, i) {
           if (q.hotUntil < now) {
-            q.theta = Math.PI / 2;
-            q.phi = center.phi + i * TAU / 3;
+            q.phi = 0;
+            q.theta = center.theta + i * TAU / 3;
           }
           q.hotUntil = now + HOLD;
         });
@@ -1425,7 +1425,7 @@
           var q = qubits[i];
           var hot = q.hotUntil > t;
           q.glow += ((hot ? 1 : 0) - q.glow) * Math.min(1, dt / 180);
-          if (hot) q.phi += SPIN * dt / 1000; else q.phi += q.drift * dt;
+          if (hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU; else q.phi += q.drift * dt;
           var g = q.glow;
 
           if (g > 0.01) {

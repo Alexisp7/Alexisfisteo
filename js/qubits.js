@@ -16,6 +16,7 @@
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
+  var LINE = '#E0DDD8';
   var GOLD = '200,169,110', BLUE = '37,99,235', RED = '220,38,38', MUSTARD = '206,154,18';
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -60,7 +61,7 @@
     function drawFrame() {
       if (profile.length < 2) return;
       var cx = w / 2;
-      ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.strokeStyle = LINE; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
       [1, -1].forEach(function (side) {
         ctx.beginPath();
         profile.forEach(function (p, i) {
@@ -207,11 +208,11 @@
       drawFrame();
       var span = lineY !== null && spanAt(lineY);
       if (span) {
-        ctx.strokeStyle = '#E0DDD8'; ctx.lineWidth = 1;
+        ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(span[0] + 32, lineY); ctx.lineTo(span[1] - 32, lineY); ctx.stroke();
         // compuerta de Hadamard sobre el cable
         var gx = w / 2, gs = 30;
-        ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 2.5;
+        ctx.fillStyle = '#fff'; ctx.strokeStyle = LINE; ctx.lineWidth = 2.5;
         ctx.fillRect(gx - gs / 2, lineY - gs / 2, gs, gs);
         ctx.strokeRect(gx - gs / 2, lineY - gs / 2, gs, gs);
         ctx.fillStyle = '#111'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';

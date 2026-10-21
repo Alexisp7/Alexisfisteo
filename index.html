@@ -1256,6 +1256,8 @@
     .hero { grid-template-columns: 1fr; text-align: center; }
     .hero-title-line, .hero-stats { justify-content: center; }
     .hero-bio { margin-left: auto; margin-right: auto; }
+    .hero-link { text-decoration: none; transition: color 0.2s; }
+    .hero-link:hover { color: var(--gold); }
   </style>
 </head>
 <body>
@@ -1296,11 +1298,11 @@
       <div class="hero-title-line">
         <span class="hero-title">Estudiante</span>
         <span class="title-sep">·</span>
-        <span class="hero-title">ORCID</span>
+        <a class="hero-title hero-link" href="https://orcid.org/0009-0009-2275-2987" target="_blank" rel="noopener">ORCID</a>
         <span class="title-sep">·</span>
         <span class="hero-title">LinkedIn</span>
         <span class="title-sep">·</span>
-        <span class="hero-title">IG</span>
+        <a class="hero-title hero-link" href="https://www.instagram.com/alexis_salva2/" target="_blank" rel="noopener">IG</a>
       </div>
       <p class="hero-bio">Estudiante de física en la Universidad Nacional Mayor de San Marcos. Exploro las fronteras entre la mecánica cuántica, la computación y los sistemas complejos. Apasionado por hacer la física rigurosa y transformadora.</p>
       <div class="hero-stats">

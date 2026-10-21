@@ -206,21 +206,32 @@
     }
 
     // medidor de circuito cuántico. Si hay esferas en H la medición está en
-    // superposición: el medidor brilla en dorado y la aguja oscila
+    // superposición: el medidor hace glitch entre rojo y azul y la aguja oscila
     function drawMeter(t, superpuesto) {
       var mw = 30, mh = 20, x = w / 2 - mw / 2, y = lineY - mh / 2;
       meter = { x: x, y: y, w: mw, h: mh };
       var ang = -0.9;
       ctx.save();
       if (superpuesto) {
-        var pulso = 0.5 + 0.5 * Math.sin(t / 260);
-        ctx.shadowColor = 'rgba(' + GOLD + ',0.9)';
-        ctx.shadowBlur = 6 + 10 * pulso;
-        ang = -Math.PI / 2 + Math.sin(t / 340) * 1.1;
+        ang = -Math.PI / 2 + Math.sin(t / 900) * 1.1;
+        // glitch: cuadraditos alrededor que saltan entre rojo y azul, y el
+        // contorno desdoblado en rojo y azul como una señal que no se decide
+        var paso = Math.floor(t / 110);
+        for (var i = 0; i < 14; i++) {
+          var a1 = rnd(paso * 31 + i * 7), a2 = rnd(paso * 17 + i * 13), a3 = rnd(paso * 5 + i * 3);
+          var lado = 2 + Math.floor(a3 * 4);
+          var gx = x - 10 + a1 * (mw + 20), gy = y - 8 + a2 * (mh + 16);
+          if (gx > x - 2 && gx < x + mw + 2 && gy > y - 2 && gy < y + mh + 2) continue;
+          ctx.fillStyle = 'rgba(' + (rnd(paso * 11 + i) < 0.5 ? RED : BLUE) + ',' + (0.45 + 0.5 * a3) + ')';
+          ctx.fillRect(Math.round(gx), Math.round(gy), lado, lado);
+        }
+        var dx = (rnd(paso * 3 + 1) - 0.5) * 4;
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = 'rgba(' + RED + ',0.75)'; ctx.strokeRect(x - 1.5 + dx, y, mw, mh);
+        ctx.strokeStyle = 'rgba(' + BLUE + ',0.75)'; ctx.strokeRect(x + 1.5 - dx, y, mw, mh);
       }
-      ctx.fillStyle = '#fff'; ctx.strokeStyle = superpuesto ? 'rgb(' + GOLD + ')' : '#3B2F28'; ctx.lineWidth = 1.2;
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3B2F28'; ctx.lineWidth = 1.2;
       ctx.fillRect(x, y, mw, mh); ctx.strokeRect(x, y, mw, mh);
-      ctx.shadowBlur = 0;
       var cx = w / 2, cy = y + mh - 4;
       ctx.beginPath(); ctx.arc(cx, cy, 9, Math.PI, 2 * Math.PI); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 11 * Math.cos(ang), cy + 11 * Math.sin(ang)); ctx.stroke();
@@ -241,9 +252,9 @@
       var ease = still ? 1 : Math.min(1, dt / 650);
       var targetL, targetR;
       if (sup) {
-        var o = Math.sin(t / 340);
+        var o = Math.sin(t / 900);
         targetL = 0.5 + 0.42 * o; targetR = 0.5 - 0.42 * o;
-        ease = still ? 1 : Math.min(1, dt / 160);
+        ease = still ? 1 : Math.min(1, dt / 260);
       } else {
         targetL = n ? c.n1 / n : 0; targetR = n ? c.n0 / n : 0;
       }

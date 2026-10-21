@@ -260,11 +260,11 @@
         ctx.fillText('H', q.x + 7, q.y - 6.6);
       } else {
         var text = '|' + q.frozen + '⟩';
-        ctx.font = 'italic 600 11px "Cormorant Garamond", serif';
-        ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.92)';
-        ctx.strokeText(text, q.x + 10, q.y - 9);
+        ctx.font = 'italic 600 13px "Cormorant Garamond", serif';
+        ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+        ctx.strokeText(text, q.x, q.y + 0.5);
         ctx.fillStyle = '#6B6B6B';
-        ctx.fillText(text, q.x + 10, q.y - 9);
+        ctx.fillText(text, q.x, q.y + 0.5);
       }
       ctx.restore();
     }

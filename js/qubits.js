@@ -317,8 +317,8 @@
       q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0; q.part = 0;
     }
     // clic en la QFT: todas las esferas pasan a H en onda desde la compuerta.
-    // El ecuador empieza con 2 posiciones posibles y se va duplicando a 4, 8,
-    // 16 y 32; la flecha fluctúa saltando entre esas posiciones
+    // Cada una divide su ecuador en 2, 4, 8, 16 o 32 posiciones al azar y la
+    // flecha avanza entre esas posiciones
     // Segundo clic en la QFT: todo colapsa en onda y los resultados forman una
     // Q arriba a la izquierda y otra abajo a la derecha, con las letras en
     // |0⟩ y el fondo en |1⟩. Después la compuerta vuelve al centro como
@@ -378,18 +378,16 @@
     function hadamard(q) {
       q.frozen = 'H'; q.masivo = false; q.hot = false; q.hAt = 0;
       q.theta = Math.PI / 2;
-      q.part = 2;
+      q.part = PARTICIONES[Math.floor(Math.random() * PARTICIONES.length)];
       q.k = Math.floor(Math.random() * q.part);
-      q.dupAt = performance.now() + DUPLICA;
       q.phi = q.phiTo = q.k * TAU / q.part;
       q.hopAt = performance.now() + TIC;
     }
     // avanza una partición en sentido antihorario a ritmo fijo, como el
-    // segundero de un reloj. Cada cierto tiempo las posiciones se duplican
-    // hasta llegar a 32
-    var DUPLICA = 2600, TIC = 600;
+    // segundero de un reloj. Cada esfera se queda con la cantidad de
+    // particiones que le tocó al azar
+    var PARTICIONES = [2, 4, 8, 16, 32], TIC = 600;
     function fluctua(q, now) {
-      if (q.part < 32 && now >= q.dupAt) { q.part *= 2; q.k *= 2; q.dupAt = now + DUPLICA; }
       q.k = (q.k + q.part - 1) % q.part;
       q.phiTo -= TAU / q.part;
       q.hopAt += TIC;

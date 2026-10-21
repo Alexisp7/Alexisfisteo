@@ -200,16 +200,15 @@
       ctx.beginPath(); ctx.moveTo(w / 2, y + mh - 4); ctx.lineTo(w / 2 + 7, y + 4); ctx.stroke();
       ctx.restore();
     }
-    // tras el colapso la línea cuenta los resultados: rojo a la izquierda
+    // la línea cuenta los resultados medidos, a mano o con el medidor: rojo a la izquierda
     // según cuántos salieron |1⟩, azul a la derecha según los |0⟩, cada lado
     // cerrado por un paréntesis de su color
     function drawTally(half) {
       var n0 = 0, n1 = 0, total = qubits.length;
       for (var i = 0; i < total; i++) {
-        if (!qubits[i].masivo) continue;
         if (qubits[i].frozen === '0') n0++; else if (qubits[i].frozen === '1') n1++;
       }
-      if (!total) return;
+      if (!total || !(n0 + n1)) return;
       var mx = 15, y = lineY, full = 2 * (half - mx) * 0.9;
       var left = full * n1 / total, right = full * n0 / total;
       function lado(dir, len, col) {
@@ -236,6 +235,7 @@
         layout(); draw(16); collapsed = false; start(); return;
       }
       qubits.forEach(function (q) {
+        if (q.frozen === '0' || q.frozen === '1') return;  // las ya medidas a mano se quedan
         var d = Math.sqrt((q.x - cx) * (q.x - cx) + (q.y - cy) * (q.y - cy));
         q.collapseAt = t0 + d * 0.9;
       });
@@ -256,7 +256,7 @@
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
         ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
-        if (collapsed) drawTally(half);
+        drawTally(half);
         drawMeter();
       }
       var now = performance.now();

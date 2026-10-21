@@ -238,6 +238,9 @@
     .header-inner { justify-content: center; }
     nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; }
     @media (max-width: 640px) { nav.main-nav a { padding: 8px 10px; } }
+    .content-body { text-align: justify; hyphens: auto; }
+    .pipeline-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; letter-spacing: 0; text-transform: none; color: rgba(255,255,255,0.85); line-height: 1.25; }
+    .pipeline-arrow { color: var(--gold); margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -321,54 +324,6 @@
   </div>
 
   <!-- COLLAGE IMAGE SECTION -->
-  <div class="collage-section">
-    <div class="collage-grid">
-
-      <!-- Cell 1: main — mapa satélite Orcopampa -->
-      <div class="collage-cell main">
-        <!-- <img src="img/orcopampa-satelite.jpg" alt="Mina Orcopampa vista satelital"> -->
-        <div class="collage-ph" style="background:radial-gradient(ellipse at 45% 40%, #0a180a 0%, #060e06 55%, #040804 100%);">
-          <img src="img/quantumquipu/titulo.png" class="project-img" alt="finanzas">
-          <div class="collage-corner"></div>
-        </div>
-      </div>
-
-      <!-- Cell 2: QUBO matrix -->
-      <div class="collage-cell">
-        <div class="collage-ph" style="background:linear-gradient(140deg,#080814 0%,#0c0c20 100%);">
-          <img src="img/quantumquipu/qubo.png" class="project-img" alt="QUBO">
-          <div class="collage-corner"></div>
-        </div>
-      </div>
-
-      <!-- Cell 3: VQE circuit diagram -->
-      <div class="collage-cell">
-        <div class="collage-ph" style="background:linear-gradient(160deg,#080818 0%,#0c0820 100%);">
-          <img src="img/quantumquipu/vqe.png" class="project-img" alt="VQE">
-          <div class="collage-corner"></div>
-        </div>
-      </div>
-
-      <!-- Cell 4: Ising Hamiltonian / energy landscape -->
-      <div class="collage-cell">
-        <div class="collage-ph" style="background:linear-gradient(130deg,#060612 0%,#0a0818 100%);">
-          <img src="img/quantumquipu/optimizador.png" class="project-img" alt="optimizador">
-          <div class="collage-corner"></div>
-        </div>
-      </div>
-
-      <!-- Cell 5: convergence / energy minimization -->
-      <div class="collage-cell">
-        <div class="collage-ph" style="background:linear-gradient(150deg,#080810 0%,#0c0a16 100%);">
-          <img src="img/quantumquipu/trayec.png" class="project-img" alt="trayec">
-          <div class="collage-corner"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- PIPELINE STRIP -->
   <div class="pipeline-strip">
     <div class="pipeline-inner">
       <div class="pipeline-step">
@@ -438,6 +393,55 @@
       </div>
     </div>
   </section>
+
+  <div class="collage-section">
+    <div class="collage-grid">
+
+      <!-- Cell 1: main — mapa satélite Orcopampa -->
+      <div class="collage-cell main">
+        <!-- <img src="img/orcopampa-satelite.jpg" alt="Mina Orcopampa vista satelital"> -->
+        <div class="collage-ph" style="background:radial-gradient(ellipse at 45% 40%, #0a180a 0%, #060e06 55%, #040804 100%);">
+          <img src="img/quantumquipu/titulo.png" class="project-img" alt="finanzas">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 2: QUBO matrix -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(140deg,#080814 0%,#0c0c20 100%);">
+          <img src="img/quantumquipu/qubo.png" class="project-img" alt="QUBO">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 3: VQE circuit diagram -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(160deg,#080818 0%,#0c0820 100%);">
+          <img src="img/quantumquipu/vqe.png" class="project-img" alt="VQE">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 4: Ising Hamiltonian / energy landscape -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(130deg,#060612 0%,#0a0818 100%);">
+          <img src="img/quantumquipu/optimizador.png" class="project-img" alt="optimizador">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 5: convergence / energy minimization -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(150deg,#080810 0%,#0c0a16 100%);">
+          <img src="img/quantumquipu/trayec.png" class="project-img" alt="trayec">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PIPELINE STRIP -->
 
 
   <hr class="gold-line"/>

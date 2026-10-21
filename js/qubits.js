@@ -200,6 +200,31 @@
       ctx.beginPath(); ctx.moveTo(w / 2, y + mh - 4); ctx.lineTo(w / 2 + 7, y + 4); ctx.stroke();
       ctx.restore();
     }
+    // tras el colapso la línea cuenta los resultados: rojo a la izquierda
+    // según cuántos salieron |1⟩, azul a la derecha según los |0⟩, cada lado
+    // cerrado por un paréntesis de su color
+    function drawTally(half) {
+      var n0 = 0, n1 = 0, total = qubits.length;
+      for (var i = 0; i < total; i++) {
+        if (!qubits[i].masivo) continue;
+        if (qubits[i].frozen === '0') n0++; else if (qubits[i].frozen === '1') n1++;
+      }
+      if (!total) return;
+      var mx = 15, y = lineY, full = 2 * (half - mx) * 0.9;
+      var left = full * n1 / total, right = full * n0 / total;
+      function lado(dir, len, col) {
+        var x0 = w / 2 + dir * mx, x1 = x0 + dir * len;
+        ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+        // paréntesis
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x1 - dir * 2, y - 14); ctx.quadraticCurveTo(x1 + dir * 9, y, x1 - dir * 2, y + 14); ctx.stroke();
+      }
+      ctx.save();
+      if (n1) lado(-1, left, 'rgb(' + RED + ')');
+      if (n0) lado(1, right, 'rgb(' + BLUE + ')');
+      ctx.restore();
+    }
     function onMeter(px, py) {
       return meter && px >= meter.x - 6 && px <= meter.x + meter.w + 6 && py >= meter.y - 6 && py <= meter.y + meter.h + 6;
     }
@@ -231,6 +256,7 @@
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
         ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
+        if (collapsed) drawTally(half);
         drawMeter();
       }
       var now = performance.now();

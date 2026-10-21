@@ -10,9 +10,8 @@
 // tocarían texto o una nota, para que nada quede encima de las letras.
 // Con data-libre="d1 y1, d2 y2, ..." se deja sin esferas una zona simétrica:
 // cada par es la media anchura en píxeles desde el centro y la altura en
-// fracción de la sección, de arriba hacia abajo. Sus costados se trazan como
-// bordes negros. Con data-linea="selector" se traza una línea fina sobre ese
-// elemento, de borde a borde de la zona, con un cuadrito en el centro.
+// fracción de la sección. Con data-linea="selector" se traza una línea fina
+// y corta sobre ese elemento, centrada, con un cuadrito.
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
@@ -58,34 +57,6 @@
       return inside;
     }
 
-    // marco: arriba solo dos escuadras doradas en las esquinas; abajo, desde
-    // la línea de los contadores, el borde dorado siguiendo la zona libre
-    function drawFrame() {
-      if (profile.length < 2) return;
-      var cx = w / 2, top = 1.5, bracket = 60, drop = 0.22 * h;
-      var pts = profile.map(function (p) { return [p[0], Math.min(Math.max(p[1] * h, top), h - 1.5)]; });
-      ctx.strokeStyle = 'rgba(' + GOLD + ',0.35)'; ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-      [1, -1].forEach(function (side) {
-        var x0 = cx + side * pts[0][0];
-        ctx.beginPath();
-        ctx.moveTo(x0 - side * bracket, top); ctx.lineTo(x0, top); ctx.lineTo(x0, drop);
-        ctx.stroke();
-        if (lineY === null) return;
-        ctx.beginPath();
-        var started = false;
-        for (var i = 1; i < pts.length; i++) {
-          var a = pts[i - 1], b = pts[i];
-          if (b[1] < lineY) continue;
-          if (!started) {
-            var t = b[1] === a[1] ? 0 : Math.max(0, (lineY - a[1]) / (b[1] - a[1]));
-            ctx.moveTo(cx + side * (a[0] + (b[0] - a[0]) * t), Math.max(lineY, a[1]));
-            started = true;
-          }
-          ctx.lineTo(cx + side * b[0], b[1]);
-        }
-        ctx.stroke();
-      });
-    }
     var qubits = [], current = [], w = 0, h = 0, visible = false, raf = 0, last = 0;
 
     // cajas de cada línea de texto (y de cada nota) dentro de la sección
@@ -219,11 +190,11 @@
 
     function draw(dt) {
       ctx.clearRect(0, 0, w, h);
-      drawFrame();
       var span = lineY !== null && spanAt(lineY);
       if (span) {
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(span[0] + 32, lineY); ctx.lineTo(span[1] - 32, lineY); ctx.stroke();
+        var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
+        ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
         // cuadrito sobre el cable
         var gs = 7;
         ctx.fillStyle = '#fff'; ctx.strokeStyle = LINE; ctx.lineWidth = 1;

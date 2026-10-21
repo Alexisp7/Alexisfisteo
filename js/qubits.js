@@ -319,14 +319,12 @@
     // clic en la QFT: todas las esferas pasan a H en onda desde la compuerta.
     // El ecuador empieza con 2 posiciones posibles y se va duplicando a 4, 8,
     // 16 y 32; la flecha fluctúa saltando entre esas posiciones
-    // Segundo clic en la QFT: todo colapsa en onda y los resultados forman las
-    // iniciales A R (lado izquierdo) y S (lado derecho), con las letras en
+    // Segundo clic en la QFT: todo colapsa en onda y los resultados forman una
+    // Q arriba a la izquierda y otra abajo a la derecha, con las letras en
     // |0⟩ y el fondo en |1⟩. Después la compuerta vuelve al centro como
     // medidor ya activado, y por eso queda fija
     var LETRAS = {
-      A: ['.###.', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
-      R: ['####.', '#...#', '#...#', '####.', '#.#..', '#..#.', '#...#'],
-      S: ['.####', '#....', '#....', '.###.', '....#', '....#', '####.']
+      Q: ['.###.', '#...#', '#...#', '#...#', '#.#.#', '#..#.', '.##.#']
     };
     var qftActivo = false;
     function mensaje() {
@@ -338,14 +336,14 @@
         return b;
       }
       var bi = caja(izq), bd = caja(der);
-      var px = Math.min((bi[1] - bi[0]) * 0.9 / 11, (bd[1] - bd[0]) * 0.9 / 5);
+      var px = Math.min(bi[1] - bi[0], bd[1] - bd[0]) * 0.6 / 5;
       // las letras van más altas que anchas para que se lean en la grilla
-      var py = Math.min(px * 1.6, h * 0.8 / 7);
-      function bloque(texto, b) {
+      var py = Math.min(px * 1.6, h * 0.42 / 7);
+      function bloque(texto, b, cy) {
         var ancho = (texto.length * 6 - 1) * px;
-        return { texto: texto, x0: (b[0] + b[1]) / 2 - ancho / 2, y0: h / 2 - 3.5 * py };
+        return { texto: texto, x0: (b[0] + b[1]) / 2 - ancho / 2, y0: cy - 3.5 * py };
       }
-      var bloques = [bloque('AR', bi), bloque('S', bd)];
+      var bloques = [bloque('Q', bi, h * 0.27), bloque('Q', bd, h * 0.73)];
       function enLetra(q) {
         var bl = q.x < w / 2 ? bloques[0] : bloques[1];
         var gx = Math.floor((q.x - bl.x0) / px), gy = Math.floor((q.y - bl.y0) / py);

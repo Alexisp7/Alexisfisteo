@@ -6,7 +6,7 @@
   <title>Cursos — Alexis R. Salvatierra</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Caveat:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
 
     *, *::before, *::after {
@@ -1247,68 +1247,106 @@
     nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; }
     @media (max-width: 640px) { nav.main-nav a { padding: 8px 10px; } }
     .hero-eyebrow::before { content: none; }
-    /* Cursos como notas sujetas sobre fondo blanco */
-    .notas-wrap { background: var(--white); padding: 72px 24px 110px; min-height: calc(100vh - 170px); }
-    .notas-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-    .notas {
-      max-width: 980px; margin: 0 auto;
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 64px 72px;
+    /* Cursos como un cuaderno abierto sobre un escritorio */
+    .escritorio {
+      --tinta: #3B2F28; --granate: #6E1A22; --papel: #F5EEDF; --papel-2: #EFE5D1;
+      background:
+        radial-gradient(ellipse at 50% 35%, rgba(255,250,240,0.9) 0%, rgba(0,0,0,0) 60%),
+        radial-gradient(ellipse at 50% 120%, rgba(90,60,30,0.25) 0%, rgba(0,0,0,0) 60%),
+        #E9E0CF;
+      padding: 40px 24px 90px;
+      color: var(--tinta);
     }
-    .nota {
-      position: relative; display: block; width: 360px; max-width: 100%;
-      padding: 54px 38px 40px;
-      background: #FFFDF7; color: inherit; text-decoration: none;
-      border: 0.5px solid #EAE5DA;
-      box-shadow: 0 1px 1px rgba(0,0,0,0.04), 0 14px 28px -12px rgba(40,30,10,0.28);
-      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
+    .escritorio-titulo { text-align: center; margin-bottom: 34px; }
+    .escritorio-titulo h1 {
+      font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(40px, 5vw, 64px);
+      color: #2A211C; line-height: 1.05; letter-spacing: -0.01em;
     }
-    .nota--alfiler { transform: rotate(-2.2deg); }
-    .nota--cinta { transform: rotate(1.8deg) translateY(18px); }
-    .nota:hover { transform: rotate(0) translateY(-4px); box-shadow: 0 2px 2px rgba(0,0,0,0.04), 0 24px 40px -14px rgba(40,30,10,0.32); }
-    .nota-alfiler {
-      position: absolute; top: -10px; left: 50%; width: 22px; height: 22px; margin-left: -11px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #F2D9A6 0%, #C8A96E 45%, #8C6B2E 100%);
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.35);
+    .escritorio-titulo p { font-family: 'Cormorant Garamond', serif; font-size: 21px; color: #4A3D35; margin-top: 6px; }
+
+    .cuaderno {
+      position: relative; max-width: 1240px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding: 14px 14px 18px;
+      background: #2C2420; border-radius: 10px;
+      box-shadow: 0 40px 80px -30px rgba(40,25,10,0.55), 0 8px 18px rgba(40,25,10,0.25);
     }
-    .nota-alfiler::after {
-      content: ''; position: absolute; left: 50%; top: 18px; width: 2px; height: 10px; margin-left: -1px;
-      background: linear-gradient(#8C8C8C, #C9C9C9); border-radius: 1px;
+    .pagina {
+      position: relative; min-height: 640px; padding: 64px 64px 56px;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.55), rgba(255,255,255,0) 55%),
+        linear-gradient(var(--papel), var(--papel-2));
     }
-    .nota-cinta {
-      position: absolute; top: -14px; left: 50%; width: 120px; height: 30px; margin-left: -60px;
-      background: rgba(232, 213, 163, 0.55);
-      border-left: 1px dashed rgba(200,169,110,0.35); border-right: 1px dashed rgba(200,169,110,0.35);
-      transform: rotate(-3deg);
+    .pagina--izq { border-radius: 6px 0 0 6px; box-shadow: inset -26px 0 30px -22px rgba(60,40,20,0.45); }
+    .pagina--der { border-radius: 0 6px 6px 0; box-shadow: inset 26px 0 30px -22px rgba(60,40,20,0.45); padding-right: 96px; }
+    .pagina::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+      background: repeating-linear-gradient(0deg, rgba(120,90,60,0.025) 0 1px, transparent 1px 3px);
     }
-    .nota-etiqueta {
-      font-family: 'Space Mono', monospace; font-size: 8px; font-weight: 700;
-      letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+
+    .pagina-titulo {
+      font-family: 'Cormorant Garamond', serif; font-weight: 700; color: var(--granate);
+      font-size: clamp(32px, 3.4vw, 46px); line-height: 1.04; letter-spacing: -0.01em;
     }
-    .nota-titulo {
-      font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600;
-      color: var(--black); line-height: 1.12; margin-bottom: 14px;
+    .pagina-sub { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #4A3D35; margin-top: 10px; }
+    .pagina-link {
+      display: inline-flex; gap: 8px; margin-top: 18px; padding-bottom: 3px;
+      font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--granate);
+      text-decoration: none; border-bottom: 1px solid var(--granate);
     }
-    .nota-texto { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.75; color: var(--gray); }
-    .nota-cta {
-      display: inline-flex; align-items: center; gap: 8px; margin-top: 22px;
-      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase; color: var(--black);
+    .pagina-link::after { content: '→'; transition: transform 0.25s ease; }
+    .pagina-link:hover::after { transform: translateX(4px); }
+
+    .dibujo { display: block; margin: 26px auto 0; stroke: var(--tinta); fill: none; }
+    .dibujo text { fill: var(--tinta); stroke: none; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+    .dibujo--medicion { position: absolute; left: 96px; bottom: 44px; margin: 0; }
+    .mano {
+      position: absolute; font-family: 'Caveat', cursive; font-size: 22px; line-height: 1.05;
+      color: #55463C; transform: rotate(-12deg); pointer-events: none;
     }
-    .nota-cta::after { content: '→'; color: var(--gold); font-size: 13px; transition: transform 0.3s ease; }
-    .nota:hover .nota-cta::after { transform: translateX(5px); }
-    @media (max-width: 640px) {
-      .notas-wrap { padding: 48px 20px 80px; }
-      .notas { gap: 48px; }
-      .nota--cinta { transform: rotate(1.4deg); }
+    .mano svg { display: block; stroke: #55463C; fill: none; stroke-width: 1.3; margin-top: 4px; }
+
+    .fisitok {
+      position: relative; margin: 34px 0 0 0; padding: 40px 44px 34px;
+      background: linear-gradient(#EDCFCF, #E6C1C2);
+      box-shadow: 0 14px 26px -16px rgba(80,30,30,0.45);
+      transform: rotate(-0.8deg);
+      clip-path: polygon(0 2%, 3% 0, 22% 1%, 41% 0, 63% 1.5%, 82% 0, 100% 1%, 99% 30%, 100% 62%, 99% 100%, 70% 98.5%, 45% 100%, 20% 98.6%, 0 100%, 1% 66%, 0 34%);
     }
-    @media (prefers-reduced-motion: reduce) { .nota { transition: none; } }
-    .nota--pronto { transform: rotate(-1.4deg) translateY(6px); }
-    .nota-sello {
-      position: absolute; top: 22px; right: -6px; transform: rotate(8deg);
-      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
-      letter-spacing: 0.2em; text-transform: uppercase; color: #2563EB;
-      border: 1.5px solid #2563EB; padding: 6px 10px; background: rgba(255,253,247,0.9);
+    .fisitok-cinta {
+      position: absolute; top: -2px; left: 50%; width: 74px; height: 22px; margin-left: -37px;
+      background: rgba(110,26,34,0.55);
+    }
+    .fisitok h3 { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 38px; color: var(--granate); }
+    .fisitok p { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #4A3D35; margin-top: 4px; }
+    .fisitok-pronto {
+      display: inline-block; margin-top: 18px; padding: 8px 18px; border-radius: 999px;
+      font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--granate);
+      background: rgba(110,26,34,0.12);
+    }
+    .fisitok .foco { position: absolute; right: 120px; top: 36px; stroke: var(--tinta); fill: none; }
+    .fisitok .mano { right: 26px; bottom: 26px; font-size: 20px; transform: rotate(-14deg); }
+
+    .pestanas { position: absolute; right: -40px; top: 60px; display: flex; flex-direction: column; gap: 14px; }
+    .pestana {
+      width: 46px; height: 210px; border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center;
+      writing-mode: vertical-rl; font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: 0.12em;
+      text-transform: uppercase; text-decoration: none; color: #F6E9E2; background: #A84B4F;
+      box-shadow: 4px 4px 10px -4px rgba(40,20,10,0.4);
+    }
+    .pestana--claro { background: #D9C4A5; color: #4A3D35; height: 170px; }
+    .pestana--corta { height: 150px; }
+
+    @media (max-width: 900px) {
+      .cuaderno { grid-template-columns: 1fr; padding: 10px; }
+      .pagina { min-height: 0; padding: 44px 26px 40px; }
+      .pagina--izq { border-radius: 6px 6px 0 0; box-shadow: inset 0 -26px 30px -22px rgba(60,40,20,0.45); }
+      .pagina--der { border-radius: 0 0 6px 6px; box-shadow: inset 0 26px 30px -22px rgba(60,40,20,0.45); padding-right: 26px; }
+      .pestanas, .mano { display: none; }
+      .dibujo { max-width: 100%; height: auto; }
+      .dibujo--medicion { position: static; margin: 18px auto 0; }
+      .escritorio { padding: 32px 14px 70px; }
+      .fisitok .foco { right: 26px; }
     }
   </style>
 </head>
@@ -1322,31 +1360,102 @@
     </div>
   </header>
 
-  <section class="notas-wrap">
-    <h1 class="notas-sr">Cursos</h1>
-    <div class="notas">
+  <section class="escritorio">
+    <div class="escritorio-titulo">
+      <h1>Ideas en construcción.</h1>
+      <p>Apuntes, problemas y preguntas de física.</p>
+    </div>
 
-      <article class="nota nota--alfiler">
-        <span class="nota-alfiler" aria-hidden="true"></span>
-        <p class="nota-etiqueta">Avanzado</p>
-        <h2 class="nota-titulo">Mecánica Cuántica Moderna</h2>
-        <p class="nota-texto">Principios variacionales, perturbaciones y entrelazamiento. Enfoque geométrico del espacio de Hilbert con aplicaciones actuales en información cuántica.</p>
+    <div class="cuaderno">
+
+      <article class="pagina pagina--izq" id="mecanica-cuantica">
+        <h2 class="pagina-titulo">Mecánica<br/>Cuántica Moderna</h2>
+        <p class="pagina-sub">Principios variacionales y entrelazamiento.</p>
+
+        <span class="mano" style="right:70px;top:60px;">estados<br/>entrelazados
+          <svg width="40" height="46" viewBox="0 0 40 46"><path d="M28 2 C34 16 30 32 14 42"/><path d="M14 42 l8 -1 M14 42 l2 -8"/></svg>
+        </span>
+
+        <svg class="dibujo" width="330" height="340" viewBox="0 0 330 340" stroke-width="1.3" aria-hidden="true">
+          <line x1="165" y1="22" x2="165" y2="318"/>
+          <path d="M159 30 L165 18 L171 30"/>
+          <path d="M159 310 L165 322 L171 310"/>
+          <text x="174" y="26" font-size="20">|0⟩</text>
+          <text x="174" y="330" font-size="20">|1⟩</text>
+          <circle cx="165" cy="170" r="122"/>
+          <path d="M43 170 A122 34 0 0 0 287 170" stroke-dasharray="4 5"/>
+          <path d="M43 170 A122 34 0 0 1 287 170"/>
+          <path d="M165 170 A34 122 0 0 1 165 48" stroke-dasharray="4 5" opacity="0.6"/>
+          <line x1="165" y1="170" x2="318" y2="170"/>
+          <path d="M308 164 L320 170 L308 176"/>
+          <text x="306" y="198" font-size="20">y</text>
+          <line x1="165" y1="170" x2="96" y2="236"/>
+          <text x="66" y="244" font-size="20">x</text>
+          <line x1="165" y1="170" x2="240" y2="96" stroke-width="1.8"/>
+          <path d="M226 98 L242 94 L238 110" stroke-width="1.8"/>
+          <text x="248" y="92" font-size="22">|ψ⟩</text>
+          <line x1="165" y1="170" x2="112" y2="230" stroke-dasharray="3 4" opacity="0.7"/>
+        </svg>
+
+        <span class="mano" style="left:44px;top:330px;">superposición<br/>de estados
+          <svg width="44" height="40" viewBox="0 0 44 40"><path d="M6 2 C4 18 14 30 34 34"/><path d="M34 34 l-7 -5 M34 34 l-8 3"/></svg>
+        </span>
+        <span class="mano" style="left:52px;bottom:150px;">medición
+          <svg width="40" height="40" viewBox="0 0 40 40"><path d="M10 2 C22 10 26 22 22 36"/><path d="M22 36 l-6 -5 M22 36 l4 -7"/></svg>
+        </span>
+        <svg class="dibujo dibujo--medicion" width="150" height="90" viewBox="0 0 150 90" stroke-width="1" aria-hidden="true">
+          <circle cx="48" cy="46" r="38"/><circle cx="102" cy="46" r="38"/>
+          <circle cx="40" cy="40" r="2.2" fill="#3B2F28"/><circle cx="76" cy="50" r="2.2" fill="#3B2F28"/><circle cx="112" cy="40" r="1.8" fill="#3B2F28"/>
+          <path d="M18 30 L70 74 M28 16 L84 62 M64 14 L128 70" opacity="0.35"/>
+        </svg>
+        <span class="mano" style="right:64px;bottom:70px;">principio<br/>variacional<br/>→ estado base</span>
       </article>
 
-      <a href="problemas.html" class="nota nota--cinta">
-        <span class="nota-cinta" aria-hidden="true"></span>
-        <p class="nota-etiqueta">Ejercicios resueltos</p>
-        <h2 class="nota-titulo">Problemas varios</h2>
-        <p class="nota-texto">Tareas y trabajos resueltos de Electromagnetismo II, Física Nuclear y Subnuclear y Termodinámica.</p>
-        <span class="nota-cta">Ver problemas</span>
-      </a>
+      <article class="pagina pagina--der" id="problemas">
+        <h2 class="pagina-titulo">Problemas de física</h2>
+        <p class="pagina-sub">Electromagnetismo, física nuclear y termodinámica.</p>
+        <a href="problemas.html" class="pagina-link">Ver problemas</a>
 
-      <article class="nota nota--pronto">
-        <span class="nota-alfiler" aria-hidden="true"></span>
-        <span class="nota-sello">Próximamente</span>
-        <p class="nota-etiqueta">Preguntas rápidas</p>
-        <h2 class="nota-titulo">FisiTok</h2>
-        <p class="nota-texto">Preguntas rápidas de física, cortas y al grano.</p>
+        <span class="mano" style="right:70px;top:150px;">pequeños<br/>&nbsp;&nbsp;problemas<br/>&nbsp;&nbsp;&nbsp;&nbsp;grandes ideas</span>
+
+        <svg class="dibujo" width="320" height="250" viewBox="0 0 320 250" stroke-width="1.3" aria-hidden="true">
+          <line x1="100" y1="16" x2="220" y2="16"/>
+          <path d="M104 16 l-8 -8 M116 16 l-8 -8 M128 16 l-8 -8 M140 16 l-8 -8 M152 16 l-8 -8 M164 16 l-8 -8 M176 16 l-8 -8 M188 16 l-8 -8 M200 16 l-8 -8 M212 16 l-8 -8 M224 16 l-8 -8"/>
+          <line x1="160" y1="16" x2="104" y2="214"/>
+          <line x1="160" y1="16" x2="252" y2="206"/>
+          <line x1="160" y1="16" x2="160" y2="232" stroke-dasharray="5 5"/>
+          <circle cx="104" cy="220" r="11" fill="#3B2F28" fill-opacity="0.75"/>
+          <circle cx="254" cy="212" r="11" fill="#3B2F28" fill-opacity="0.75"/>
+          <circle cx="24" cy="168" r="10" opacity="0.3"/>
+          <path d="M24 170 Q100 248 160 232 Q222 222 268 196" stroke-dasharray="5 5"/>
+          <path d="M160 74 A58 58 0 0 1 184 70" />
+          <text x="164" y="94" font-size="20">θ</text>
+          <text x="206" y="66" font-size="20">L</text>
+        </svg>
+
+        <span class="mano" style="right:110px;top:300px;">del problema<br/>a la intuición
+          <svg width="46" height="40" viewBox="0 0 46 40"><path d="M38 2 C40 20 30 32 8 36"/><path d="M8 36 l7 -6 M8 36 l8 3"/></svg>
+        </span>
+
+        <div class="fisitok" id="fisitok">
+          <span class="fisitok-cinta" aria-hidden="true"></span>
+          <h3>FisiTok</h3>
+          <p>Preguntas breves para pensar.</p>
+          <span class="fisitok-pronto">Próximamente</span>
+          <svg class="foco" width="64" height="80" viewBox="0 0 64 80" stroke-width="1.3" aria-hidden="true">
+            <path d="M32 10 C18 10 10 20 10 31 C10 41 18 46 22 54 L42 54 C46 46 54 41 54 31 C54 20 46 10 32 10 Z"/>
+            <path d="M24 60 H40 M25 66 H39 M28 72 H36"/>
+            <path d="M28 54 L28 40 L32 36 L36 40 L36 54"/>
+            <path d="M32 0 V5 M8 8 L12 12 M56 8 L52 12 M0 31 H5 M59 31 H64"/>
+          </svg>
+          <span class="mano">una pregunta<br/>&nbsp;&nbsp;también<br/>puede enseñar</span>
+        </div>
+
+        <nav class="pestanas" aria-label="Secciones del cuaderno">
+          <a class="pestana" href="#mecanica-cuantica">Mecánica cuántica</a>
+          <a class="pestana pestana--claro" href="problemas.html">Problemas</a>
+          <a class="pestana pestana--corta" href="#fisitok">FisiTok</a>
+        </nav>
       </article>
 
     </div>

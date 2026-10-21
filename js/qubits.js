@@ -188,6 +188,42 @@
       start();
     }
 
+    // medidor de circuito cuántico sobre la línea; un clic colapsa todo
+    var meter = null, collapsed = false;
+    function drawMeter() {
+      var mw = 30, mh = 20, x = w / 2 - mw / 2, y = lineY - mh / 2;
+      meter = { x: x, y: y, w: mw, h: mh };
+      ctx.save();
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3B2F28'; ctx.lineWidth = 1.2;
+      ctx.fillRect(x, y, mw, mh); ctx.strokeRect(x, y, mw, mh);
+      ctx.beginPath(); ctx.arc(w / 2, y + mh - 4, 9, Math.PI, 2 * Math.PI); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w / 2, y + mh - 4); ctx.lineTo(w / 2 + 7, y + 4); ctx.stroke();
+      ctx.restore();
+    }
+    function onMeter(px, py) {
+      return meter && px >= meter.x - 6 && px <= meter.x + meter.w + 6 && py >= meter.y - 6 && py <= meter.y + meter.h + 6;
+    }
+    // colapso en onda desde el medidor: cada esfera sale |0⟩ con
+    // probabilidad cos²(θ/2); un segundo clic deja todo como al inicio
+    function collapseAll() {
+      var t0 = performance.now(), cx = w / 2, cy = lineY;
+      if (collapsed) {
+        layout(); draw(16); collapsed = false; start(); return;
+      }
+      qubits.forEach(function (q) {
+        var d = Math.sqrt((q.x - cx) * (q.x - cx) + (q.y - cy) * (q.y - cy));
+        q.collapseAt = t0 + d * 0.9;
+      });
+      current.forEach(function (q) { q.hot = false; }); current = [];
+      collapsed = true;
+      start();
+    }
+    function measure(q) {
+      var p0 = Math.cos(q.theta / 2); p0 *= p0;
+      q.frozen = Math.random() < p0 ? '0' : '1';
+      q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0;
+    }
+
     function draw(dt) {
       ctx.clearRect(0, 0, w, h);
       var span = lineY !== null && spanAt(lineY);
@@ -195,14 +231,12 @@
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
         ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
-        // cuadrito sobre el cable
-        var gs = 7;
-        ctx.fillStyle = '#fff'; ctx.strokeStyle = LINE; ctx.lineWidth = 1;
-        ctx.fillRect(w / 2 - gs / 2, lineY - gs / 2, gs, gs);
-        ctx.strokeRect(w / 2 - gs / 2, lineY - gs / 2, gs, gs);
+        drawMeter();
       }
+      var now = performance.now();
       for (var i = 0; i < qubits.length; i++) {
         var q = qubits[i];
+        if (q.collapseAt && now >= q.collapseAt) { measure(q); q.masivo = true; }
         if (q.hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU;
         else if (q.frozen === 'H') q.phi = (q.phi + SPIN * dt / 1000) % TAU;
         else if (!q.frozen) q.phi += q.drift * dt;
@@ -231,7 +265,7 @@
         ctx.lineTo(ex - 2.6 * Math.cos(a - 0.5), ey - 2.6 * Math.sin(a - 0.5));
         ctx.lineTo(ex - 2.6 * Math.cos(a + 0.5), ey - 2.6 * Math.sin(a + 0.5));
         ctx.closePath(); ctx.fill();
-        if (q.frozen) label(q);
+        if (q.frozen && !q.masivo) label(q);
       }
     }
 
@@ -260,7 +294,8 @@
       var dt = last ? Math.min(t - last, 50) : 16;
       last = t;
       draw(dt);
-      if (visible && (!still || current.length)) raf = requestAnimationFrame(loop);
+      var pendientes = collapsed && qubits.some(function (q) { return q.collapseAt; });
+      if (visible && (!still || current.length || pendientes)) raf = requestAnimationFrame(loop);
       else { raf = 0; last = 0; }
     }
 
@@ -284,11 +319,15 @@
 
     section.addEventListener('mouseleave', release);
     section.addEventListener('mousemove', function (e) {
-      var p = point(e); activate(p[0], p[1]);
+      var p = point(e);
+      section.style.cursor = onMeter(p[0], p[1]) ? 'pointer' : '';
+      activate(p[0], p[1]);
     });
     section.addEventListener('click', function (e) {
       if (e.target.closest && e.target.closest('a, button, .nota')) return;
-      var p = point(e); freeze(p[0], p[1]);
+      var p = point(e);
+      if (onMeter(p[0], p[1])) return collapseAll();
+      freeze(p[0], p[1]);
     });
 
     // al cambiar el tamaño se reacomoda en el siguiente cuadro, sin esperar,

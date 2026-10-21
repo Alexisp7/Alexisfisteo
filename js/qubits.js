@@ -1,7 +1,7 @@
 // Teselado de qubits: esferas de Bloch doradas detrás de una sección.
 // En reposo se ven al 35%; al pasar el mouse la esfera y sus 3 vecinas se
-// ven enteras y su flecha gira de polo a polo, cada una desfasada un tercio
-// de vuelta. Un clic mide el qubit: colapsa al polo más cercano, |0⟩ o |1⟩
+// ven enteras y su flecha gira de polo a polo desde donde estaba, cada una
+// en su propia fase. Un clic mide el qubit: colapsa al polo más cercano, |0⟩ o |1⟩
 // (azul para |0⟩, rojo para |1⟩, con el ket encima); solo si la flecha está
 // justo en el ecuador queda en mostaza con una H, girando por el ecuador,
 // hasta que un segundo clic la mide al azar en 0 o 1.
@@ -78,11 +78,8 @@
       if (!center || !onSphere(center, px, py)) return release();
       if (current[0] === center) return;
       release();
-      group.forEach(function (q, i) {
-        q.phi = 0;
-        q.theta = center.theta + i * TAU / 3;
-        q.hot = true;
-      });
+      // cada flecha sigue desde donde quedó, sin reiniciar su ángulo
+      group.forEach(function (q) { q.hot = true; });
       current = group;
       start();
     }
@@ -93,7 +90,7 @@
       if (q.frozen === '0' || q.frozen === '1') return;
       var c = Math.cos(q.theta);
       if (q.frozen === 'H') q.frozen = Math.random() < 0.5 ? '0' : '1';
-      else q.frozen = Math.abs(c) < 0.12 ? 'H' : c > 0 ? '0' : '1';
+      else q.frozen = Math.abs(c) < 0.2 ? 'H' : c > 0 ? '0' : '1';
       q.theta = q.frozen === '0' ? 0 : q.frozen === '1' ? Math.PI : Math.PI / 2;
       q.phi = 0;
       q.hot = false;

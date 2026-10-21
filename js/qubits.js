@@ -308,14 +308,17 @@
       var p = point(e); freeze(p[0], p[1]);
     });
 
-    var timer, lastW = section.clientWidth, lastH = section.clientHeight;
+    // al cambiar el tamaño se reacomoda en el siguiente cuadro, sin esperar,
+    // para que el dibujo nunca se vea estirado
+    var pending = 0, lastW = section.clientWidth, lastH = section.clientHeight;
     window.addEventListener('resize', function () {
-      clearTimeout(timer);
-      timer = setTimeout(function () {
+      if (pending) return;
+      pending = requestAnimationFrame(function () {
+        pending = 0;
         if (section.clientWidth === lastW && section.clientHeight === lastH) return;
         lastW = section.clientWidth; lastH = section.clientHeight;
         layout(); draw(16);
-      }, 150);
+      });
     });
   }
 

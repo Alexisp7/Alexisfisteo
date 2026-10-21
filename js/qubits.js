@@ -314,10 +314,29 @@
     function measure(q) {
       var p0 = Math.cos(q.theta / 2); p0 *= p0;
       q.frozen = Math.random() < p0 ? '0' : '1';
-      q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0;
+      q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0; q.vel = 0;
+    }
+    // clic en la QFT: todas las esferas pasan a H en onda desde la compuerta,
+    // cada una girando con una de 8 velocidades elegida al azar
+    var VELOCIDADES = [0.35, 0.55, 0.75, 1, 1.3, 1.65, 2.1, 2.6];
+    function qftAll() {
+      var t0 = performance.now(), cx = w / 2 + meterOff, cy = lineY;
+      qubits.forEach(function (q) {
+        var d = Math.sqrt((q.x - cx) * (q.x - cx) + (q.y - cy) * (q.y - cy));
+        q.collapseAt = 0; q.resetAt = 0;
+        q.hAt = t0 + d * 0.9;
+      });
+      current.forEach(function (q) { q.hot = false; }); current = [];
+      collapsed = false;
+      start();
+    }
+    function hadamard(q) {
+      q.frozen = 'H'; q.masivo = false; q.hot = false; q.hAt = 0;
+      q.theta = Math.PI / 2;
+      q.vel = VELOCIDADES[Math.floor(Math.random() * VELOCIDADES.length)];
     }
     function restore(q) {
-      q.frozen = false; q.masivo = false; q.resetAt = 0;
+      q.frozen = false; q.masivo = false; q.resetAt = 0; q.vel = 0;
       q.theta = q.theta0; q.phi = q.phi0;
     }
 
@@ -339,8 +358,9 @@
         var q = qubits[i];
         if (q.collapseAt && now >= q.collapseAt) { measure(q); q.masivo = true; }
         if (q.resetAt && now >= q.resetAt) restore(q);
+        if (q.hAt && now >= q.hAt) hadamard(q);
         if (q.hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU;
-        else if (q.frozen === 'H') q.phi = (q.phi + SPIN * dt / 1000) % TAU;
+        else if (q.frozen === 'H') q.phi = (q.phi + SPIN * (q.vel || 1) * dt / 1000) % TAU;
         else if (!q.frozen) q.phi += q.drift * dt;
 
         var on = q.hot || q.frozen;
@@ -398,7 +418,7 @@
       var dt = last ? Math.min(t - last, 50) : 16;
       last = t;
       draw(dt);
-      var pendientes = drag || (!anclado && Math.abs(meterOff) > 0.3) || qubits.some(function (q) { return q.collapseAt || q.resetAt; });
+      var pendientes = drag || (!anclado && Math.abs(meterOff) > 0.3) || qubits.some(function (q) { return q.collapseAt || q.resetAt || q.hAt; });
       if (visible && (!still || current.length || pendientes)) raf = requestAnimationFrame(loop);
       else { raf = 0; last = 0; }
     }
@@ -430,6 +450,7 @@
     });
     section.addEventListener('mousedown', function (e) {
       var p = point(e);
+      arrastrado = false;
       if (!onMeter(p[0], p[1])) return;
       e.preventDefault();
       drag = { x: p[0], off: meterOff };
@@ -456,7 +477,7 @@
       // soltar después de arrastrar no cuenta como clic en el medidor
       if (arrastrado) { arrastrado = false; return; }
       var p = point(e);
-      if (onMeter(p[0], p[1])) return anclado ? undefined : collapseAll();
+      if (onMeter(p[0], p[1])) return anclado ? qftAll() : collapseAll();
       freeze(p[0], p[1]);
     });
 

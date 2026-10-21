@@ -314,11 +314,11 @@
     function measure(q) {
       var p0 = Math.cos(q.theta / 2); p0 *= p0;
       q.frozen = Math.random() < p0 ? '0' : '1';
-      q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0; q.vel = 0;
+      q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0; q.part = 0;
     }
-    // clic en la QFT: todas las esferas pasan a H en onda desde la compuerta,
-    // cada una girando con una de 8 velocidades elegida al azar
-    var VELOCIDADES = [0.35, 0.55, 0.75, 1, 1.3, 1.65, 2.1, 2.6];
+    // clic en la QFT: todas las esferas pasan a H en onda desde la compuerta.
+    // Cada una divide su ecuador en 2 a 8 particiones elegidas al azar y la
+    // flecha fluctúa saltando de una partición a otra
     function qftAll() {
       var t0 = performance.now(), cx = w / 2 + meterOff, cy = lineY;
       qubits.forEach(function (q) {
@@ -333,10 +333,22 @@
     function hadamard(q) {
       q.frozen = 'H'; q.masivo = false; q.hot = false; q.hAt = 0;
       q.theta = Math.PI / 2;
-      q.vel = VELOCIDADES[Math.floor(Math.random() * VELOCIDADES.length)];
+      q.part = 2 + Math.floor(Math.random() * 7);
+      q.k = Math.floor(Math.random() * q.part);
+      q.phi = q.phiTo = q.k * TAU / q.part;
+      q.hopAt = performance.now() + Math.random() * 900;
+    }
+    // salto a otra partición al azar, por el camino más corto
+    function fluctua(q, now) {
+      var k = Math.floor(Math.random() * (q.part - 1));
+      if (k >= q.k) k++;
+      var d = (k - q.k) * TAU / q.part;
+      d -= Math.round(d / TAU) * TAU;
+      q.k = k; q.phiTo += d;
+      q.hopAt = now + 500 + Math.random() * 900;
     }
     function restore(q) {
-      q.frozen = false; q.masivo = false; q.resetAt = 0; q.vel = 0;
+      q.frozen = false; q.masivo = false; q.resetAt = 0; q.part = 0;
       q.theta = q.theta0; q.phi = q.phi0;
     }
 
@@ -360,7 +372,11 @@
         if (q.resetAt && now >= q.resetAt) restore(q);
         if (q.hAt && now >= q.hAt) hadamard(q);
         if (q.hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU;
-        else if (q.frozen === 'H') q.phi = (q.phi + SPIN * (q.vel || 1) * dt / 1000) % TAU;
+        else if (q.frozen === 'H' && q.part) {
+          if (now >= q.hopAt) fluctua(q, now);
+          q.phi += (q.phiTo - q.phi) * (still ? 1 : Math.min(1, dt / 110));
+        }
+        else if (q.frozen === 'H') q.phi = (q.phi + SPIN * dt / 1000) % TAU;
         else if (!q.frozen) q.phi += q.drift * dt;
 
         var on = q.hot || q.frozen;
@@ -375,6 +391,13 @@
         ctx.setLineDash([1.4, 1.6]);
         ctx.beginPath(); ctx.ellipse(q.x, q.y, R, R * 0.3, 0, Math.PI, TAU); ctx.stroke();
         ctx.setLineDash([]);
+        // particiones del ecuador tras la QFT
+        if (q.frozen === 'H' && q.part) {
+          for (var j = 0; j < q.part; j++) {
+            var pa = j * TAU / q.part;
+            ctx.beginPath(); ctx.arc(q.x + Math.cos(pa) * R, q.y + Math.sin(pa) * 0.3 * R, 1.3, 0, TAU); ctx.fill();
+          }
+        }
 
         // flecha de estado
         var st = Math.sin(q.theta);

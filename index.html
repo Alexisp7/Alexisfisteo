@@ -1266,9 +1266,14 @@
       .projects-inner .section-header { margin-bottom: 24px; text-align: center; }
       .projects-inner .section-eyebrow { justify-content: center; }
       .projects-inner .section-title { font-size: 36px; }
-      .projects-grid { max-width: min(100%, calc((100vh - 270px) * 1.5)); margin: 0 auto; }
+      .projects-grid { max-width: min(100%, clamp(960px, calc((100vh - 190px) * 1.5), 1184px)); margin: 0 auto; }
       .project-img-ph { min-height: 0; }
     }
+    .header { transition: opacity 0.15s linear; will-change: opacity; }
+    .project-card.square .project-curtain, .project-card.tall .project-curtain { padding: 20px; }
+    .project-card.square .curtain-greek { margin-bottom: 10px; }
+    .project-card.square .curtain-name { font-size: 20px; margin-bottom: 10px; }
+    .project-card.square .curtain-desc { margin-bottom: 14px; }
   </style>
 </head>
 <body>
@@ -1479,5 +1484,22 @@
     </div>
   </footer>
 
+  <script>
+    // El menú se desvanece al bajar y desaparece al llegar a Proyectos
+    (function () {
+      var header = document.querySelector('.header');
+      var target = document.getElementById('proyectos');
+      if (!header || !target) return;
+      function update() {
+        var end = target.offsetTop;
+        var t = end > 0 ? Math.min(Math.max(window.scrollY / end, 0), 1) : 0;
+        header.style.opacity = String(1 - t);
+        header.style.visibility = t >= 1 ? 'hidden' : 'visible';
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+  </script>
 </body>
 </html>

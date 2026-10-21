@@ -9,7 +9,9 @@
 // hasta el elemento que indique data-hasta. Se omiten las esferas que
 // tocarían texto o una nota, para que nada quede encima de las letras.
 // Con data-libre="x1 y1, x2 y2, ..." se deja sin esferas el polígono dado
-// en fracciones del ancho y del alto de la sección.
+// en fracciones del ancho y del alto de la sección. Con data-linea="selector"
+// se traza una línea fina sobre ese elemento, solo de borde a borde de la
+// zona libre.
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
@@ -72,6 +74,18 @@
       return false;
     }
 
+    var lineSel = canvas.getAttribute('data-linea'), lineY = null;
+
+    // extremos de la zona libre a la altura y
+    function spanAt(y) {
+      var xs = [];
+      for (var i = 0, j = free.length - 1; i < free.length; j = i++) {
+        var a = [free[i][0] * w, free[i][1] * h], b = [free[j][0] * w, free[j][1] * h];
+        if ((a[1] > y) !== (b[1] > y)) xs.push(a[0] + (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]));
+      }
+      return xs.length >= 2 ? [Math.min.apply(null, xs), Math.max.apply(null, xs)] : null;
+    }
+
     function layout() {
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = section.clientWidth; h = section.clientHeight;
@@ -82,6 +96,8 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       qubits = []; current = [];
       var boxes = blockers();
+      var lineEl = lineSel && section.querySelector(lineSel);
+      lineY = lineEl ? Math.round(lineEl.getBoundingClientRect().top - section.getBoundingClientRect().top) + 0.5 : null;
       var row = 0, k = 0;
       // solo filas completas, para que ninguna esfera quede cortada abajo
       for (var y = DY / 2; y + R + 1 <= h; y += DY, row++) {
@@ -160,6 +176,11 @@
 
     function draw(dt) {
       ctx.clearRect(0, 0, w, h);
+      var span = lineY !== null && spanAt(lineY);
+      if (span) {
+        ctx.strokeStyle = '#E0DDD8'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(span[0] + 16, lineY); ctx.lineTo(span[1] - 16, lineY); ctx.stroke();
+      }
       for (var i = 0; i < qubits.length; i++) {
         var q = qubits[i];
         if (q.hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU;

@@ -1,9 +1,11 @@
 // Teselado de qubits: esferas de Bloch doradas detrás de una sección.
 // En reposo se ven al 35%; al pasar el mouse la esfera y sus 3 vecinas se
 // ven enteras y su flecha gira de polo a polo, cada una desfasada un tercio
-// de vuelta. Un clic mide el qubit: cerca de un polo colapsa a |0⟩ o |1⟩
-// (azul, con el ket encima); cerca del ecuador queda en mostaza con una H.
-// Cada <canvas class="qubits-fondo"> cubre a su elemento padre.
+// de vuelta. Un clic mide el qubit: colapsa al polo más cercano, |0⟩ o |1⟩
+// (azul, con el ket encima); solo si la flecha está justo en el ecuador
+// queda en mostaza con una H, y un segundo clic la mide al azar en 0 o 1.
+// Cada <canvas class="qubits-fondo"> cubre a su elemento padre, o solo
+// hasta el elemento que indique data-hasta.
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
@@ -19,11 +21,15 @@
     if (!canvas.getContext) return;
     var ctx = canvas.getContext('2d');
     var section = canvas.parentElement;
+    var limit = canvas.getAttribute('data-hasta');
     var qubits = [], current = [], w = 0, h = 0, visible = false, raf = 0, last = 0;
 
     function layout() {
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = section.clientWidth; h = section.clientHeight;
+      var stop = limit && section.querySelector(limit);
+      if (stop) h = Math.round(stop.getBoundingClientRect().top - section.getBoundingClientRect().top);
+      canvas.style.height = h + 'px';
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       qubits = []; current = [];
@@ -43,6 +49,7 @@
 
     function nearest(px, py, count) {
       var found = [];
+      if (py > h) return found;
       for (var i = 0; i < qubits.length; i++) {
         var q = qubits[i], dx = q.x - px, dy = q.y - py;
         if (Math.abs(dx) > DX * 2 || Math.abs(dy) > DY * 2.5) continue;
@@ -81,8 +88,10 @@
     function freeze(px, py) {
       var q = nearest(px, py, 1)[0];
       if (!q || !onSphere(q, px, py)) return;
+      if (q.frozen === '0' || q.frozen === '1') return;
       var c = Math.cos(q.theta);
-      q.frozen = c > 0.5 ? '0' : c < -0.5 ? '1' : 'H';
+      if (q.frozen === 'H') q.frozen = Math.random() < 0.5 ? '0' : '1';
+      else q.frozen = Math.abs(c) < 0.12 ? 'H' : c > 0 ? '0' : '1';
       q.theta = q.frozen === '0' ? 0 : q.frozen === '1' ? Math.PI : Math.PI / 2;
       q.phi = 0;
       q.hot = false;

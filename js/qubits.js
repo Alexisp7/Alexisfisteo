@@ -184,6 +184,8 @@
       q.theta = q.frozen === '0' ? 0 : q.frozen === '1' ? Math.PI : Math.PI / 2;
       q.phi = 0;
       q.hot = false;
+      // al medir a mano, las flechas del conteo vuelven a salir del medidor
+      if (q.frozen !== 'H') { shownRed = 0; shownBlue = 0; }
       current = current.filter(function (c) { return c !== q; });
       start();
     }

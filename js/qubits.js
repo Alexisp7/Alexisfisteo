@@ -209,7 +209,9 @@
     // llegar un |0⟩ el rojo baja a la mitad y el azul aparece en la mitad.
     // largo mostrado de cada barra: se acerca suave al valor real para que
     // las flechas crezcan en vez de aparecer de golpe
-    var shownRed = 0, shownBlue = 0;
+    // cuando una barra tiene que recogerse no vuelve detrás del medidor: se
+    // desvanece rápido y reaparece ya en su nuevo largo
+    var shownRed = 0, shownBlue = 0, alphaRed = 1, alphaBlue = 1;
     function drawTally(half, dt) {
       var n0 = 0, n1 = 0;
       for (var i = 0; i < qubits.length; i++) {
@@ -218,21 +220,35 @@
       var n = n0 + n1;
       var targetRed = n ? n1 / n : 0, targetBlue = n ? n0 / n : 0;
       var ease = still ? 1 : Math.min(1, dt / 650);
-      shownRed += (targetRed - shownRed) * ease;
-      shownBlue += (targetBlue - shownBlue) * ease;
+      var fade = still ? 1 : dt / 160;
+      if (targetRed < shownRed - 0.02) {
+        alphaRed = Math.max(0, alphaRed - fade);
+        if (!alphaRed) shownRed = targetRed;
+      } else {
+        alphaRed = Math.min(1, alphaRed + fade);
+        shownRed += (targetRed - shownRed) * ease;
+      }
+      if (targetBlue < shownBlue - 0.02) {
+        alphaBlue = Math.max(0, alphaBlue - fade);
+        if (!alphaBlue) shownBlue = targetBlue;
+      } else {
+        alphaBlue = Math.min(1, alphaBlue + fade);
+        shownBlue += (targetBlue - shownBlue) * ease;
+      }
       if (shownRed < 0.002 && shownBlue < 0.002) return;
       var y = lineY, mx = 15, largo = half - mx;
       ctx.save();
       ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       // cada barra termina en un ángulo como el de los kets, pegado a la línea
-      function lado(dir, k, col) {
+      function lado(dir, k, col, alpha) {
+        ctx.globalAlpha = alpha;
         var x0 = w / 2 + dir * mx, x1 = x0 + dir * largo * k;
         ctx.strokeStyle = col;
         ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(x1 - dir * 7, y - 11); ctx.lineTo(x1, y); ctx.lineTo(x1 - dir * 7, y + 11); ctx.stroke();
       }
-      if (shownRed > 0.002) lado(-1, shownRed, 'rgb(' + RED + ')');
-      if (shownBlue > 0.002) lado(1, shownBlue, 'rgb(' + BLUE + ')');
+      if (shownRed > 0.002) lado(-1, shownRed, 'rgb(' + RED + ')', alphaRed);
+      if (shownBlue > 0.002) lado(1, shownBlue, 'rgb(' + BLUE + ')', alphaBlue);
       ctx.restore();
     }
     function onMeter(px, py) {

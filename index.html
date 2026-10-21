@@ -1267,7 +1267,7 @@
       .projects-inner .section-eyebrow { justify-content: center; }
       .projects-inner .section-title { font-size: 36px; }
       #proyectos > div[style] { max-width: 1680px !important; padding: 0 48px !important; }
-      .projects-grid { grid-template-rows: repeat(2, clamp(240px, calc((100vh - 190px) / 2), 420px)); }
+      .projects-grid { grid-template-rows: repeat(2, max(240px, calc((100vh - 150px) / 2))); }
       .project-card.square, .project-card.wide, .project-card.tall { aspect-ratio: auto; }
       .project-img-ph { min-height: 0; }
     }
@@ -1285,6 +1285,14 @@
     .projects-inner .section-title::before,
     .projects-inner .section-title::after { content: ''; width: 26px; height: 1px; background: var(--gold); flex-shrink: 0; margin: 0 18px; }
     @media (min-width: 901px) { .projects-wrap { padding-top: 22px; } }
+    @media (min-width: 901px) {
+      html { scroll-snap-type: y proximity; }
+      .projects-wrap {
+        min-height: 100vh; box-sizing: border-box; padding: 22px 0 28px;
+        display: flex; flex-direction: column; justify-content: center;
+        scroll-snap-align: start;
+      }
+    }
   </style>
 </head>
 <body>

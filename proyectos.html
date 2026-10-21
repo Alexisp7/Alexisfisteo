@@ -1340,6 +1340,7 @@
       color: var(--white); line-height: 1.15; margin-bottom: 18px;
     }
     .proj-cf-detalle p:not(.proj-cf-meta) { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.85; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
+    .hero-eyebrow::before { content: none; }
   </style>
 </head>
 <body>
@@ -1358,7 +1359,6 @@
       <h1 class="page-hero-title">Proyectos <em>Ganadores</em></h1>
       <p class="page-hero-sub">Hackathons y proyectos de computación cuántica.</p>
     </div>
-    <div class="page-hero-ornament">Ψ</div>
   </section>
   <hr class="gold-line"/>
 
@@ -1386,7 +1386,7 @@
           </div>
         </a>
 
-        <a href="#swaptions" class="proj-cf-carta">
+        <div class="proj-cf-carta" id="swaptions">
           <div class="proj-cf-img proj-cf-img--ph">
             <svg viewBox="0 0 48 48" fill="none" stroke="#C8A96E" stroke-width="1.2"><path d="M6 40h36M6 40V8"/><circle cx="12" cy="32" r="1.6"/><circle cx="19" cy="27" r="1.6"/><circle cx="33" cy="17" r="1.6"/><circle cx="40" cy="12" r="1.6"/><circle cx="26" cy="22" r="2.4" stroke-dasharray="2 2"/><path d="M8 35 L42 10"/></svg>
           </div>
@@ -1394,19 +1394,12 @@
             <p class="proj-cf-meta">Regresión lineal · Reservorio cuántico</p>
             <h3 class="proj-cf-title">Predicción de valores faltantes en precios de swaptions</h3>
             <p class="proj-cf-desc">Regresión lineal sobre un dataset de precios de swaptions y una alternativa cuántica basada en un reservorio cuántico.</p>
-            <span class="proj-cf-cta">Leer más</span>
           </div>
-        </a>
+        </div>
 
       </div>
     </div>
 
-    <div class="proj-cf-detalle" id="swaptions">
-      <p class="proj-cf-meta">Regresión lineal · Reservorio cuántico</p>
-      <h2 class="proj-cf-detalle-title">Predicción de valores faltantes en precios de swaptions</h2>
-      <p>Predicción de valores faltantes en un dataset de precios de swaptions usando regresión lineal.</p>
-      <p>Alternativa cuántica: en lugar de conseguir los pesos de una red neuronal entrenando con datasets, se usa un reservorio cuántico. Las conexiones quedan codificadas y los pesos solo se mueven con la temperatura o alguna perturbación. Al final de un proceso estocástico se evalúa la función de coste en cada configuración y se elige la de menor pérdida.</p>
-    </div>
   </section>
 
 
@@ -1414,7 +1407,6 @@
     <div class="footer">
       <div class="footer-bottom">
         <span class="footer-copy">© 2025 Alexis R. Salvatierra · Todos los derechos reservados</span>
-        <span class="footer-greek">Ψ · Σ · Ω · Δ · Λ · Π</span>
       </div>
     </div>
   </footer>

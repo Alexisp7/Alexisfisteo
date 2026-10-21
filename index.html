@@ -1277,6 +1277,14 @@
     .project-card.square .curtain-name { font-size: 20px; margin-bottom: 10px; }
     .project-card.square .curtain-desc { margin-bottom: 14px; }
     .hero-eyebrow::before { content: none; }
+    .projects-inner .section-header { text-align: center; }
+    .projects-inner .section-title {
+      color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 22px;
+    }
+    .projects-inner .section-title em { color: var(--gold); }
+    .projects-inner .section-title::before,
+    .projects-inner .section-title::after { content: ''; width: 56px; height: 1px; background: var(--gold); flex-shrink: 0; }
+    @media (min-width: 901px) { .projects-wrap { padding-top: 22px; } }
   </style>
 </head>
 <body>
@@ -1341,7 +1349,6 @@
   <section id="proyectos" class="projects-wrap">
     <div class="projects-inner">
       <div class="section-header">
-        <p class="section-eyebrow">Portafolio de innovación</p>
         <h2 class="section-title">Proyectos <em>Ganadores</em></h2>
       </div>
     </div>

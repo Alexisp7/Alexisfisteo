@@ -8,9 +8,8 @@
 // Cada <canvas class="qubits-fondo"> cubre a su elemento padre, o solo
 // hasta el elemento que indique data-hasta. Se omiten las esferas que
 // tocarían texto o una nota, para que nada quede encima de las letras.
-// Con data-franja="ai,bi,ad,bd" se deja libre una franja inclinada: sin
-// esferas entre la recta izquierda (de ai arriba a bi abajo, en fracción
-// del ancho) y la recta derecha (de ad arriba a bd abajo).
+// Con data-libre="x1 y1, x2 y2, ..." se deja sin esferas el polígono dado
+// en fracciones del ancho y del alto de la sección.
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
@@ -27,15 +26,24 @@
     var ctx = canvas.getContext('2d');
     var section = canvas.parentElement;
     var limit = canvas.getAttribute('data-hasta');
-    var band = (canvas.getAttribute('data-franja') || '').split(',').map(Number);
-    if (band.length !== 4 || band.some(isNaN)) band = null;
+    var free = (canvas.getAttribute('data-libre') || '').split(',').map(function (pair) {
+      return pair.trim().split(/\s+/).map(Number);
+    }).filter(function (p) { return p.length === 2 && !isNaN(p[0]) && !isNaN(p[1]); });
 
-    function inBand(x, y) {
-      if (!band) return false;
-      var t = h ? y / h : 0;
-      var left = (band[0] + (band[1] - band[0]) * t) * w;
-      var right = (band[2] + (band[3] - band[2]) * t) * w;
-      return x + R > left && x - R < right;
+    // la esfera queda fuera si su centro cae en el polígono o lo roza
+    function inFree(x, y) {
+      if (free.length < 3) return false;
+      var pts = free.map(function (p) { return [p[0] * w, p[1] * h]; });
+      var inside = false;
+      for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+        var a = pts[i], b = pts[j];
+        if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) inside = !inside;
+        var ex = b[0] - a[0], ey = b[1] - a[1];
+        var t = Math.max(0, Math.min(1, ((x - a[0]) * ex + (y - a[1]) * ey) / (ex * ex + ey * ey || 1)));
+        var dx = a[0] + t * ex - x, dy = a[1] + t * ey - y;
+        if (dx * dx + dy * dy < (R + 2) * (R + 2)) return true;
+      }
+      return inside;
     }
     var qubits = [], current = [], w = 0, h = 0, visible = false, raf = 0, last = 0;
 
@@ -78,7 +86,7 @@
       // solo filas completas, para que ninguna esfera quede cortada abajo
       for (var y = DY / 2; y + R + 1 <= h; y += DY, row++) {
         for (var x = (row % 2 ? DX : DX / 2); x < w + DX; x += DX, k++) {
-          if (covered(boxes, x, y) || inBand(x, y)) continue;
+          if (covered(boxes, x, y) || inFree(x, y)) continue;
           qubits.push({
             x: x, y: y,
             theta: Math.acos(1 - 2 * rnd(k + 1)),

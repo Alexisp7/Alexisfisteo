@@ -317,8 +317,8 @@
       q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0; q.part = 0;
     }
     // clic en la QFT: todas las esferas pasan a H en onda desde la compuerta.
-    // Cada una divide su ecuador en 2 a 8 particiones elegidas al azar y la
-    // flecha fluctúa saltando de una partición a otra
+    // El ecuador empieza con 2 posiciones posibles y se va duplicando a 4, 8,
+    // 16 y 32; la flecha fluctúa saltando entre esas posiciones
     function qftAll() {
       var t0 = performance.now(), cx = w / 2 + meterOff, cy = lineY;
       qubits.forEach(function (q) {
@@ -333,13 +333,17 @@
     function hadamard(q) {
       q.frozen = 'H'; q.masivo = false; q.hot = false; q.hAt = 0;
       q.theta = Math.PI / 2;
-      q.part = 2 + Math.floor(Math.random() * 7);
+      q.part = 2;
       q.k = Math.floor(Math.random() * q.part);
+      q.dupAt = performance.now() + DUPLICA;
       q.phi = q.phiTo = q.k * TAU / q.part;
       q.hopAt = performance.now() + Math.random() * 900;
     }
-    // salto a otra partición al azar, por el camino más corto
+    // salto a otra partición al azar, por el camino más corto. Cada cierto
+    // tiempo las posiciones se duplican hasta llegar a 32
+    var DUPLICA = 2600;
     function fluctua(q, now) {
+      if (q.part < 32 && now >= q.dupAt) { q.part *= 2; q.k *= 2; q.dupAt = now + DUPLICA; }
       var k = Math.floor(Math.random() * (q.part - 1));
       if (k >= q.k) k++;
       var d = (k - q.k) * TAU / q.part;
@@ -391,13 +395,6 @@
         ctx.setLineDash([1.4, 1.6]);
         ctx.beginPath(); ctx.ellipse(q.x, q.y, R, R * 0.3, 0, Math.PI, TAU); ctx.stroke();
         ctx.setLineDash([]);
-        // particiones del ecuador tras la QFT
-        if (q.frozen === 'H' && q.part) {
-          for (var j = 0; j < q.part; j++) {
-            var pa = j * TAU / q.part;
-            ctx.beginPath(); ctx.arc(q.x + Math.cos(pa) * R, q.y + Math.sin(pa) * 0.3 * R, 1.3, 0, TAU); ctx.fill();
-          }
-        }
 
         // flecha de estado
         var st = Math.sin(q.theta);

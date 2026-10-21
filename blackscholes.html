@@ -242,7 +242,8 @@
     .pipeline-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; letter-spacing: 0; text-transform: none; color: rgba(255,255,255,0.85); line-height: 1.25; }
     .pipeline-arrow { color: var(--gold); margin-bottom: 0; }
     .content-wrap { grid-template-columns: 1fr; max-width: 980px; }
-    .content-main .collage-section { margin: 8px 0 40px; }
+    .content-wrap:not(.content-wrap--sigue) { padding-bottom: 48px; }
+    .content-wrap--sigue { padding-top: 56px; }
   </style>
 </head>
 <body>
@@ -338,45 +339,52 @@
         <p class="content-body">
           En la caminata aleatoria clásica, la partícula se mueve a la derecha o a la izquierda con probabilidad 1/2 en cada paso. La caminata cuántica introduce un <strong>qubit de moneda</strong> (coin qubit) cuyo estado se prepara con la compuerta de Hadamard H: el caminante puede estar simultáneamente en superposición de ir a ambos lados. El operador de desplazamiento condicional S± aplica el movimiento según el estado de la moneda. El resultado es una distribución de probabilidad con <strong>interferencia cuántica</strong> — más ancha y de colas más pesadas que la gaussiana clásica — lo que la hace conceptualmente más rica para modelar retornos financieros.
         </p>
-        <div class="collage-section">
-          <div class="collage-grid">
-            <div class="collage-cell main">
-              <div class="collage-ph" style="background:linear-gradient(135deg,#080818 0%,#0e0a28 60%,#060612 100%);">
-                <img src="img/Black sholes/circuitos.png" class="project-img" alt="circuitos">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-            <div class="collage-cell">
-              <div class="collage-ph" style="background:linear-gradient(140deg,#08080e 0%,#0c0c1c 100%);">
-                <img src="img/Black sholes/titulo.png" class="project-img" alt="titulo">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-            <div class="collage-cell">
-              <div class="collage-ph" style="background:linear-gradient(160deg,#060610 0%,#0a0820 100%);">
-                <img src="img/Black sholes/ruido.png" class="project-img" alt="ruido">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-            <div class="collage-cell">
-              <div class="collage-ph" style="background:linear-gradient(130deg,#06060e 0%,#0a0a18 100%);">
-                <img src="img/Black sholes/campanas.png" class="project-img" alt="campanas">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-            <div class="collage-cell">
-              <div class="collage-ph" style="background:linear-gradient(150deg,#080810 0%,#0c0c16 100%);">
-                <img src="img/Black sholes/formula.png" class="project-img" alt="formula">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      </div>
+    </div>
+  </section>
 
+  <div class="collage-section">
+    <div class="collage-grid">
+      <div class="collage-cell main">
+        <div class="collage-ph" style="background:linear-gradient(135deg,#080818 0%,#0e0a28 60%,#060612 100%);">
+          <img src="img/Black sholes/circuitos.png" class="project-img" alt="circuitos">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(140deg,#08080e 0%,#0c0c1c 100%);">
+          <img src="img/Black sholes/titulo.png" class="project-img" alt="titulo">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(160deg,#060610 0%,#0a0820 100%);">
+          <img src="img/Black sholes/ruido.png" class="project-img" alt="ruido">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(130deg,#06060e 0%,#0a0a18 100%);">
+          <img src="img/Black sholes/campanas.png" class="project-img" alt="campanas">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(150deg,#080810 0%,#0c0c16 100%);">
+          <img src="img/Black sholes/formula.png" class="project-img" alt="formula">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="content-wrap content-wrap--sigue">
+      <div class="content-main">
         <blockquote class="content-quote">
           El mercado financiero y la mecánica cuántica comparten un secreto: ambos evolucionan en superposición — hasta que el precio es observado.
         </blockquote>

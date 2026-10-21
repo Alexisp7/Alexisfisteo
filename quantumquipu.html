@@ -242,7 +242,8 @@
     .pipeline-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; letter-spacing: 0; text-transform: none; color: rgba(255,255,255,0.85); line-height: 1.25; }
     .pipeline-arrow { color: var(--gold); margin-bottom: 0; }
     .content-wrap { grid-template-columns: 1fr; max-width: 980px; }
-    .content-main .collage-section { margin: 8px 0 40px; }
+    .content-wrap:not(.content-wrap--sigue) { padding-bottom: 48px; }
+    .content-wrap--sigue { padding-top: 56px; }
   </style>
 </head>
 <body>
@@ -366,54 +367,60 @@
         <p class="content-body">
           El problema de encontrar la ruta de menor costo que visite los nodos requeridos se formula como un <strong>problema de optimización binaria cuadrática sin restricciones (QUBO)</strong>. Las variables binarias χ_{i,t} ∈ {0,1} codifican si el camión visita la ubicación <em>i</em> en el paso temporal <em>t</em>. La función de costo total incorpora tres términos: el costo de transición Q_C (distancias reales medidas en Google Earth), la restricción temporal Q_B (un solo lugar por paso de tiempo) y la restricción espacial Q_A (cada lugar visitado exactamente una vez).
         </p>
+      </div>
+    </div>
+  </section>
 
-        <div class="collage-section">
-          <div class="collage-grid">
-      
-            <!-- Cell 1: main — mapa satélite Orcopampa -->
-            <div class="collage-cell main">
-              <!-- <img src="img/orcopampa-satelite.jpg" alt="Mina Orcopampa vista satelital"> -->
-              <div class="collage-ph" style="background:radial-gradient(ellipse at 45% 40%, #0a180a 0%, #060e06 55%, #040804 100%);">
-                <img src="img/quantumquipu/titulo.png" class="project-img" alt="finanzas">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-            <!-- Cell 2: QUBO matrix -->
-            <div class="collage-cell">
-              <div class="collage-ph" style="background:linear-gradient(140deg,#080814 0%,#0c0c20 100%);">
-                <img src="img/quantumquipu/qubo.png" class="project-img" alt="QUBO">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-            <!-- Cell 3: VQE circuit diagram -->
-            <div class="collage-cell">
-              <div class="collage-ph" style="background:linear-gradient(160deg,#080818 0%,#0c0820 100%);">
-                <img src="img/quantumquipu/vqe.png" class="project-img" alt="VQE">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-            <!-- Cell 4: Ising Hamiltonian / energy landscape -->
-            <div class="collage-cell">
-              <div class="collage-ph" style="background:linear-gradient(130deg,#060612 0%,#0a0818 100%);">
-                <img src="img/quantumquipu/optimizador.png" class="project-img" alt="optimizador">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-            <!-- Cell 5: convergence / energy minimization -->
-            <div class="collage-cell">
-              <div class="collage-ph" style="background:linear-gradient(150deg,#080810 0%,#0c0a16 100%);">
-                <img src="img/quantumquipu/trayec.png" class="project-img" alt="trayec">
-                <div class="collage-corner"></div>
-              </div>
-            </div>
-      
-          </div>
+  <div class="collage-section">
+    <div class="collage-grid">
+
+      <!-- Cell 1: main — mapa satélite Orcopampa -->
+      <div class="collage-cell main">
+        <!-- <img src="img/orcopampa-satelite.jpg" alt="Mina Orcopampa vista satelital"> -->
+        <div class="collage-ph" style="background:radial-gradient(ellipse at 45% 40%, #0a180a 0%, #060e06 55%, #040804 100%);">
+          <img src="img/quantumquipu/titulo.png" class="project-img" alt="finanzas">
+          <div class="collage-corner"></div>
         </div>
+      </div>
 
+      <!-- Cell 2: QUBO matrix -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(140deg,#080814 0%,#0c0c20 100%);">
+          <img src="img/quantumquipu/qubo.png" class="project-img" alt="QUBO">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 3: VQE circuit diagram -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(160deg,#080818 0%,#0c0820 100%);">
+          <img src="img/quantumquipu/vqe.png" class="project-img" alt="VQE">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 4: Ising Hamiltonian / energy landscape -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(130deg,#060612 0%,#0a0818 100%);">
+          <img src="img/quantumquipu/optimizador.png" class="project-img" alt="optimizador">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+      <!-- Cell 5: convergence / energy minimization -->
+      <div class="collage-cell">
+        <div class="collage-ph" style="background:linear-gradient(150deg,#080810 0%,#0c0a16 100%);">
+          <img src="img/quantumquipu/trayec.png" class="project-img" alt="trayec">
+          <div class="collage-corner"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <section>
+    <div class="content-wrap content-wrap--sigue">
+      <div class="content-main">
         <blockquote class="content-quote">
           La superposición cuántica permite explorar simultáneamente todas las rutas posibles — lo que un computador clásico haría en 2ᴺ pasos, el circuito variacional lo aproxima en tiempo polinomial.
         </blockquote>

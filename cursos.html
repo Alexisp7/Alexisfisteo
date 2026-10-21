@@ -1303,11 +1303,6 @@
       .nota--cinta { transform: rotate(1.4deg); }
     }
     @media (prefers-reduced-motion: reduce) { .nota { transition: none; } }
-    /* Fondo de la página Cursos: esferas de Bloch doradas tenues, cada una
-       con su flecha de estado; al pasar el mouse se encienden y giran */
-    .notas-wrap { position: relative; overflow: hidden; }
-    .notas { position: relative; z-index: 1; }
-    .qubits-fondo { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
     .nota--pronto { transform: rotate(-1.4deg) translateY(6px); }
     .nota-sello {
       position: absolute; top: 22px; right: -6px; transform: rotate(8deg);
@@ -1328,7 +1323,6 @@
   </header>
 
   <section class="notas-wrap">
-    <canvas class="qubits-fondo" aria-hidden="true"></canvas>
     <h1 class="notas-sr">Cursos</h1>
     <div class="notas">
 
@@ -1366,6 +1360,5 @@
       </div>
     </div>
   </footer>
-  <script src="js/qubits.js"></script>
 </body>
 </html>

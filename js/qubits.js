@@ -125,7 +125,11 @@
       var row = 0, k = 0;
       // solo filas completas, para que ninguna esfera quede cortada abajo
       for (var y = DY / 2; y + R + 1 <= h; y += DY, row++) {
-        for (var x = (row % 2 ? DX : DX / 2); x < w + DX; x += DX, k++) {
+        // filas centradas en la mitad de la sección, para que ambos lados
+        // sean espejo uno del otro
+        var x0 = w / 2 + (row % 2 ? DX / 2 : 0);
+        x0 -= Math.ceil((x0 + DX) / DX) * DX;
+        for (var x = x0; x < w + DX; x += DX, k++) {
           if (covered(boxes, x, y) || inFree(x, y)) continue;
           qubits.push({
             x: x, y: y,

@@ -6,7 +6,8 @@
 // justo en el ecuador queda en mostaza con una H, girando por el ecuador,
 // hasta que un segundo clic la mide al azar en 0 o 1.
 // Cada <canvas class="qubits-fondo"> cubre a su elemento padre, o solo
-// hasta el elemento que indique data-hasta.
+// hasta el elemento que indique data-hasta. Se omiten las esferas que
+// tocarían texto o una nota, para que nada quede encima de las letras.
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
@@ -25,6 +26,31 @@
     var limit = canvas.getAttribute('data-hasta');
     var qubits = [], current = [], w = 0, h = 0, visible = false, raf = 0, last = 0;
 
+    // cajas de cada línea de texto (y de cada nota) dentro de la sección
+    function blockers() {
+      var base = section.getBoundingClientRect(), boxes = [], pad = 4;
+      function add(r) {
+        if (r.width && r.height) boxes.push([r.left - base.left - pad, r.top - base.top - pad, r.right - base.left + pad, r.bottom - base.top + pad]);
+      }
+      var walker = document.createTreeWalker(section, NodeFilter.SHOW_TEXT, null);
+      var range = document.createRange(), node;
+      while ((node = walker.nextNode())) {
+        if (!node.nodeValue.trim()) continue;
+        range.selectNodeContents(node);
+        Array.prototype.forEach.call(range.getClientRects(), add);
+      }
+      Array.prototype.forEach.call(section.querySelectorAll('.nota'), function (el) { add(el.getBoundingClientRect()); });
+      return boxes;
+    }
+
+    function covered(boxes, x, y) {
+      for (var i = 0; i < boxes.length; i++) {
+        var b = boxes[i];
+        if (x + R > b[0] && x - R < b[2] && y + R > b[1] && y - R < b[3]) return true;
+      }
+      return false;
+    }
+
     function layout() {
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = section.clientWidth; h = section.clientHeight;
@@ -34,10 +60,12 @@
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       qubits = []; current = [];
+      var boxes = blockers();
       var row = 0, k = 0;
       // solo filas completas, para que ninguna esfera quede cortada abajo
       for (var y = DY / 2; y + R + 1 <= h; y += DY, row++) {
         for (var x = (row % 2 ? DX : DX / 2); x < w + DX; x += DX, k++) {
+          if (covered(boxes, x, y)) continue;
           qubits.push({
             x: x, y: y,
             theta: Math.acos(1 - 2 * rnd(k + 1)),
@@ -78,8 +106,19 @@
       if (!center || !onSphere(center, px, py)) return release();
       if (current[0] === center) return;
       release();
-      // cada flecha sigue desde donde quedó, sin reiniciar su ángulo
-      group.forEach(function (q) { q.hot = true; });
+      // cada flecha sigue desde donde apunta: se pasa al meridiano que se ve
+      // de frente (phi = 0) conservando su dirección en pantalla, así gira
+      // por el contorno de la esfera sin saltos
+      group.forEach(function (q) {
+        if (q.phi !== 0) {
+          var st = Math.sin(q.theta);
+          var vx = st * Math.cos(q.phi);
+          var vy = -Math.cos(q.theta) * 0.95 + st * Math.sin(q.phi) * 0.3;
+          q.theta = Math.atan2(vx, -vy / 0.95);
+          q.phi = 0;
+        }
+        q.hot = true;
+      });
       current = group;
       start();
     }
@@ -173,6 +212,7 @@
     }
 
     layout(); draw(16);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { layout(); draw(16); });
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         visible = entries[0].isIntersecting;

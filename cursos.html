@@ -1352,9 +1352,10 @@
     </div>
   </footer>
   <script>
-    // Teselado de qubits detrás de las notas de Cursos. Al pasar el mouse por
-    // una esfera se vuelve dorada y su flecha gira de polo a polo, junto con
-    // sus 3 vecinas más cercanas, cada una desfasada un tercio de vuelta.
+    // Teselado de qubits detrás de las notas de Cursos. En reposo se ven al
+    // 35%; al pasar el mouse la esfera y sus 3 vecinas se ven enteras y su
+    // flecha gira de polo a polo, cada una desfasada un tercio de vuelta.
+    // Un clic deja esa esfera en azul, quieta, hasta recargar la página.
     (function () {
       var canvas = document.querySelector('.qubits-fondo');
       if (!canvas || !canvas.getContext) return;
@@ -1384,7 +1385,7 @@
               theta: Math.acos(1 - 2 * rnd(k + 1)),
               phi: rnd(k + 7) * TAU,
               drift: (rnd(k + 13) - 0.5) * 0.0012,
-              hotUntil: 0, glow: 0
+              hotUntil: 0, frozen: false
             });
           }
         }
@@ -1404,13 +1405,13 @@
       var current = [];
 
       function release() {
-        current.forEach(function (q) { q.hotUntil = 0; q.glow = 0; });
+        current.forEach(function (q) { q.hotUntil = 0; });
         current = [];
         start();
       }
 
       function activate(px, py) {
-        var group = nearest(px, py, 4);
+        var group = nearest(px, py, 4).filter(function (q) { return !q.frozen; });
         var center = group[0];
         if (!center) return release();
         var dx = center.x - px, dy = center.y - py;
@@ -1421,7 +1422,6 @@
           q.phi = 0;
           q.theta = center.theta + i * TAU / 3;
           q.hotUntil = Infinity;
-          q.glow = 1;
         });
         current = group;
         start();
@@ -1429,28 +1429,23 @@
 
       function draw(t, dt) {
         ctx.clearRect(0, 0, w, h);
-        ctx.lineWidth = 0.7;
         for (var i = 0; i < qubits.length; i++) {
           var q = qubits[i];
           var hot = q.hotUntil > t;
-          if (hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU; else q.phi += q.drift * dt;
-          var g = q.glow;
-
-          if (g > 0.01) {
-            ctx.fillStyle = 'rgba(200,169,110,' + g + ')';
-            ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, TAU); ctx.fill();
-          }
-          ctx.strokeStyle = 'rgba(200,169,110,' + (0.32 + 0.68 * g) + ')';
+          if (q.frozen) { /* quieta */ } else if (hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU; else q.phi += q.drift * dt;
+          var on = hot || q.frozen;
+          var col = q.frozen ? '37,99,235' : '200,169,110';
+          var alpha = on ? 1 : 0.35;
+          ctx.lineWidth = on ? 1 : 0.7;
+          ctx.strokeStyle = 'rgba(' + col + ',' + alpha + ')';
+          ctx.fillStyle = ctx.strokeStyle;
           ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, TAU); ctx.stroke();
-          ctx.strokeStyle = 'rgba(200,169,110,' + (0.22 + 0.5 * g) + ')';
           ctx.beginPath(); ctx.ellipse(q.x, q.y, R, R * 0.3, 0, 0, TAU); ctx.stroke();
 
           var st = Math.sin(q.theta);
           var vx = st * Math.cos(q.phi);
           var vy = -Math.cos(q.theta) * 0.95 + st * Math.sin(q.phi) * 0.3;
           var ex = q.x + vx * R, ey = q.y + vy * R;
-          var arrow = g > 0.5 ? 'rgba(17,17,17,' + g + ')' : 'rgba(160,124,58,0.6)';
-          ctx.strokeStyle = arrow; ctx.fillStyle = arrow;
           ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(ex, ey); ctx.stroke();
           var a = Math.atan2(ey - q.y, ex - q.x);
           ctx.beginPath();
@@ -1462,7 +1457,7 @@
       }
 
       function busy(t) {
-        for (var i = 0; i < qubits.length; i++) if (qubits[i].hotUntil > t || qubits[i].glow > 0.01) return true;
+        for (var i = 0; i < qubits.length; i++) if (qubits[i].hotUntil > t) return true;
         return false;
       }
 
@@ -1487,6 +1482,19 @@
       } else { visible = true; start(); }
 
       section.addEventListener('mouseleave', release);
+      section.addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('.nota')) return;
+        var r = section.getBoundingClientRect();
+        var px = e.clientX - r.left, py = e.clientY - r.top;
+        var q = nearest(px, py, 1)[0];
+        if (!q) return;
+        var dx = q.x - px, dy = q.y - py;
+        if (dx * dx + dy * dy > (R + 3) * (R + 3)) return;
+        q.frozen = true;
+        q.hotUntil = 0;
+        current = current.filter(function (c) { return c !== q; });
+        start();
+      });
       section.addEventListener('mousemove', function (e) {
         var r = section.getBoundingClientRect();
         activate(e.clientX - r.left, e.clientY - r.top);

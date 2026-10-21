@@ -205,25 +205,32 @@
     // (azul). Cada lado mide su fracción del total medido, así que con cada
     // nueva medición todo se reescala: un solo |1⟩ llena el lado rojo, y al
     // llegar un |0⟩ el rojo baja a la mitad y el azul aparece en la mitad.
-    function drawTally(half) {
+    // largo mostrado de cada barra: se acerca suave al valor real para que
+    // las flechas crezcan en vez de aparecer de golpe
+    var shownRed = 0, shownBlue = 0;
+    function drawTally(half, dt) {
       var n0 = 0, n1 = 0;
       for (var i = 0; i < qubits.length; i++) {
         if (qubits[i].frozen === '0') n0++; else if (qubits[i].frozen === '1') n1++;
       }
       var n = n0 + n1;
-      if (!n) return;
+      var targetRed = n ? n1 / n : 0, targetBlue = n ? n0 / n : 0;
+      var ease = still ? 1 : Math.min(1, dt / 650);
+      shownRed += (targetRed - shownRed) * ease;
+      shownBlue += (targetBlue - shownBlue) * ease;
+      if (shownRed < 0.002 && shownBlue < 0.002) return;
       var y = lineY, mx = 15, largo = half - mx;
       ctx.save();
       ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       // cada barra termina en un ángulo como el de los kets, pegado a la línea
       function lado(dir, k, col) {
-        var x0 = w / 2 + dir * mx, x1 = x0 + dir * largo * k / n;
+        var x0 = w / 2 + dir * mx, x1 = x0 + dir * largo * k;
         ctx.strokeStyle = col;
         ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(x1 - dir * 7, y - 11); ctx.lineTo(x1, y); ctx.lineTo(x1 - dir * 7, y + 11); ctx.stroke();
       }
-      if (n1) lado(-1, n1, 'rgb(' + RED + ')');
-      if (n0) lado(1, n0, 'rgb(' + BLUE + ')');
+      if (shownRed > 0.002) lado(-1, shownRed, 'rgb(' + RED + ')');
+      if (shownBlue > 0.002) lado(1, shownBlue, 'rgb(' + BLUE + ')');
       ctx.restore();
     }
     function onMeter(px, py) {
@@ -258,7 +265,7 @@
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
         ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
-        drawTally(half);
+        drawTally(half, dt);
         drawMeter();
       }
       var now = performance.now();

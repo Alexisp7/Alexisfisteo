@@ -384,19 +384,18 @@
       q.k = Math.floor(Math.random() * q.part);
       q.dupAt = performance.now() + DUPLICA;
       q.phi = q.phiTo = q.k * TAU / q.part;
-      q.hopAt = performance.now() + Math.random() * 900;
+      q.hopAt = performance.now() + TIC;
     }
-    // salto a otra partición al azar, por el camino más corto. Cada cierto
-    // tiempo las posiciones se duplican hasta llegar a 32
-    var DUPLICA = 2600;
+    // avanza una partición en sentido antihorario a ritmo fijo, como el
+    // segundero de un reloj. Cada cierto tiempo las posiciones se duplican
+    // hasta llegar a 32
+    var DUPLICA = 2600, TIC = 600;
     function fluctua(q, now) {
       if (q.part < 32 && now >= q.dupAt) { q.part *= 2; q.k *= 2; q.dupAt = now + DUPLICA; }
-      var k = Math.floor(Math.random() * (q.part - 1));
-      if (k >= q.k) k++;
-      var d = (k - q.k) * TAU / q.part;
-      d -= Math.round(d / TAU) * TAU;
-      q.k = k; q.phiTo += d;
-      q.hopAt = now + 500 + Math.random() * 900;
+      q.k = (q.k + q.part - 1) % q.part;
+      q.phiTo -= TAU / q.part;
+      q.hopAt += TIC;
+      if (q.hopAt < now) q.hopAt = now + TIC;
     }
     function restore(q) {
       q.frozen = false; q.masivo = false; q.resetAt = 0; q.part = 0;
@@ -427,7 +426,7 @@
           if (now >= q.hopAt) fluctua(q, now);
           q.phi += (q.phiTo - q.phi) * (still ? 1 : Math.min(1, dt / 110));
         }
-        else if (q.frozen === 'H') q.phi = (q.phi + SPIN * dt / 1000) % TAU;
+        else if (q.frozen === 'H') q.phi = (q.phi - SPIN * dt / 1000) % TAU;
         else if (!q.frozen) q.phi += q.drift * dt;
 
         var on = q.hot || q.frozen;

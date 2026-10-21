@@ -313,13 +313,60 @@
     }
     function measure(q) {
       var p0 = Math.cos(q.theta / 2); p0 *= p0;
-      q.frozen = Math.random() < p0 ? '0' : '1';
+      q.frozen = q.forzado || (Math.random() < p0 ? '0' : '1'); q.forzado = '';
       q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0; q.part = 0;
     }
     // clic en la QFT: todas las esferas pasan a H en onda desde la compuerta.
     // El ecuador empieza con 2 posiciones posibles y se va duplicando a 4, 8,
     // 16 y 32; la flecha fluctúa saltando entre esas posiciones
+    // Segundo clic en la QFT: todo colapsa en onda y los resultados forman las
+    // iniciales A R (lado izquierdo) y S (lado derecho), con las letras en
+    // |0⟩ y el fondo en |1⟩. Después la compuerta vuelve al centro como
+    // medidor ya activado, y por eso queda fija
+    var LETRAS = {
+      A: ['.###.', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
+      R: ['####.', '#...#', '#...#', '####.', '#.#..', '#..#.', '#...#'],
+      S: ['.####', '#....', '#....', '.###.', '....#', '....#', '####.']
+    };
+    var qftActivo = false;
+    function mensaje() {
+      var izq = qubits.filter(function (q) { return q.x < w / 2; });
+      var der = qubits.filter(function (q) { return q.x >= w / 2; });
+      function caja(lista) {
+        var b = [Infinity, -Infinity];
+        lista.forEach(function (q) { b[0] = Math.min(b[0], q.x); b[1] = Math.max(b[1], q.x); });
+        return b;
+      }
+      var bi = caja(izq), bd = caja(der);
+      var px = Math.min((bi[1] - bi[0]) * 0.9 / 11, (bd[1] - bd[0]) * 0.9 / 5);
+      // las letras van más altas que anchas para que se lean en la grilla
+      var py = Math.min(px * 1.6, h * 0.8 / 7);
+      function bloque(texto, b) {
+        var ancho = (texto.length * 6 - 1) * px;
+        return { texto: texto, x0: (b[0] + b[1]) / 2 - ancho / 2, y0: h / 2 - 3.5 * py };
+      }
+      var bloques = [bloque('AR', bi), bloque('S', bd)];
+      function enLetra(q) {
+        var bl = q.x < w / 2 ? bloques[0] : bloques[1];
+        var gx = Math.floor((q.x - bl.x0) / px), gy = Math.floor((q.y - bl.y0) / py);
+        if (gx < 0 || gy < 0 || gy > 6) return false;
+        var letra = bl.texto[Math.floor(gx / 6)], col = gx % 6;
+        return !!letra && col < 5 && LETRAS[letra][gy][col] === '#';
+      }
+      var t0 = performance.now(), cx = w / 2 + meterOff, cy = lineY;
+      qubits.forEach(function (q) {
+        var d = Math.sqrt((q.x - cx) * (q.x - cx) + (q.y - cy) * (q.y - cy));
+        q.hAt = 0; q.resetAt = 0;
+        q.forzado = enLetra(q) ? '0' : '1';
+        q.collapseAt = t0 + d * 0.9;
+      });
+      current.forEach(function (q) { q.hot = false; }); current = [];
+      qftActivo = false; anclado = false; collapsed = true;
+      start();
+    }
     function qftAll() {
+      if (qftActivo) return mensaje();
+      qftActivo = true;
       var t0 = performance.now(), cx = w / 2 + meterOff, cy = lineY;
       qubits.forEach(function (q) {
         var d = Math.sqrt((q.x - cx) * (q.x - cx) + (q.y - cy) * (q.y - cy));

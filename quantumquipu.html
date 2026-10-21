@@ -235,21 +235,16 @@
       .pipeline-strip { padding:24px; }
       .content-wrap { grid-template-columns:1fr; gap:48px; padding:56px 24px; }
     }
+    .header-inner { justify-content: center; }
+    nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; }
+    @media (max-width: 640px) { nav.main-nav a { padding: 8px 10px; } }
   </style>
 </head>
 <body>
 
   <!-- HEADER -->
   <header class="header">
-    <div class="header-greek-bar"></div>
     <div class="header-inner">
-      <div class="logo-group">
-        <span class="logo-phi">Ψ</span>
-        <div class="site-logo">
-          <span class="site-logo-name">Alexis R. Salvatierra</span>
-          <span class="site-logo-subtitle">Física Teórica · UNMSM</span>
-        </div>
-      </div>
       <nav class="main-nav">
         <a href="index.html">Inicio</a>
         <span class="nav-sep">|</span>
@@ -257,10 +252,9 @@
         <span class="nav-sep">|</span>
         <a href="proyectos.html" class="active">Proyectos</a>
         <span class="nav-sep">|</span>
-        <a href="#contacto">Contacto</a>
+        <a href="contacto.html">Contacto</a>
       </nav>
     </div>
-    <div class="header-border"></div>
   </header>
 
   <!-- BREADCRUMB -->

@@ -8,6 +8,9 @@
 // Cada <canvas class="qubits-fondo"> cubre a su elemento padre, o solo
 // hasta el elemento que indique data-hasta. Se omiten las esferas que
 // tocarían texto o una nota, para que nada quede encima de las letras.
+// Con data-franja="ai,bi,ad,bd" se deja libre una franja inclinada: sin
+// esferas entre la recta izquierda (de ai arriba a bi abajo, en fracción
+// del ancho) y la recta derecha (de ad arriba a bd abajo).
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
@@ -24,6 +27,16 @@
     var ctx = canvas.getContext('2d');
     var section = canvas.parentElement;
     var limit = canvas.getAttribute('data-hasta');
+    var band = (canvas.getAttribute('data-franja') || '').split(',').map(Number);
+    if (band.length !== 4 || band.some(isNaN)) band = null;
+
+    function inBand(x, y) {
+      if (!band) return false;
+      var t = h ? y / h : 0;
+      var left = (band[0] + (band[1] - band[0]) * t) * w;
+      var right = (band[2] + (band[3] - band[2]) * t) * w;
+      return x + R > left && x - R < right;
+    }
     var qubits = [], current = [], w = 0, h = 0, visible = false, raf = 0, last = 0;
 
     // cajas de cada línea de texto (y de cada nota) dentro de la sección
@@ -65,7 +78,7 @@
       // solo filas completas, para que ninguna esfera quede cortada abajo
       for (var y = DY / 2; y + R + 1 <= h; y += DY, row++) {
         for (var x = (row % 2 ? DX : DX / 2); x < w + DX; x += DX, k++) {
-          if (covered(boxes, x, y)) continue;
+          if (covered(boxes, x, y) || inBand(x, y)) continue;
           qubits.push({
             x: x, y: y,
             theta: Math.acos(1 - 2 * rnd(k + 1)),

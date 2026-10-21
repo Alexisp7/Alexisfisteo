@@ -194,6 +194,9 @@
 
     // medidor de circuito cuántico sobre la línea; un clic colapsa todo
     var meter = null, collapsed = false;
+    // el medidor se arrastra con el mouse sobre la línea y al soltarlo vuelve
+    // suave al centro
+    var meterOff = 0, lineHalf = 105, drag = null, arrastrado = false;
 
     // cuántas esferas hay en cada resultado
     function cuenta() {
@@ -208,7 +211,7 @@
     // medidor de circuito cuántico. Si hay esferas en H la medición está en
     // superposición: el medidor hace glitch entre rojo y azul y la aguja oscila
     function drawMeter(t, superpuesto) {
-      var mw = 30, mh = 20, x = w / 2 - mw / 2, y = lineY - mh / 2;
+      var mw = 30, mh = 20, x = w / 2 + meterOff - mw / 2, y = lineY - mh / 2;
       meter = { x: x, y: y, w: mw, h: mh };
       var ang = -0.9;
       ctx.save();
@@ -232,7 +235,7 @@
       }
       ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3B2F28'; ctx.lineWidth = 1.2;
       ctx.fillRect(x, y, mw, mh); ctx.strokeRect(x, y, mw, mh);
-      var cx = w / 2, cy = y + mh - 4;
+      var cx = w / 2 + meterOff, cy = y + mh - 4;
       ctx.beginPath(); ctx.arc(cx, cy, 9, Math.PI, 2 * Math.PI); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 11 * Math.cos(ang), cy + 11 * Math.sin(ang)); ctx.stroke();
       ctx.restore();
@@ -260,14 +263,16 @@
       shownL += (targetL - shownL) * ease;
       shownR += (targetR - shownR) * ease;
       if (shownL < 0.004 && shownR < 0.004) return sup;
-      var y = lineY, mx = 15, largo = half - mx;
+      var y = lineY, mx = 15;
       function color(base) { return 'rgb(' + base + ')'; }
       ctx.save();
       ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       function lado(dir, k, col) {
         // se desvanece al acercarse al medidor
         ctx.globalAlpha = Math.min(1, k / 0.22);
-        var x0 = w / 2 + dir * mx, x1 = x0 + dir * largo * k;
+        // cada flecha sale del medidor y llega como máximo al borde de la línea
+        var largo = half - dir * meterOff - mx;
+        var x0 = w / 2 + meterOff + dir * mx, x1 = x0 + dir * largo * k;
         ctx.strokeStyle = col;
         ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(x1 - dir * 7, y - 11); ctx.lineTo(x1, y); ctx.lineTo(x1 - dir * 7, y + 11); ctx.stroke();
@@ -284,7 +289,7 @@
     // probabilidad cos²(θ/2). Un segundo clic deshace todo, también en onda
     // desde el medidor, y cada esfera vuelve a su estado inicial
     function collapseAll() {
-      var t0 = performance.now(), cx = w / 2, cy = lineY;
+      var t0 = performance.now(), cx = w / 2 + meterOff, cy = lineY;
       qubits.forEach(function (q) {
         var d = Math.sqrt((q.x - cx) * (q.x - cx) + (q.y - cy) * (q.y - cy));
         if (collapsed) {
@@ -314,6 +319,9 @@
       if (span) {
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
+        lineHalf = half;
+        if (!drag) meterOff += (0 - meterOff) * (still ? 1 : Math.min(1, dt / 220));
+        meterOff = Math.max(-(half - 15), Math.min(half - 15, meterOff));
         ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
         var sup = drawTally(half, dt, performance.now());
         drawMeter(performance.now(), sup);
@@ -382,7 +390,7 @@
       var dt = last ? Math.min(t - last, 50) : 16;
       last = t;
       draw(dt);
-      var pendientes = qubits.some(function (q) { return q.collapseAt || q.resetAt; });
+      var pendientes = drag || Math.abs(meterOff) > 0.3 || qubits.some(function (q) { return q.collapseAt || q.resetAt; });
       if (visible && (!still || current.length || pendientes)) raf = requestAnimationFrame(loop);
       else { raf = 0; last = 0; }
     }
@@ -407,12 +415,37 @@
 
     section.addEventListener('mouseleave', release);
     section.addEventListener('mousemove', function (e) {
+      if (drag) return;
       var p = point(e);
-      section.style.cursor = onMeter(p[0], p[1]) ? 'pointer' : '';
+      section.style.cursor = onMeter(p[0], p[1]) ? 'grab' : '';
       activate(p[0], p[1]);
+    });
+    section.addEventListener('mousedown', function (e) {
+      var p = point(e);
+      if (!onMeter(p[0], p[1])) return;
+      e.preventDefault();
+      drag = { x: p[0], off: meterOff };
+      arrastrado = false;
+      section.style.cursor = 'grabbing';
+      start();
+    });
+    window.addEventListener('mousemove', function (e) {
+      if (!drag) return;
+      var dx = point(e)[0] - drag.x;
+      if (Math.abs(dx) > 3) arrastrado = true;
+      meterOff = Math.max(-(lineHalf - 15), Math.min(lineHalf - 15, drag.off + dx));
+      start();
+    });
+    window.addEventListener('mouseup', function () {
+      if (!drag) return;
+      drag = null;
+      section.style.cursor = '';
+      start();
     });
     section.addEventListener('click', function (e) {
       if (e.target.closest && e.target.closest('a, button, .nota')) return;
+      // soltar después de arrastrar no cuenta como clic en el medidor
+      if (arrastrado) { arrastrado = false; return; }
       var p = point(e);
       if (onMeter(p[0], p[1])) return collapseAll();
       freeze(p[0], p[1]);

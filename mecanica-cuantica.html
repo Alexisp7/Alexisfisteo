@@ -1263,7 +1263,7 @@
     .hero-eyebrow::before { content: none; }
     /* Stern-Gerlach centrado sobre blanco */
     .sg {
-      background: var(--white); min-height: calc(100vh - 150px);
+      background: var(--white); min-height: 0; padding-top: 60px;
       display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px;
     }
     .sg-dibujo { width: min(900px, 100%); height: auto; overflow: visible; }
@@ -1282,6 +1282,22 @@
     .sg-ket { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 26px; fill: #3B2F28; }
     .sg-atomo { fill: #C8A96E; }
     .sg-pie { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: var(--gray-light); margin-top: 18px; }
+    /* Los tres experimentos de Feynman */
+    .fy-wrap { background: var(--white); padding: 10px 20px 80px; display: flex; flex-direction: column; align-items: center; gap: 46px; }
+    .fy-intro { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--gray); }
+    .fy { width: min(900px, 100%); margin: 0; }
+    .fy-titulo { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 28px; color: #6E1A22; margin-bottom: 6px; }
+    .fy-formula { font-weight: 500; font-style: italic; font-size: 22px; color: #3B2F28; margin-left: 14px; }
+    .fy-dibujo { width: 100%; height: auto; overflow: visible; }
+    .fy-muro { stroke: #3B2F28; stroke-width: 6; fill: none; }
+    .fy-pantalla { stroke: #3B2F28; stroke-width: 2; }
+    .fy-eje { stroke: #3B2F28; stroke-width: 1; opacity: 0.35; }
+    .fy-et { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; fill: #7A7A7A; }
+    .fy-p1 { stroke: #7A7A7A; stroke-width: 1.3; fill: none; stroke-dasharray: 4 5; }
+    .fy-p12 { stroke: #6E1A22; stroke-width: 2.2; fill: none; }
+    .fy-ley { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; fill: #3B2F28; }
+    .fy-impacto { fill: #3B2F28; opacity: 0.7; }
+    .fy-onda { fill: none; stroke: #C8A96E; stroke-width: 1.3; }
   </style>
 </head>
 <body>
@@ -1331,6 +1347,66 @@
       <g id="sg-atomos"></g>
     </svg>
     <p class="sg-pie">Stern y Gerlach, 1922</p>
+  </section>
+
+  <section class="fy-wrap" aria-label="Los tres experimentos de doble rendija de Feynman">
+    <p class="fy-intro">Feynman, <em>Lectures on Physics</em>, vol. III, capítulo 1</p>
+      <figure class="fy" data-tipo="balas">
+        <figcaption class="fy-titulo">Balas <span class="fy-formula">P₁₂ = P₁ + P₂</span></figcaption>
+        <svg class="fy-dibujo" viewBox="0 0 900 300" role="img" aria-label="Experimento de doble rendija con balas">
+          <rect x="34" y="136" width="56" height="28" rx="4" class="sg-pieza"/>
+          <path d="M90 145 H118 V155 H90" class="sg-pieza"/>
+          <path d="M44 164 L36 196 M80 164 L88 196" class="sg-linea"/>
+          <text x="70" y="250" class="sg-nota" text-anchor="middle">ametralladora</text>
+          <path d="M330 30 V105 M330 135 V165 M330 195 V270" class="fy-muro"/>
+          <text x="345" y="125" class="fy-et">1</text>
+          <text x="345" y="185" class="fy-et">2</text>
+          <text x="330" y="292" class="sg-nota" text-anchor="middle">muro</text>
+          <line x1="600" y1="30" x2="600" y2="270" class="fy-pantalla"/>
+          <text x="600" y="292" class="sg-nota" text-anchor="middle">pantalla</text>
+          <g class="fy-ondas"></g>
+          <g class="fy-impactos"></g>
+          <line x1="640" y1="30" x2="640" y2="270" class="fy-eje"/>
+          <g class="fy-curvas"></g>
+        </svg>
+      </figure>
+      <figure class="fy" data-tipo="ondas">
+        <figcaption class="fy-titulo">Ondas de agua <span class="fy-formula">I₁₂ = |h₁ + h₂|²</span></figcaption>
+        <svg class="fy-dibujo" viewBox="0 0 900 300" role="img" aria-label="Experimento de doble rendija con ondas de agua">
+          <circle cx="90" cy="150" r="9" class="sg-pieza"/>
+          <path d="M90 159 V200 M76 200 H104" class="sg-linea"/>
+          <text x="70" y="250" class="sg-nota" text-anchor="middle">fuente</text>
+          <path d="M330 30 V105 M330 135 V165 M330 195 V270" class="fy-muro"/>
+          <text x="345" y="125" class="fy-et">1</text>
+          <text x="345" y="185" class="fy-et">2</text>
+          <text x="330" y="292" class="sg-nota" text-anchor="middle">muro</text>
+          <line x1="600" y1="30" x2="600" y2="270" class="fy-pantalla"/>
+          <text x="600" y="292" class="sg-nota" text-anchor="middle">pantalla</text>
+          <g class="fy-ondas"></g>
+          <g class="fy-impactos"></g>
+          <line x1="640" y1="30" x2="640" y2="270" class="fy-eje"/>
+          <g class="fy-curvas"></g>
+        </svg>
+      </figure>
+      <figure class="fy" data-tipo="electrones">
+        <figcaption class="fy-titulo">Electrones <span class="fy-formula">P₁₂ = |φ₁ + φ₂|²</span></figcaption>
+        <svg class="fy-dibujo" viewBox="0 0 900 300" role="img" aria-label="Experimento de doble rendija con electrones">
+          <rect x="38" y="134" width="60" height="32" rx="8" class="sg-pieza"/>
+          <path d="M98 144 L116 150 L98 156" class="sg-linea"/>
+          <path d="M50 166 V196 M86 166 V196" class="sg-linea"/>
+          <text x="70" y="250" class="sg-nota" text-anchor="middle">cañón de electrones</text>
+          <path d="M330 30 V105 M330 135 V165 M330 195 V270" class="fy-muro"/>
+          <text x="345" y="125" class="fy-et">1</text>
+          <text x="345" y="185" class="fy-et">2</text>
+          <text x="330" y="292" class="sg-nota" text-anchor="middle">muro</text>
+          <line x1="600" y1="30" x2="600" y2="270" class="fy-pantalla"/>
+          <text x="600" y="292" class="sg-nota" text-anchor="middle">pantalla</text>
+          <g class="fy-ondas"></g>
+          <g class="fy-impactos"></g>
+          <line x1="640" y1="30" x2="640" y2="270" class="fy-eje"/>
+          <g class="fy-curvas"></g>
+        </svg>
+      </figure>
   </section>
 
   <footer class="footer-wrap">
@@ -1384,6 +1460,123 @@
         requestAnimationFrame(loop);
       }
       requestAnimationFrame(loop);
+    })();
+  </script>
+  <script>
+    // Experimentos de doble rendija de Feynman: curvas P1, P2 y P12, impactos
+    // que llegan uno por uno (balas y electrones) y ondas que se propagan.
+    (function () {
+      var NS = 'http://www.w3.org/2000/svg';
+      var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var Y1 = 120, Y2 = 180, YC = 150, X0 = 640, AMP = 210;
+
+      function gauss(y, c, s) { return Math.exp(-Math.pow((y - c) / s, 2) / 2); }
+      var dist = {
+        balas: {
+          p1: function (y) { return gauss(y, Y1, 34); },
+          p2: function (y) { return gauss(y, Y2, 34); },
+          p12: function (y) { return 0.5 * (gauss(y, Y1, 34) + gauss(y, Y2, 34)); }
+        },
+        ondas: {
+          p1: function (y) { return gauss(y, Y1, 46); },
+          p2: function (y) { return gauss(y, Y2, 46); },
+          p12: function (y) { var e = gauss(y, YC, 58); var c = Math.cos((y - YC) * 0.075); return e * c * c; }
+        }
+      };
+      dist.electrones = dist.ondas;
+
+      function curva(f, norm) {
+        var d = '';
+        for (var y = 30; y <= 270; y += 2) {
+          var x = X0 + AMP * f(y) / norm;
+          d += (y === 30 ? 'M' : 'L') + x.toFixed(1) + ' ' + y;
+        }
+        return d;
+      }
+      function maximo(f) { var m = 0; for (var y = 30; y <= 270; y++) m = Math.max(m, f(y)); return m; }
+      function linea(g, d, cls) { var p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', cls); g.appendChild(p); }
+      function texto(g, x, y, t) { var e = document.createElementNS(NS, 'text'); e.setAttribute('x', x); e.setAttribute('y', y); e.setAttribute('class', 'fy-ley'); e.textContent = t; g.appendChild(e); }
+
+      // muestreo por rechazo de la distribución P12
+      function muestra(f, m) {
+        for (var k = 0; k < 200; k++) {
+          var y = 32 + Math.random() * 236;
+          if (Math.random() * m < f(y)) return y;
+        }
+        return YC;
+      }
+
+      Array.prototype.forEach.call(document.querySelectorAll('.fy'), function (fig) {
+        var tipo = fig.getAttribute('data-tipo');
+        var D = dist[tipo];
+        var curvas = fig.querySelector('.fy-curvas');
+        var m1 = maximo(D.p1), m12 = maximo(D.p12);
+        var nombre = tipo === 'ondas' ? 'I' : 'P';
+        linea(curvas, curva(D.p1, m1 * 2.2), 'fy-p1');
+        linea(curvas, curva(D.p2, m1 * 2.2), 'fy-p1');
+        linea(curvas, curva(D.p12, m12), 'fy-p12');
+        texto(curvas, X0 + AMP * 0.48, Y1 - 46, nombre + '₁');
+        texto(curvas, X0 + AMP * 0.48, Y2 + 56, nombre + '₂');
+        texto(curvas, X0 + AMP + 8, YC + 5, nombre + '₁₂');
+
+        var impactos = fig.querySelector('.fy-impactos');
+        var ondas = fig.querySelector('.fy-ondas');
+
+        if (tipo === 'ondas') {
+          // frentes de onda: desde la fuente y luego desde cada rendija
+          var arcs = [];
+          // cada grupo de ondas queda recortado a su tramo: fuente a muro y muro a pantalla
+          var svg = fig.querySelector('svg'), defs = document.createElementNS(NS, 'defs');
+          svg.insertBefore(defs, svg.firstChild);
+          function recorte(id, x, w) {
+            var cp = document.createElementNS(NS, 'clipPath'); cp.setAttribute('id', id);
+            var r = document.createElementNS(NS, 'rect');
+            r.setAttribute('x', x); r.setAttribute('y', 30); r.setAttribute('width', w); r.setAttribute('height', 240);
+            cp.appendChild(r); defs.appendChild(cp);
+            var g = document.createElementNS(NS, 'g'); g.setAttribute('clip-path', 'url(#' + id + ')'); ondas.appendChild(g);
+            return g;
+          }
+          var gFuente = recorte('fy-clip-fuente', 96, 230), gRendijas = recorte('fy-clip-rendijas', 334, 264);
+          function arco(cx, cy, r, a0, a1) {
+            var p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'fy-onda'); (cx === 90 ? gFuente : gRendijas).appendChild(p);
+            return { el: p, cx: cx, cy: cy, r0: r, a0: a0, a1: a1 };
+          }
+          for (var k = 0; k < 4; k++) {
+            arcs.push(arco(90, 150, k * 60, -0.9, 0.9));
+            arcs.push(arco(330, Y1, k * 68, -1.3, 1.3));
+            arcs.push(arco(330, Y2, k * 68, -1.3, 1.3));
+          }
+          var t0 = performance.now();
+          (function anima(t) {
+            var ph = ((t - t0) * 0.04) % 60;
+            arcs.forEach(function (a) {
+              var span = a.cx === 90 ? 240 : 270;
+              var r = (a.r0 + ph * (a.cx === 90 ? 1 : 68 / 60)) % span + 6;
+              var x0 = a.cx + r * Math.cos(a.a0), y0 = a.cy + r * Math.sin(a.a0);
+              var x1 = a.cx + r * Math.cos(a.a1), y1 = a.cy + r * Math.sin(a.a1);
+              a.el.setAttribute('d', 'M' + x0 + ' ' + y0 + ' A' + r + ' ' + r + ' 0 0 1 ' + x1 + ' ' + y1);
+              a.el.style.opacity = Math.max(0, 1 - r / span) * 0.9;
+            });
+            if (!still) requestAnimationFrame(anima);
+          })(t0);
+          return;
+        }
+
+        // balas y electrones: impactos uno por uno sobre la pantalla
+        var cuenta = 0, MAX = tipo === 'electrones' ? 520 : 380;
+        function impacto() {
+          var y = muestra(D.p12, m12);
+          var c = document.createElementNS(NS, 'circle');
+          c.setAttribute('cx', (594 + Math.random() * 12).toFixed(1));
+          c.setAttribute('cy', y.toFixed(1));
+          c.setAttribute('r', tipo === 'balas' ? '2.3' : '1.4');
+          c.setAttribute('class', 'fy-impacto');
+          impactos.appendChild(c);
+          if (++cuenta > MAX) { impactos.removeChild(impactos.firstChild); }
+        }
+        if (still) { for (var n = 0; n < MAX; n++) impacto(); return; }
+        setInterval(impacto, tipo === 'balas' ? 70 : 45);
+      });
     })();
   </script>
 </body>

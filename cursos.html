@@ -1250,19 +1250,10 @@
     /* Cursos como un cuaderno abierto sobre un escritorio */
     .escritorio {
       --tinta: #3B2F28; --granate: #6E1A22; --papel: #F5EEDF; --papel-2: #EFE5D1;
-      background:
-        radial-gradient(ellipse at 50% 35%, rgba(255,250,240,0.9) 0%, rgba(0,0,0,0) 60%),
-        radial-gradient(ellipse at 50% 120%, rgba(90,60,30,0.25) 0%, rgba(0,0,0,0) 60%),
-        #E9E0CF;
-      padding: 40px 24px 90px;
-      color: var(--tinta);
+      background: var(--white); padding: 28px 24px 40px; color: var(--tinta);
     }
-    .escritorio-titulo { text-align: center; margin-bottom: 34px; }
-    .escritorio-titulo h1 {
-      font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(40px, 5vw, 64px);
-      color: #2A211C; line-height: 1.05; letter-spacing: -0.01em;
-    }
-    .escritorio-titulo p { font-family: 'Cormorant Garamond', serif; font-size: 21px; color: #4A3D35; margin-top: 6px; }
+    .escritorio-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .cuaderno-marco { max-width: 1240px; margin: 0 auto; }
 
     .cuaderno {
       position: relative; max-width: 1240px; margin: 0 auto;
@@ -1361,11 +1352,8 @@
   </header>
 
   <section class="escritorio">
-    <div class="escritorio-titulo">
-      <h1>Ideas en construcción.</h1>
-      <p>Apuntes, problemas y preguntas de física.</p>
-    </div>
-
+    <h1 class="escritorio-sr">Cursos</h1>
+    <div class="cuaderno-marco">
     <div class="cuaderno">
 
       <article class="pagina pagina--izq" id="mecanica-cuantica">
@@ -1459,6 +1447,7 @@
       </article>
 
     </div>
+    </div>
   </section>
 
 
@@ -1469,5 +1458,29 @@
       </div>
     </div>
   </footer>
+  <script>
+    // En escritorio el cuaderno se escala para que entre completo en la pantalla
+    (function () {
+      var marco = document.querySelector('.cuaderno-marco');
+      var libro = document.querySelector('.cuaderno');
+      var header = document.querySelector('.header');
+      if (!marco || !libro) return;
+      var desktop = window.matchMedia('(min-width: 901px)');
+      function fit() {
+        libro.style.transform = ''; marco.style.height = '';
+        if (!desktop.matches) return;
+        var room = window.innerHeight - (header ? header.offsetHeight : 0) - 68;
+        var k = Math.min(1, room / libro.offsetHeight, (marco.clientWidth) / libro.offsetWidth);
+        if (k < 1) {
+          libro.style.transformOrigin = 'top center';
+          libro.style.transform = 'scale(' + k + ')';
+          marco.style.height = Math.ceil(libro.offsetHeight * k) + 'px';
+        }
+      }
+      window.addEventListener('resize', fit);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+      fit();
+    })();
+  </script>
 </body>
 </html>

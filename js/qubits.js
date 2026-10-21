@@ -225,7 +225,7 @@
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(span[0] + 32, lineY); ctx.lineTo(span[1] - 32, lineY); ctx.stroke();
         // cuadrito sobre el cable
-        var gs = 14;
+        var gs = 7;
         ctx.fillStyle = '#fff'; ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         ctx.fillRect(w / 2 - gs / 2, lineY - gs / 2, gs, gs);
         ctx.strokeRect(w / 2 - gs / 2, lineY - gs / 2, gs, gs);

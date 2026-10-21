@@ -64,7 +64,7 @@
       if (profile.length < 2) return;
       var cx = w / 2, top = 1.5, bracket = 60, drop = 0.22 * h;
       var pts = profile.map(function (p) { return [p[0], Math.min(Math.max(p[1] * h, top), h - 1.5)]; });
-      ctx.strokeStyle = '#E8D5A3'; ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.strokeStyle = 'rgba(' + GOLD + ',0.35)'; ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
       [1, -1].forEach(function (side) {
         var x0 = cx + side * pts[0][0];
         ctx.beginPath();

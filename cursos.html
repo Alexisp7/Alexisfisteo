@@ -1242,30 +1242,43 @@
       display:grid; grid-template-columns:repeat(3,1fr); gap:0;
       border:0.5px solid var(--border); margin-top:0;
     }
-    .course-works { margin:-8px 0 22px; border-top:0.5px solid var(--border); }
-    .course-works summary {
-      list-style:none; cursor:pointer; padding:14px 0 4px;
+    .pub-list { max-width:900px; }
+    .pub-item {
+      padding:40px 0; border-bottom:0.5px solid var(--border);
+      display:grid; grid-template-columns:64px 1fr; gap:32px; align-items:start;
+    }
+    .pub-num {
+      font-family:'Cormorant Garamond',serif; font-size:42px; font-weight:700;
+      color:var(--border); line-height:1; letter-spacing:-0.03em;
+    }
+    .pub-type {
       font-family:'Space Mono',monospace; font-size:8px; font-weight:700;
-      letter-spacing:0.2em; text-transform:uppercase; color:var(--gold);
+      letter-spacing:0.25em; text-transform:uppercase; color:var(--gold);
+      margin-bottom:10px;
     }
-    .course-works summary::-webkit-details-marker { display:none; }
-    .course-works summary::after { content:' +'; }
-    .course-works[open] summary::after { content:' −'; }
-    .course-works ul { list-style:none; margin-top:8px; }
-    .course-works li { padding:10px 0; border-bottom:0.5px solid var(--border); }
-    .course-works li:last-child { border-bottom:none; }
-    .course-work-title {
-      font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:600;
-      color:var(--black); line-height:1.25; display:block; margin-bottom:4px;
+    .pub-title {
+      font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600;
+      color:var(--black); line-height:1.2; margin-bottom:10px;
     }
-    .course-work-desc { font-family:'Inter',sans-serif; font-size:12px; color:var(--gray); line-height:1.6; display:block; margin-bottom:6px; }
-    .course-work-links a {
+    .pub-venue {
+      font-family:'Inter',sans-serif; font-size:12px; color:var(--gray-light); margin-bottom:14px;
+    }
+    .pub-abstract {
+      font-family:'Inter',sans-serif; font-size:13px; color:var(--gray); line-height:1.75;
+      margin-bottom:16px;
+    }
+    .pub-links { display:flex; gap:20px; }
+    .pub-link {
       font-family:'Space Mono',monospace; font-size:8px; font-weight:700;
       letter-spacing:0.18em; text-transform:uppercase; color:var(--gold);
-      text-decoration:none; margin-right:16px; opacity:0.8;
+      text-decoration:none; transition:opacity 0.2s; opacity:0.8;
     }
-    .course-work-links a:hover { opacity:1; }
+    .pub-link:hover { opacity:1; }
+    @media (max-width:640px) {
+      .pub-item { grid-template-columns:1fr; gap:12px; }
+    }
 
+    .all-courses-grid { border:none; }
   </style>
 </head>
 <body>
@@ -1291,91 +1304,16 @@
     <div class="page-hero-inner">
       <p class="hero-eyebrow" style="margin-bottom:18px;">Portafolio académico</p>
       <h1 class="page-hero-title">Cursos &amp; <em>Formación</em></h1>
-      <p class="page-hero-sub">Doce cursos de física teórica y computacional — desde fundamentos hasta especialización avanzada.</p>
+      <p class="page-hero-sub">Cursos y problemas resueltos de física teórica y computacional.</p>
     </div>
     <div class="page-hero-ornament">Ψ</div>
   </section>
   <hr class="gold-line"/>
 
-  <section class="courses-tabs-section">
-    <div class="courses-tabs">
-      <a href="#todos" class="tab-active">Todos</a>
-      <span class="tab-sep">|</span>
-      <a href="#avanzados">Avanzados</a>
-      <span class="tab-sep">|</span>
-      <a href="#intermedios">Intermedios</a>
-      <span class="tab-sep">|</span>
-      <a href="#fundamentos">Fundamentos</a>
-    </div>
-  </section>
 
   <section id="todos">
     <div class="section">
       <div class="all-courses-grid">
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h10"/><path d="M6.5 10.5 Q12 3 17.5 10.5"/><path d="M6.5 13.5 Q12 21 17.5 13.5"/></svg>
-          </div>
-          <p class="course-level">UNMSM · 2026</p>
-          <h3 class="course-title">Electromagnetismo II</h3>
-          <p class="course-desc">Teoremas integrales, ecuación de Laplace y problemas de frontera. Cálculo vectorial en coordenadas curvilíneas aplicado a campos electrostáticos.</p>
-          <details class="course-works">
-            <summary>Ver trabajos · 2</summary>
-            <ul>
-              <li>
-                <span class="course-work-title">Tarea 1: Teorema de Stokes</span>
-                <span class="course-work-desc">Integral de línea de un campo azimutal sobre una circunferencia y verificación con el flujo del rotacional sobre un hemisferio.</span>
-                <span class="course-work-links"><a href="arch/avances/Electromagnetismo_Tarea_1.pdf" target="_blank">Ver PDF →</a><a href="arch/avances/Electromagnetismo_Tarea_1.pdf" download>Descargar →</a></span>
-              </li>
-              <li>
-                <span class="course-work-title">Tarea 2: Ecuación de Laplace</span>
-                <span class="course-work-desc">Potencial entre dos planos infinitos por separación de variables con condiciones de frontera periódicas.</span>
-                <span class="course-work-links"><a href="arch/avances/Electromagnetismo_Tarea_2.pdf" target="_blank">Ver PDF →</a><a href="arch/avances/Electromagnetismo_Tarea_2.pdf" download>Descargar →</a></span>
-              </li>
-            </ul>
-          </details>
-        </div>
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><circle cx="10.5" cy="10.5" r="2.2"/><circle cx="13.5" cy="10.5" r="2.2"/><circle cx="12" cy="13.2" r="2.2"/><circle cx="12" cy="12" r="10"/></svg>
-          </div>
-          <p class="course-level">UNMSM · 2026</p>
-          <h3 class="course-title">Física Nuclear y Subnuclear</h3>
-          <p class="course-desc">Estructura y spin nuclear, argumentos contra los electrones nucleares y teoría de dispersión en la primera aproximación de Born.</p>
-          <details class="course-works">
-            <summary>Ver trabajos · 2</summary>
-            <ul>
-              <li>
-                <span class="course-work-title">Tarea 2: Electrones nucleares</span>
-                <span class="course-work-desc">Principio de incertidumbre, spin de núcleos según la paridad de nucleones y el caso del tritio.</span>
-                <span class="course-work-links"><a href="arch/avances/Fisica_nuclear_Tarea_2.pdf" target="_blank">Ver PDF →</a><a href="arch/avances/Fisica_nuclear_Tarea_2.pdf" download>Descargar →</a></span>
-              </li>
-              <li>
-                <span class="course-work-title">Tarea 3: Aproximación de Born</span>
-                <span class="course-work-desc">Amplitud de dispersión y su reducción a una integral radial para un potencial central.</span>
-                <span class="course-work-links"><a href="arch/avances/Fisica_nuclear_Tarea_3.pdf" target="_blank">Ver PDF →</a><a href="arch/avances/Fisica_nuclear_Tarea_3.pdf" download>Descargar →</a></span>
-              </li>
-            </ul>
-          </details>
-        </div>
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><path d="M10 14V4a2 2 0 0 1 4 0v10"/><circle cx="12" cy="17.5" r="3.5"/><path d="M12 9v5"/></svg>
-          </div>
-          <p class="course-level">UNMSM · 2024</p>
-          <h3 class="course-title">Termodinámica</h3>
-          <p class="course-desc">Leyes de la termodinámica, radiación térmica y el nacimiento de la hipótesis cuántica de Planck.</p>
-          <details class="course-works">
-            <summary>Ver trabajos · 1</summary>
-            <ul>
-              <li>
-                <span class="course-work-title">Radiación de Cuerpo Negro</span>
-                <span class="course-work-desc">Del trabajo de Wien, Rayleigh y Jeans a la ley de Planck y el abandono de la energía continua.</span>
-                <span class="course-work-links"><a href="arch/avances/Radiacion_de_cuerpo_negro.pdf" target="_blank">Ver PDF →</a><a href="arch/avances/Radiacion_de_cuerpo_negro.pdf" download>Descargar →</a></span>
-              </li>
-            </ul>
-          </details>
-        </div>
 
         <div class="course-card">
           <div class="course-icon-box">
@@ -1387,90 +1325,92 @@
           <a href="#" class="course-cta">Ver curso</a>
         </div>
 
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="7" y="7" width="10" height="10"/><line x1="7" y1="1" x2="7" y2="4"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="17" y1="1" x2="17" y2="4"/><line x1="7" y1="20" x2="7" y2="23"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="17" y1="20" x2="17" y2="23"/><line x1="1" y1="7" x2="4" y2="7"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="1" y1="17" x2="4" y2="17"/><line x1="20" y1="7" x2="23" y2="7"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="20" y1="17" x2="23" y2="17"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <hr class="gold-line"/>
+  <section id="problemas">
+    <div class="section">
+      <div class="section-header">
+        <p class="section-eyebrow">Ejercicios resueltos</p>
+        <h2 class="section-title">Problemas <em>varios</em></h2>
+      </div>
+      <div class="pub-list">
+
+        <div class="pub-item">
+          <div class="pub-num">01</div>
+          <div>
+            <div class="pub-type">Electromagnetismo II · UNMSM 2026</div>
+            <h3 class="pub-title">Tarea 1: Teorema de Stokes</h3>
+            <p class="pub-venue">8 páginas</p>
+            <p class="pub-abstract">Integral de línea de un campo azimutal sobre una circunferencia y verificación del resultado mediante el flujo del rotacional sobre un hemisferio.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Electromagnetismo_Tarea_1.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Electromagnetismo_Tarea_1.pdf" download class="pub-link">Descargar →</a>
+            </div>
           </div>
-          <p class="course-level">Intermedio</p>
-          <h3 class="course-title">Simulación Computacional</h3>
-          <p class="course-desc">Métodos de Monte Carlo, dinámica molecular y redes neuronales aplicadas a sistemas físicos complejos de alta dimensionalidad.</p>
-          <a href="#" class="course-cta">Ver curso</a>
         </div>
 
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><path d="M2 12 Q5 6 8 12 Q11 18 14 12 Q17 6 20 12 Q22 15 23 12"/></svg>
+        <div class="pub-item">
+          <div class="pub-num">02</div>
+          <div>
+            <div class="pub-type">Electromagnetismo II · UNMSM 2026</div>
+            <h3 class="pub-title">Tarea 2: Ecuación de Laplace</h3>
+            <p class="pub-venue">7 páginas</p>
+            <p class="pub-abstract">Potencial entre dos planos infinitos resuelto por separación de variables con condiciones de frontera periódicas en x.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Electromagnetismo_Tarea_2.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Electromagnetismo_Tarea_2.pdf" download class="pub-link">Descargar →</a>
+            </div>
           </div>
-          <p class="course-level">Fundamentos</p>
-          <h3 class="course-title">Relatividad General</h3>
-          <p class="course-desc">Geometría diferencial, tensor de Riemann y soluciones de Schwarzschild. Ondas gravitacionales y agujeros negros.</p>
-          <a href="#" class="course-cta">Ver curso</a>
         </div>
 
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><polyline points="2 20 7 12 11 16 16 8 22 4"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        <div class="pub-item">
+          <div class="pub-num">03</div>
+          <div>
+            <div class="pub-type">Física Nuclear y Subnuclear · UNMSM 2026</div>
+            <h3 class="pub-title">Tarea 2: Electrones nucleares</h3>
+            <p class="pub-venue">4 páginas</p>
+            <p class="pub-abstract">Principio de incertidumbre de Heisenberg, spin de núcleos según la paridad del número de nucleones y el caso del tritio.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Fisica_nuclear_Tarea_2.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Fisica_nuclear_Tarea_2.pdf" download class="pub-link">Descargar →</a>
+            </div>
           </div>
-          <p class="course-level">Avanzado</p>
-          <h3 class="course-title">Física Estadística</h3>
-          <p class="course-desc">Transiciones de fase, renormalización y sistemas fuera del equilibrio. Enfoque moderno con simulaciones numéricas y teoría de campos.</p>
-          <a href="#" class="course-cta">Ver curso</a>
         </div>
 
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><path d="M12 2 L4 14 h7 L9 22 L20 10 h-7 Z"/></svg>
+        <div class="pub-item">
+          <div class="pub-num">04</div>
+          <div>
+            <div class="pub-type">Física Nuclear y Subnuclear · UNMSM 2026</div>
+            <h3 class="pub-title">Tarea 3: Aproximación de Born</h3>
+            <p class="pub-venue">3 páginas</p>
+            <p class="pub-abstract">Amplitud de dispersión en la primera aproximación de Born y su reducción a una integral radial para un potencial central.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Fisica_nuclear_Tarea_3.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Fisica_nuclear_Tarea_3.pdf" download class="pub-link">Descargar →</a>
+            </div>
           </div>
-          <p class="course-level">Intermedio</p>
-          <h3 class="course-title">Electrodinámica Clásica</h3>
-          <p class="course-desc">Ecuaciones de Maxwell, radiación y óptica cuántica. Laboratorio virtual de simulación de campos electromagnéticos.</p>
-          <a href="#" class="course-cta">Ver curso</a>
         </div>
 
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><polygon points="12 2 22 8 22 16 12 22 2 16 2 8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8" x2="22" y2="8"/><line x1="2" y1="16" x2="22" y2="16"/></svg>
+        <div class="pub-item">
+          <div class="pub-num">05</div>
+          <div>
+            <div class="pub-type">Termodinámica · UNMSM 2024</div>
+            <h3 class="pub-title">Radiación de Cuerpo Negro</h3>
+            <p class="pub-venue">9 páginas</p>
+            <p class="pub-abstract">Del trabajo de Boltzmann, Wien, Rayleigh y Jeans a la ley de Planck y el abandono de la idea clásica de energía continua.</p>
+            <div class="pub-links">
+              <a href="arch/avances/Radiacion_de_cuerpo_negro.pdf" target="_blank" class="pub-link">Ver PDF →</a>
+              <a href="arch/avances/Radiacion_de_cuerpo_negro.pdf" download class="pub-link">Descargar →</a>
+            </div>
           </div>
-          <p class="course-level">Especialización</p>
-          <h3 class="course-title">Física del Estado Sólido</h3>
-          <p class="course-desc">Estructura de bandas, superconductividad y materiales cuánticos. Conexión directa con tecnologías emergentes del siglo XXI.</p>
-          <a href="#" class="course-cta">Ver curso</a>
-        </div>
-
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-          </div>
-          <p class="course-level">Avanzado</p>
-          <h3 class="course-title">Computación Cuántica</h3>
-          <p class="course-desc">Algoritmos de Shor, Grover y variacional. Implementación en Qiskit y PennyLane con ejercicios en hardware real de IBM.</p>
-          <a href="#" class="course-cta">Ver curso</a>
-        </div>
-
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><path d="M3 3h18v18H3zM9 9h6v6H9z"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
-          </div>
-          <p class="course-level">Intermedio</p>
-          <h3 class="course-title">Teoría de Campos</h3>
-          <p class="course-desc">Lagrangiana de Klein-Gordon, cuantización canónica y diagramas de Feynman. Introducción a la electrodinámica cuántica.</p>
-          <a href="#" class="course-cta">Ver curso</a>
-        </div>
-
-        <div class="course-card">
-          <div class="course-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 3 Q17 12 12 21"/><path d="M12 3 Q7 12 12 21"/><path d="M3 12h18"/></svg>
-          </div>
-          <p class="course-level">Fundamentos</p>
-          <h3 class="course-title">Ciencia de Redes</h3>
-          <p class="course-desc">Grafos complejos, percolación y dinámica en redes. Aplicaciones a sistemas biológicos, sociales y físicos de muchos cuerpos.</p>
-          <a href="#" class="course-cta">Ver curso</a>
         </div>
 
       </div>
     </div>
   </section>
-
   <div class="greek-strip"></div>
   <footer class="footer-wrap">
     <div class="footer">

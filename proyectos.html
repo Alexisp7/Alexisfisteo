@@ -1314,20 +1314,10 @@
         transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease, box-shadow 0.5s ease;
       }
       .proj-cf-carta + .proj-cf-carta { margin-top: 0; }
-      .proj-cf-carta:nth-child(1) { transform: translateX(-80%) translateZ(-220px) rotateY(-32deg) scale(0.8); opacity: 0.55; z-index: 1; }
-      .proj-cf-carta:nth-child(2) { transform: translateX(0) translateZ(0) rotateY(0) scale(1); z-index: 3; }
-      .proj-cf-carta:nth-child(3) { transform: translateX(80%) translateZ(-220px) rotateY(32deg) scale(0.8); opacity: 0.55; z-index: 1; }
-      .proj-cf-pista:has(.proj-cf-carta:nth-child(1):hover) .proj-cf-carta:nth-child(1),
-      .proj-cf-pista:has(.proj-cf-carta:nth-child(3):hover) .proj-cf-carta:nth-child(3) {
-        transform: translateX(0) translateZ(0) rotateY(0) scale(1); opacity: 1; z-index: 3;
-        box-shadow: 0 40px 70px -25px rgba(0,0,0,0.9);
-      }
-      .proj-cf-pista:has(.proj-cf-carta:nth-child(1):hover) .proj-cf-carta:nth-child(2) {
-        transform: translateX(-80%) translateZ(-220px) rotateY(-32deg) scale(0.8); opacity: 0.55; z-index: 1;
-      }
-      .proj-cf-pista:has(.proj-cf-carta:nth-child(3):hover) .proj-cf-carta:nth-child(2) {
-        transform: translateX(80%) translateZ(-220px) rotateY(32deg) scale(0.8); opacity: 0.55; z-index: 1;
-      }
+      .proj-cf-carta.is-left { transform: translateX(-80%) translateZ(-220px) rotateY(-32deg) scale(0.8); opacity: 0.55; z-index: 1; cursor: pointer; }
+      .proj-cf-carta.is-center { transform: translateX(0) translateZ(0) rotateY(0) scale(1); opacity: 1; z-index: 3; box-shadow: 0 40px 70px -25px rgba(0,0,0,0.9); }
+      .proj-cf-carta.is-right { transform: translateX(80%) translateZ(-220px) rotateY(32deg) scale(0.8); opacity: 0.55; z-index: 1; cursor: pointer; }
+      .proj-cf-carta.is-left:hover, .proj-cf-carta.is-right:hover { opacity: 0.8; }
       @media (prefers-reduced-motion: reduce) { .proj-cf-carta { transition: none; } }
     }
 
@@ -1366,7 +1356,7 @@
     <div class="proj-cf">
       <div class="proj-cf-pista">
 
-        <a href="quantumquipu.html" class="proj-cf-carta">
+        <a href="quantumquipu.html" class="proj-cf-carta is-left">
           <div class="proj-cf-img"><img src="img/minas.png" alt=""/></div>
           <div class="proj-cf-texto">
             <p class="proj-cf-meta">2025 · Hackathon Quantum Quipu · 2.do lugar</p>
@@ -1376,7 +1366,7 @@
           </div>
         </a>
 
-        <a href="blackscholes.html" class="proj-cf-carta">
+        <a href="blackscholes.html" class="proj-cf-carta is-center">
           <div class="proj-cf-img"><img src="img/finanzas.png" alt=""/></div>
           <div class="proj-cf-texto">
             <p class="proj-cf-meta">2025 · PUCP · Hackathon Qiskit Fall Fest (IBM Quantum) · 1.er lugar</p>
@@ -1386,7 +1376,7 @@
           </div>
         </a>
 
-        <div class="proj-cf-carta" id="swaptions">
+        <div class="proj-cf-carta is-right" id="swaptions">
           <div class="proj-cf-img proj-cf-img--ph">
             <svg viewBox="0 0 48 48" fill="none" stroke="#C8A96E" stroke-width="1.2"><path d="M6 40h36M6 40V8"/><circle cx="12" cy="32" r="1.6"/><circle cx="19" cy="27" r="1.6"/><circle cx="33" cy="17" r="1.6"/><circle cx="40" cy="12" r="1.6"/><circle cx="26" cy="22" r="2.4" stroke-dasharray="2 2"/><path d="M8 35 L42 10"/></svg>
           </div>
@@ -1410,5 +1400,27 @@
       </div>
     </div>
   </footer>
+  <script>
+    // Carrusel de proyectos: en escritorio, un clic en una tarjeta lateral
+    // la trae al frente; un clic en la del frente abre el proyecto.
+    (function () {
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.proj-cf-carta'));
+      if (cards.length !== 3) return;
+      var desktop = window.matchMedia('(min-width: 901px)');
+      var order = ['is-left', 'is-center', 'is-right'];
+      cards.forEach(function (card) {
+        card.addEventListener('click', function (e) {
+          if (!desktop.matches || card.classList.contains('is-center')) return;
+          e.preventDefault();
+          var shift = card.classList.contains('is-left') ? 1 : -1;
+          cards.forEach(function (c) {
+            var i = order.findIndex(function (cls) { return c.classList.contains(cls); });
+            c.classList.remove(order[i]);
+            c.classList.add(order[(i + shift + 3) % 3]);
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

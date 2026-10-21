@@ -307,9 +307,9 @@
         var text = '|' + q.frozen + '⟩';
         ctx.font = 'italic 600 13px "Cormorant Garamond", serif';
         ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(255,255,255,0.92)';
-        ctx.strokeText(text, q.x, q.y + 0.5);
+        ctx.strokeText(text, q.x + 11, q.y - 10);
         ctx.fillStyle = '#6B6B6B';
-        ctx.fillText(text, q.x, q.y + 0.5);
+        ctx.fillText(text, q.x + 11, q.y - 10);
       }
       ctx.restore();
     }

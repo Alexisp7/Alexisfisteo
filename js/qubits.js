@@ -2,14 +2,15 @@
 // En reposo se ven al 35%; al pasar el mouse la esfera y sus 3 vecinas se
 // ven enteras y su flecha gira de polo a polo, cada una desfasada un tercio
 // de vuelta. Un clic mide el qubit: colapsa al polo más cercano, |0⟩ o |1⟩
-// (azul, con el ket encima); solo si la flecha está justo en el ecuador
-// queda en mostaza con una H, y un segundo clic la mide al azar en 0 o 1.
+// (azul para |0⟩, rojo para |1⟩, con el ket encima); solo si la flecha está
+// justo en el ecuador queda en mostaza con una H, girando por el ecuador,
+// hasta que un segundo clic la mide al azar en 0 o 1.
 // Cada <canvas class="qubits-fondo"> cubre a su elemento padre, o solo
 // hasta el elemento que indique data-hasta.
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
-  var GOLD = '200,169,110', BLUE = '37,99,235', MUSTARD = '206,154,18';
+  var GOLD = '200,169,110', BLUE = '37,99,235', RED = '220,38,38', MUSTARD = '206,154,18';
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function rnd(seed) {
@@ -104,10 +105,11 @@
       for (var i = 0; i < qubits.length; i++) {
         var q = qubits[i];
         if (q.hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU;
+        else if (q.frozen === 'H') q.phi = (q.phi + SPIN * dt / 1000) % TAU;
         else if (!q.frozen) q.phi += q.drift * dt;
 
         var on = q.hot || q.frozen;
-        var col = q.frozen === 'H' ? MUSTARD : q.frozen ? BLUE : GOLD;
+        var col = q.frozen === 'H' ? MUSTARD : q.frozen === '1' ? RED : q.frozen === '0' ? BLUE : GOLD;
         ctx.strokeStyle = ctx.fillStyle = 'rgba(' + col + ',' + (on ? 1 : 0.35) + ')';
         ctx.lineWidth = on ? 1 : 0.7;
 

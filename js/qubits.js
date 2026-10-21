@@ -121,6 +121,8 @@
             x: x, y: y,
             theta: Math.acos(1 - 2 * rnd(k + 1)),
             phi: rnd(k + 7) * TAU,
+            theta0: Math.acos(1 - 2 * rnd(k + 1)),
+            phi0: rnd(k + 7) * TAU,
             drift: (rnd(k + 13) - 0.5) * 0.0012,
             hot: false, frozen: false
           });
@@ -185,95 +187,119 @@
       q.phi = 0;
       q.hot = false;
       // al medir a mano, las flechas del conteo vuelven a salir del medidor
-      if (q.frozen !== 'H') { shownRed = 0; shownBlue = 0; }
+      if (q.frozen !== 'H') { shownL = 0; shownR = 0; }
       current = current.filter(function (c) { return c !== q; });
       start();
     }
 
     // medidor de circuito cuántico sobre la línea; un clic colapsa todo
     var meter = null, collapsed = false;
-    function drawMeter() {
+
+    // cuántas esferas hay en cada resultado
+    function cuenta() {
+      var c = { n0: 0, n1: 0, h: 0 };
+      for (var i = 0; i < qubits.length; i++) {
+        var f = qubits[i].frozen;
+        if (f === '0') c.n0++; else if (f === '1') c.n1++; else if (f === 'H') c.h++;
+      }
+      return c;
+    }
+
+    // medidor de circuito cuántico. Si hay esferas en H la medición está en
+    // superposición: el medidor brilla en dorado y la aguja oscila
+    function drawMeter(t, superpuesto) {
       var mw = 30, mh = 20, x = w / 2 - mw / 2, y = lineY - mh / 2;
       meter = { x: x, y: y, w: mw, h: mh };
+      var ang = -0.9;
       ctx.save();
-      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3B2F28'; ctx.lineWidth = 1.2;
+      if (superpuesto) {
+        var pulso = 0.5 + 0.5 * Math.sin(t / 260);
+        ctx.shadowColor = 'rgba(' + GOLD + ',0.9)';
+        ctx.shadowBlur = 6 + 10 * pulso;
+        ang = -Math.PI / 2 + Math.sin(t / 340) * 1.1;
+      }
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = superpuesto ? 'rgb(' + GOLD + ')' : '#3B2F28'; ctx.lineWidth = 1.2;
       ctx.fillRect(x, y, mw, mh); ctx.strokeRect(x, y, mw, mh);
-      ctx.beginPath(); ctx.arc(w / 2, y + mh - 4, 9, Math.PI, 2 * Math.PI); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(w / 2, y + mh - 4); ctx.lineTo(w / 2 + 7, y + 4); ctx.stroke();
+      ctx.shadowBlur = 0;
+      var cx = w / 2, cy = y + mh - 4;
+      ctx.beginPath(); ctx.arc(cx, cy, 9, Math.PI, 2 * Math.PI); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 11 * Math.cos(ang), cy + 11 * Math.sin(ang)); ctx.stroke();
       ctx.restore();
     }
-    // la línea cuenta los resultados medidos, a mano o con el medidor. La
+
+    // La línea cuenta los resultados medidos, a mano o con el medidor. La
     // mitad izquierda es solo de los |1⟩ (rojo) y la derecha solo de los |0⟩
-    // (azul). Cada lado mide su fracción del total medido, así que con cada
-    // nueva medición todo se reescala: un solo |1⟩ llena el lado rojo, y al
-    // llegar un |0⟩ el rojo baja a la mitad y el azul aparece en la mitad.
-    // largo mostrado de cada barra: se acerca suave al valor real para que
-    // las flechas crezcan en vez de aparecer de golpe
-    // cuando una barra tiene que recogerse no vuelve detrás del medidor: se
-    // desvanece rápido y reaparece ya en su nuevo largo
-    var shownRed = 0, shownBlue = 0, alphaRed = 1, alphaBlue = 1;
-    function drawTally(half, dt) {
-      var n0 = 0, n1 = 0;
-      for (var i = 0; i < qubits.length; i++) {
-        if (qubits[i].frozen === '0') n0++; else if (qubits[i].frozen === '1') n1++;
-      }
-      var n = n0 + n1;
-      var targetRed = n ? n1 / n : 0, targetBlue = n ? n0 / n : 0;
+    // (azul); cada lado mide su fracción del total medido y se reescala con
+    // cada medición. Las flechas crecen y se recogen suave, y al recogerse se
+    // van desvaneciendo cuanto más se acercan al medidor. Si hay esferas en H
+    // la medición queda superpuesta: las dos flechas son doradas y oscilan,
+    // una crece mientras la otra se achica.
+    var shownL = 0, shownR = 0, mezcla = 0;
+    function drawTally(half, dt, t) {
+      var c = cuenta(), n = c.n0 + c.n1;
+      var sup = c.h > 0;
       var ease = still ? 1 : Math.min(1, dt / 650);
-      var fade = still ? 1 : dt / 160;
-      if (targetRed < shownRed - 0.02) {
-        alphaRed = Math.max(0, alphaRed - fade);
-        if (!alphaRed) shownRed = targetRed;
+      var targetL, targetR;
+      if (sup) {
+        var o = Math.sin(t / 340);
+        targetL = 0.5 + 0.42 * o; targetR = 0.5 - 0.42 * o;
+        ease = still ? 1 : Math.min(1, dt / 160);
       } else {
-        alphaRed = Math.min(1, alphaRed + fade);
-        shownRed += (targetRed - shownRed) * ease;
+        targetL = n ? c.n1 / n : 0; targetR = n ? c.n0 / n : 0;
       }
-      if (targetBlue < shownBlue - 0.02) {
-        alphaBlue = Math.max(0, alphaBlue - fade);
-        if (!alphaBlue) shownBlue = targetBlue;
-      } else {
-        alphaBlue = Math.min(1, alphaBlue + fade);
-        shownBlue += (targetBlue - shownBlue) * ease;
-      }
-      if (shownRed < 0.002 && shownBlue < 0.002) return;
+      shownL += (targetL - shownL) * ease;
+      shownR += (targetR - shownR) * ease;
+      mezcla += ((sup ? 1 : 0) - mezcla) * (still ? 1 : Math.min(1, dt / 300));
+      if (shownL < 0.004 && shownR < 0.004) return sup;
       var y = lineY, mx = 15, largo = half - mx;
+      function color(base) {
+        var a = base.split(','), g = GOLD.split(',');
+        return 'rgb(' + a.map(function (v, i) { return Math.round(+v + (+g[i] - +v) * mezcla); }).join(',') + ')';
+      }
       ctx.save();
       ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      // cada barra termina en un ángulo como el de los kets, pegado a la línea
-      function lado(dir, k, col, alpha) {
-        ctx.globalAlpha = alpha;
+      function lado(dir, k, col) {
+        // se desvanece al acercarse al medidor
+        ctx.globalAlpha = Math.min(1, k / 0.22);
         var x0 = w / 2 + dir * mx, x1 = x0 + dir * largo * k;
         ctx.strokeStyle = col;
         ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(x1 - dir * 7, y - 11); ctx.lineTo(x1, y); ctx.lineTo(x1 - dir * 7, y + 11); ctx.stroke();
       }
-      if (shownRed > 0.002) lado(-1, shownRed, 'rgb(' + RED + ')', alphaRed);
-      if (shownBlue > 0.002) lado(1, shownBlue, 'rgb(' + BLUE + ')', alphaBlue);
+      if (shownL > 0.004) lado(-1, shownL, color(RED));
+      if (shownR > 0.004) lado(1, shownR, color(BLUE));
       ctx.restore();
+      return sup;
     }
     function onMeter(px, py) {
       return meter && px >= meter.x - 6 && px <= meter.x + meter.w + 6 && py >= meter.y - 6 && py <= meter.y + meter.h + 6;
     }
     // colapso en onda desde el medidor: cada esfera sale |0⟩ con
-    // probabilidad cos²(θ/2); un segundo clic deja todo como al inicio
+    // probabilidad cos²(θ/2). Un segundo clic deshace todo, también en onda
+    // desde el medidor, y cada esfera vuelve a su estado inicial
     function collapseAll() {
       var t0 = performance.now(), cx = w / 2, cy = lineY;
-      if (collapsed) {
-        layout(); draw(16); collapsed = false; start(); return;
-      }
       qubits.forEach(function (q) {
-        if (q.frozen === '0' || q.frozen === '1') return;  // las ya medidas a mano se quedan
         var d = Math.sqrt((q.x - cx) * (q.x - cx) + (q.y - cy) * (q.y - cy));
-        q.collapseAt = t0 + d * 0.9;
+        if (collapsed) {
+          if (q.frozen) q.resetAt = t0 + d * 0.9;
+          q.collapseAt = 0;
+        } else if (q.frozen !== '0' && q.frozen !== '1') {
+          q.collapseAt = t0 + d * 0.9;
+        }
       });
       current.forEach(function (q) { q.hot = false; }); current = [];
-      collapsed = true;
+      collapsed = !collapsed;
       start();
     }
     function measure(q) {
       var p0 = Math.cos(q.theta / 2); p0 *= p0;
       q.frozen = Math.random() < p0 ? '0' : '1';
       q.theta = q.frozen === '0' ? 0 : Math.PI; q.phi = 0; q.hot = false; q.collapseAt = 0;
+    }
+    function restore(q) {
+      q.frozen = false; q.masivo = false; q.resetAt = 0;
+      q.theta = q.theta0; q.phi = q.phi0;
     }
 
     function draw(dt) {
@@ -283,13 +309,14 @@
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
         ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
-        drawTally(half, dt);
-        drawMeter();
+        var sup = drawTally(half, dt, performance.now());
+        drawMeter(performance.now(), sup);
       }
       var now = performance.now();
       for (var i = 0; i < qubits.length; i++) {
         var q = qubits[i];
         if (q.collapseAt && now >= q.collapseAt) { measure(q); q.masivo = true; }
+        if (q.resetAt && now >= q.resetAt) restore(q);
         if (q.hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU;
         else if (q.frozen === 'H') q.phi = (q.phi + SPIN * dt / 1000) % TAU;
         else if (!q.frozen) q.phi += q.drift * dt;
@@ -349,7 +376,7 @@
       var dt = last ? Math.min(t - last, 50) : 16;
       last = t;
       draw(dt);
-      var pendientes = collapsed && qubits.some(function (q) { return q.collapseAt; });
+      var pendientes = qubits.some(function (q) { return q.collapseAt || q.resetAt; });
       if (visible && (!still || current.length || pendientes)) raf = requestAnimationFrame(loop);
       else { raf = 0; last = 0; }
     }

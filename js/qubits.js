@@ -200,28 +200,32 @@
       ctx.beginPath(); ctx.moveTo(w / 2, y + mh - 4); ctx.lineTo(w / 2 + 7, y + 4); ctx.stroke();
       ctx.restore();
     }
-    // la línea cuenta los resultados medidos, a mano o con el medidor: rojo a la izquierda
-    // según cuántos salieron |1⟩, azul a la derecha según los |0⟩, cada lado
-    // cerrado por un paréntesis de su color
+    // la línea cuenta los resultados medidos, a mano o con el medidor: se
+    // reparte entre rojo (|1⟩, desde la izquierda) y azul (|0⟩, desde la
+    // derecha) según cuántos hay de cada uno entre los ya medidos; si solo hay
+    // de un tipo, toda la línea queda de ese color. Cada color cierra con su
+    // paréntesis en su extremo.
     function drawTally(half) {
-      var n0 = 0, n1 = 0, total = qubits.length;
-      for (var i = 0; i < total; i++) {
+      var n0 = 0, n1 = 0;
+      for (var i = 0; i < qubits.length; i++) {
         if (qubits[i].frozen === '0') n0++; else if (qubits[i].frozen === '1') n1++;
       }
-      if (!total || !(n0 + n1)) return;
-      var mx = 15, y = lineY, full = 2 * (half - mx) * 0.9;
-      var left = full * n1 / total, right = full * n0 / total;
-      function lado(dir, len, col) {
-        var x0 = w / 2 + dir * mx, x1 = x0 + dir * len;
-        ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
-        // paréntesis
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(x1 - dir * 2, y - 14); ctx.quadraticCurveTo(x1 + dir * 9, y, x1 - dir * 2, y + 14); ctx.stroke();
-      }
+      var n = n0 + n1;
+      if (!n) return;
+      var y = lineY, xl = w / 2 - half, xr = w / 2 + half;
+      var corte = xl + (xr - xl) * n1 / n;
       ctx.save();
-      if (n1) lado(-1, left, 'rgb(' + RED + ')');
-      if (n0) lado(1, right, 'rgb(' + BLUE + ')');
+      ctx.lineWidth = 3; ctx.lineCap = 'round';
+      function tramo(x0, x1, col) {
+        ctx.strokeStyle = col;
+        ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+      }
+      function parentesis(x, dir, col) {
+        ctx.strokeStyle = col;
+        ctx.beginPath(); ctx.moveTo(x - dir * 2, y - 14); ctx.quadraticCurveTo(x + dir * 9, y, x - dir * 2, y + 14); ctx.stroke();
+      }
+      if (n1) { tramo(xl, corte, 'rgb(' + RED + ')'); parentesis(xl, -1, 'rgb(' + RED + ')'); }
+      if (n0) { tramo(corte, xr, 'rgb(' + BLUE + ')'); parentesis(xr, 1, 'rgb(' + BLUE + ')'); }
       ctx.restore();
     }
     function onMeter(px, py) {

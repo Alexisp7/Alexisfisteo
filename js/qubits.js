@@ -60,13 +60,13 @@
       return inside;
     }
 
-    // marco: arriba solo dos escuadras negras en las esquinas; abajo, desde
-    // la línea de los contadores, el borde negro siguiendo la zona libre
+    // marco: arriba solo dos escuadras doradas en las esquinas; abajo, desde
+    // la línea de los contadores, el borde dorado siguiendo la zona libre
     function drawFrame() {
       if (profile.length < 2) return;
       var cx = w / 2, top = 1.5, bracket = 60, drop = 0.22 * h;
       var pts = profile.map(function (p) { return [p[0], Math.min(Math.max(p[1] * h, top), h - 1.5)]; });
-      ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.strokeStyle = '#E8D5A3'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
       [1, -1].forEach(function (side) {
         var x0 = cx + side * pts[0][0];
         ctx.beginPath();

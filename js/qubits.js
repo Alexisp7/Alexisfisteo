@@ -468,13 +468,14 @@
     section.addEventListener('mousemove', function (e) {
       if (drag) return;
       var p = point(e);
-      section.style.cursor = onMeter(p[0], p[1]) ? 'grab' : '';
+      section.style.cursor = onMeter(p[0], p[1]) ? (collapsed ? 'pointer' : 'grab') : '';
       activate(p[0], p[1]);
     });
     section.addEventListener('mousedown', function (e) {
       var p = point(e);
       arrastrado = false;
-      if (!onMeter(p[0], p[1])) return;
+      // con la medición activada el medidor queda fijo
+      if (!onMeter(p[0], p[1]) || collapsed) return;
       e.preventDefault();
       drag = { x: p[0], off: meterOff };
       arrastrado = false;

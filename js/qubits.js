@@ -214,12 +214,13 @@
       if (!n) return;
       var y = lineY, mx = 15, largo = half - mx;
       ctx.save();
-      ctx.lineWidth = 3; ctx.lineCap = 'round';
+      ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      // cada barra termina en un ángulo como el de los kets, pegado a la línea
       function lado(dir, k, col) {
         var x0 = w / 2 + dir * mx, x1 = x0 + dir * largo * k / n;
         ctx.strokeStyle = col;
         ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(x1 - dir * 2, y - 14); ctx.quadraticCurveTo(x1 + dir * 9, y, x1 - dir * 2, y + 14); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x1 - dir * 7, y - 11); ctx.lineTo(x1, y); ctx.lineTo(x1 - dir * 7, y + 11); ctx.stroke();
       }
       if (n1) lado(-1, n1, 'rgb(' + RED + ')');
       if (n0) lado(1, n0, 'rgb(' + BLUE + ')');

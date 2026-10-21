@@ -1345,14 +1345,27 @@
     .sgx-control strong { color: #6E1A22; }
     .sgx-control input { accent-color: #5B3FC4; width: 100%; }
     .sgx--girado { border-top: 1px solid #EFE7D8; padding-top: 30px; }
-    .sgx-dibujo--alto { max-height: 440px; }
     .sgx--y { border-top: 1px solid #EFE7D8; padding-top: 30px; }
     .sgx-recuadro {
       max-width: 720px; margin-top: 10px; padding: 22px 26px; background: #FBF7EF; border-left: 3px solid #C8A96E;
       font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7; color: var(--gray);
     }
     .sgx-recuadro p + p { margin-top: 8px; }
-    .sgx-ecuacion { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px; color: #3B2F28; text-align: center; }
+    /* Figuras de Feynman: aparatos S, T y U */
+    .stu { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .stu-dibujo { width: 100%; max-width: 840px; height: auto; }
+    .stu-dibujo--alto { max-width: 470px; }
+    .stu-caja { fill: none; stroke: #3B2F28; stroke-width: 1.3; stroke-dasharray: 6 5; }
+    .stu-haz { fill: none; stroke: #111; stroke-width: 1.8; }
+    .stu-haz--gris { stroke: #B9B2A6; stroke-dasharray: 5 5; }
+    .stu-punta { fill: #111; }
+    .stu-punta--morada { fill: #7A1FA2; }
+    .stu-punto { fill: #111; }
+    .stu-hueco { fill: #fff; stroke: #111; stroke-width: 1.2; }
+    .stu-eje { stroke: #111; stroke-width: 2; fill: none; }
+    .stu-letra { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; fill: #111; }
+    .stu-sub { font-size: 13px; }
+    .stu-nombre { font-family: 'Cormorant Garamond', serif; font-size: 22px; fill: #111; }
   </style>
 </head>
 <body>
@@ -1547,54 +1560,59 @@
         <p class="sgx-texto">Este es el experimento central: el segundo aparato mide el espín en otra dirección n̂, girada un ángulo θ respecto de z. Con θ = 0° todos salen |+n⟩, con θ = 90° la mitad y la mitad, y con θ = 180° todos salen |−n⟩. Entre esos casos la probabilidad depende solo del ángulo.</p>
       </figure>
       <figure class="sgx sgx--y">
-        <figcaption class="sgx-titulo"><span class="sgx-num">6</span> El aparato en el eje y</figcaption>
-        <svg class="sgx-dibujo sgx-dibujo--alto" viewBox="0 0 920 420" role="img" aria-label="Átomos filtrados en z o en x y luego medidos en el eje y: siempre mitad y mitad">
-          <rect x="22" y="84" width="46" height="32" rx="5" class="sg-pieza"/>
-          <text x="45" y="105" class="sgx-mini" text-anchor="middle">Ag</text>
-          <path d="M68 100 H130" class="sgx-haz" style="stroke-width:3"/>
-          <rect x="130" y="66" width="104" height="68" rx="6" class="sgx-caja"/>
-          <text x="182" y="108" class="sgx-eje" text-anchor="middle">SG z</text>
-          <path d="M234 86 Q280 86 320 100 H360" class="sgx-haz" style="stroke-width:3"/>
-          <path d="M234 114 Q294 114 354 140" class="sgx-haz" style="stroke-width:3"/>
-          <rect x="352" y="131" width="6" height="18" class="sgx-tapon"/>
-          <text x="248" y="78" class="sgx-mini">↑</text>
-          <text x="248" y="134" class="sgx-mini">↓</text>
-          <rect x="360" y="66" width="104" height="68" rx="6" class="sgx-caja"/>
-          <text x="400" y="108" class="sgx-eje" text-anchor="middle">SG y</text>
-          <circle cx="444" cy="100" r="8" class="sgx-eje-flecha"/><circle cx="444" cy="100" r="2" fill="#6E1A22"/>
-          <path d="M464 86 Q524 86 584 52" class="sgx-haz" style="stroke-width:3"/>
-          <path d="M464 114 Q524 114 584 148" class="sgx-haz" style="stroke-width:3"/>
-          <rect x="584" y="30" width="10" height="140" rx="2" class="sg-pantalla"/>
-          <text x="606" y="58" class="sgx-ket">|+y⟩</text><text x="606" y="78" class="sgx-pct">50%</text>
-          <text x="606" y="154" class="sgx-ket">|−y⟩</text><text x="606" y="174" class="sgx-pct">50%</text>
-          <rect x="22" y="304" width="46" height="32" rx="5" class="sg-pieza"/>
-          <text x="45" y="325" class="sgx-mini" text-anchor="middle">Ag</text>
-          <path d="M68 320 H130" class="sgx-haz" style="stroke-width:3"/>
-          <rect x="130" y="286" width="104" height="68" rx="6" class="sgx-caja"/>
-          <text x="182" y="328" class="sgx-eje" text-anchor="middle">SG x</text>
-          <path d="M234 306 Q280 306 320 320 H360" class="sgx-haz" style="stroke-width:3"/>
-          <path d="M234 334 Q294 334 354 360" class="sgx-haz" style="stroke-width:3"/>
-          <rect x="352" y="351" width="6" height="18" class="sgx-tapon"/>
-          <text x="248" y="298" class="sgx-mini">+</text>
-          <text x="248" y="354" class="sgx-mini">−</text>
-          <rect x="360" y="286" width="104" height="68" rx="6" class="sgx-caja"/>
-          <text x="400" y="328" class="sgx-eje" text-anchor="middle">SG y</text>
-          <circle cx="444" cy="320" r="8" class="sgx-eje-flecha"/><circle cx="444" cy="320" r="2" fill="#6E1A22"/>
-          <path d="M464 306 Q524 306 584 272" class="sgx-haz" style="stroke-width:3"/>
-          <path d="M464 334 Q524 334 584 368" class="sgx-haz" style="stroke-width:3"/>
-          <rect x="584" y="250" width="10" height="140" rx="2" class="sg-pantalla"/>
-          <text x="606" y="278" class="sgx-ket">|+y⟩</text><text x="606" y="298" class="sgx-pct">50%</text>
-          <text x="606" y="374" class="sgx-ket">|−y⟩</text><text x="606" y="394" class="sgx-pct">50%</text>
-          <text x="700" y="96" class="sgx-formula">desde |↑z⟩</text>
-          <text x="700" y="316" class="sgx-formula">desde |+x⟩</text>
-          <line x1="690" y1="210" x2="900" y2="210" class="fy-eje"/>
-        </svg>
+        <figcaption class="sgx-titulo"><span class="sgx-num">6</span> El aparato T girado: S, T y U en serie</figcaption>
+        <div class="stu">
+          <svg class="stu-dibujo" viewBox="60 20 760 190" role="img" aria-label="Aparatos S, T y U alineados">
+            <path d="M128 40 H170" class="stu-eje"/><path d="M172.0 40.0 L160.0 45.0 L160.0 35.0 Z" class="stu-punta"/><path d="M128 40 V82" class="stu-eje"/><path d="M128.0 84.0 L123.0 72.0 L133.0 72.0 Z" class="stu-punta"/><text x="172" y="34" class="stu-letra">y</text><text x="110" y="86" class="stu-letra">x</text>
+            <text x="98" y="124" class="stu-letra" text-anchor="middle">(+x)</text><circle cx="98" cy="142" r="3" class="stu-punto"/><path d="M98 142 V162" class="stu-eje"/><path d="M98.0 164.0 L93.0 152.0 L103.0 152.0 Z" class="stu-punta"/>
+            <polygon points="162.0,94.0 292.0,94.0 314.0,116.0 314.0,158.0 292.0,180.0 162.0,180.0 140.0,158.0 140.0,116.0" class="stu-caja"/>
+            <polygon points="362.0,94.0 492.0,94.0 514.0,116.0 514.0,158.0 492.0,180.0 362.0,180.0 340.0,158.0 340.0,116.0" class="stu-caja"/>
+            <rect x="568" y="95" width="143" height="85" class="stu-caja"/>
+            <path d="M125 137 H541" class="stu-haz"/>
+            <path d="M196.0 137.0 L184.0 142.0 L184.0 132.0 Z" class="stu-punta"/><path d="M396.0 137.0 L384.0 142.0 L384.0 132.0 Z" class="stu-punta"/>
+            <circle cx="227" cy="137" r="3.5" class="stu-hueco"/><circle cx="427" cy="137" r="3.5" class="stu-hueco"/>
+            <circle cx="125" cy="137" r="3.5" class="stu-punto"/><circle cx="326" cy="137" r="3.5" class="stu-punto"/><circle cx="541" cy="137" r="3.5" class="stu-punto"/>
+            <text x="318" y="160" class="stu-letra">P<tspan class="stu-sub" dy="4">1</tspan></text>
+            <path d="M541 137 Q640 66 742 137" class="stu-haz stu-haz--gris"/>
+            <path d="M541 137 Q640 214 742 137" class="stu-haz"/>
+            <path d="M602.0 163.0 L589.0 162.5 L593.2 153.4 Z" class="stu-punta"/>
+            <path d="M640 117 V152" stroke="#7A1FA2" stroke-width="2.6"/><path d="M640.0 158.0 L635.0 146.0 L645.0 146.0 Z" class="stu-punta stu-punta--morada"/>
+            <circle cx="742" cy="137" r="3.5" class="stu-punto"/>
+            <text x="773" y="124" class="stu-letra" text-anchor="middle">(+x)</text><circle cx="773" cy="142" r="3" class="stu-punto"/><path d="M773 142 V162" class="stu-eje"/><path d="M773.0 164.0 L768.0 152.0 L778.0 152.0 Z" class="stu-punta"/>
+            <text x="227" y="202" class="stu-nombre" text-anchor="middle">S</text>
+            <text x="427" y="202" class="stu-nombre" text-anchor="middle">T</text>
+            <text x="640" y="202" class="stu-nombre" text-anchor="middle">U</text>
+          </svg>
+          <svg class="stu-dibujo stu-dibujo--alto" viewBox="200 30 460 500" role="img" aria-label="Aparato T girado: el haz sigue por el eje y prima">
+            <text x="481" y="56" class="stu-letra" text-anchor="middle">(+?)</text>
+            <circle cx="481" cy="75" r="3.5" class="stu-punto"/>
+            <rect x="438" y="106" width="86" height="144" class="stu-caja"/>
+            <path d="M481 275 C446 236 446 120 481 75" class="stu-haz"/>
+            <path d="M481 275 C516 236 516 120 481 75" class="stu-haz"/>
+            <path d="M456.0 226.0 L464.8 235.6 L455.4 239.0 Z" class="stu-punta"/><path d="M506.0 226.0 L506.6 239.0 L497.2 235.6 Z" class="stu-punta"/>
+            <path d="M462 177 H496" stroke="#7A1FA2" stroke-width="2.6"/><path d="M502.0 177.0 L490.0 182.0 L490.0 172.0 Z" class="stu-punta stu-punta--morada"/>
+            <text x="540" y="183" class="stu-nombre">U</text>
+            <path d="M582 196 V150" class="stu-eje"/><path d="M582.0 148.0 L587.0 160.0 L577.0 160.0 Z" class="stu-punta"/><path d="M582 196 H628" class="stu-eje"/><path d="M630.0 196.0 L618.0 201.0 L618.0 191.0 Z" class="stu-punta"/><text x="560" y="160" class="stu-letra">y′</text><text x="636" y="202" class="stu-letra">x′</text>
+            <circle cx="481" cy="275" r="3.5" class="stu-punto"/>
+            <polygon points="460.0,303.0 502.0,303.0 524.0,325.0 524.0,455.0 502.0,477.0 460.0,477.0 438.0,455.0 438.0,325.0" class="stu-caja"/>
+            <path d="M481 500 V275" class="stu-haz"/>
+            <path d="M481.0 432.0 L486.0 444.0 L476.0 444.0 Z" class="stu-punta"/>
+            <circle cx="481" cy="390" r="3.5" class="stu-hueco"/>
+            <text x="540" y="396" class="stu-nombre">T</text>
+            <path d="M272 410 H314" class="stu-eje"/><path d="M316.0 410.0 L304.0 415.0 L304.0 405.0 Z" class="stu-punta"/><path d="M272 410 V452" class="stu-eje"/><path d="M272.0 454.0 L267.0 442.0 L277.0 442.0 Z" class="stu-punta"/><text x="316" y="404" class="stu-letra">y</text><text x="254" y="456" class="stu-letra">x</text>
+            <text x="244" y="486" class="stu-letra" text-anchor="middle">(+x)</text><circle cx="244" cy="504" r="3" class="stu-punto"/><path d="M244 504 V524" class="stu-eje"/><path d="M244.0 526.0 L239.0 514.0 L249.0 514.0 Z" class="stu-punta"/>
+            <polygon points="307.0,457.0 437.0,457.0 459.0,479.0 459.0,521.0 437.0,543.0 307.0,543.0 285.0,521.0 285.0,479.0" class="stu-caja"/>
+            <path d="M272 500 H481" class="stu-haz"/>
+            <path d="M340.0 500.0 L328.0 505.0 L328.0 495.0 Z" class="stu-punta"/>
+            <circle cx="372" cy="500" r="3.5" class="stu-hueco"/>
+            <circle cx="272" cy="500" r="3.5" class="stu-punto"/><circle cx="481" cy="500" r="3.5" class="stu-punto"/>
+            <text x="490" y="520" class="stu-letra">P<tspan class="stu-sub" dy="4">1</tspan></text>
+            <text x="372" y="566" class="stu-nombre" text-anchor="middle">S</text>
+          </svg>
+        </div>
         <div class="sgx-recuadro">
-          <p>Venga de z o de x, al medir en y siempre sale mitad y mitad. Pero |+x⟩ ya es mitad |↑z⟩ y mitad |↓z⟩ con amplitudes reales:</p>
-          <p class="sgx-ecuacion">|±x⟩ = ( |↑⟩ ± |↓⟩ ) / √2</p>
-          <p>No queda ninguna combinación real que también esté a mitad de camino de |±x⟩. La única salida es usar números complejos:</p>
-          <p class="sgx-ecuacion">|±y⟩ = ( |↑⟩ ± <em>i</em> |↓⟩ ) / √2</p>
-          <p>Por eso las amplitudes de la mecánica cuántica son complejas.</p>
+          <p>Es el experimento con el que Feynman y Leighton plantean el problema: tres aparatos de Stern-Gerlach modificados en serie, S, T y U. S prepara el estado; U, orientado igual que S, vuelve a filtrar en el mismo eje y solo sirve para leer el resultado; y T, entre los dos, es el que se cambia.</p>
+          <p>Arriba, T está orientado igual que S y los átomos llegan a U con el mismo estado (+x). Abajo, T está girado y el haz sigue por el nuevo eje y′: la pregunta es qué fracción sale ahora por (+).</p>
         </div>
       </figure>
   </section>

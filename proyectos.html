@@ -1268,6 +1268,78 @@
     .header-inner { justify-content: center; }
     nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; }
     @media (max-width: 640px) { nav.main-nav a { padding: 8px 10px; } }
+    /* Proyectos en carrusel 3D, como los cursos de la página de Andreé:
+       en escritorio una tarjeta queda de frente y las otras se inclinan
+       a los lados; al pasar el mouse por una lateral pasa al frente.
+       En celular quedan apiladas. */
+    .proj-cf-wrap { padding: 72px 24px 88px; }
+    .proj-cf { max-width: 1100px; margin: 0 auto; }
+    .proj-cf-carta {
+      display: block; text-decoration: none; color: inherit;
+      background: var(--white); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.8);
+      transition: box-shadow 0.4s ease;
+    }
+    .proj-cf-carta + .proj-cf-carta { margin-top: 28px; }
+    .proj-cf-img { aspect-ratio: 16/10; overflow: hidden; background: #10141c; }
+    .proj-cf-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.65s cubic-bezier(0.16,1,0.3,1); }
+    .proj-cf-carta:hover .proj-cf-img img { transform: scale(1.06); }
+    .proj-cf-img--ph { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#0d1117 0%,#1a2634 100%); }
+    .proj-cf-img--ph svg { width: 64px; height: 64px; }
+    .proj-cf-texto { padding: 26px 30px 30px; }
+    .proj-cf-meta {
+      font-family: 'Space Mono', monospace; font-size: 8px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+    }
+    .proj-cf-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600;
+      color: var(--black); line-height: 1.15; margin-bottom: 12px;
+    }
+    .proj-cf-desc { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.7; color: var(--gray); }
+    .proj-cf-cta {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--black);
+    }
+    .proj-cf-cta::after { content: '→'; color: var(--gold); font-size: 13px; transition: transform 0.3s ease; }
+    .proj-cf-carta:hover .proj-cf-cta::after { transform: translateX(5px); }
+
+    @media (min-width: 901px) {
+      .proj-cf-pista {
+        position: relative; display: flex; align-items: center; justify-content: center;
+        min-height: 600px; perspective: 1600px;
+      }
+      .proj-cf-carta {
+        position: absolute; width: 420px;
+        transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease, box-shadow 0.5s ease;
+      }
+      .proj-cf-carta + .proj-cf-carta { margin-top: 0; }
+      .proj-cf-carta:nth-child(1) { transform: translateX(-80%) translateZ(-220px) rotateY(-32deg) scale(0.8); opacity: 0.55; z-index: 1; }
+      .proj-cf-carta:nth-child(2) { transform: translateX(0) translateZ(0) rotateY(0) scale(1); z-index: 3; }
+      .proj-cf-carta:nth-child(3) { transform: translateX(80%) translateZ(-220px) rotateY(32deg) scale(0.8); opacity: 0.55; z-index: 1; }
+      .proj-cf-pista:has(.proj-cf-carta:nth-child(1):hover) .proj-cf-carta:nth-child(1),
+      .proj-cf-pista:has(.proj-cf-carta:nth-child(3):hover) .proj-cf-carta:nth-child(3) {
+        transform: translateX(0) translateZ(0) rotateY(0) scale(1); opacity: 1; z-index: 3;
+        box-shadow: 0 40px 70px -25px rgba(0,0,0,0.9);
+      }
+      .proj-cf-pista:has(.proj-cf-carta:nth-child(1):hover) .proj-cf-carta:nth-child(2) {
+        transform: translateX(-80%) translateZ(-220px) rotateY(-32deg) scale(0.8); opacity: 0.55; z-index: 1;
+      }
+      .proj-cf-pista:has(.proj-cf-carta:nth-child(3):hover) .proj-cf-carta:nth-child(2) {
+        transform: translateX(80%) translateZ(-220px) rotateY(32deg) scale(0.8); opacity: 0.55; z-index: 1;
+      }
+      @media (prefers-reduced-motion: reduce) { .proj-cf-carta { transition: none; } }
+    }
+
+    .proj-cf-detalle {
+      max-width: 820px; margin: 72px auto 0; padding-top: 48px;
+      border-top: 0.5px solid #2A2A2A; scroll-margin-top: 90px;
+    }
+    .proj-cf-detalle-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 600;
+      color: var(--white); line-height: 1.15; margin-bottom: 18px;
+    }
+    .proj-cf-detalle p:not(.proj-cf-meta) { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.85; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
   </style>
 </head>
 <body>
@@ -1290,32 +1362,50 @@
   </section>
   <hr class="gold-line"/>
 
-  <section class="projects-wrap" style="padding-top:64px;padding-bottom:0;">
-    <div class="proj-detail-grid">
+  <section class="projects-wrap proj-cf-wrap">
+    <div class="proj-cf">
+      <div class="proj-cf-pista">
 
-      <div class="proj-detail-card">
-        <div class="proj-detail-year">2025 · PUCP</div>
-        <div class="proj-detail-award">Hackathon Qiskit Fall Fest 2025 (IBM Quantum) · 1.er lugar</div>
-        <h2 class="proj-detail-name">Black–Scholes con Caminata Aleatoria Cuántica</h2>
-        <p class="proj-detail-desc">De la fórmula que revolucionó las finanzas a su codificación cuántica: caminata aleatoria cuántica aplicada a opciones europeas.</p>
-        <a href="blackscholes.html" class="proj-detail-link">Explorar proyecto</a>
+        <a href="quantumquipu.html" class="proj-cf-carta">
+          <div class="proj-cf-img"><img src="img/minas.png" alt=""/></div>
+          <div class="proj-cf-texto">
+            <p class="proj-cf-meta">2025 · Hackathon Quantum Quipu · 2.do lugar</p>
+            <h3 class="proj-cf-title">QuantumQuipu: Optimización de Rutas en Minería con VQE</h3>
+            <p class="proj-cf-desc">Formulación QUBO, mapeo al Hamiltoniano de Ising y resolución con VQE aplicados a rutas de transporte en Mina Orcopampa, Arequipa.</p>
+            <span class="proj-cf-cta">Explorar proyecto</span>
+          </div>
+        </a>
+
+        <a href="blackscholes.html" class="proj-cf-carta">
+          <div class="proj-cf-img"><img src="img/finanzas.png" alt=""/></div>
+          <div class="proj-cf-texto">
+            <p class="proj-cf-meta">2025 · PUCP · Hackathon Qiskit Fall Fest (IBM Quantum) · 1.er lugar</p>
+            <h3 class="proj-cf-title">Black–Scholes con Caminata Aleatoria Cuántica</h3>
+            <p class="proj-cf-desc">De la fórmula que revolucionó las finanzas a su codificación cuántica: caminata aleatoria cuántica aplicada a opciones europeas.</p>
+            <span class="proj-cf-cta">Explorar proyecto</span>
+          </div>
+        </a>
+
+        <a href="#swaptions" class="proj-cf-carta">
+          <div class="proj-cf-img proj-cf-img--ph">
+            <svg viewBox="0 0 48 48" fill="none" stroke="#C8A96E" stroke-width="1.2"><path d="M6 40h36M6 40V8"/><circle cx="12" cy="32" r="1.6"/><circle cx="19" cy="27" r="1.6"/><circle cx="33" cy="17" r="1.6"/><circle cx="40" cy="12" r="1.6"/><circle cx="26" cy="22" r="2.4" stroke-dasharray="2 2"/><path d="M8 35 L42 10"/></svg>
+          </div>
+          <div class="proj-cf-texto">
+            <p class="proj-cf-meta">Regresión lineal · Reservorio cuántico</p>
+            <h3 class="proj-cf-title">Predicción de valores faltantes en precios de swaptions</h3>
+            <p class="proj-cf-desc">Regresión lineal sobre un dataset de precios de swaptions y una alternativa cuántica basada en un reservorio cuántico.</p>
+            <span class="proj-cf-cta">Leer más</span>
+          </div>
+        </a>
+
       </div>
+    </div>
 
-      <div class="proj-detail-card">
-        <div class="proj-detail-year">2025</div>
-        <div class="proj-detail-award">Hackathon Quantum Quipu 2025 · 2.do lugar</div>
-        <h2 class="proj-detail-name">QuantumQuipu: Optimización de Rutas en Minería con VQE</h2>
-        <p class="proj-detail-desc">Formulación QUBO, mapeo al Hamiltoniano de Ising y resolución con VQE aplicados a rutas de transporte en Mina Orcopampa, Arequipa.</p>
-        <a href="quantumquipu.html" class="proj-detail-link">Explorar proyecto</a>
-      </div>
-
-      <div class="proj-detail-card" id="swaptions" style="grid-column: 1 / -1;">
-        <div class="proj-detail-award">Regresión lineal · Reservorio cuántico</div>
-        <h2 class="proj-detail-name">Predicción de valores faltantes en precios de swaptions</h2>
-        <p class="proj-detail-desc">Predicción de valores faltantes en un dataset de precios de swaptions usando regresión lineal.</p>
-        <p class="proj-detail-desc">Alternativa cuántica: en lugar de conseguir los pesos de una red neuronal entrenando con datasets, se usa un reservorio cuántico. Las conexiones quedan codificadas y los pesos solo se mueven con la temperatura o alguna perturbación. Al final de un proceso estocástico se evalúa la función de coste en cada configuración y se elige la de menor pérdida.</p>
-      </div>
-
+    <div class="proj-cf-detalle" id="swaptions">
+      <p class="proj-cf-meta">Regresión lineal · Reservorio cuántico</p>
+      <h2 class="proj-cf-detalle-title">Predicción de valores faltantes en precios de swaptions</h2>
+      <p>Predicción de valores faltantes en un dataset de precios de swaptions usando regresión lineal.</p>
+      <p>Alternativa cuántica: en lugar de conseguir los pesos de una red neuronal entrenando con datasets, se usa un reservorio cuántico. Las conexiones quedan codificadas y los pesos solo se mueven con la temperatura o alguna perturbación. Al final de un proceso estocástico se evalúa la función de coste en cada configuración y se elige la de menor pérdida.</p>
     </div>
   </section>
 

@@ -1366,6 +1366,13 @@
       .pagina--izq { left: 7.4%; }
       .pagina--der { left: 50.6%; }
     }
+    /* Enlace como una flecha dibujada a mano */
+    .pagina-flecha {
+      position: absolute; right: 70px; top: 56px; color: #5B3FC4; display: block; padding: 6px;
+      transition: transform 0.25s ease;
+    }
+    .pagina-flecha:hover { transform: translateX(5px); }
+    @media (max-width: 900px) { .pagina-flecha { position: static; display: inline-block; margin-top: 10px; } }
   </style>
 </head>
 <body>
@@ -1385,7 +1392,7 @@
 
       <article class="pagina pagina--izq" id="mecanica-cuantica">
         <h2 class="pagina-titulo">Mecánica Cuántica</h2>
-        <a href="mecanica-cuantica.html" class="pagina-link a-mano pagina-link--arriba">Ver curso</a>
+        <a href="mecanica-cuantica.html" class="pagina-flecha" aria-label="Ver curso de Mecánica Cuántica" title="Ver curso"><svg viewBox="0 0 34 50" width="30" height="44" aria-hidden="true"><path d="M5 6 C14 9 22 15 28 24 C21 31 13 38 6 45" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 6 C3 5 2 7 4 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></a>
         <p class="pagina-sub">Principios variacionales y entrelazamiento.</p>
 
 
@@ -1410,7 +1417,7 @@
       <article class="pagina pagina--der" id="problemas">
         <h2 class="pagina-titulo a-mano">Problemas de física</h2>
         <p class="pagina-sub a-mano">Electromagnetismo, física nuclear y termodinámica.</p>
-        <a href="problemas.html" class="pagina-link a-mano pagina-link--arriba">Ver problemas</a>
+        <a href="problemas.html" class="pagina-flecha" aria-label="Ver problemas de física" title="Ver problemas"><svg viewBox="0 0 34 50" width="30" height="44" aria-hidden="true"><path d="M5 6 C14 9 22 15 28 24 C21 31 13 38 6 45" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 6 C3 5 2 7 4 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></a>
 
 
 

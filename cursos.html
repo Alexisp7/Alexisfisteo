@@ -1362,7 +1362,7 @@
       var section = canvas.parentElement;
       var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
-      var SPIN = 3.2, HOLD = 1400, TAU = Math.PI * 2;
+      var SPIN = 3.2, TAU = Math.PI * 2;
       var qubits = [], w = 0, h = 0, visible = false, raf = 0, last = 0;
 
       function rnd(seed) {
@@ -1401,20 +1401,29 @@
         return found.slice(0, count).map(function (f) { return f.q; });
       }
 
+      var current = [];
+
+      function release() {
+        current.forEach(function (q) { q.hotUntil = 0; q.glow = 0; });
+        current = [];
+        start();
+      }
+
       function activate(px, py) {
         var group = nearest(px, py, 4);
-        if (!group.length) return;
         var center = group[0];
+        if (!center) return release();
         var dx = center.x - px, dy = center.y - py;
-        if (dx * dx + dy * dy > (R + 3) * (R + 3)) return;
-        var now = performance.now();
+        if (dx * dx + dy * dy > (R + 3) * (R + 3)) return release();
+        if (current[0] === center) return;
+        release();
         group.forEach(function (q, i) {
-          if (q.hotUntil < now) {
-            q.phi = 0;
-            q.theta = center.theta + i * TAU / 3;
-          }
-          q.hotUntil = now + HOLD;
+          q.phi = 0;
+          q.theta = center.theta + i * TAU / 3;
+          q.hotUntil = Infinity;
+          q.glow = 1;
         });
+        current = group;
         start();
       }
 
@@ -1424,7 +1433,6 @@
         for (var i = 0; i < qubits.length; i++) {
           var q = qubits[i];
           var hot = q.hotUntil > t;
-          q.glow += ((hot ? 1 : 0) - q.glow) * Math.min(1, dt / 180);
           if (hot) q.theta = (q.theta + SPIN * dt / 1000) % TAU; else q.phi += q.drift * dt;
           var g = q.glow;
 
@@ -1478,6 +1486,7 @@
         }).observe(section);
       } else { visible = true; start(); }
 
+      section.addEventListener('mouseleave', release);
       section.addEventListener('mousemove', function (e) {
         var r = section.getBoundingClientRect();
         activate(e.clientX - r.left, e.clientY - r.top);

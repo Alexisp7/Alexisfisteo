@@ -202,20 +202,21 @@
     }
     // la línea cuenta los resultados medidos, a mano o con el medidor. La
     // mitad izquierda es solo de los |1⟩ (rojo) y la derecha solo de los |0⟩
-    // (azul); cada lado crece desde el medidor hacia afuera. El lado con más
-    // mediciones llega hasta su extremo y el otro queda en proporción a él.
+    // (azul). Cada lado mide su fracción del total medido, así que con cada
+    // nueva medición todo se reescala: un solo |1⟩ llena el lado rojo, y al
+    // llegar un |0⟩ el rojo baja a la mitad y el azul aparece en la mitad.
     function drawTally(half) {
       var n0 = 0, n1 = 0;
       for (var i = 0; i < qubits.length; i++) {
         if (qubits[i].frozen === '0') n0++; else if (qubits[i].frozen === '1') n1++;
       }
-      var mayor = Math.max(n0, n1);
-      if (!mayor) return;
+      var n = n0 + n1;
+      if (!n) return;
       var y = lineY, mx = 15, largo = half - mx;
       ctx.save();
       ctx.lineWidth = 3; ctx.lineCap = 'round';
-      function lado(dir, n, col) {
-        var x0 = w / 2 + dir * mx, x1 = x0 + dir * largo * n / mayor;
+      function lado(dir, k, col) {
+        var x0 = w / 2 + dir * mx, x1 = x0 + dir * largo * k / n;
         ctx.strokeStyle = col;
         ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(x1 - dir * 2, y - 14); ctx.quadraticCurveTo(x1 + dir * 9, y, x1 - dir * 2, y + 14); ctx.stroke();

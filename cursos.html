@@ -1349,6 +1349,23 @@
       .stickers { position: static; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; margin-top: 26px; }
       .sticker { position: static; width: auto !important; max-width: 40%; max-height: 78px; }
     }
+    /* En escritorio el cuaderno es la imagen del libro abierto y las dos
+       páginas se ubican encima de su papel */
+    @media (min-width: 901px) {
+      .cuaderno-marco { max-width: 1446px; }
+      .cuaderno { position: relative; left: 50%; }
+      .cuaderno {
+        display: block; width: 1446px; max-width: none; height: 803px; padding: 0; border-radius: 0;
+        background: url('img/cuaderno.webp') center / 100% 100% no-repeat; box-shadow: none;
+      }
+      .pagina {
+        position: absolute; top: 4.9%; height: 86.8%; width: 41.6%; min-height: 0;
+        padding: 46px 50px 40px; background: none; box-shadow: none; border-radius: 0;
+      }
+      .pagina::after { display: none; }
+      .pagina--izq { left: 7.4%; }
+      .pagina--der { left: 50.6%; }
+    }
   </style>
 </head>
 <body>
@@ -1449,11 +1466,9 @@
         if (!desktop.matches) return;
         var room = window.innerHeight - (header ? header.offsetHeight : 0) - 68;
         var k = Math.min(1, room / libro.offsetHeight, (marco.clientWidth) / libro.offsetWidth);
-        if (k < 1) {
-          libro.style.transformOrigin = 'top center';
-          libro.style.transform = 'scale(' + k + ')';
-          marco.style.height = Math.ceil(libro.offsetHeight * k) + 'px';
-        }
+        libro.style.transformOrigin = 'top center';
+        libro.style.transform = 'translateX(-50%) scale(' + k + ')';
+        marco.style.height = Math.ceil(libro.offsetHeight * k) + 'px';
       }
       window.addEventListener('resize', fit);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);

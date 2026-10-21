@@ -243,30 +243,25 @@
     // (azul); cada lado mide su fracción del total medido y se reescala con
     // cada medición. Las flechas crecen y se recogen suave, y al recogerse se
     // van desvaneciendo cuanto más se acercan al medidor. Si hay esferas en H
-    // la medición queda superpuesta: las dos flechas son doradas y oscilan,
-    // una crece mientras la otra se achica.
-    var shownL = 0, shownR = 0, mezcla = 0;
+    // la medición queda superpuesta: las flechas se recogen y solo queda el
+    // glitch del medidor.
+    var shownL = 0, shownR = 0;
     function drawTally(half, dt, t) {
       var c = cuenta(), n = c.n0 + c.n1;
       var sup = c.h > 0;
       var ease = still ? 1 : Math.min(1, dt / 650);
       var targetL, targetR;
       if (sup) {
-        var o = Math.sin(t / 900);
-        targetL = 0.5 + 0.42 * o; targetR = 0.5 - 0.42 * o;
-        ease = still ? 1 : Math.min(1, dt / 260);
+        targetL = 0; targetR = 0;
+        ease = still ? 1 : Math.min(1, dt / 120);
       } else {
         targetL = n ? c.n1 / n : 0; targetR = n ? c.n0 / n : 0;
       }
       shownL += (targetL - shownL) * ease;
       shownR += (targetR - shownR) * ease;
-      mezcla += ((sup ? 1 : 0) - mezcla) * (still ? 1 : Math.min(1, dt / 300));
       if (shownL < 0.004 && shownR < 0.004) return sup;
       var y = lineY, mx = 15, largo = half - mx;
-      function color(base) {
-        var a = base.split(','), g = GOLD.split(',');
-        return 'rgb(' + a.map(function (v, i) { return Math.round(+v + (+g[i] - +v) * mezcla); }).join(',') + ')';
-      }
+      function color(base) { return 'rgb(' + base + ')'; }
       ctx.save();
       ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       function lado(dir, k, col) {

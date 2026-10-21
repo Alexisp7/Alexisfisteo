@@ -1338,6 +1338,13 @@
       .carrusel { padding: 34px 34px 10px; }
       .carrusel-flecha--izq { left: 0; } .carrusel-flecha--der { right: 0; }
     }
+    .sgx-eje-flecha { stroke: #6E1A22; stroke-width: 2.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .sgx-eje--chico { font-size: 18px; }
+    .sgx-formula { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px; fill: #3B2F28; }
+    .sgx-control { display: flex; flex-direction: column; gap: 8px; max-width: 420px; margin: 6px 0 4px; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--gray); }
+    .sgx-control strong { color: #6E1A22; }
+    .sgx-control input { accent-color: #5B3FC4; width: 100%; }
+    .sgx--girado { border-top: 1px solid #EFE7D8; padding-top: 30px; }
   </style>
 </head>
 <body>
@@ -1492,6 +1499,44 @@
           <rect x="22" y="84" width="46" height="32" rx="5" class="sg-pieza"/><text x="45" y="105" class="sgx-mini" text-anchor="middle">Ag</text><path d="M68 100 H130" class="sgx-haz" style="stroke-width:3"/><rect x="130" y="66" width="104" height="68" rx="6" class="sgx-caja"/><text x="182" y="108" class="sgx-eje" text-anchor="middle">SG z</text><path d="M234 86 Q280 86 320 100 H360" class="sgx-haz" style="stroke-width:3"/><path d="M234 114 Q294 114 354 140" class="sgx-haz" style="stroke-width:3"/><rect x="352" y="131" width="6" height="18" class="sgx-tapon"/><text x="248" y="78" class="sgx-mini">↑</text><text x="248" y="134" class="sgx-mini">↓</text><rect x="360" y="66" width="104" height="68" rx="6" class="sgx-caja"/><text x="412" y="108" class="sgx-eje" text-anchor="middle">SG x</text><path d="M464 86 Q510 86 550 100 H590" class="sgx-haz" style="stroke-width:3"/><path d="M464 114 Q524 114 584 140" class="sgx-haz" style="stroke-width:3"/><rect x="582" y="131" width="6" height="18" class="sgx-tapon"/><text x="478" y="78" class="sgx-mini">+</text><text x="478" y="134" class="sgx-mini">−</text><rect x="590" y="66" width="104" height="68" rx="6" class="sgx-caja"/><text x="642" y="108" class="sgx-eje" text-anchor="middle">SG z</text><path d="M694 86 Q754 86 814 52" class="sgx-haz" style="stroke-width:3.0"/><path d="M694 114 Q754 114 814 148" class="sgx-haz" style="stroke-width:3.0"/><rect x="814" y="30" width="10" height="140" rx="2" class="sg-pantalla"/><text x="836" y="58" class="sgx-ket">|↑z⟩</text><text x="836" y="78" class="sgx-pct">50%</text><text x="836" y="154" class="sgx-ket">|↓z⟩</text><text x="836" y="174" class="sgx-pct">50%</text>
         </svg>
         <p class="sgx-texto">Medir en x borra lo que se sabía de z: aunque se habían quedado solo los |↑z⟩, vuelven a salir mitad arriba y mitad abajo.</p>
+      </figure>
+      <figure class="sgx sgx--girado" id="sgx-girado">
+        <figcaption class="sgx-titulo"><span class="sgx-num">5</span> z y luego un eje girado</figcaption>
+        <svg class="sgx-dibujo" viewBox="0 0 920 200" role="img" aria-label="Aparato de Stern-Gerlach en z seguido de otro aparato girado un ángulo theta">
+          <rect x="22" y="84" width="46" height="32" rx="5" class="sg-pieza"/>
+          <text x="45" y="105" class="sgx-mini" text-anchor="middle">Ag</text>
+          <path d="M68 100 H130" class="sgx-haz" style="stroke-width:3"/>
+          <rect x="130" y="66" width="104" height="68" rx="6" class="sgx-caja"/>
+          <text x="182" y="108" class="sgx-eje" text-anchor="middle">SG z</text>
+          <path d="M234 86 Q280 86 320 100 H360" class="sgx-haz" style="stroke-width:3"/>
+          <path d="M234 114 Q294 114 354 140" class="sgx-haz" style="stroke-width:3"/>
+          <rect x="352" y="131" width="6" height="18" class="sgx-tapon"/>
+          <text x="248" y="78" class="sgx-mini">↑</text>
+          <text x="248" y="134" class="sgx-mini">↓</text>
+
+          <!-- aparato girado: la caja gira con el angulo -->
+          <g id="sgx-caja-girada" transform="rotate(0 412 100)">
+            <rect x="360" y="66" width="104" height="68" rx="6" class="sgx-caja"/>
+            <line x1="412" y1="124" x2="412" y2="76" class="sgx-eje-flecha"/>
+            <path d="M406 84 L412 74 L418 84" class="sgx-eje-flecha"/>
+          </g>
+          <text x="412" y="160" class="sgx-eje sgx-eje--chico" text-anchor="middle">SG n̂</text>
+
+          <path id="sgx-sale-mas" d="M464 86 Q524 86 584 52" class="sgx-haz"/>
+          <path id="sgx-sale-menos" d="M464 114 Q524 114 584 148" class="sgx-haz"/>
+          <rect x="584" y="30" width="10" height="140" rx="2" class="sg-pantalla"/>
+          <text x="606" y="58" class="sgx-ket">|+n⟩</text><text x="606" y="78" class="sgx-pct" id="sgx-pct-mas">100%</text>
+          <text x="606" y="154" class="sgx-ket">|−n⟩</text><text x="606" y="174" class="sgx-pct" id="sgx-pct-menos">0%</text>
+
+          <!-- formulas -->
+          <text x="700" y="80" class="sgx-formula">P(+) = cos²(θ/2)</text>
+          <text x="700" y="128" class="sgx-formula">P(−) = sin²(θ/2)</text>
+        </svg>
+        <label class="sgx-control">
+          <span>Ángulo del segundo aparato, θ = <strong id="sgx-theta">0°</strong></span>
+          <input type="range" id="sgx-rango" min="0" max="180" step="1" value="0"/>
+        </label>
+        <p class="sgx-texto">Este es el experimento central: el segundo aparato mide el espín en otra dirección n̂, girada un ángulo θ respecto de z. Con θ = 0° todos salen |+n⟩, con θ = 90° la mitad y la mitad, y con θ = 180° todos salen |−n⟩. Entre esos casos la probabilidad depende solo del ángulo.</p>
       </figure>
   </section>
 
@@ -1703,6 +1748,30 @@
         if (Math.abs(dx) > 40) ir(i + (dx < 0 ? 1 : -1));
       });
       ir(0);
+    })();
+  </script>
+  <script>
+    // Experimento con el eje girado: el control mueve el ángulo θ del segundo
+    // aparato y actualiza las probabilidades cos²(θ/2) y sin²(θ/2).
+    (function () {
+      var rango = document.getElementById('sgx-rango');
+      if (!rango) return;
+      var caja = document.getElementById('sgx-caja-girada');
+      var mas = document.getElementById('sgx-sale-mas'), menos = document.getElementById('sgx-sale-menos');
+      var pMas = document.getElementById('sgx-pct-mas'), pMenos = document.getElementById('sgx-pct-menos');
+      var theta = document.getElementById('sgx-theta');
+      function actualiza() {
+        var t = +rango.value, r = t * Math.PI / 180;
+        var a = Math.cos(r / 2) * Math.cos(r / 2), b = 1 - a;
+        caja.setAttribute('transform', 'rotate(' + t + ' 412 100)');
+        theta.textContent = t + '°';
+        pMas.textContent = Math.round(a * 100) + '%';
+        pMenos.textContent = Math.round(b * 100) + '%';
+        mas.style.strokeWidth = Math.max(0.8, 6 * a); menos.style.strokeWidth = Math.max(0.8, 6 * b);
+        mas.classList.toggle('sgx-haz--nulo', a < 0.005); menos.classList.toggle('sgx-haz--nulo', b < 0.005);
+      }
+      rango.addEventListener('input', actualiza);
+      actualiza();
     })();
   </script>
 </body>

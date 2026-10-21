@@ -1293,6 +1293,11 @@
         scroll-snap-align: start;
       }
     }
+    /* Fondo de Cursos: esferas de Bloch doradas muy tenues, cada una con
+       su flecha de estado en una dirección al azar que precesa despacio */
+    .cursos-qubits { position: relative; overflow: hidden; }
+    .cursos-qubits > .section { position: relative; z-index: 1; }
+    .qubits-fondo { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
   </style>
 </head>
 <body>
@@ -1448,11 +1453,11 @@
   <!-- ═══════════════════════════════════
        CURSOS
   ═══════════════════════════════════ -->
-  <section id="cursos">
+  <section id="cursos" class="cursos-qubits">
+    <canvas class="qubits-fondo" aria-hidden="true"></canvas>
     <div class="section">
       <div class="section-header">
-        <p class="section-eyebrow">Portafolio académico</p>
-        <h2 class="section-title">Cursos &amp; <em>Formación</em></h2>
+        <h2 class="section-title">Cursos</h2>
       </div>
 
       <div class="courses-grid">
@@ -1508,6 +1513,91 @@
       window.addEventListener('scroll', update, { passive: true });
       window.addEventListener('resize', update);
       update();
+    })();
+  </script>
+  <script>
+    // Teselado de qubits detrás de la sección Cursos
+    (function () {
+      var canvas = document.querySelector('.qubits-fondo');
+      if (!canvas || !canvas.getContext) return;
+      var ctx = canvas.getContext('2d');
+      var section = canvas.parentElement;
+      var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var R = 7, DX = 24, DY = DX * Math.sqrt(3) / 2;
+      var qubits = [], w = 0, h = 0, dpr = 1, visible = false, raf = 0;
+
+      function rnd(seed) {
+        var x = Math.sin(seed * 12.9898) * 43758.5453;
+        return x - Math.floor(x);
+      }
+
+      function layout() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = section.clientWidth; h = section.clientHeight;
+        canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        qubits = [];
+        var row = 0, k = 0;
+        for (var y = DY / 2; y < h + DY; y += DY, row++) {
+          for (var x = (row % 2 ? DX : DX / 2); x < w + DX; x += DX, k++) {
+            qubits.push({
+              x: x, y: y,
+              theta: Math.acos(1 - 2 * rnd(k + 1)),
+              phi: rnd(k + 7) * Math.PI * 2,
+              w: (rnd(k + 13) - 0.5) * 0.0012
+            });
+          }
+        }
+      }
+
+      function draw(t) {
+        ctx.clearRect(0, 0, w, h);
+        ctx.lineWidth = 0.6;
+        for (var i = 0; i < qubits.length; i++) {
+          var q = qubits[i];
+          ctx.strokeStyle = 'rgba(200,169,110,0.16)';
+          ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, Math.PI * 2); ctx.stroke();
+          ctx.strokeStyle = 'rgba(200,169,110,0.10)';
+          ctx.beginPath(); ctx.ellipse(q.x, q.y, R, R * 0.3, 0, 0, Math.PI * 2); ctx.stroke();
+          var phi = q.phi + q.w * t;
+          var st = Math.sin(q.theta);
+          var vx = st * Math.cos(phi);
+          var vy = -Math.cos(q.theta) * 0.95 + st * Math.sin(phi) * 0.3;
+          var ex = q.x + vx * R, ey = q.y + vy * R;
+          ctx.strokeStyle = 'rgba(176,140,74,0.42)';
+          ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(ex, ey); ctx.stroke();
+          var a = Math.atan2(ey - q.y, ex - q.x);
+          ctx.fillStyle = 'rgba(176,140,74,0.42)';
+          ctx.beginPath();
+          ctx.moveTo(ex, ey);
+          ctx.lineTo(ex - 2.4 * Math.cos(a - 0.5), ey - 2.4 * Math.sin(a - 0.5));
+          ctx.lineTo(ex - 2.4 * Math.cos(a + 0.5), ey - 2.4 * Math.sin(a + 0.5));
+          ctx.closePath(); ctx.fill();
+        }
+      }
+
+      function loop(t) {
+        draw(t);
+        if (visible && !still) raf = requestAnimationFrame(loop);
+      }
+
+      function start() {
+        cancelAnimationFrame(raf);
+        if (still) draw(0); else raf = requestAnimationFrame(loop);
+      }
+
+      layout(); draw(0);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          visible = entries[0].isIntersecting;
+          if (visible) start(); else cancelAnimationFrame(raf);
+        }).observe(section);
+      }
+      var timer;
+      window.addEventListener('resize', function () {
+        clearTimeout(timer);
+        timer = setTimeout(function () { layout(); draw(performance.now()); }, 150);
+      });
     })();
   </script>
 </body>

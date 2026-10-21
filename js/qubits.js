@@ -13,6 +13,8 @@
 // fracción de la sección, de arriba hacia abajo. Sus costados se trazan como
 // bordes negros. Con data-linea="selector" se traza una línea fina sobre ese
 // elemento, de borde a borde de la zona, con una compuerta H en el centro.
+// Un clic en esa compuerta aplica Hadamard a todas las esferas; otro clic
+// la deshace y todo vuelve a como estaba (H por H es la identidad).
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
@@ -99,6 +101,28 @@
     }
 
     var lineSel = canvas.getAttribute('data-linea'), lineY = null;
+    var gate = null, snapshot = null;
+
+    function onGate(px, py) {
+      return gate && Math.abs(px - gate.x) <= gate.s / 2 + 4 && Math.abs(py - gate.y) <= gate.s / 2 + 4;
+    }
+
+    function hadamardAll() {
+      if (snapshot) {
+        qubits.forEach(function (q, i) {
+          var o = snapshot[i];
+          q.frozen = o.frozen; q.theta = o.theta; q.phi = o.phi; q.hot = false;
+        });
+        snapshot = null;
+      } else {
+        snapshot = qubits.map(function (q) { return { frozen: q.frozen, theta: q.theta, phi: q.phi }; });
+        qubits.forEach(function (q, i) {
+          q.frozen = 'H'; q.theta = Math.PI / 2; q.phi = rnd(i + 29) * TAU; q.hot = false;
+        });
+      }
+      current = [];
+      start();
+    }
 
     // extremos de la zona libre a la altura y
     function spanAt(y) {
@@ -119,7 +143,7 @@
       canvas.style.height = h + 'px';
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      qubits = []; current = [];
+      qubits = []; current = []; snapshot = null;
       var boxes = blockers();
       var lineEl = lineSel && section.querySelector(lineSel);
       lineY = lineEl ? Math.round(lineEl.getBoundingClientRect().top - section.getBoundingClientRect().top) + 0.5 : null;
@@ -212,7 +236,8 @@
         ctx.beginPath(); ctx.moveTo(span[0] + 32, lineY); ctx.lineTo(span[1] - 32, lineY); ctx.stroke();
         // compuerta de Hadamard sobre el cable
         var gx = w / 2, gs = 30;
-        ctx.fillStyle = '#fff'; ctx.strokeStyle = LINE; ctx.lineWidth = 2.5;
+        gate = { x: gx, y: lineY, s: gs };
+        ctx.fillStyle = '#fff'; ctx.strokeStyle = snapshot ? 'rgb(' + MUSTARD + ')' : LINE; ctx.lineWidth = 2.5;
         ctx.fillRect(gx - gs / 2, lineY - gs / 2, gs, gs);
         ctx.strokeRect(gx - gs / 2, lineY - gs / 2, gs, gs);
         ctx.fillStyle = '#111'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -302,11 +327,15 @@
 
     section.addEventListener('mouseleave', release);
     section.addEventListener('mousemove', function (e) {
-      var p = point(e); activate(p[0], p[1]);
+      var p = point(e);
+      section.style.cursor = onGate(p[0], p[1]) ? 'pointer' : '';
+      activate(p[0], p[1]);
     });
     section.addEventListener('click', function (e) {
       if (e.target.closest && e.target.closest('a, button, .nota')) return;
-      var p = point(e); freeze(p[0], p[1]);
+      var p = point(e);
+      if (onGate(p[0], p[1])) return hadamardAll();
+      freeze(p[0], p[1]);
     });
 
     // al cambiar el tamaño se reacomoda en el siguiente cuadro, sin esperar,

@@ -1269,7 +1269,7 @@
         linear-gradient(var(--papel), var(--papel-2));
     }
     .pagina--izq { border-radius: 6px 0 0 6px; box-shadow: inset -26px 0 30px -22px rgba(60,40,20,0.45); }
-    .pagina--der { border-radius: 0 6px 6px 0; box-shadow: inset 26px 0 30px -22px rgba(60,40,20,0.45); padding-right: 96px; }
+    .pagina--der { border-radius: 0 6px 6px 0; box-shadow: inset 26px 0 30px -22px rgba(60,40,20,0.45); }
     .pagina::after {
       content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
       background: repeating-linear-gradient(0deg, rgba(120,90,60,0.025) 0 1px, transparent 1px 3px);
@@ -1344,6 +1344,8 @@
     .pagina-titulo.a-mano { font-family: 'Caveat', cursive; font-weight: 500; font-size: clamp(30px, 2.6vw, 38px); line-height: 1.05; }
     .pagina-sub.a-mano { font-family: 'Caveat', cursive; font-size: 20px; margin-top: 6px; }
     .pagina-link.a-mano { font-family: 'Caveat', cursive; font-size: 20px; margin-top: 12px; }
+    .pagina-link--arriba { position: absolute; right: 64px; top: 70px; margin-top: 0; }
+    @media (max-width: 900px) { .pagina-link--arriba { position: static; margin-top: 12px; } }
   </style>
 </head>
 <body>
@@ -1407,7 +1409,7 @@
       <article class="pagina pagina--der" id="problemas">
         <h2 class="pagina-titulo a-mano">Problemas de física</h2>
         <p class="pagina-sub a-mano">Electromagnetismo, física nuclear y termodinámica.</p>
-        <a href="problemas.html" class="pagina-link a-mano">Ver problemas</a>
+        <a href="problemas.html" class="pagina-link a-mano pagina-link--arriba">Ver problemas</a>
 
         <span class="mano" style="right:70px;top:150px;">pequeños<br/>&nbsp;&nbsp;problemas<br/>&nbsp;&nbsp;&nbsp;&nbsp;grandes ideas</span>
 
@@ -1426,9 +1428,6 @@
           <text x="206" y="66" font-size="20">L</text>
         </svg>
 
-        <span class="mano" style="right:110px;top:300px;">del problema<br/>a la intuición
-          <svg width="46" height="40" viewBox="0 0 46 40"><path d="M38 2 C40 20 30 32 8 36"/><path d="M8 36 l7 -6 M8 36 l8 3"/></svg>
-        </span>
 
         <div class="fisitok" id="fisitok">
           <span class="fisitok-cinta" aria-hidden="true"></span>
@@ -1441,14 +1440,8 @@
             <path d="M28 54 L28 40 L32 36 L36 40 L36 54"/>
             <path d="M32 0 V5 M8 8 L12 12 M56 8 L52 12 M0 31 H5 M59 31 H64"/>
           </svg>
-          <span class="mano">una pregunta<br/>&nbsp;&nbsp;también<br/>puede enseñar</span>
         </div>
 
-        <nav class="pestanas" aria-label="Secciones del cuaderno">
-          <a class="pestana" href="#mecanica-cuantica">Mecánica cuántica</a>
-          <a class="pestana pestana--claro" href="problemas.html">Problemas</a>
-          <a class="pestana pestana--corta" href="#fisitok">FisiTok</a>
-        </nav>
       </article>
 
     </div>

@@ -1516,15 +1516,18 @@
     })();
   </script>
   <script>
-    // Teselado de qubits detrás de la sección Cursos
+    // Teselado de qubits detrás de la sección Cursos. Al pasar el mouse por
+    // una esfera se vuelve dorada y su flecha gira, junto con sus 3 vecinas
+    // más cercanas, cada una desfasada un tercio de vuelta.
     (function () {
       var canvas = document.querySelector('.qubits-fondo');
       if (!canvas || !canvas.getContext) return;
       var ctx = canvas.getContext('2d');
       var section = canvas.parentElement;
       var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var R = 7, DX = 24, DY = DX * Math.sqrt(3) / 2;
-      var qubits = [], w = 0, h = 0, dpr = 1, visible = false, raf = 0;
+      var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
+      var SPIN = 3.2, HOLD = 1400, TAU = Math.PI * 2;
+      var qubits = [], w = 0, h = 0, visible = false, raf = 0, last = 0;
 
       function rnd(seed) {
         var x = Math.sin(seed * 12.9898) * 43758.5453;
@@ -1532,7 +1535,7 @@
       }
 
       function layout() {
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
         w = section.clientWidth; h = section.clientHeight;
         canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1543,60 +1546,111 @@
             qubits.push({
               x: x, y: y,
               theta: Math.acos(1 - 2 * rnd(k + 1)),
-              phi: rnd(k + 7) * Math.PI * 2,
-              w: (rnd(k + 13) - 0.5) * 0.0012
+              phi: rnd(k + 7) * TAU,
+              drift: (rnd(k + 13) - 0.5) * 0.0012,
+              hotUntil: 0, glow: 0
             });
           }
         }
       }
 
-      function draw(t) {
+      function nearest(px, py, count) {
+        var found = [];
+        for (var i = 0; i < qubits.length; i++) {
+          var q = qubits[i], dx = q.x - px, dy = q.y - py;
+          if (Math.abs(dx) > DX * 2 || Math.abs(dy) > DY * 2.5) continue;
+          found.push({ q: q, d: dx * dx + dy * dy });
+        }
+        found.sort(function (a, b) { return a.d - b.d; });
+        return found.slice(0, count).map(function (f) { return f.q; });
+      }
+
+      function activate(px, py) {
+        var group = nearest(px, py, 4);
+        if (!group.length) return;
+        var center = group[0];
+        var dx = center.x - px, dy = center.y - py;
+        if (dx * dx + dy * dy > (R + 3) * (R + 3)) return;
+        var now = performance.now();
+        group.forEach(function (q, i) {
+          if (q.hotUntil < now) {
+            q.theta = Math.PI / 2;
+            q.phi = center.phi + i * TAU / 3;
+          }
+          q.hotUntil = now + HOLD;
+        });
+        start();
+      }
+
+      function draw(t, dt) {
         ctx.clearRect(0, 0, w, h);
-        ctx.lineWidth = 0.6;
+        ctx.lineWidth = 0.7;
         for (var i = 0; i < qubits.length; i++) {
           var q = qubits[i];
-          ctx.strokeStyle = 'rgba(200,169,110,0.16)';
-          ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, Math.PI * 2); ctx.stroke();
-          ctx.strokeStyle = 'rgba(200,169,110,0.10)';
-          ctx.beginPath(); ctx.ellipse(q.x, q.y, R, R * 0.3, 0, 0, Math.PI * 2); ctx.stroke();
-          var phi = q.phi + q.w * t;
+          var hot = q.hotUntil > t;
+          q.glow += ((hot ? 1 : 0) - q.glow) * Math.min(1, dt / 180);
+          if (hot) q.phi += SPIN * dt / 1000; else q.phi += q.drift * dt;
+          var g = q.glow;
+
+          if (g > 0.01) {
+            ctx.fillStyle = 'rgba(200,169,110,' + g + ')';
+            ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, TAU); ctx.fill();
+          }
+          ctx.strokeStyle = 'rgba(200,169,110,' + (0.32 + 0.68 * g) + ')';
+          ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, TAU); ctx.stroke();
+          ctx.strokeStyle = 'rgba(200,169,110,' + (0.22 + 0.5 * g) + ')';
+          ctx.beginPath(); ctx.ellipse(q.x, q.y, R, R * 0.3, 0, 0, TAU); ctx.stroke();
+
           var st = Math.sin(q.theta);
-          var vx = st * Math.cos(phi);
-          var vy = -Math.cos(q.theta) * 0.95 + st * Math.sin(phi) * 0.3;
+          var vx = st * Math.cos(q.phi);
+          var vy = -Math.cos(q.theta) * 0.95 + st * Math.sin(q.phi) * 0.3;
           var ex = q.x + vx * R, ey = q.y + vy * R;
-          ctx.strokeStyle = 'rgba(176,140,74,0.42)';
+          var arrow = g > 0.5 ? 'rgba(17,17,17,' + g + ')' : 'rgba(160,124,58,0.6)';
+          ctx.strokeStyle = arrow; ctx.fillStyle = arrow;
           ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(ex, ey); ctx.stroke();
           var a = Math.atan2(ey - q.y, ex - q.x);
-          ctx.fillStyle = 'rgba(176,140,74,0.42)';
           ctx.beginPath();
           ctx.moveTo(ex, ey);
-          ctx.lineTo(ex - 2.4 * Math.cos(a - 0.5), ey - 2.4 * Math.sin(a - 0.5));
-          ctx.lineTo(ex - 2.4 * Math.cos(a + 0.5), ey - 2.4 * Math.sin(a + 0.5));
+          ctx.lineTo(ex - 2.6 * Math.cos(a - 0.5), ey - 2.6 * Math.sin(a - 0.5));
+          ctx.lineTo(ex - 2.6 * Math.cos(a + 0.5), ey - 2.6 * Math.sin(a + 0.5));
           ctx.closePath(); ctx.fill();
         }
       }
 
+      function busy(t) {
+        for (var i = 0; i < qubits.length; i++) if (qubits[i].hotUntil > t || qubits[i].glow > 0.01) return true;
+        return false;
+      }
+
       function loop(t) {
-        draw(t);
-        if (visible && !still) raf = requestAnimationFrame(loop);
+        var dt = last ? Math.min(t - last, 50) : 16;
+        last = t;
+        draw(t, dt);
+        if (visible && (!still || busy(t))) raf = requestAnimationFrame(loop);
+        else { raf = 0; last = 0; }
       }
 
       function start() {
-        cancelAnimationFrame(raf);
-        if (still) draw(0); else raf = requestAnimationFrame(loop);
+        if (!raf) raf = requestAnimationFrame(loop);
       }
 
-      layout(); draw(0);
+      layout(); draw(performance.now(), 16);
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (entries) {
           visible = entries[0].isIntersecting;
-          if (visible) start(); else cancelAnimationFrame(raf);
+          if (visible) start(); else { cancelAnimationFrame(raf); raf = 0; last = 0; }
         }).observe(section);
-      }
+      } else { visible = true; start(); }
+
+      section.addEventListener('mousemove', function (e) {
+        var r = section.getBoundingClientRect();
+        activate(e.clientX - r.left, e.clientY - r.top);
+      });
+
       var timer;
       window.addEventListener('resize', function () {
         clearTimeout(timer);
-        timer = setTimeout(function () { layout(); draw(performance.now()); }, 150);
+        timer = setTimeout(function () { layout(); draw(performance.now(), 16); }, 150);
       });
     })();
   </script>

@@ -1273,6 +1273,10 @@
        a los lados; al pasar el mouse por una lateral pasa al frente.
        En celular quedan apiladas. */
     .proj-cf-wrap { padding: 72px 24px 88px; }
+    @media (min-width: 901px) {
+      .proj-cf-wrap { padding: 28px 24px; min-height: calc(100vh - 72px); display: flex; align-items: center; }
+      .proj-cf { width: 100%; }
+    }
     .proj-cf { max-width: 1100px; margin: 0 auto; }
     .proj-cf-carta {
       display: block; text-decoration: none; color: inherit;
@@ -1307,7 +1311,7 @@
     @media (min-width: 901px) {
       .proj-cf-pista {
         position: relative; display: flex; align-items: center; justify-content: center;
-        min-height: 600px; perspective: 1600px;
+        min-height: 0; perspective: 1600px;
       }
       .proj-cf-carta {
         position: absolute; width: 420px;
@@ -1393,25 +1397,62 @@
     </div>
   </footer>
   <script>
-    // Carrusel de proyectos: en escritorio, un clic en una tarjeta lateral
-    // la trae al frente; un clic en la del frente abre el proyecto.
+    // Carrusel de proyectos. En escritorio, pasar el mouse por una tarjeta
+    // lateral (o hacerle clic) la trae al frente; un clic en la del frente
+    // abre el proyecto. Tras cada cambio el mouse debe volver a la tarjeta
+    // del frente o salir del carrusel antes de poder cambiar otra vez, así
+    // las tarjetas no se intercambian sin parar bajo un cursor quieto.
+    // El carrusel se escala para entrar centrado en la pantalla.
     (function () {
+      var pista = document.querySelector('.proj-cf-pista');
+      var wrap = document.querySelector('.proj-cf-wrap');
+      var header = document.querySelector('.header');
       var cards = Array.prototype.slice.call(document.querySelectorAll('.proj-cf-carta'));
-      if (cards.length !== 3) return;
+      if (!pista || cards.length !== 3) return;
       var desktop = window.matchMedia('(min-width: 901px)');
       var order = ['is-left', 'is-center', 'is-right'];
+      var armed = true, lockedUntil = 0;
+
+      function bringToFront(card) {
+        var shift = card.classList.contains('is-left') ? 1 : -1;
+        cards.forEach(function (c) {
+          var i = order.findIndex(function (cls) { return c.classList.contains(cls); });
+          c.classList.remove(order[i]);
+          c.classList.add(order[(i + shift + 3) % 3]);
+        });
+        armed = false;
+        lockedUntil = performance.now() + 650;
+      }
+
       cards.forEach(function (card) {
         card.addEventListener('click', function (e) {
           if (!desktop.matches || card.classList.contains('is-center')) return;
           e.preventDefault();
-          var shift = card.classList.contains('is-left') ? 1 : -1;
-          cards.forEach(function (c) {
-            var i = order.findIndex(function (cls) { return c.classList.contains(cls); });
-            c.classList.remove(order[i]);
-            c.classList.add(order[(i + shift + 3) % 3]);
-          });
+          bringToFront(card);
         });
       });
+
+      pista.addEventListener('pointermove', function (e) {
+        if (!desktop.matches || e.pointerType === 'touch') return;
+        var card = e.target.closest && e.target.closest('.proj-cf-carta');
+        if (!card) return;
+        if (card.classList.contains('is-center')) { armed = true; return; }
+        if (armed && performance.now() > lockedUntil) bringToFront(card);
+      });
+      pista.addEventListener('pointerleave', function () { armed = true; });
+
+      function fit() {
+        pista.style.zoom = ''; pista.style.height = '';
+        if (!desktop.matches) return;
+        var tallest = Math.max.apply(null, cards.map(function (c) { return c.offsetHeight; }));
+        var room = window.innerHeight - (header ? header.offsetHeight : 0) - 56;
+        var k = Math.min(1, room / (tallest + 40));
+        pista.style.height = (tallest + 40) + 'px';
+        if (k < 1) pista.style.zoom = k;
+      }
+      window.addEventListener('resize', fit);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+      fit();
     })();
   </script>
 </body>

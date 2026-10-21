@@ -1,12 +1,13 @@
 // Teselado de qubits: esferas de Bloch doradas detrás de una sección.
 // En reposo se ven al 35%; al pasar el mouse la esfera y sus 3 vecinas se
 // ven enteras y su flecha gira de polo a polo, cada una desfasada un tercio
-// de vuelta. Un clic deja esa esfera en azul, quieta, hasta recargar.
+// de vuelta. Un clic mide el qubit: cerca de un polo colapsa a |0⟩ o |1⟩
+// (azul, con el ket encima); cerca del ecuador queda en mostaza con una H.
 // Cada <canvas class="qubits-fondo"> cubre a su elemento padre.
 (function () {
   var R = 8, DX = 26, DY = DX * Math.sqrt(3) / 2;
   var SPIN = 3.2, TAU = Math.PI * 2;
-  var GOLD = '200,169,110', BLUE = '37,99,235';
+  var GOLD = '200,169,110', BLUE = '37,99,235', MUSTARD = '206,154,18';
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function rnd(seed) {
@@ -80,7 +81,10 @@
     function freeze(px, py) {
       var q = nearest(px, py, 1)[0];
       if (!q || !onSphere(q, px, py)) return;
-      q.frozen = true;
+      var c = Math.cos(q.theta);
+      q.frozen = c > 0.5 ? '0' : c < -0.5 ? '1' : 'H';
+      q.theta = q.frozen === '0' ? 0 : q.frozen === '1' ? Math.PI : Math.PI / 2;
+      q.phi = 0;
       q.hot = false;
       current = current.filter(function (c) { return c !== q; });
       start();
@@ -94,7 +98,8 @@
         else if (!q.frozen) q.phi += q.drift * dt;
 
         var on = q.hot || q.frozen;
-        ctx.strokeStyle = ctx.fillStyle = 'rgba(' + (q.frozen ? BLUE : GOLD) + ',' + (on ? 1 : 0.35) + ')';
+        var col = q.frozen === 'H' ? MUSTARD : q.frozen ? BLUE : GOLD;
+        ctx.strokeStyle = ctx.fillStyle = 'rgba(' + col + ',' + (on ? 1 : 0.35) + ')';
         ctx.lineWidth = on ? 1 : 0.7;
 
         // contorno
@@ -116,7 +121,29 @@
         ctx.lineTo(ex - 2.6 * Math.cos(a - 0.5), ey - 2.6 * Math.sin(a - 0.5));
         ctx.lineTo(ex - 2.6 * Math.cos(a + 0.5), ey - 2.6 * Math.sin(a + 0.5));
         ctx.closePath(); ctx.fill();
+        if (q.frozen) label(q);
       }
+    }
+
+    // ket |0⟩ o |1⟩ en gris, o la compuerta H, encima de la esfera medida
+    function label(q) {
+      ctx.save();
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      if (q.frozen === 'H') {
+        ctx.fillStyle = '#fff'; ctx.strokeStyle = 'rgb(' + MUSTARD + ')'; ctx.lineWidth = 1;
+        ctx.fillRect(q.x + 2, q.y - 12, 10, 10); ctx.strokeRect(q.x + 2, q.y - 12, 10, 10);
+        ctx.fillStyle = 'rgb(' + MUSTARD + ')';
+        ctx.font = '700 8px "Space Mono", monospace';
+        ctx.fillText('H', q.x + 7, q.y - 6.6);
+      } else {
+        var text = '|' + q.frozen + '⟩';
+        ctx.font = 'italic 600 11px "Cormorant Garamond", serif';
+        ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+        ctx.strokeText(text, q.x + 10, q.y - 9);
+        ctx.fillStyle = '#6B6B6B';
+        ctx.fillText(text, q.x + 10, q.y - 9);
+      }
+      ctx.restore();
     }
 
     function loop(t) {

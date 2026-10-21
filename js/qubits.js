@@ -196,7 +196,8 @@
     var meter = null, collapsed = false;
     // el medidor se arrastra con el mouse sobre la línea y al soltarlo vuelve
     // suave al centro
-    var meterOff = 0, lineHalf = 105, drag = null, arrastrado = false;
+    // Si se suelta en el extremo derecho se queda ahí anclado como QFT
+    var meterOff = 0, lineHalf = 105, drag = null, arrastrado = false, anclado = false;
 
     // cuántas esferas hay en cada resultado
     function cuenta() {
@@ -236,8 +237,15 @@
       ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3B2F28'; ctx.lineWidth = 1.2;
       ctx.fillRect(x, y, mw, mh); ctx.strokeRect(x, y, mw, mh);
       var cx = w / 2 + meterOff, cy = y + mh - 4;
-      ctx.beginPath(); ctx.arc(cx, cy, 9, Math.PI, 2 * Math.PI); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 11 * Math.cos(ang), cy + 11 * Math.sin(ang)); ctx.stroke();
+      if (anclado) {
+        // en el extremo derecho el medidor se vuelve una compuerta QFT
+        ctx.fillStyle = '#3B2F28'; ctx.font = '600 10px Inter, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('QFT', cx, lineY + 0.5);
+      } else {
+        ctx.beginPath(); ctx.arc(cx, cy, 9, Math.PI, 2 * Math.PI); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 11 * Math.cos(ang), cy + 11 * Math.sin(ang)); ctx.stroke();
+      }
       ctx.restore();
     }
 
@@ -320,7 +328,7 @@
         ctx.strokeStyle = LINE; ctx.lineWidth = 1;
         var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
         lineHalf = half;
-        if (!drag) meterOff += (0 - meterOff) * (still ? 1 : Math.min(1, dt / 220));
+        if (!drag) meterOff += ((anclado ? half - 15 : 0) - meterOff) * (still ? 1 : Math.min(1, dt / 220));
         meterOff = Math.max(-(half - 15), Math.min(half - 15, meterOff));
         ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
         var sup = drawTally(half, dt, performance.now());
@@ -390,7 +398,7 @@
       var dt = last ? Math.min(t - last, 50) : 16;
       last = t;
       draw(dt);
-      var pendientes = drag || Math.abs(meterOff) > 0.3 || qubits.some(function (q) { return q.collapseAt || q.resetAt; });
+      var pendientes = drag || (!anclado && Math.abs(meterOff) > 0.3) || qubits.some(function (q) { return q.collapseAt || q.resetAt; });
       if (visible && (!still || current.length || pendientes)) raf = requestAnimationFrame(loop);
       else { raf = 0; last = 0; }
     }
@@ -439,6 +447,7 @@
     window.addEventListener('mouseup', function () {
       if (!drag) return;
       drag = null;
+      anclado = meterOff >= lineHalf - 15 - 12;
       section.style.cursor = '';
       start();
     });
@@ -447,7 +456,7 @@
       // soltar después de arrastrar no cuenta como clic en el medidor
       if (arrastrado) { arrastrado = false; return; }
       var p = point(e);
-      if (onMeter(p[0], p[1])) return collapseAll();
+      if (onMeter(p[0], p[1])) return anclado ? undefined : collapseAll();
       freeze(p[0], p[1]);
     });
 

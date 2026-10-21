@@ -60,16 +60,31 @@
       return inside;
     }
 
+    // marco: arriba solo dos escuadras negras en las esquinas; abajo, desde
+    // la línea de los contadores, el borde negro siguiendo la zona libre
     function drawFrame() {
       if (profile.length < 2) return;
-      var cx = w / 2;
-      ctx.strokeStyle = LINE; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      var cx = w / 2, top = 1.5, bracket = 60, drop = 0.22 * h;
+      var pts = profile.map(function (p) { return [p[0], Math.min(Math.max(p[1] * h, top), h - 1.5)]; });
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
       [1, -1].forEach(function (side) {
+        var x0 = cx + side * pts[0][0];
         ctx.beginPath();
-        profile.forEach(function (p, i) {
-          var x = cx + side * p[0], y = Math.min(Math.max(p[1] * h, 1.5), h - 1.5);
-          if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
-        });
+        ctx.moveTo(x0 - side * bracket, top); ctx.lineTo(x0, top); ctx.lineTo(x0, drop);
+        ctx.stroke();
+        if (lineY === null) return;
+        ctx.beginPath();
+        var started = false;
+        for (var i = 1; i < pts.length; i++) {
+          var a = pts[i - 1], b = pts[i];
+          if (b[1] < lineY) continue;
+          if (!started) {
+            var t = b[1] === a[1] ? 0 : Math.max(0, (lineY - a[1]) / (b[1] - a[1]));
+            ctx.moveTo(cx + side * (a[0] + (b[0] - a[0]) * t), Math.max(lineY, a[1]));
+            started = true;
+          }
+          ctx.lineTo(cx + side * b[0], b[1]);
+        }
         ctx.stroke();
       });
     }

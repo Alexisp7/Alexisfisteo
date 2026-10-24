@@ -1338,6 +1338,9 @@
     }
     .proj-cf-detalle p:not(.proj-cf-meta) { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.85; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
     .hero-eyebrow::before { content: none; }
+    /* Tarjeta del reto: la pregunta en grande */
+    .proj-cf-img--reto { padding: 0 34px; }
+    .reto-pregunta { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 26px; line-height: 1.25; color: #E8D9B8; text-align: center; }
   </style>
 </head>
 <body>
@@ -1375,14 +1378,14 @@
           </div>
         </a>
 
-        <div class="proj-cf-carta is-right" id="swaptions">
-          <div class="proj-cf-img proj-cf-img--ph">
-            <svg viewBox="0 0 48 48" fill="none" stroke="#C8A96E" stroke-width="1.2"><path d="M6 40h36M6 40V8"/><circle cx="12" cy="32" r="1.6"/><circle cx="19" cy="27" r="1.6"/><circle cx="33" cy="17" r="1.6"/><circle cx="40" cy="12" r="1.6"/><circle cx="26" cy="22" r="2.4" stroke-dasharray="2 2"/><path d="M8 35 L42 10"/></svg>
+        <div class="proj-cf-carta is-right" id="reto">
+          <div class="proj-cf-img proj-cf-img--ph proj-cf-img--reto">
+            <p class="reto-pregunta">¿Cómo pueden los algoritmos de optimización cuántica contribuir a encontrar soluciones de buena calidad para estos problemas?</p>
           </div>
           <div class="proj-cf-texto">
-            <p class="proj-cf-meta">Regresión lineal · Reservorio cuántico</p>
-            <h3 class="proj-cf-title">Predicción de valores faltantes en precios de swaptions</h3>
-            <p class="proj-cf-desc">Regresión lineal sobre un dataset de precios de swaptions y una alternativa cuántica basada en un reservorio cuántico.</p>
+            <p class="proj-cf-meta">Reto</p>
+            <h3 class="proj-cf-title">Optimización de rutas y conexiones mediante algoritmos cuánticos</h3>
+            <p class="proj-cf-desc">Muchos problemas requieren encontrar la mejor manera de conectar puntos, distribuir recursos o seleccionar combinaciones de elementos, minimizando costos y respetando determinadas restricciones.</p>
             <span class="proj-cf-cta">Próximamente</span>
           </div>
         </div>

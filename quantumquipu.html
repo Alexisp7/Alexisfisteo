@@ -322,7 +322,7 @@
       .qq-cell img, .qq-rec-go, .qq-rec--web::after { transition:none; }
     }
     .qq-head { background:#0B0F15; border-top:0.5px solid rgba(200,169,110,.35); }
-    .qq-head-grid { max-width:1280px; margin:0 auto; padding:64px 64px 72px; display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr); gap:72px; align-items:end; }
+    .qq-head-grid { max-width:1280px; margin:0 auto; padding:64px 64px 72px; display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr); gap:72px; align-items:center; }
     .qq-head-desc { position:relative; padding-left:28px; border-left:0.5px solid rgba(200,169,110,.45); opacity:0; animation:qqUp 1.1s .6s cubic-bezier(0.16,1,0.3,1) forwards; }
     .qq-head-desc .proj-hero-subtitle { opacity:1; animation:none; color:rgba(255,255,255,.66); font-size:22px; line-height:1.55; margin:0; max-width:none; }
     .qq-head .qq-hero-inner { padding:0; max-width:none; margin:0; pointer-events:auto; }
@@ -343,6 +343,38 @@
       .qq-head-desc { padding-left:20px; }
       .qq-head-desc .proj-hero-subtitle { font-size:19px; }
     }
+
+    /* ═══ Grafo animado al costado del título ═══ */
+    .qq-head-desc { border-left:none; padding-left:0; }
+    .qq-viz { margin:0; }
+    .qq-graph { width:100%; max-width:460px; height:auto; display:block; overflow:visible; }
+    .g-edge { stroke:rgba(200,169,110,.32); stroke-width:1; stroke-dasharray:1; stroke-dashoffset:1; animation:gDraw 1.1s calc(.5s + var(--i)*.09s) cubic-bezier(0.65,0,0.35,1) forwards; }
+    .g-route { fill:none; stroke:#E8D5A3; stroke-width:1.4; stroke-dasharray:.14 .86; stroke-dashoffset:1; opacity:0; animation:gRoute 7s 2.2s linear infinite, gFade .6s 2.2s forwards; filter:drop-shadow(0 0 4px rgba(232,213,163,.7)); }
+    .g-node { opacity:0; transform-box:fill-box; transform-origin:center; animation:gPop .7s calc(.3s + var(--i)*.08s) cubic-bezier(0.34,1.56,0.64,1) forwards; }
+    .g-node circle:not(.g-halo) { fill:#0B0F15; stroke:var(--gold); stroke-width:1.2; }
+    .g-junc circle:not(.g-halo) { fill:var(--gold); stroke:none; }
+    .g-halo { fill:none; stroke:rgba(127,212,255,.35); stroke-width:.6; opacity:0; transform-box:fill-box; transform-origin:center; animation:gHalo 3.5s calc(2.4s + var(--i)*.43s) ease-out infinite; }
+    .g-node text { font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.08em; fill:rgba(255,255,255,.6); text-transform:uppercase; }
+    .g-comet { opacity:0; animation:gFade .6s 2.2s forwards; }
+    .qq-graph { max-width:400px; }
+    .nw { white-space:nowrap; }
+    .qq-steps { list-style:none; margin:14px 0 14px; padding:0; }
+    .qq-steps li { position:relative; display:grid; grid-template-columns:62px 1fr; gap:16px; align-items:baseline; padding:11px 0 11px 16px; border-left:1px solid rgba(200,169,110,.18); opacity:0; animation:qqUp .9s calc(1.2s + var(--s)*.15s) cubic-bezier(0.16,1,0.3,1) forwards; }
+    .qq-steps li::before { content:''; position:absolute; left:-1px; top:0; bottom:0; width:1px; background:#E8D5A3; transform:scaleY(0); transform-origin:top; box-shadow:0 0 8px rgba(232,213,163,.8); animation:gBar 6s calc(2.2s + var(--s)*2s) ease-in-out infinite; }
+    .qq-step-k { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--gold); animation:gStep 6s calc(2.2s + var(--s)*2s) ease-in-out infinite; }
+    .qq-step-t { font-family:'Inter',sans-serif; font-size:13px; line-height:1.6; color:rgba(255,255,255,.62); }
+    @keyframes gBar { 0%,8% { transform:scaleY(0); } 14%,30% { transform:scaleY(1); } 40%,100% { transform:scaleY(0); transform-origin:bottom; } }
+    .qq-viz-cap { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:rgba(200,169,110,.75); margin:0; }
+    @keyframes gDraw { to { stroke-dashoffset:0; } }
+    @keyframes gRoute { to { stroke-dashoffset:0; } }
+    @keyframes gFade { to { opacity:1; } }
+    @keyframes gPop { from { opacity:0; transform:scale(.3); } to { opacity:1; transform:scale(1); } }
+    @keyframes gHalo { 0% { opacity:.9; transform:scale(.6); } 70%,100% { opacity:0; transform:scale(1.6); } }
+    @keyframes gStep { 0%,8% { color:var(--gold); text-shadow:none; } 14%,30% { color:#F2E6C4; text-shadow:0 0 14px rgba(232,213,163,.5); } 40%,100% { color:var(--gold); text-shadow:none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .g-edge { animation:none; stroke-dashoffset:0; } .g-node { animation:none; opacity:1; } .g-halo, .g-route, .g-comet, .qq-steps li, .qq-steps li::before, .qq-step-k { animation:none; opacity:1; } .qq-steps li::before { display:none; } .g-comet, .g-route { display:none; }
+    }
+    @media (max-width:900px) { .qq-graph { max-width:360px; margin:0 auto; } .qq-steps li { grid-template-columns:54px 1fr; } }
   </style>
 </head>
 <body>
@@ -390,7 +422,23 @@
       <h1 class="proj-hero-title">QuantumQuipu —<br/><em>Optimización de Rutas</em><br/>en Minería</h1>
     </div>
     <div class="qq-head-desc">
-      <p class="proj-hero-subtitle">Formulación QUBO, mapeo al Hamiltoniano de Ising y resolución mediante el Eigensolver Cuántico Variacional (VQE) sobre datos reales de Mina Orcopampa, Arequipa</p>
+      <figure class="qq-viz">
+        <svg class="qq-graph" viewBox="0 0 440 350" role="img" aria-label="Esquema del grafo de 8 nodos de Mina Orcopampa">
+          <defs><radialGradient id="qqComet"><stop offset="0" stop-color="#F2E6C4"/><stop offset=".4" stop-color="#C8A96E" stop-opacity=".8"/><stop offset="1" stop-color="#C8A96E" stop-opacity="0"/></radialGradient></defs>
+          <g class="g-edges"><line class="g-edge" style="--i:0" x1="140" y1="40" x2="220" y2="125" pathLength="1"/><line class="g-edge" style="--i:1" x1="300" y1="40" x2="220" y2="125" pathLength="1"/><line class="g-edge" style="--i:2" x1="60" y1="180" x2="220" y2="125" pathLength="1"/><line class="g-edge" style="--i:3" x1="380" y1="180" x2="220" y2="125" pathLength="1"/><line class="g-edge" style="--i:4" x1="220" y1="125" x2="220" y2="235" pathLength="1"/><line class="g-edge" style="--i:5" x1="60" y1="180" x2="220" y2="235" pathLength="1"/><line class="g-edge" style="--i:6" x1="380" y1="180" x2="220" y2="235" pathLength="1"/><line class="g-edge" style="--i:7" x1="140" y1="320" x2="220" y2="235" pathLength="1"/><line class="g-edge" style="--i:8" x1="300" y1="320" x2="220" y2="235" pathLength="1"/></g>
+          <path id="qqRoute" class="g-route" d="M140 40 L220 125 L60 180 L220 235 L380 180 L220 125 L300 40" pathLength="1"/>
+          <g class="g-nodes"><g class="g-node g-junc" style="--i:0"><circle class="g-halo" cx="220" cy="125" r="12"/><circle cx="220" cy="125" r="4"/></g><g class="g-node g-junc" style="--i:1"><circle class="g-halo" cx="220" cy="235" r="12"/><circle cx="220" cy="235" r="4"/></g><g class="g-node" style="--i:2"><circle class="g-halo" cx="140" cy="40" r="14"/><circle cx="140" cy="40" r="6"/><text x="140" y="26" text-anchor="middle">Tajo</text></g><g class="g-node" style="--i:3"><circle class="g-halo" cx="300" cy="40" r="14"/><circle cx="300" cy="40" r="6"/><text x="300" y="26" text-anchor="middle">Botadero</text></g><g class="g-node" style="--i:4"><circle class="g-halo" cx="60" cy="180" r="14"/><circle cx="60" cy="180" r="6"/><text x="60" y="202" text-anchor="middle">Planta</text></g><g class="g-node" style="--i:5"><circle class="g-halo" cx="380" cy="180" r="14"/><circle cx="380" cy="180" r="6"/><text x="380" y="202" text-anchor="middle">Lixiviación</text></g><g class="g-node" style="--i:6"><circle class="g-halo" cx="140" cy="320" r="14"/><circle cx="140" cy="320" r="6"/><text x="140" y="342" text-anchor="middle">Baja ley</text></g><g class="g-node" style="--i:7"><circle class="g-halo" cx="300" cy="320" r="14"/><circle cx="300" cy="320" r="6"/><text x="300" y="342" text-anchor="middle">Relaves</text></g></g>
+          <circle class="g-comet" r="9" fill="url(#qqComet)"><animateMotion dur="7s" begin="2.2s" repeatCount="indefinite" rotate="auto"><mpath href="#qqRoute"/></animateMotion></circle>
+        </svg>
+        <figcaption>
+          <ol class="qq-steps">
+            <li style="--s:0"><span class="qq-step-k">QUBO</span><span class="qq-step-t">La ruta de menor costo como optimización binaria, con distancias reales medidas en Google Earth.</span></li>
+            <li style="--s:1"><span class="qq-step-k">Ising</span><span class="qq-step-t">El costo se reescribe con spins <span class="nw">Z ∈ {−1, +1}</span>: <span class="nw">H = ZᵀJZ + hᵀZ</span>.</span></li>
+            <li style="--s:2"><span class="qq-step-k">VQE</span><span class="qq-step-t">Un ansatz parametrizado en Qiskit; un optimizador clásico ajusta θ hasta llegar a E<sub>min</sub>.</span></li>
+          </ol>
+          <p class="qq-viz-cap">Mina Orcopampa, Arequipa · grafo de 8 nodos</p>
+        </figcaption>
+      </figure>
     </div>
 
    </div>
@@ -416,35 +464,6 @@
   </section>
 
   
-  <!-- MAIN CONTENT -->
-  <section>
-    <div class="content-wrap qq-content">
-      <div class="content-main">
-        <p class="content-section-eyebrow">Descripción del proyecto</p>
-        <h2 class="content-title">Optimización combinatoria cuántica<br/><em>aplicada a rutas de transporte minero</em></h2>
-
-        <p class="content-body">
-          <strong>QuantumQuipu</strong> es un proyecto de computación cuántica aplicada que aborda el problema de optimización de rutas de camiones en operaciones mineras a tajo abierto. El caso de estudio es <strong>Mina Orcopampa</strong> (Castilla, Arequipa, 3 800 msnm), una mina subterránea de oro en operación desde 1967, modelada como un grafo de 8 nodos: Planta de procesamiento, dos junctions, Tajo, Botadero, Lixiviación, Baja ley y Relaves.
-        </p>
-
-        <p class="content-body">
-          El problema de encontrar la ruta de menor costo que visite los nodos requeridos se formula como un <strong>problema de optimización binaria cuadrática sin restricciones (QUBO)</strong>. Las variables binarias χ_{i,t} ∈ {0,1} codifican si el camión visita la ubicación <em>i</em> en el paso temporal <em>t</em>. La función de costo total incorpora tres términos: el costo de transición Q_C (distancias reales medidas en Google Earth), la restricción temporal Q_B (un solo lugar por paso de tiempo) y la restricción espacial Q_A (cada lugar visitado exactamente una vez).
-        </p>
-
-        <blockquote class="content-quote">
-          La superposición cuántica permite explorar simultáneamente todas las rutas posibles — lo que un computador clásico haría en 2ᴺ pasos, el circuito variacional lo aproxima en tiempo polinomial.
-        </blockquote>
-
-        <p class="content-body">
-          El paso central del proyecto es el <strong>mapeo al Hamiltoniano de Ising</strong>: la función de costo QUBO se reescribe en términos de variables de spin Z_{i,t} ∈ {−1, +1} mediante la sustitución estándar χ_{i,t} = (1 − Z_{i,t})/2. El resultado es el Hamiltoniano H = Z⊺JZ + h⊺Z, donde J es la matriz de acoplamiento entre spins (que codifica distancias y penalizaciones) y h es el vector de campos locales. Este Hamiltoniano se proyecta como operador cuántico Ĥ = Σ J_{kl} Ẑ_k ⊗ Ẑ_l + Σ h_k Ẑ_k.
-        </p>
-
-        <p class="content-body">
-          La minimización de la energía ⟨Ψ(θ)|Ĥ|Ψ(θ)⟩ se realiza con el <strong>Variational Quantum Eigensolver (VQE)</strong> implementado en <strong>Qiskit</strong>. El ansatz parametrizado |Ψ(θ)⟩ pasa por el circuito cuántico (compuertas de rotación θ_i + capa entrelazadora), se mide el valor esperado del Hamiltoniano en la etapa de medición, y un optimizador clásico actualiza los parámetros θ por descenso por gradiente hasta la convergencia a E_min.
-        </p>
-      </div>
-    </div>
-  </section>
 
   <hr class="gold-line"/>
 

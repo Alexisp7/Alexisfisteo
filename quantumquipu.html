@@ -318,11 +318,13 @@
       .qq-content { padding:56px 24px 64px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .qq-cell, .qq-hero-inner > * , .qq-hero-inner .proj-hero-title, .qq-meta > div { animation:none !important; opacity:1 !important; transform:none !important; }
+      .qq-cell, .qq-hero-inner > * , .qq-hero-inner .proj-hero-title, .qq-meta > div, .qq-head-desc { animation:none !important; opacity:1 !important; transform:none !important; }
       .qq-cell img, .qq-rec-go, .qq-rec--web::after { transition:none; }
     }
     .qq-head { background:#0B0F15; border-top:0.5px solid rgba(200,169,110,.35); }
-    .qq-head-grid { max-width:1280px; margin:0 auto; padding:64px 64px 72px; display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr); gap:72px; align-items:center; }
+    .qq-head-grid { max-width:1280px; margin:0 auto; padding:64px 64px 72px; display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr); gap:72px; align-items:end; }
+    .qq-head-desc { position:relative; padding-left:28px; border-left:0.5px solid rgba(200,169,110,.45); opacity:0; animation:qqUp 1.1s .6s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .qq-head-desc .proj-hero-subtitle { opacity:1; animation:none; color:rgba(255,255,255,.66); font-size:22px; line-height:1.55; margin:0; max-width:none; }
     .qq-head .qq-hero-inner { padding:0; max-width:none; margin:0; pointer-events:auto; }
     .qq-head .proj-hero-title { text-shadow:none; }
     .qq-head .qq-meta { position:relative; margin:0; padding:10px 28px; max-width:none; display:block; border:0.5px solid rgba(200,169,110,.22); background:linear-gradient(180deg,rgba(200,169,110,.05),rgba(200,169,110,0)); }
@@ -338,6 +340,8 @@
       .qq-hero { height:auto; aspect-ratio:3/4; padding-top:0; }
       .qq-head-grid { grid-template-columns:1fr; gap:36px; padding:44px 24px 52px; }
       .qq-head .qq-meta { padding:6px 20px; }
+      .qq-head-desc { padding-left:20px; }
+      .qq-head-desc .proj-hero-subtitle { font-size:19px; }
     }
   </style>
 </head>
@@ -384,16 +388,11 @@
     <div class="qq-hero-inner">
       <p class="proj-hero-eyebrow">Hackathon Quantum Quipu 2025 · 2.do lugar</p>
       <h1 class="proj-hero-title">QuantumQuipu —<br/><em>Optimización de Rutas</em><br/>en Minería</h1>
+    </div>
+    <div class="qq-head-desc">
       <p class="proj-hero-subtitle">Formulación QUBO, mapeo al Hamiltoniano de Ising y resolución mediante el Eigensolver Cuántico Variacional (VQE) sobre datos reales de Mina Orcopampa, Arequipa</p>
     </div>
 
-    <dl class="qq-meta">
-      <div><dt>Año</dt><dd>2025</dd></div>
-      <div><dt>Método</dt><dd>QUBO → Ising → VQE</dd></div>
-      <div><dt>Framework</dt><dd>Qiskit · Python</dd></div>
-      <div><dt>Caso real</dt><dd>Mina Orcopampa</dd></div>
-      <div><dt>Colaboración</dt><dd>Ronaldo &amp; Rodrigo</dd></div>
-    </dl>
    </div>
   </section>
 

@@ -244,43 +244,6 @@
     .content-wrap { grid-template-columns: 1fr; max-width: 980px; }
     .content-wrap:not(.content-wrap--sigue) { padding-bottom: 48px; }
     .content-wrap--sigue { padding-top: 56px; }
-
-    /* ── RECURSOS: página web de la solución + documento ── */
-    .recursos { background:var(--bg-off); border-bottom:0.5px solid var(--border); }
-    .recursos-inner { max-width:1280px; margin:0 auto; padding:64px 48px; }
-    .recursos-grid { display:grid; grid-template-columns:1.45fr 1fr; gap:24px; align-items:stretch; }
-    .rec-card { position:relative; display:flex; flex-direction:column; background:var(--white); border:0.5px solid var(--border); text-decoration:none; color:inherit; overflow:hidden; transition:border-color .35s ease, box-shadow .45s ease, transform .45s cubic-bezier(0.16,1,0.3,1); }
-    .rec-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); transform:scaleX(0); transition:transform .6s cubic-bezier(0.16,1,0.3,1); z-index:3; }
-    .rec-card:hover::before { transform:scaleX(1); }
-    .rec-card--web:hover { border-color:rgba(200,169,110,.6); box-shadow:0 30px 60px -30px rgba(0,0,0,.35); transform:translateY(-3px); }
-    .rec-browser { background:#0b0f15; padding:18px 18px 0; }
-    .rec-browser-bar { display:flex; align-items:center; gap:6px; padding:9px 12px; background:#151b24; border:0.5px solid rgba(200,169,110,.18); border-bottom:none; }
-    .rec-dot { width:7px; height:7px; border-radius:50%; background:rgba(200,169,110,.35); }
-    .rec-url { margin-left:10px; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.06em; color:rgba(232,213,163,.7); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .rec-browser-view { position:relative; aspect-ratio:16/9; overflow:hidden; background:#10141c; border:0.5px solid rgba(200,169,110,.18); border-bottom:none; }
-    .rec-browser-view iframe { position:absolute; top:0; left:0; width:1280px; height:720px; border:0; transform-origin:0 0; pointer-events:none; }
-    .rec-browser-veil { position:absolute; inset:0; background:linear-gradient(180deg,transparent 60%,rgba(11,15,21,.35)); transition:opacity .4s ease; }
-    .rec-card--web:hover .rec-browser-veil { opacity:0; }
-    .rec-body { padding:28px 30px 30px; display:flex; flex-direction:column; flex:1; }
-    .rec-eyebrow { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
-    .rec-title { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:600; color:var(--black); line-height:1.15; margin-bottom:10px; }
-    .rec-sub { font-family:'Inter',sans-serif; font-size:13px; line-height:1.75; color:var(--gray); margin-bottom:22px; }
-    .rec-cta { margin-top:auto; display:inline-flex; align-items:center; gap:10px; font-family:'Space Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--black); }
-    .rec-cta svg { width:12px; height:12px; color:var(--gold); transition:transform .3s ease; }
-    .rec-card--web:hover .rec-cta svg { transform:translate(3px,-3px); }
-    .rec-doc-icon { display:flex; align-items:center; justify-content:center; height:120px; background:#0b0f15; border-bottom:0.5px solid var(--border); }
-    .rec-doc-icon svg { width:40px; height:40px; }
-    .rec-actions { margin-top:auto; display:flex; flex-wrap:wrap; gap:10px; }
-    .content-wrap { grid-template-columns:minmax(0,820px); justify-content:center; }
-    @media (max-width:900px) {
-      .recursos-inner { padding:48px 20px; }
-      .recursos-grid { grid-template-columns:1fr; }
-      .pipeline-strip { padding:28px 20px; }
-      .pipeline-inner { flex-wrap:wrap; row-gap:18px; }
-      .pipeline-step { flex:0 0 auto; max-width:none; }
-      .pipeline-arrow { padding:0 10px; }
-    }
-    @media (prefers-reduced-motion: reduce) { .rec-card, .rec-card::before { transition:none; } }
   </style>
 </head>
 <body>
@@ -308,52 +271,25 @@
     </div>
   </section>
 
-  <section class="recursos">
-    <div class="recursos-inner">
-      <p class="content-section-eyebrow">Recursos del proyecto</p>
-      <div class="recursos-grid">
-
-        <a class="rec-card rec-card--web" href="https://qiskit-fall-fest-2026-uop.vercel.app/index.html" target="_blank" rel="noopener">
-          <div class="rec-browser">
-            <div class="rec-browser-bar">
-              <span class="rec-dot"></span><span class="rec-dot"></span><span class="rec-dot"></span>
-              <span class="rec-url">qiskit-fall-fest-2026-uop.vercel.app</span>
-            </div>
-            <div class="rec-browser-view">
-              <iframe src="https://qiskit-fall-fest-2026-uop.vercel.app/index.html" title="Página web de la solución" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
-              <div class="rec-browser-veil"></div>
-            </div>
-          </div>
-          <div class="rec-body">
-            <p class="rec-eyebrow">Mejora · Presentación Qiskit Fall Fest 2026</p>
-            <h2 class="rec-title">Página web de la solución</h2>
-            <p class="rec-sub">La solución presentada como sitio web, mejorada para la presentación del Qiskit Fall Fest 2026.</p>
-            <span class="rec-cta">Visitar el sitio <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2h4v4"/><path d="M6 10l8-8"/><path d="M14 9v5H2V3h5"/></svg></span>
-          </div>
+  <div class="pdf-featured">
+    <div class="pdf-featured-inner">
+      <div class="pdf-featured-left">
+        <p class="pdf-featured-eyebrow">Documentación técnica</p>
+        <h2 class="pdf-featured-title">Black–Scholes con Caminata Aleatoria Cuántica — Notas y código</h2>
+        <p class="pdf-featured-sub">Hackathon Qiskit Fall Fest 2025 · IBM Quantum</p>
+      </div>
+      <div class="pdf-featured-right">
+        <button class="btn-pdf-main" onclick="openPDF()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="10" height="14" rx="1"/><path d="M5 5h6M5 8h6M5 11h3"/></svg>
+          Ver documento
+        </button>
+        <a href="arch/black_scholes.pdf" download class="btn-pdf-ghost">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 7l3 3 3-3"/><path d="M2 12h12"/></svg>
+          Descargar
         </a>
-
-        <div class="rec-card rec-card--doc">
-          <div class="rec-doc-icon"><svg viewBox="0 0 28 28" fill="none" stroke="#C8A96E" stroke-width="1"><rect x="3" y="1" width="18" height="26" rx="1.5"/><path d="M7 8h10M7 12h10M7 16h6"/><path d="M19 1v6h6"/></svg></div>
-          <div class="rec-body">
-            <p class="rec-eyebrow">Documentación técnica</p>
-            <h2 class="rec-title">Notas y código</h2>
-            <p class="rec-sub">Desarrollo matemático e implementación en Qiskit presentados en el Hackathon Qiskit Fall Fest 2025.</p>
-            <div class="rec-actions">
-              <button class="btn-pdf-main" onclick="openPDF()">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="10" height="14" rx="1"/><path d="M5 5h6M5 8h6M5 11h3"/></svg>
-                Ver documento
-              </button>
-              <a href="arch/black_scholes.pdf" download class="btn-pdf-ghost">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 7l3 3 3-3"/><path d="M2 12h12"/></svg>
-                Descargar
-              </a>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
-  </section>
+  </div>
   <div class="pdf-modal-backdrop" id="pdfBackdrop" data-pdf="arch/black_scholes.pdf" onclick="closePDFOutside(event)">
     <div class="pdf-modal">
       <div class="pdf-modal-bar">
@@ -370,6 +306,7 @@
         <div class="pdf-placeholder" id="pdfPlaceholder">
           <div class="pdf-placeholder-icon"><svg viewBox="0 0 28 28" fill="none" stroke="#C8A96E" stroke-width="1"><rect x="3" y="1" width="18" height="26" rx="1.5"/><path d="M7 8h10M7 12h10M7 16h6"/><path d="M19 1v6h6"/></svg></div>
           <div class="pdf-placeholder-text">Cargando documento</div>
+          <div class="pdf-placeholder-sub">Coloca el archivo en <code style="color:#333;font-size:10px;">arch/black_scholes.pdf</code></div>
           <a href="arch/black_scholes.pdf" target="_blank" class="pdf-placeholder-link">Abrir en nueva pestaña →</a>
         </div>
       </div>
@@ -396,7 +333,7 @@
       <div class="content-main">
         <p class="content-section-eyebrow">Descripción del proyecto</p>
         <h2 class="content-title">Opciones financieras desde<br/><em>la mecánica cuántica</em></h2>
-        <p class="content-body">
+                <p class="content-body">
           La fórmula de <strong>Black–Scholes</strong> es el pilar matemático de la valoración de opciones financieras. Parte del supuesto de que el precio de un activo subyacente S(t) sigue un <strong>movimiento browniano geométrico</strong>, cuya dinámica es descrita por la ecuación diferencial estocástica dS = μS dt + σS dW(t). Este proyecto reinterpreta ese movimiento estocástico clásico en términos de una <strong>caminata aleatoria cuántica</strong>, aprovechando la superposición e interferencia cuántica para replicar — y potencialmente superar — el modelo clásico.
         </p>
         <p class="content-body">
@@ -467,12 +404,6 @@
     </div>
   </footer>
   <script>
-    (function(){
-      var view=document.querySelector('.rec-browser-view'); if(!view) return;
-      var fr=view.querySelector('iframe');
-      function fit(){ fr.style.transform='scale('+(view.clientWidth/1280)+')'; }
-      fit(); window.addEventListener('resize',fit);
-    })();
     const backdrop = document.getElementById('pdfBackdrop');
     const placeholder = document.getElementById('pdfPlaceholder');
     const wrap = document.getElementById('pdfViewerWrap');

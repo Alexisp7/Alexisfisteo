@@ -1338,6 +1338,32 @@
     }
     .proj-cf-detalle p:not(.proj-cf-meta) { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.85; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
     .hero-eyebrow::before { content: none; }
+
+    /* ── Tarjeta "Próximamente": glifo dorado con núcleo psiónico ── */
+    .soon { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; width:100%; height:100%;
+      background: radial-gradient(circle at 50% 42%, rgba(127,212,255,0.10) 0%, rgba(13,17,23,0) 55%), linear-gradient(160deg,#0b0f15 0%,#121a24 100%); overflow:hidden; }
+    .soon::before { content:''; position:absolute; inset:14px; border:0.5px solid rgba(200,169,110,0.22); pointer-events:none; }
+    .soon::after { content:''; position:absolute; inset:0; background: linear-gradient(115deg, transparent 40%, rgba(232,213,163,0.07) 50%, transparent 60%);
+      transform: translateX(-100%); animation: soonSweep 6s ease-in-out infinite; pointer-events:none; }
+    .soon-glyph { width:112px; height:112px; filter: drop-shadow(0 0 10px rgba(200,169,110,0.25)); }
+    .soon-ring { transform-origin:60px 60px; animation: soonSpin 28s linear infinite; }
+    .soon-ring--rev { animation-duration:18s; animation-direction:reverse; }
+    .soon-core { transform-origin:60px 60px; animation: soonPulse 2.8s ease-in-out infinite; filter: drop-shadow(0 0 6px #7FD4FF); }
+    .soon-label { font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:500; font-size:26px; letter-spacing:0.04em;
+      background: linear-gradient(90deg,#C8A96E 0%,#F2E6C4 50%,#C8A96E 100%); background-size:200% 100%;
+      -webkit-background-clip:text; background-clip:text; color:transparent; animation: soonShine 5s linear infinite; }
+    .soon-rule { display:flex; align-items:center; gap:10px; }
+    .soon-rule span { display:block; width:40px; height:0.5px; background:linear-gradient(90deg,transparent,#C8A96E); }
+    .soon-rule span:last-child { transform:scaleX(-1); }
+    .soon-rule i { width:5px; height:5px; border:0.5px solid #C8A96E; transform:rotate(45deg); }
+    @keyframes soonSpin { to { transform: rotate(360deg); } }
+    @keyframes soonPulse { 0%,100% { opacity:.55; transform:scale(.85); } 50% { opacity:1; transform:scale(1.15); } }
+    @keyframes soonShine { to { background-position: -200% 0; } }
+    @keyframes soonSweep { 0%,55% { transform:translateX(-100%); } 100% { transform:translateX(100%); } }
+    @media (prefers-reduced-motion: reduce) { .soon *, .soon::after { animation:none !important; } }
+    .proj-cf-carta--soon { background:#0b0f15; }
+    .proj-cf-carta--soon .soon { aspect-ratio: 16/10; }
+    @media (min-width: 901px) { .proj-cf-carta--soon .soon { aspect-ratio:auto; height:430px; } }
   </style>
 </head>
 <body>
@@ -1375,10 +1401,18 @@
           </div>
         </a>
 
-        <div class="proj-cf-carta is-right" id="proximamente">
-          <div class="proj-cf-img proj-cf-img--ph"></div>
-          <div class="proj-cf-texto">
-            <h3 class="proj-cf-title">Próximamente</h3>
+        <div class="proj-cf-carta proj-cf-carta--soon is-right" id="proximamente">
+          <div class="soon">
+            <svg class="soon-glyph" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+              <g class="soon-ring"><circle cx="60" cy="60" r="52" stroke="#C8A96E" stroke-opacity=".35" stroke-width=".6" stroke-dasharray="1 5"/></g>
+              <g class="soon-ring soon-ring--rev"><circle cx="60" cy="60" r="44" stroke="#C8A96E" stroke-opacity=".25" stroke-width=".6" stroke-dasharray="14 8"/></g>
+              <path d="M60 22 L93 41 L93 79 L60 98 L27 79 L27 41 Z" stroke="#C8A96E" stroke-opacity=".7" stroke-width=".9"/>
+              <path d="M60 36 L80 60 L60 84 L40 60 Z" stroke="#E8D5A3" stroke-opacity=".9" stroke-width=".9"/>
+              <path d="M60 22 V36 M60 84 V98 M27 41 L40 60 M93 41 L80 60 M27 79 L40 60 M93 79 L80 60" stroke="#C8A96E" stroke-opacity=".35" stroke-width=".6"/>
+              <circle class="soon-core" cx="60" cy="60" r="5" fill="#7FD4FF"/>
+            </svg>
+            <div class="soon-rule"><span></span><i></i><span></span></div>
+            <div class="soon-label">Próximamente</div>
           </div>
         </div>
 

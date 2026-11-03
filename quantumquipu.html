@@ -246,14 +246,14 @@
     .content-wrap--sigue { padding-top: 56px; }
 
     /* ═══ QQ HERO — collage como fondo del título ═══ */
-    .qq-hero { --ink:#0B0F15; position:relative; min-height:clamp(560px, 86vh, 820px); display:flex; flex-direction:column; justify-content:flex-end; background:var(--ink); overflow:hidden; isolation:isolate; }
+    .qq-hero { --ink:#0B0F15; position:relative; height:clamp(380px, 62vh, 620px); display:flex; flex-direction:column; justify-content:flex-end; background:var(--ink); overflow:hidden; isolation:isolate; }
     .qq-mosaic { position:absolute; inset:0; display:grid; grid-template-columns:1fr 1fr 1.7fr; grid-template-rows:1fr 1fr; gap:2px; background:#05070a; z-index:-2; }
     .qq-c1 { grid-area:1/1; } .qq-c2 { grid-area:1/2; } .qq-c3 { grid-area:2/1; } .qq-c4 { grid-area:2/2; } .qq-c5 { grid-area:1/3/3/4; }
     .qq-cell { position:relative; margin:0; overflow:hidden; opacity:0; transform:scale(1.06); animation:qqIn 1.4s cubic-bezier(0.16,1,0.3,1) forwards; }
     .qq-c1 { animation-delay:.05s } .qq-c2 { animation-delay:.18s } .qq-c3 { animation-delay:.31s } .qq-c4 { animation-delay:.44s } .qq-c5 { animation-delay:.6s }
-    .qq-cell img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(.5) contrast(1.05) brightness(.5); transition:filter .7s ease, transform 1.2s cubic-bezier(0.16,1,0.3,1); }
+    .qq-cell img { width:100%; height:100%; object-fit:cover; display:block; filter:none; transition:filter .7s ease, transform 1.2s cubic-bezier(0.16,1,0.3,1); }
     .qq-cell::after { content:''; position:absolute; inset:0; box-shadow:inset 0 0 0 0.5px rgba(200,169,110,0); transition:box-shadow .5s ease; pointer-events:none; }
-    .qq-cell:hover img { filter:grayscale(0) contrast(1) brightness(.95); transform:scale(1.03); }
+    .qq-cell:hover img { transform:scale(1.03); }
     .qq-cell:hover::after { box-shadow:inset 0 0 0 0.5px rgba(200,169,110,.7); }
     .qq-veil { position:absolute; inset:0; z-index:-1; pointer-events:none;
       background:
@@ -321,6 +321,14 @@
       .qq-cell, .qq-hero-inner > * , .qq-hero-inner .proj-hero-title { animation:none !important; opacity:1 !important; transform:none !important; }
       .qq-cell img, .qq-rec-go, .qq-rec--web::after { transition:none; }
     }
+    .qq-head { background:#0B0F15; border-top:0.5px solid rgba(200,169,110,.35); }
+    .qq-head .qq-hero-inner { padding-top:56px; pointer-events:auto; }
+    .qq-head .proj-hero-title { text-shadow:none; }
+    .qq-head .qq-meta { padding-bottom:44px; }
+    @media (max-width:900px) {
+      .qq-hero { height:auto; aspect-ratio:3/4; padding-top:0; }
+      .qq-head .qq-hero-inner { padding-top:40px; }
+    }
   </style>
 </head>
 <body>
@@ -358,9 +366,10 @@
       <figure class="qq-cell qq-c4"><img src="img/quantumquipu/trayec.png" alt=""/></figure>
       <figure class="qq-cell qq-c5"><img src="img/quantumquipu/vqe.png" alt=""/></figure>
     </div>
-    <div class="qq-veil" aria-hidden="true"></div>
     <div class="qq-frame" aria-hidden="true"></div>
+  </section>
 
+  <section class="qq-head">
     <div class="qq-hero-inner">
       <p class="proj-hero-eyebrow">Hackathon Quantum Quipu 2025 · 2.do lugar</p>
       <h1 class="proj-hero-title">QuantumQuipu —<br/><em>Optimización de Rutas</em><br/>en Minería</h1>
@@ -395,30 +404,7 @@
     </div>
   </section>
 
-  <div class="pipeline-strip">
-    <div class="pipeline-inner">
-      <div class="pipeline-step">
-        <div class="pipeline-name">Problema de rutas<br/>Mina Orcopampa</div>
-      </div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-step">
-        <div class="pipeline-name">Formulación<br/>QUBO</div>
-      </div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-step">
-        <div class="pipeline-name">Hamiltoniano<br/>de Ising</div>
-      </div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-step">
-        <div class="pipeline-name">Ansatz<br/>VQE</div>
-      </div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-step">
-        <div class="pipeline-name">E_min<br/>Ruta óptima</div>
-      </div>
-    </div>
-  </div>
-
+  
   <!-- MAIN CONTENT -->
   <section>
     <div class="content-wrap qq-content">

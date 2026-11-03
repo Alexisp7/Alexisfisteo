@@ -1398,7 +1398,7 @@
       <div class="projects-grid">
 
         <!-- TALL IZQUIERDA: Black-Scholes -->
-        <div class="project-card tall">
+        <div class="project-card tall" data-href="blackscholes.html">
           <div class="project-img-ph" style="background:linear-gradient(160deg,#100a20 0%,#1e0a40 100%);">
             <img src="img/blackscholes-portada.webp" class="project-img" alt="Black-Scholes Cuántico">
           </div>
@@ -1416,7 +1416,7 @@
         </div>
 
         <!-- WIDE DERECHA (destacado): QuantumQuipu -->
-        <div class="project-card wide">
+        <div class="project-card wide" data-href="quantumquipu.html">
           <div class="project-img-ph" style="background:linear-gradient(135deg,#0a0a1a 0%,#10103a 50%,#0a1a2a 100%);">
           <img src="img/minas.png" class="project-img" alt="minas">  
           </div>
@@ -1537,5 +1537,14 @@
     })();
   </script>
   <script src="js/qubits.js?v=20261021s"></script>
+  <script>
+    // Toda la tarjeta del proyecto lleva a su página, no solo el botón.
+    document.querySelectorAll('.project-card[data-href]').forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('a')) return;
+        window.location = card.dataset.href;
+      });
+    });
+  </script>
 </body>
 </html>

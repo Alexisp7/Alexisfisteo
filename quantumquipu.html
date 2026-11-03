@@ -318,16 +318,26 @@
       .qq-content { padding:56px 24px 64px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .qq-cell, .qq-hero-inner > * , .qq-hero-inner .proj-hero-title { animation:none !important; opacity:1 !important; transform:none !important; }
+      .qq-cell, .qq-hero-inner > * , .qq-hero-inner .proj-hero-title, .qq-meta > div { animation:none !important; opacity:1 !important; transform:none !important; }
       .qq-cell img, .qq-rec-go, .qq-rec--web::after { transition:none; }
     }
     .qq-head { background:#0B0F15; border-top:0.5px solid rgba(200,169,110,.35); }
-    .qq-head .qq-hero-inner { padding-top:56px; pointer-events:auto; }
+    .qq-head-grid { max-width:1280px; margin:0 auto; padding:64px 64px 72px; display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr); gap:72px; align-items:center; }
+    .qq-head .qq-hero-inner { padding:0; max-width:none; margin:0; pointer-events:auto; }
     .qq-head .proj-hero-title { text-shadow:none; }
-    .qq-head .qq-meta { padding-bottom:44px; }
+    .qq-head .qq-meta { position:relative; margin:0; padding:10px 28px; max-width:none; display:block; border:0.5px solid rgba(200,169,110,.22); background:linear-gradient(180deg,rgba(200,169,110,.05),rgba(200,169,110,0)); }
+    .qq-head .qq-meta::before, .qq-head .qq-meta::after { content:''; position:absolute; width:16px; height:16px; border-color:var(--gold); border-style:solid; }
+    .qq-head .qq-meta::before { top:-1px; left:-1px; border-width:1px 0 0 1px; }
+    .qq-head .qq-meta::after { bottom:-1px; right:-1px; border-width:0 1px 1px 0; }
+    .qq-head .qq-meta > div { display:flex; align-items:baseline; justify-content:space-between; gap:24px; padding:16px 0; border-bottom:0.5px solid rgba(200,169,110,.14); opacity:0; animation:qqUp .9s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .qq-head .qq-meta > div:last-child { border-bottom:none; }
+    .qq-head .qq-meta > div:nth-child(1) { animation-delay:.55s } .qq-head .qq-meta > div:nth-child(2) { animation-delay:.63s } .qq-head .qq-meta > div:nth-child(3) { animation-delay:.71s } .qq-head .qq-meta > div:nth-child(4) { animation-delay:.79s } .qq-head .qq-meta > div:nth-child(5) { animation-delay:.87s }
+    .qq-head .qq-meta dt { margin:0; flex-shrink:0; }
+    .qq-head .qq-meta dd { text-align:right; font-size:19px; }
     @media (max-width:900px) {
       .qq-hero { height:auto; aspect-ratio:3/4; padding-top:0; }
-      .qq-head .qq-hero-inner { padding-top:40px; }
+      .qq-head-grid { grid-template-columns:1fr; gap:36px; padding:44px 24px 52px; }
+      .qq-head .qq-meta { padding:6px 20px; }
     }
   </style>
 </head>
@@ -370,6 +380,7 @@
   </section>
 
   <section class="qq-head">
+   <div class="qq-head-grid">
     <div class="qq-hero-inner">
       <p class="proj-hero-eyebrow">Hackathon Quantum Quipu 2025 · 2.do lugar</p>
       <h1 class="proj-hero-title">QuantumQuipu —<br/><em>Optimización de Rutas</em><br/>en Minería</h1>
@@ -383,6 +394,7 @@
       <div><dt>Caso real</dt><dd>Mina Orcopampa</dd></div>
       <div><dt>Colaboración</dt><dd>Ronaldo &amp; Rodrigo</dd></div>
     </dl>
+   </div>
   </section>
 
   <!-- RECURSOS: página web de la solución + presentación -->

@@ -1504,34 +1504,38 @@
     .mc-escena { position:absolute; inset:0; margin:0; opacity:0; transform:scale(1.025); transition:opacity .7s ease, transform 1.2s cubic-bezier(.16,1,.3,1); }
     .mc-escena.on { opacity:1; transform:none; }
     .mc-escena svg { width:100%; height:100%; display:block; }
-    .mc-velo { position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg, rgba(30,26,22,.97) 0%, rgba(30,26,22,0.970) 28.00%, rgba(30,26,22,0.965) 29.38%, rgba(30,26,22,0.951) 30.75%, rgba(30,26,22,0.928) 32.12%, rgba(30,26,22,0.898) 33.50%, rgba(30,26,22,0.861) 34.88%, rgba(30,26,22,0.818) 36.25%, rgba(30,26,22,0.771) 37.62%, rgba(30,26,22,0.719) 39.00%, rgba(30,26,22,0.663) 40.38%, rgba(30,26,22,0.605) 41.75%, rgba(30,26,22,0.545) 43.12%, rgba(30,26,22,0.485) 44.50%, rgba(30,26,22,0.425) 45.88%, rgba(30,26,22,0.365) 47.25%, rgba(30,26,22,0.307) 48.62%, rgba(30,26,22,0.251) 50.00%, rgba(30,26,22,0.199) 51.38%, rgba(30,26,22,0.152) 52.75%, rgba(30,26,22,0.109) 54.12%, rgba(30,26,22,0.072) 55.50%, rgba(30,26,22,0.042) 56.88%, rgba(30,26,22,0.019) 58.25%, rgba(30,26,22,0.005) 59.62%, rgba(30,26,22,0.000) 61.00%); }
+    .mc-velo { position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg, rgba(30,26,22,.97) 0%, rgba(30,26,22,0.970) 18.00%, rgba(30,26,22,0.968) 19.45%, rgba(30,26,22,0.962) 20.90%, rgba(30,26,22,0.952) 22.35%, rgba(30,26,22,0.938) 23.80%, rgba(30,26,22,0.920) 25.25%, rgba(30,26,22,0.899) 26.70%, rgba(30,26,22,0.875) 28.15%, rgba(30,26,22,0.847) 29.60%, rgba(30,26,22,0.817) 31.05%, rgba(30,26,22,0.783) 32.50%, rgba(30,26,22,0.748) 33.95%, rgba(30,26,22,0.710) 35.40%, rgba(30,26,22,0.671) 36.85%, rgba(30,26,22,0.631) 38.30%, rgba(30,26,22,0.589) 39.75%, rgba(30,26,22,0.547) 41.20%, rgba(30,26,22,0.505) 42.65%, rgba(30,26,22,0.463) 44.10%, rgba(30,26,22,0.421) 45.55%, rgba(30,26,22,0.381) 47.00%, rgba(30,26,22,0.341) 48.45%, rgba(30,26,22,0.302) 49.90%, rgba(30,26,22,0.266) 51.35%, rgba(30,26,22,0.231) 52.80%, rgba(30,26,22,0.198) 54.25%, rgba(30,26,22,0.168) 55.70%, rgba(30,26,22,0.140) 57.15%, rgba(30,26,22,0.115) 58.60%, rgba(30,26,22,0.092) 60.05%, rgba(30,26,22,0.073) 61.50%, rgba(30,26,22,0.055) 62.95%, rgba(30,26,22,0.041) 64.40%, rgba(30,26,22,0.029) 65.85%, rgba(30,26,22,0.019) 67.30%, rgba(30,26,22,0.012) 68.75%, rgba(30,26,22,0.006) 70.20%, rgba(30,26,22,0.003) 71.65%, rgba(30,26,22,0.001) 73.10%, rgba(30,26,22,0.000) 74.55%, rgba(30,26,22,0.000) 76.00%); }
     .mc-velo::after { content:''; position:absolute; inset:0; opacity:.06; mix-blend-mode:overlay; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-    .mc-menu { position:relative; z-index:2; width:min(560px,46%); padding:clamp(40px,7vh,84px) 0 40px clamp(28px,6vw,96px); color:#EFE8DA; }
-    .mc-k { font:700 9.5px 'Space Mono',monospace; letter-spacing:.34em; text-transform:uppercase; color:var(--cuero); display:flex; align-items:center; gap:14px; }
-    .mc-k::before { content:''; width:32px; height:1px; background:var(--cuero); }
-    .mc-lista { list-style:none; margin:32px 0 0; padding:0; }
-    .mc-item { position:relative; border-top:1px solid rgba(239,232,218,.12); }
-    .mc-item:last-child { border-bottom:1px solid rgba(239,232,218,.12); }
-    .mc-item a { display:flex; align-items:baseline; gap:22px; padding:18px 0; text-decoration:none; color:rgba(239,232,218,.42); transition:color .4s ease; outline:none; }
-    .mc-n { font:700 10px 'Space Mono',monospace; letter-spacing:.18em; color:rgba(201,162,122,.5); width:26px; flex-shrink:0; transition:color .4s ease; }
-    .mc-t { font:500 clamp(28px,2.6vw,36px)/1.08 'Cormorant Garamond',serif; transition:font-size .5s cubic-bezier(.16,1,.3,1), color .4s ease; }
-    .mc-t em { font-style:italic; }
-    .mc-item.on a { color:#F7F2E7; }
-    .mc-item.on .mc-n { color:var(--cuero); }
-    .mc-item.on .mc-t { font-size:clamp(38px,3.6vw,54px); }
+    .mc-menu { position:relative; z-index:2; width:min(470px,42%); min-height:100%; display:flex; flex-direction:column; justify-content:center; padding:40px 0 48px clamp(28px,6vw,96px); color:#EFE8DA; }
+    .mc-k { margin:0; font:700 9px 'Space Mono',monospace; letter-spacing:.38em; text-transform:uppercase; color:var(--cuero); display:flex; align-items:center; gap:14px; }
+    .mc-k::before { content:''; width:28px; height:1px; background:var(--cuero); transform-origin:left; animation:mc-trazo 1s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes mc-trazo { from { transform:scaleX(0); } }
+    .mc-lista { position:relative; list-style:none; margin:26px 0 0; padding:0 0 0 22px; }
+    .mc-lista::before { content:''; position:absolute; left:0; top:4px; bottom:4px; width:1px; background:linear-gradient(rgba(239,232,218,0), rgba(239,232,218,.14) 12%, rgba(239,232,218,.14) 88%, rgba(239,232,218,0)); }
+    .mc-guia { list-style:none; position:absolute; left:-1px; top:0; width:3px; height:0; border-radius:2px; background:var(--cuero); box-shadow:0 0 12px rgba(201,162,122,.55); transition:transform .22s cubic-bezier(.3,0,.2,1), height .22s cubic-bezier(.3,0,.2,1); }
+    .mc-item { position:relative; }
+    .mc-a { display:block; padding:9px 0; text-decoration:none; color:rgba(239,232,218,.36); outline:none; transition:color .35s ease; }
+    .mc-t { display:inline-block; font:500 clamp(24px,2.1vw,29px)/1.12 'Cormorant Garamond',serif; letter-spacing:.005em; transition:transform .55s cubic-bezier(.16,1,.3,1), letter-spacing .55s cubic-bezier(.16,1,.3,1); }
+    .mc-t em { font-style:italic; transition:color .45s ease; }
+    .mc-a:hover { color:rgba(239,232,218,.62); }
+    .mc-item.on .mc-a { color:#F7F2E7; }
+    .mc-item.on .mc-t { transform:translateX(6px); letter-spacing:.012em; }
     .mc-item.on .mc-t em { color:var(--cuero); }
-    .mc-item a::before { content:''; position:absolute; left:-34px; top:50%; width:0; height:1px; background:var(--cuero); transition:width .45s cubic-bezier(.16,1,.3,1); }
-    .mc-item.on a::before { width:20px; }
-    .mc-item a:focus-visible .mc-t { text-decoration:underline; text-decoration-color:var(--cuero); text-underline-offset:6px; text-decoration-thickness:1px; }
-    .mc-info { display:grid; grid-template-rows:0fr; padding-left:48px; transition:grid-template-rows .55s cubic-bezier(.16,1,.3,1), opacity .4s ease; opacity:0; }
-    .mc-info > * { overflow:hidden; min-height:0; }
-    .mc-info { grid-template-areas:'x'; }
-    .mc-info > * { grid-area:auto; }
-    .mc-item.on .mc-info { grid-template-rows:1fr; opacity:1; padding-bottom:22px; }
-    .mc-info p { margin:0 0 10px; font:400 15px/1.65 Inter,sans-serif; color:rgba(239,232,218,.72); max-width:380px; }
-    .mc-meta { display:block; font:400 10px 'Space Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:rgba(201,162,122,.85); }
-    .mc-ir { display:inline-block; margin-top:16px; padding:11px 18px; border:1px solid rgba(201,162,122,.6); font:700 9.5px 'Space Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:var(--cuero); pointer-events:none; }
-    .mc-pista { margin-top:34px; font:400 9.5px 'Space Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:rgba(239,232,218,.32); }
+    .mc-a:focus-visible .mc-t { text-decoration:underline; text-decoration-color:var(--cuero); text-underline-offset:6px; text-decoration-thickness:1px; }
+    .mc-info { display:grid; grid-template-rows:0fr; transition:grid-template-rows .55s cubic-bezier(.16,1,.3,1); }
+    .mc-info > div { overflow:hidden; min-height:0; padding-left:6px; }
+    .mc-item.on .mc-info { grid-template-rows:1fr; }
+    .mc-info p, .mc-pie { opacity:0; transform:translateY(-6px); transition:opacity .3s ease, transform .45s cubic-bezier(.16,1,.3,1); }
+    .mc-item.on .mc-info p { opacity:1; transform:none; transition-delay:.12s; }
+    .mc-item.on .mc-pie { opacity:1; transform:none; transition-delay:.22s; }
+    .mc-info p { margin:2px 0 12px; font:400 14px/1.6 Inter,sans-serif; color:rgba(239,232,218,.66); max-width:340px; }
+    .mc-pie { display:flex; align-items:center; gap:16px; padding-bottom:16px; }
+    .mc-meta { font:400 9px 'Space Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:rgba(201,162,122,.7); }
+    .mc-ir { position:relative; display:inline-flex; align-items:center; gap:8px; padding:2px 0 5px; font:700 9px 'Space Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:var(--cuero); text-decoration:none; }
+    .mc-ir::after { content:''; position:absolute; left:0; right:0; bottom:0; height:1px; background:currentColor; transform-origin:left; transform:scaleX(.35); transition:transform .45s cubic-bezier(.16,1,.3,1); }
+    .mc-ir i { font-style:normal; transition:transform .45s cubic-bezier(.16,1,.3,1); }
+    .mc-ir:hover::after, .mc-item.on .mc-a:hover ~ .mc-info .mc-ir::after { transform:scaleX(1); }
+    .mc-ir:hover i { transform:translateX(4px); }
     .mc-lectura { position:absolute; z-index:2; right:clamp(20px,4vw,64px); bottom:clamp(20px,5vh,48px); text-align:right; color:var(--tinta); background:linear-gradient(90deg, rgba(244,238,227,0), rgba(244,238,227,.88) 28%); padding:12px 16px 12px 60px; }
     .mc-ec { display:none; font:italic 500 26px 'Cormorant Garamond',serif; }
     .mc[data-activo="0"] .mc-ec[data-ec="0"], .mc[data-activo="1"] .mc-ec[data-ec="1"], .mc[data-activo="2"] .mc-ec[data-ec="2"] { display:block; }
@@ -1669,9 +1673,6 @@
       .mc-menu { width:auto; padding:34px 24px 40px; }
       .mc-lectura { top:8px; bottom:auto; right:10px; padding:6px 10px 6px 40px; } .mc-ec { font-size:18px; } .mc-l2 { display:none; }
       .mc-ec { font-size:19px; }
-      .mc-item.on .mc-t { font-size:34px; }
-      .mc-item a::before { display:none; }
-      .mc-pista { display:none; }
     }
     @media (prefers-reduced-motion: reduce) { .mc-escena, .mc-info, .mc-t { transition:none; } }
   </style>
@@ -1702,22 +1703,22 @@
     </div>
     <div class="mc-velo" aria-hidden="true"></div>
     <nav class="mc-menu" aria-label="Elige un curso">
-      <p class="mc-k">Cursos · Física UNMSM</p>
+      <p class="mc-k">Cursos</p>
       <ol class="mc-lista">
+        <li class="mc-guia" aria-hidden="true"></li>
         <li class="mc-item on">
-          <a href="relatividad.html"><span class="mc-n">I</span><span class="mc-t">Teoría General de la <em>Relatividad</em></span></a>
-          <div class="mc-info"><p>Prácticas calificadas, exámenes y una exposición sobre modificación gravitacional unificada.</p><span class="mc-meta">7 documentos · 2025</span><span class="mc-ir">Abrir curso →</span></div>
+          <a class="mc-a" href="relatividad.html"><span class="mc-t">Teoría General de la <em>Relatividad</em></span></a>
+          <div class="mc-info"><div><p>Prácticas calificadas, exámenes y una exposición sobre modificación gravitacional unificada.</p><div class="mc-pie"><a class="mc-ir" href="relatividad.html" tabindex="-1">Abrir curso<i aria-hidden="true">→</i></a><span class="mc-meta">7 documentos · 2025</span></div></div></div>
         </li>
         <li class="mc-item">
-          <a href="mecanica-cuantica.html"><span class="mc-n">II</span><span class="mc-t">Mecánica <em>Cuántica</em></span></a>
-          <div class="mc-info"><p>Próximamente. Mientras tanto, juega con el experimento de Stern–Gerlach.</p><span class="mc-meta">simulador interactivo</span><span class="mc-ir">Abrir experimento →</span></div>
+          <a class="mc-a" href="mecanica-cuantica.html"><span class="mc-t">Mecánica <em>Cuántica</em></span></a>
+          <div class="mc-info"><div><p>Próximamente. Mientras tanto, juega con el experimento de Stern–Gerlach.</p><div class="mc-pie"><a class="mc-ir" href="mecanica-cuantica.html" tabindex="-1">Abrir experimento<i aria-hidden="true">→</i></a><span class="mc-meta">simulador interactivo</span></div></div></div>
         </li>
         <li class="mc-item">
-          <a href="problemas.html"><span class="mc-n">III</span><span class="mc-t">Problemas de <em>física</em></span></a>
-          <div class="mc-info"><p>Electromagnetismo, física nuclear y termodinámica.</p><span class="mc-meta">tareas resueltas</span><span class="mc-ir">Ver problemas →</span></div>
+          <a class="mc-a" href="problemas.html"><span class="mc-t">Problemas de <em>física</em></span></a>
+          <div class="mc-info"><div><p>Electromagnetismo, física nuclear y termodinámica.</p><div class="mc-pie"><a class="mc-ir" href="problemas.html" tabindex="-1">Ver problemas<i aria-hidden="true">→</i></a><span class="mc-meta">tareas resueltas</span></div></div></div>
         </li>
       </ol>
-      <p class="mc-pista">↑ ↓ elegir · enter abrir</p>
     </nav>
     <div class="mc-lectura" aria-live="off">
       <span class="mc-ec" data-ec="0">G<sub>μν</sub> = 8πG T<sub>μν</sub> / c⁴</span>

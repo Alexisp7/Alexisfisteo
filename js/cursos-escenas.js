@@ -550,6 +550,21 @@
   var activo = 0;
   function salida(i) { return function (a, b) { if (i === activo) { lect1.textContent = a; lect2.textContent = b; } }; }
   var mods = [escenaRelatividad, escenaSternGerlach, escenaProblemas].map(function (fn, i) { return fn(escenas[i].querySelector('svg'), salida(i)); });
+  // guía: una barra de luz que se desliza hasta el título activo
+  var guia = raiz.querySelector('.mc-guia');
+  function guiar() {
+    if (!guia) return;
+    var t = items[activo].querySelector('.mc-a'), lista = guia.parentNode;
+    var top = t.getBoundingClientRect().top - lista.getBoundingClientRect().top + 9, alto = t.offsetHeight - 18;
+    guia.style.transform = 'translateY(' + top + 'px)'; guia.style.height = alto + 'px';
+  }
+  var tGuia = 0;
+  function seguirGuia() {   // sigue al título mientras el menú se reacomoda
+    var t0 = performance.now(), id = ++tGuia;
+    (function paso() { guiar(); if (id === tGuia && performance.now() - t0 < 700) requestAnimationFrame(paso); })();
+  }
+  window.addEventListener('resize', guiar);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(guiar);
   var tArmado = null;
   function armar(e) {          // se rearma cada vez que se entra a la escena
     clearTimeout(tArmado);
@@ -563,6 +578,7 @@
     var e = escenas[i];
     if (i !== previo && !quieto && e.querySelector('.pieza')) armar(e);
     raiz.setAttribute('data-activo', i);
+    seguirGuia();
     mods[i].tick(1 / 60);
   }
   items.forEach(function (it, i) {

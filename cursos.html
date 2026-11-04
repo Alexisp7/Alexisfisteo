@@ -1393,26 +1393,53 @@
     .cursos-mano { list-style:none; margin:0; padding:0; position:relative; z-index:2; }
     .cursos-mano li + li { margin-top:22px; }
     .cm-curso { position:relative; display:block; padding:10px 14px 12px; margin-left:-14px; text-decoration:none; color:var(--granate); border-radius:4px; transition:transform .6s cubic-bezier(.16,1,.3,1); }
-    .cm-titulo { display:block; font-family:'Pinyon Script',cursive; font-size:clamp(34px,3vw,44px); line-height:1.15; color:var(--granate);
-      background:linear-gradient(100deg,var(--granate) 0 40%,#E9C46A 48%,#FFF3C4 50%,#E9C46A 52%,var(--granate) 60% 100%); background-size:300% 100%; background-position:100% 0;
-      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-      transition:background-position 1.4s cubic-bezier(.16,1,.3,1), filter .6s ease; }
-    .cm-sub { display:block; font-family:'Caveat',cursive; font-size:21px; line-height:1.2; color:#4A3D35; margin-top:2px; transition:color .5s ease; }
+    .cm-titulo { display:block; font-family:'Pinyon Script',cursive; font-size:clamp(34px,3vw,44px); line-height:1.15; color:var(--granate); transition:color .9s ease, text-shadow .9s ease, letter-spacing .9s cubic-bezier(.16,1,.3,1); }
+    .cm-sub { display:block; font-family:'Caveat',cursive; font-size:21px; line-height:1.2; color:#4A3D35; margin-top:2px; transition:color .5s ease, opacity .5s ease; }
     .cm-flor { display:block; width:min(320px,80%); height:20px; margin:-4px 0 0 6px; overflow:visible; }
-    .cm-flor path { fill:none; stroke:#B08A3E; stroke-width:1.4; stroke-linecap:round; stroke-dasharray:420; stroke-dashoffset:420; transition:stroke-dashoffset 1.1s cubic-bezier(.65,0,.35,1); filter:drop-shadow(0 0 2px rgba(233,196,106,.8)); }
-    .cm-curso:hover, .cm-curso:focus-visible { transform:translateY(-4px) rotate(-.6deg); outline:none; }
-    .cm-curso:focus-visible { box-shadow:0 0 0 1px rgba(176,138,62,.6); }
-    .cm-curso:hover .cm-titulo, .cm-curso:focus-visible .cm-titulo { animation:cmTinta 2.4s linear infinite; filter:drop-shadow(0 0 6px rgba(233,196,106,.55)); }
-    @keyframes cmTinta { from { background-position:100% 0; } to { background-position:0 0; } }
+    .cm-flor path { fill:none; stroke:#2B3A67; stroke-width:1.3; stroke-linecap:round; stroke-dasharray:420; stroke-dashoffset:420; transition:stroke-dashoffset 1.1s cubic-bezier(.65,0,.35,1); }
+    /* al pasar el cursor la tinta "despierta" como en un diario encantado: se vuelve tinta azul, se corre un poco y escribe su floritura */
+    .cm-curso:hover, .cm-curso:focus-visible { transform:translateY(-3px) rotate(-.5deg); outline:none; }
+    .cm-curso:focus-visible { box-shadow:0 0 0 1px rgba(43,58,103,.4); }
+    .cm-curso:hover .cm-titulo, .cm-curso:focus-visible .cm-titulo { color:#2B3A67; letter-spacing:.012em; text-shadow:0 0 1px rgba(43,58,103,.5), 1px 1px 6px rgba(43,58,103,.18); animation:cmTinta 2.6s ease-in-out infinite; }
+    @keyframes cmTinta { 0%,100% { text-shadow:0 0 1px rgba(43,58,103,.5), 1px 1px 6px rgba(43,58,103,.18); } 50% { text-shadow:0 0 1px rgba(43,58,103,.6), 2px 2px 10px rgba(43,58,103,.28); } }
     .cm-curso:hover .cm-flor path, .cm-curso:focus-visible .cm-flor path { stroke-dashoffset:0; }
     .cm-curso:hover .cm-sub, .cm-curso:focus-visible .cm-sub { color:#2A211C; }
-    .cm-curso::after { content:''; position:absolute; inset:-6px -10px; border-radius:50%; pointer-events:none; opacity:0; background:radial-gradient(closest-side, rgba(255,236,170,.45), rgba(255,236,170,0)); transition:opacity .6s ease; z-index:-1; }
-    .cm-curso:hover::after, .cm-curso:focus-visible::after { opacity:1; animation:cmLumos 2.4s ease-in-out infinite; }
-    @keyframes cmLumos { 50% { opacity:.6; transform:scale(1.03); } }
+    .cm-curso::after { content:''; position:absolute; inset:-4px -8px; border-radius:40% 60% 55% 45%; pointer-events:none; opacity:0; background:radial-gradient(closest-side, rgba(43,58,103,.07), rgba(43,58,103,0)); transition:opacity .7s ease; z-index:-1; }
+    .cm-curso:hover::after, .cm-curso:focus-visible::after { opacity:1; }
     .cm-chispas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:3; }
     .pagina--izq { overflow:visible; }
     @media (max-width:900px) { .cm-titulo { font-size:34px; } .cursos-mano li + li { margin-top:14px; } }
-    @media (prefers-reduced-motion: reduce) { .cm-curso, .cm-titulo, .cm-flor path { transition:none; } .cm-curso:hover { transform:none; } .cm-curso::after { animation:none !important; } .cm-chispas { display:none; } }
+    /* dibujos vivos: cada garabato respira, la línea "hierve" como dibujo animado y algunos hacen su física */
+    .sticker, .dib { filter:url(#hervir); animation:anFlota 6s ease-in-out infinite; }
+    .stickers > :nth-child(3n) { animation-duration:7.4s; animation-delay:-2s; }
+    .stickers > :nth-child(3n+1) { animation-duration:5.2s; animation-delay:-3.5s; }
+    @keyframes anFlota { 0%,100% { transform:translateY(0) rotate(0); } 50% { transform:translateY(-3px) rotate(-.8deg); } }
+    .sticker.an-pendulo { transform-origin:42% 6%; animation:anPendulo 2.4s ease-in-out infinite; }
+    @keyframes anPendulo { 0%,100% { transform:rotate(7deg); } 50% { transform:rotate(-7deg); } }
+    .sticker.an-giro { animation:anGiro 22s linear infinite; }
+    @keyframes anGiro { to { transform:rotate(360deg); } }
+    .sticker.an-giro-suave { animation:anGiroS 5s ease-in-out infinite; }
+    @keyframes anGiroS { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(6deg); } }
+    .sticker.an-pulso { transform-origin:50% 50%; animation:anPulso 2.6s ease-in-out infinite; }
+    @keyframes anPulso { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08,.92); } }
+    .sticker.an-onda { animation:anOnda 1.8s ease-in-out infinite; }
+    @keyframes anOnda { 0%,100% { transform:scaleX(1) skewX(0); } 50% { transform:scaleX(1.06) skewX(-6deg); } }
+    .sticker.an-empuje { animation:anEmpuje 2.2s cubic-bezier(.45,0,.55,1) infinite; }
+    @keyframes anEmpuje { 0%,100% { transform:translateX(0); } 50% { transform:translateX(6px); } }
+    .sticker.an-temblor { animation:anTemblor .5s steps(2) infinite; }
+    @keyframes anTemblor { 0% { transform:translate(0,0) rotate(0); } 50% { transform:translate(.6px,-.6px) rotate(.6deg); } }
+    .dib { position:absolute; overflow:visible; }
+    .dib * { vector-effect:non-scaling-stroke; }
+    .dib .dib-tr, .dib .dib-eje, .dib .dib-fino, .dib .dib-grueso, .dib ellipse, .dib .dib-ondas circle { fill:none; stroke:var(--tinta); stroke-linecap:round; stroke-linejoin:round; }
+    .dib .dib-tr { stroke-width:1.5; } .dib .dib-eje { stroke-width:1; opacity:.6; } .dib .dib-fino { stroke-width:.9; opacity:.7; } .dib .dib-grueso { stroke-width:3; }
+    .dib .dib-txt { font-family:'Caveat',cursive; font-size:15px; fill:var(--tinta); stroke:none; }
+    .dib .dib-nucleo { fill:var(--granate); } .dib .dib-e { fill:#2B3A67; }
+    .dib .dib-masa { fill:#EFE5D1; stroke:var(--tinta); stroke-width:1.5; }
+    .dib .dib-sol { fill:#F2D9A0; stroke:var(--tinta); stroke-width:1.2; } .dib .dib-planeta { fill:#2B3A67; }
+    .dib .dib-ondas circle { stroke-width:1; transform-box:fill-box; transform-origin:0 50%; animation:anRendija 2.2s linear infinite; }
+    @keyframes anRendija { from { r:4; opacity:.9; } to { r:120; opacity:0; } }
+    @media (max-width:900px) { .dib { position:static; display:block; width:120px !important; height:auto; } .stickers > .dib { max-width:40%; } }
+    @media (prefers-reduced-motion: reduce) { .cm-curso, .cm-titulo, .cm-flor path { transition:none; } .cm-curso:hover { transform:none; } .cm-titulo { animation:none !important; } .cm-chispas { display:none; } .sticker, .dib { animation:none !important; filter:none; } }
   </style>
   <link rel="stylesheet" href="css/efectos.css"/>
 </head>
@@ -1426,6 +1453,12 @@
     </div>
   </header>
 
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="hervir" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="1" seed="1" result="r"><animate attributeName="seed" values="1;2;3;4;5" dur=".75s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="r" scale="1.6"/>
+    </filter>
+  </svg>
   <section class="escritorio">
     <h1 class="escritorio-sr">Cursos</h1>
     <div class="cuaderno-marco">
@@ -1453,27 +1486,69 @@
         <canvas class="cm-chispas" aria-hidden="true"></canvas>
 
         <div class="stickers" aria-hidden="true">
-          <img class="sticker" src="img/garabatos/integral.webp" alt="" style="left:40px;top:560px;width:150px;"/>
-          <img class="sticker" src="img/garabatos/esperanza.webp" alt="" style="left:220px;top:575px;width:250px;"/>
-          <img class="sticker" src="img/garabatos/onda-roja.webp" alt="" style="left:480px;top:560px;width:50px;"/>
+          <img class="sticker an-flota" src="img/garabatos/integral.webp" alt="" style="left:30px;top:590px;width:140px;"/>
+          <img class="sticker" src="img/garabatos/esperanza.webp" alt="" style="left:160px;top:575px;width:190px;"/>
+          <img class="sticker an-onda" src="img/garabatos/onda-roja.webp" alt="" style="left:500px;top:600px;width:46px;"/>
+          <svg class="dib dib-atomo" viewBox="0 0 120 120" style="left:448px;top:6px;width:124px;">
+            <g class="dib-tr"><ellipse cx="60" cy="60" rx="52" ry="17"/><ellipse cx="60" cy="60" rx="52" ry="17" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="52" ry="17" transform="rotate(-60 60 60)"/></g>
+            <circle cx="60" cy="60" r="5" class="dib-nucleo"/>
+            <circle r="3" class="dib-e"><animateMotion dur="2.2s" repeatCount="indefinite" path="M8 60 a52 17 0 1 0 104 0 a52 17 0 1 0 -104 0"/></circle>
+            <g transform="rotate(60 60 60)"><circle r="3" class="dib-e"><animateMotion dur="3s" repeatCount="indefinite" path="M112 60 a52 17 0 1 0 -104 0 a52 17 0 1 0 104 0"/></circle></g>
+            <g transform="rotate(-60 60 60)"><circle r="3" class="dib-e"><animateMotion dur="2.6s" repeatCount="indefinite" path="M8 60 a52 17 0 1 1 104 0 a52 17 0 1 1 -104 0"/></circle></g>
+          </svg>
+          <svg class="dib dib-resorte" viewBox="0 0 90 150" style="left:486px;top:132px;width:62px;">
+            <path d="M8 8 h74" class="dib-tr"/><path d="M12 8 l-6 -6 M24 8 l-6 -6 M36 8 l-6 -6 M48 8 l-6 -6 M60 8 l-6 -6 M72 8 l-6 -6 M84 8 l-6 -6" class="dib-fino"/>
+            <g><animateTransform attributeName="transform" type="translate" values="0 0;0 26;0 0" dur="1.8s" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" repeatCount="indefinite"/>
+              <rect x="27" y="78" width="36" height="28" rx="2" class="dib-masa"/><text x="40" y="97" class="dib-txt">m</text></g>
+            <path class="dib-tr" d="M45 8 v8 l14 5 -28 8 28 8 -28 8 28 8 -28 8 14 5 v12"><animateTransform attributeName="transform" type="scale" values="1 1;1 1.37;1 1" dur="1.8s" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" repeatCount="indefinite" additive="sum"/></path>
+            <text x="6" y="146" class="dib-txt">F = −kx</text>
+          </svg>
+          <svg class="dib dib-kepler" viewBox="0 0 140 100" style="left:446px;top:262px;width:122px;">
+            <ellipse cx="70" cy="46" rx="62" ry="34" class="dib-tr"/>
+            <circle cx="40" cy="46" r="6" class="dib-sol"/><path d="M40 34 v-5 M40 58 v5 M28 46 h-5 M52 46 h5 M31 37 l-4 -4 M49 55 l4 4 M31 55 l-4 4 M49 37 l4 -4" class="dib-fino"/>
+            <circle r="4" class="dib-planeta"><animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;.18;.5;.82;1" keyTimes="0;.12;.5;.88;1" calcMode="linear" path="M8 46 a62 34 0 1 0 124 0 a62 34 0 1 0 -124 0"/></circle>
+            <text x="44" y="96" class="dib-txt">T² ∝ a³</text>
+          </svg>
+          <svg class="dib dib-rendija" viewBox="0 0 150 90" style="left:372px;top:585px;width:122px;">
+            <defs><clipPath id="dib-cl-rend"><rect x="21" y="0" width="117" height="90"/></clipPath></defs>
+            <path d="M20 4 v28 M20 40 v10 M20 58 v28" class="dib-grueso"/>
+            <g class="dib-ondas" clip-path="url(#dib-cl-rend)"><circle cx="20" cy="36" r="10"/><circle cx="20" cy="54" r="10"/><circle cx="20" cy="36" r="10" style="animation-delay:-1.1s"/><circle cx="20" cy="54" r="10" style="animation-delay:-1.1s"/></g>
+            <path d="M138 6 C 128 16, 148 24, 138 34 S 148 54, 138 64 S 128 78, 138 86" class="dib-tr"/>
+          </svg>
         </div>
       </article>
 
       <article class="pagina pagina--der" id="problemas">
         <div class="stickers" aria-hidden="true">
-          <img class="sticker" src="img/garabatos/pendulo.webp" alt="" style="left:40px;top:75px;width:210px;"/>
-          <img class="sticker" src="img/garabatos/fuerza.webp" alt="" style="left:280px;top:80px;width:105px;"/>
-          <img class="sticker" src="img/garabatos/cono-chico.webp" alt="" style="left:410px;top:70px;width:40px;"/>
-          <img class="sticker" src="img/garabatos/cono.webp" alt="" style="left:485px;top:90px;width:62px;"/>
-          <img class="sticker" src="img/garabatos/metrica.webp" alt="" style="left:275px;top:145px;width:190px;"/>
-          <img class="sticker" src="img/garabatos/gauss.webp" alt="" style="left:40px;top:235px;width:130px;"/>
-          <img class="sticker" src="img/garabatos/rotacional.webp" alt="" style="left:190px;top:230px;width:95px;"/>
-          <img class="sticker" src="img/garabatos/feynman.webp" alt="" style="left:305px;top:225px;width:95px;"/>
-          <img class="sticker" src="img/garabatos/parabola.webp" alt="" style="left:420px;top:210px;width:105px;"/>
-          <img class="sticker" src="img/garabatos/tetraedro.webp" alt="" style="left:195px;top:340px;width:55px;"/>
-          <img class="sticker" src="img/garabatos/vectores.webp" alt="" style="left:265px;top:335px;width:100px;"/>
-          <img class="sticker" src="img/garabatos/laplaciano.webp" alt="" style="left:195px;top:415px;width:80px;"/>
-          <img class="sticker" src="img/garabatos/espiral.webp" alt="" style="left:60px;top:465px;width:140px;"/>
+          <img class="sticker an-pendulo" src="img/garabatos/pendulo.webp" alt="" style="left:18px;top:26px;width:150px;"/>
+          <img class="sticker" src="img/garabatos/schrodinger.webp" alt="" style="left:182px;top:40px;width:138px;"/>
+          <img class="sticker an-giro-suave" src="img/garabatos/bloch.webp" alt="" style="left:336px;top:22px;width:104px;"/>
+          <img class="sticker an-pulso" src="img/garabatos/cono-chico.webp" alt="" style="left:462px;top:40px;width:34px;"/>
+          <img class="sticker an-pulso" src="img/garabatos/cono.webp" alt="" style="left:506px;top:26px;width:50px;"/>
+          <img class="sticker an-empuje" src="img/garabatos/fuerza.webp" alt="" style="left:18px;top:150px;width:96px;"/>
+          <img class="sticker" src="img/garabatos/metrica.webp" alt="" style="left:132px;top:162px;width:196px;"/>
+          <img class="sticker" src="img/garabatos/energia.webp" alt="" style="left:346px;top:150px;width:88px;"/>
+          <img class="sticker an-giro-suave" src="img/garabatos/elipse.webp" alt="" style="left:470px;top:134px;width:54px;"/>
+          <img class="sticker" src="img/garabatos/gauss.webp" alt="" style="left:18px;top:222px;width:112px;"/>
+          <img class="sticker" src="img/garabatos/superposicion.webp" alt="" style="left:146px;top:208px;width:158px;"/>
+          <img class="sticker an-giro" src="img/garabatos/rotacional.webp" alt="" style="left:322px;top:206px;width:84px;"/>
+          <img class="sticker an-temblor" src="img/garabatos/feynman.webp" alt="" style="left:424px;top:208px;width:82px;"/>
+          <img class="sticker an-onda" src="img/garabatos/onda.webp" alt="" style="left:18px;top:306px;width:118px;"/>
+          <img class="sticker" src="img/garabatos/parabola.webp" alt="" style="left:150px;top:312px;width:100px;"/>
+          <img class="sticker" src="img/garabatos/pauli-x.webp" alt="" style="left:266px;top:322px;width:52px;"/>
+          <img class="sticker" src="img/garabatos/pauli-z.webp" alt="" style="left:330px;top:316px;width:78px;"/>
+          <img class="sticker an-empuje" src="img/garabatos/vectores.webp" alt="" style="left:426px;top:318px;width:92px;"/>
+          <img class="sticker" src="img/garabatos/circuito.webp" alt="" style="left:18px;top:410px;width:196px;"/>
+          <img class="sticker an-giro-suave" src="img/garabatos/tetraedro.webp" alt="" style="left:230px;top:404px;width:48px;"/>
+          <img class="sticker" src="img/garabatos/laplaciano.webp" alt="" style="left:292px;top:416px;width:72px;"/>
+          <img class="sticker an-giro" src="img/garabatos/espiral.webp" alt="" style="left:18px;top:500px;width:124px;"/>
+          <img class="sticker" src="img/garabatos/psi.webp" alt="" style="left:160px;top:520px;width:132px;"/>
+          <svg class="dib dib-onda" viewBox="0 0 170 70" style="left:376px;top:404px;width:170px;">
+            <defs><clipPath id="dib-cl-onda"><rect x="8" y="0" width="154" height="56"/></clipPath></defs>
+            <line x1="8" y1="30" x2="164" y2="30" class="dib-eje"/><path d="M160 26 l4 4 -4 4" class="dib-eje"/>
+            <g clip-path="url(#dib-cl-onda)"><path class="dib-tr" d="M-60 30 q12.5 -18 25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0"><animateTransform attributeName="transform" type="translate" values="0 0;50 0" dur="1.6s" repeatCount="indefinite"/></path></g>
+            <text x="22" y="66" class="dib-txt">y = A sin(kx − ωt)</text>
+          </svg>
         </div>
 
         <div class="postit" id="fisitok">
@@ -1499,7 +1574,7 @@
     </div>
   </footer>
   <script>
-    // Chispas doradas que salen de la punta del cursor sobre cada curso (como una varita)
+    // Símbolos de física en tinta que brotan del cursor sobre cada curso, como una pluma encantada
     (function () {
       if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       var pag = document.querySelector('.pagina--izq'), cv = pag && pag.querySelector('.cm-chispas');
@@ -1512,10 +1587,11 @@
       function soltar(x, y, n) {
         for (var i = 0; i < n; i++) {
           var a = Math.random() * Math.PI * 2, v = .3 + Math.random() * 1.4;
-          ch.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - .6, vida: 1, dec: .012 + Math.random() * .02, r: .8 + Math.random() * 2.2, giro: Math.random() * 6 });
+          ch.push({ x: x, y: y, vx: Math.cos(a) * v * .6, vy: -(.4 + Math.random() * .9), vida: 1, dec: .008 + Math.random() * .012, r: 13 + Math.random() * 10, giro: (Math.random() - .5) * .6, g: SIMB[Math.floor(Math.random() * SIMB.length)], c: Math.random() < .7 ? '43,58,103' : '110,26,34' });
         }
         if (!corriendo) { corriendo = true; requestAnimationFrame(paso); }
       }
+      var SIMB = ['ψ', 'ħ', '∇', '∂', 'λ', 'γ', 'ν', '∞', 'Σ', 'π', 'Ω', 'δ', 'ε₀', 'μ', '⟨ψ|', '|0⟩', 'c', 'Λ', 'φ', '∮'];
       function estrella(x, y, r, rot) {
         cx.beginPath();
         for (var k = 0; k < 8; k++) { var rr = k % 2 ? r * .35 : r, an = rot + k * Math.PI / 4; cx.lineTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr); }
@@ -1525,11 +1601,12 @@
         cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, cv.width, cv.height);
         ch = ch.filter(function (p) { return p.vida > 0; });
         ch.forEach(function (p) {
-          p.x += p.vx; p.y += p.vy; p.vy += .025; p.vx *= .985; p.vida -= p.dec; p.giro += .08;
-          var al = Math.max(0, p.vida);
-          cx.fillStyle = 'rgba(255,' + (200 + Math.round(40 * al)) + ',' + Math.round(110 + 100 * al) + ',' + al + ')';
-          cx.shadowColor = 'rgba(255,214,120,' + al + ')'; cx.shadowBlur = 8;
-          estrella(p.x, p.y, p.r * (0.6 + al * .6), p.giro);
+          p.x += p.vx + Math.sin(p.vida * 9) * .25; p.y += p.vy; p.vy *= .992; p.vida -= p.dec;
+          var al = Math.max(0, p.vida), ap = Math.min(1, (1 - al) * 6) * al;
+          cx.save(); cx.translate(p.x, p.y); cx.rotate(p.giro * (1 - al));
+          cx.font = 'italic ' + Math.round(p.r) + 'px "Cormorant Garamond", serif'; cx.textAlign = 'center';
+          cx.fillStyle = 'rgba(' + p.c + ',' + Math.min(1, ap * 1.6).toFixed(3) + ')'; cx.shadowColor = 'rgba(' + p.c + ',' + (ap * .35).toFixed(3) + ')'; cx.shadowBlur = 3;
+          cx.fillText(p.g, 0, 0); cx.restore();
         });
         if (ch.length) requestAnimationFrame(paso); else { corriendo = false; cx.clearRect(0, 0, cv.width, cv.height); }
       }
@@ -1537,11 +1614,11 @@
         a.addEventListener('pointerenter', function (e) {
           activo = a; var t = a.querySelector('.cm-titulo').getBoundingClientRect();
           // un destello que recorre el título al entrar
-          for (var i = 0; i < 26; i++) (function (i) { setTimeout(function () { if (activo !== a) return; var l = local(t.left + t.width * i / 25, t.top + t.height * (.35 + Math.random() * .4)); soltar(l[0], l[1], 2); }, i * 28); })(i);
+          for (var i = 0; i < 7; i++) (function (i) { setTimeout(function () { if (activo !== a) return; var l = local(t.left + t.width * i / 6, t.top + t.height * (.2 + Math.random() * .3)); soltar(l[0], l[1], 1); }, i * 70); })(i);
         });
         a.addEventListener('pointermove', function (e) {
-          var ahora = performance.now(); if (ahora - ultimo < 24) return; ultimo = ahora;
-          var l = local(e.clientX, e.clientY); soltar(l[0], l[1], 3);
+          var ahora = performance.now(); if (ahora - ultimo < 140) return; ultimo = ahora;
+          var l = local(e.clientX, e.clientY); soltar(l[0], l[1], 1);
         });
         a.addEventListener('pointerleave', function () { if (activo === a) activo = null; });
       });

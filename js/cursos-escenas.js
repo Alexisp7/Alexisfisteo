@@ -186,20 +186,38 @@
     '  vec3 col = mix(amarillo, claro, .15 + .5 * st) * (.6 + .25 * T) * clamp(D, .6, 1.4) * (.55 + 1.15 * st);',
     '  float a = max(linea * fade * (.1 + .9 * st), isco * .9);',
     '  return vec4(col + isco * vec3(1.0, .9, .45), clamp(a, 0.0, 1.0)); }',
-    // la sombra como esfera de tinta: luz arriba a la izquierda, reflejo de ventana, brillo, rebote violeta y sombreado a líneas
-    'vec3 esfera(vec2 b) {',
-    '  vec2 u = b / 5.196; float q = dot(u, u), au = uPix / 5.196; vec3 nn = vec3(u, sqrt(max(1.0 - q, 0.0)));',
-    '  vec3 L = normalize(vec3(-.55, .62, .58)); float dif = max(dot(nn, L), 0.0);',
-    '  vec3 col = vec3(.010, .007, .012) + vec3(.055, .04, .065) * pow(dif, 1.6);',
-    '  col += vec3(.95, .9, 1.0) * pow(max(dot(reflect(-L, nn), vec3(0.0, 0.0, 1.0)), 0.0), 70.0) * .55;',
-    '  vec2 w = u - vec2(-.38, .44); w = vec2(.8 * w.x + .6 * w.y, -.6 * w.x + .8 * w.y);',
-    '  float e = length(w / vec2(.21, .085)); col += vec3(.75, .7, .85) * (1.0 - smoothstep(1.0 - au * 9.0, 1.0, e)) * .16;',
-    '  vec2 w2 = u - vec2(-.2, .6); float e2 = length(w2 / vec2(.06, .03)); col += vec3(.8, .75, .9) * (1.0 - smoothstep(1.0 - au * 25.0, 1.0, e2)) * .12;',
-    '  float ru = sqrt(q), rim = smoothstep(.8, .99, ru) * max(dot(normalize(u + 1e-5), normalize(vec2(.65, -.55))), 0.0);',
-    '  col += vec3(.5, .38, .9) * rim * .18;',
-    '  float hl = abs(fract((u.x + u.y) * 16.0) - .5) / 16.0;',              // sombreado a líneas en el lado oscuro
-    '  col += vec3(.42, .34, .62) * (1.0 - smoothstep(.0035, .0035 + au, hl)) * (1.0 - smoothstep(.05, .45, dif)) * smoothstep(.97, .85, ru) * .18;',
+    // fondo: espacio azul muy oscuro con nubes violáceas dibujadas a curvas de nivel y muchas estrellas.
+    // Se consulta en la dirección final del rayo, así que la lente lo deforma alrededor de la sombra.
+    'float ruido(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);',
+    '  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
+    '             mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x), mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z); }',
+    'float fbm(vec3 p) { float a = .5, s = 0.0; for (int i = 0; i < 5; i++) { s += a * ruido(p); p = p * 2.03 + 7.1; a *= .5; } return s; }',
+    'float nube(vec3 d) { return fbm(d * 2.2 + vec3(3.1, 1.7, .4)); }',
+    'vec3 estrellas(vec3 d, float px) {',
+    '  vec3 col = vec3(0.0);',
+    '  for (int l = 0; l < 3; l++) {',
+    '    float fl = float(l), K = 34.0 * pow(2.1, fl), umbral = l == 0 ? .62 : (l == 1 ? .9 : .975);',
+    '    vec3 pp = d * K, c = floor(pp); float h = hash(c + fl * 17.0);',
+    '    if (h > umbral) {',
+    '      vec3 sp = c + .22 + .56 * vec3(hash(c + 1.3), hash(c + 2.7), hash(c + 5.1));',
+    '      vec3 dd = pp - sp; dd -= d * dot(dd, d); float dist = length(dd) / K;',
+    '      float g = hash(c + 9.0), rad = px * (.35 + 1.1 * g * g * g * (1.0 - .3 * fl));',
+    '      float b = 1.0 - smoothstep(rad, rad + px, dist);',
+    '      vec3 tinte = mix(vec3(.72, .82, 1.0), vec3(1.0, .9, .74), hash(c + 4.4));',
+    '      col += tinte * b * (.3 + .7 * hash(c + 3.3)) * (1.0 - .28 * fl);',
+    '    }',
+    '  }',
     '  return col; }',
+    'vec3 cielo(vec3 d, float px) {',
+    '  float n = nube(d);',
+    '  vec3 ex = normalize(cross(d, vec3(0.0, 1.0, 0.0)) + 1e-4), ey = cross(ex, d);',
+    '  float nx = nube(normalize(d + ex * px * 2.0)), ny = nube(normalize(d + ey * px * 2.0));',
+    '  float w = 15.0 * length(vec2(nx - n, ny - n)) * .5 + 1e-4;',          // ancho de un píxel en unidades de nivel
+    '  float nivel = abs(fract(n * 15.0 + .5) - .5), curva = 1.0 - smoothstep(w * .55, w * 1.55, nivel);',
+    '  float masa = smoothstep(.4, .78, n), n2 = ruido(d * 7.0 + 4.0);',
+    '  vec3 col = vec3(.006, .010, .034) + mix(vec3(.025, .04, .13), vec3(.12, .035, .17), n2) * masa * .9;',
+    '  col += vec3(.46, .34, .78) * curva * smoothstep(.36, .62, n) * .2;',
+    '  return col + estrellas(d, px); }',
     'void main() {',
     '  vec2 q = vec2(gl_FragCoord.x / uRes.x, 1.0 - gl_FragCoord.y / uRes.y);',
     '  vec2 d = (uVB.xy + q * uVB.zw - uC) / uSC; float cr = cos(uRoll), sr = sin(uRoll);',
@@ -222,8 +240,11 @@
     '      acc += (1.0 - al) * c.rgb * c.a; al += (1.0 - al) * c.a; if (al > .98) break; }',
     '    p = pn; v = vn;',
     '  }',
-    '  float rb = length(vec2(bx, by));',
-    '  vec3 fondo = cae ? esfera(vec2(bx, by)) : vec3(.030, .016, .026) * (1.0 - .45 * smoothstep(8.0, 30.0, rb));',
+    // dirección hacia el fondo: la de una cámara estenopeica más la desviación que sufrió el rayo; el cielo gira despacio
+    '  float F = 16.0, px = uPix / F;',
+    '  vec3 dg = normalize(normalize(fw + (rt * bx + up * by) / F) + (normalize(v) - fw));',
+    '  float ag = uT * .03, cg = cos(ag), sg = sin(ag); dg = vec3(cg * dg.x - sg * dg.z, dg.y, sg * dg.x + cg * dg.z);',
+    '  vec3 fondo = cae ? vec3(0.0) : cielo(dg, px);',
     '  vec3 col = acc + (1.0 - al) * fondo;',
     '  col = 1.0 - exp(-col * 1.6);',
     '  gl_FragColor = vec4(col, 1.0); }'
@@ -275,22 +296,6 @@
     })(0);
     fig.bnPintar = function (q) { calidad = q; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
-    // ── estrellas dibujadas a pluma: puntos, cruces de cuatro puntas y alguna con aro; titilan despacio
-    var cielo = el('g', { 'class': 'bn-cielo' }, svg), semilla = 7;
-    function azar() { semilla = (semilla * 16807) % 2147483647; return semilla / 2147483647; }
-    for (var si = 0, puestas = 0; si < 900 && puestas < 130; si++) {
-      var sx = 180 + azar() * 1700, sy = -120 + azar() * 1140, ex = (sx - C[0]) / SC, ey = (sy - C[1]) / SC;
-      var ux = Math.cos(ROLL) * ex + Math.sin(ROLL) * ey, uy = -Math.sin(ROLL) * ex + Math.cos(ROLL) * ey;
-      if ((sx > 980 && sy > 700) || (sy < 80 && sx > 450 && sx < 1000) || (ux / 19) * (ux / 19) + (uy / 8.5) * (uy / 8.5) < 1 || ux * ux + uy * uy < 100) continue;
-      puestas++;
-      var tipo = azar(), tono = azar() < .18 ? ' bn-est-oro' : azar() < .15 ? ' bn-est-vio' : '';
-      var est = el('g', { 'class': 'bn-est' + tono, style: 'animation-delay:' + f(-azar() * 6) + 's;animation-duration:' + f(3 + azar() * 4) + 's' }, cielo);
-      if (tipo < .72) { el('circle', { cx: f(sx), cy: f(sy), r: f(.45 + azar() * .7) }, est); continue; }
-      var L = 2.5 + azar() * 4.5;
-      el('circle', { cx: f(sx), cy: f(sy), r: .9 }, est);
-      el('path', { d: 'M' + f(sx - L) + ' ' + f(sy) + 'H' + f(sx + L) + 'M' + f(sx) + ' ' + f(sy - L * 1.3) + 'V' + f(sy + L * 1.3) }, est);
-      if (tipo > .93) el('circle', { 'class': 'bn-est-aro', cx: f(sx), cy: f(sy), r: f(L * .55) }, est);
-    }
     var g = el('g', {}, svg);
     function anillo(r0, r1) { return 'M' + f(C[0] - r1) + ' ' + f(C[1]) + ' a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(2 * r1) + ' 0 a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(-2 * r1) + ' 0' + (r0 ? ' M' + f(C[0] - r0) + ' ' + f(C[1]) + ' a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(2 * r0) + ' 0 a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(-2 * r0) + ' 0' : ''); }
     el('circle', { 'class': 'bn-hawking-borde', cx: f(C[0]), cy: f(C[1]), r: f(RSH * .965) }, g);
@@ -333,7 +338,7 @@
         var ph = enPantalla(Math.cos(-.5) * BC * .95, Math.sin(-.5) * BC * .95);
         nota([zHawk], ph, 'Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 660, null, { izq: false });
         var pl = enPantalla(Math.cos(1.25) * 8.2, Math.sin(1.25) * 8.2);
-        nota([zLente], pl, 'Lente gravitacional', ['El arco sobre la sombra es la parte de', 'atrás del disco: su luz se curva por', 'encima del agujero y llega hasta aquí.'], 110);
+        nota([zLente], pl, 'Lente gravitacional', ['El arco sobre la sombra es la parte de', 'atrás del disco: su luz se curva por', 'encima del agujero. Por lo mismo, las', 'estrellas y nubes del fondo se deforman', 'al pasar junto a la sombra.'], 110);
         var pd = aPantalla(12, 0, -7);
         nota([zDisco], pd, 'Disco de acreción', ['Gas en órbita que se calienta al caer en', 'espiral. Empieza en la órbita circular', 'estable más interna, r = 3 rₛ (ISCO).'], 680, null, { izq: false });
         var pp = aPantalla(-12, 0, 2);
@@ -345,7 +350,7 @@
 
   // ═════════ II · Mecánica cuántica: Stern–Gerlach ═════════
   function escenaSternGerlach(svg, salida) {
-    var s = 4.7, P = camara(920, 462, s, 38), g = el('g', {}, svg), ZB = 16, orden = 0;
+    var s = 4.7, P = camara(920, 476, s, 38), g = el('g', {}, svg), ZB = 16, orden = 0;
     // cada pieza entra desde abajo (+) o desde arriba (−) cada vez que se muestra la escena
     function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;--d:' + (120 + orden++ * 45) + 'ms' }, g); }
     function arrollamiento(q, x0, x1, y, z0, z1, n) { for (var k = 1; k < n; k++) { var z = z0 + (z1 - z0) * k / n; linea(q, P(x0, y, z), P(x1, y, z), 'espira'); } }

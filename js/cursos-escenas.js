@@ -26,6 +26,8 @@
     poly(q, [P(x, y + d, z), P(x + w, y + d, z), P(x + w, y + d, z + h), P(x, y + d, z + h)], 'fr');
     poly(q, [P(x + w, y, z), P(x + w, y + d, z), P(x + w, y + d, z + h), P(x + w, y, z + h)], 'sd');
     poly(q, [P(x, y, z + h), P(x + w, y, z + h), P(x + w, y + d, z + h), P(x, y + d, z + h)], 'tp');
+    var e = Math.min(.45, w * .12, d * .12);   // bisel: un filo de luz en las aristas superiores
+    if (e > .08) { linea(q, P(x + e, y + d - e, z + h), P(x + w - e, y + d - e, z + h), 'bisel'); linea(q, P(x + w - e, y + e, z + h), P(x + w - e, y + d - e, z + h), 'bisel'); }
     return q;
   }
   // cilindro vertical (eje z)
@@ -33,6 +35,7 @@
     var q = el('g', { 'class': 's ' + (tono || 'mid') }, g), a = P(x, y, z), b = P(x, y, z + h), rx = r * 1.2247 * s, ry = r * 0.7071 * s;
     el('path', { 'class': 'fr', d: 'M' + f(b[0] - rx) + ' ' + f(b[1]) + ' L' + f(a[0] - rx) + ' ' + f(a[1]) + ' A' + f(rx) + ' ' + f(ry) + ' 0 0 0 ' + f(a[0]) + ' ' + f(a[1] + ry) + ' L' + f(b[0]) + ' ' + f(b[1] + ry) + ' A' + f(rx) + ' ' + f(ry) + ' 0 0 1 ' + f(b[0] - rx) + ' ' + f(b[1]) + 'Z' }, q);
     el('path', { 'class': 'sd', d: 'M' + f(b[0]) + ' ' + f(b[1] + ry) + ' L' + f(a[0]) + ' ' + f(a[1] + ry) + ' A' + f(rx) + ' ' + f(ry) + ' 0 0 0 ' + f(a[0] + rx) + ' ' + f(a[1]) + ' L' + f(b[0] + rx) + ' ' + f(b[1]) + ' A' + f(rx) + ' ' + f(ry) + ' 0 0 1 ' + f(b[0]) + ' ' + f(b[1] + ry) + 'Z' }, q);
+    if (h * s > 6) linea(q, [b[0] - rx * .45, b[1] + ry * .893], [a[0] - rx * .45, a[1] + ry * .893], 'brillo-cil');
     el('ellipse', { 'class': 'tp', cx: f(b[0]), cy: f(b[1]), rx: f(rx), ry: f(ry) }, q);
     return q;
   }
@@ -134,6 +137,7 @@
     sombra(b0, P, s, 10, 0, 110, 46);
     [[-80, -28], [94, -28], [-80, 28], [94, 28]].forEach(function (q) { caja(b0, P, q[0] - 3, q[1] - 3, -12, 6, 6, 4, 'lo'); });
     caja(b0, P, -86, -30, -8, 186, 60, 5, 'lo');
+    for (var v = 0; v < 5; v++) { var vt = []; for (var xv = -86; xv <= 100; xv += 3) vt.push(P(xv, 30, -7.2 + v * .9 + .28 * Math.sin(xv * .09 + v * 1.7) + .15 * Math.sin(xv * .31 + v))); ruta(b0, vt, 'veta'); }
     caja(b0, P, -84, -26, -3, 182, 52, 3, 'mid');
     regla(b0, P, -80, 94, 26, -1.5, 2, 5);
     linea(b0, P(-84, 0, 0), P(98, 0, 0), 'eje-optico');
@@ -141,6 +145,7 @@
 
     // ── horno de plata: crisol cilíndrico, resistencia en espiral, tapa y boquilla
     var h0 = pieza(-160);
+    sombra(h0, P, s, -71, 0, 15, 15);
     caja(h0, P, -82, -12, 0, 22, 24, 3, 'lo');
     cilindro(h0, P, s, -71, 0, 3, 9, 24, 'mid');
     for (var j = 0; j < 9; j++) {
@@ -172,12 +177,14 @@
 
     // ── electroimán: columna con bobina, brazos, polo inferior acanalado y polo superior en filo
     var m0 = pieza(150);
+    sombra(m0, P, s, 10, -8, 32, 24);
     caja(m0, P, -12, -26, 0, 44, 6, 46, 'lo');
+    for (var lm = -10; lm < 32; lm += 2) linea(m0, P(lm, -26, 46), P(lm, -20, 46), 'lamina');
     caja(m0, P, -12, -20, 0, 44, 30, 5, 'lo');
     var m1 = pieza(-160);
     caja(m1, P, -14, -28, 13, 48, 10, 16, 'cobre');
     arrollamiento(m1, -14, 34, -18, 13, 29, 9);
-    for (var k = 1; k < 5; k++) { var yy = -28 + k * 2; linea(m1, P(34, yy, 13), P(34, yy, 29), 'espira'); }
+    for (var k = 1; k < 5; k++) { var yy = -28 + k * 2; linea(m1, P(34, yy, 13), P(34, yy, 29), 'espira'); linea(m1, P(-14, yy, 29), P(34, yy, 29), 'espira'); }
     var m2 = pieza(130);
     caja(m2, P, -12, -10, 5, 44, 20, 7, 'mid');
     poly(m2, [P(-12, -1.3, 12), P(32, -1.3, 12), P(32, 1.3, 12), P(-12, 1.3, 12)], 'hueco');
@@ -191,6 +198,7 @@
     linea(m3, P(-12, 0, 19), P(32, 0, 19), 'arista');
     caja(m3, P, -12, -10, 26, 44, 20, 8, 'mid');
     caja(m3, P, -12, -20, 34, 44, 30, 6, 'lo');
+    for (var la = -10; la < 32; la += 2) linea(m3, P(la, -20, 40), P(la, 10, 40), 'lamina');
     for (var w = 0; w < 6; w++) tornillo(m3, P(-8 + w * 7.6, 6, 40));
     var rN = P(10, 10, 30), tN = el('text', { 'class': 'grabado', x: f(rN[0]), y: f(rN[1]) }, m3); tN.textContent = '∂B/∂z';
 
@@ -199,43 +207,57 @@
     placa(p0, P, 40, 13, 0, 28, 10, 'Ag · 1922 · T ≈ 1300 K');
     capa();                                   // imán → pantalla
     var pa = pieza(-170);
+    sombra(pa, P, s, 80, 0, 7, 28);
     caja(pa, P, 76, -24, 0, 8, 6, 2.5, 'lo'); caja(pa, P, 76, 18, 0, 8, 6, 2.5, 'lo');
     caja(pa, P, 79, -22, 2.5, 2, 2, 34, 'lo');
     var pantalla = el('g', { 'class': 's vidrio' }, pa);
     poly(pantalla, [P(80, -20, 3), P(80, 20, 3), P(80, 20, 35), P(80, -20, 35)], 'tp');
+    poly(pa, [P(80, -18, 35), P(80, -12, 35), P(80, 6, 3), P(80, 0, 3)], 'reflejo');
+    poly(pa, [P(80, -9, 35), P(80, -7, 35), P(80, 11, 3), P(80, 9, 3)], 'reflejo');
     var impactos = el('g', {}, pa);
     ruta(pa, [P(80, -9, ZB), P(80, 9, ZB)], 'clasico');
     var rc = P(80, 12, ZB + 1.5), tc = el('text', { 'class': 'grabado', x: f(rc[0]), y: f(rc[1]) }, pa); tc.textContent = 'clásico';
     caja(pa, P, 79, 20, 2.5, 2, 2, 34, 'lo');
     caja(pa, P, 79, -22, 35, 2, 44, 2, 'lo');
+    var pz = pieza(-170);
+    poly(pz, [P(80, -10, 4), P(80, 10, 4), P(80, 10, 33), P(80, -10, 33)], 'zona');
 
     // notas: al pasar el mouse por una pieza, una línea guía sube hasta una explicación corta en gris
     var capaNotas = el('g', { 'class': 'notas' }, g);
-    function nota(piezas, ancla, titulo, l1, l2, cima) {
+    function nota(piezas, ancla, titulo, lineas, cima, foco) {
+      foco = piezas.concat(foco || []);
       var a = P(ancla[0], ancla[1], ancla[2]), alto = 64 + (a[1] > 520 ? 40 : 0), izq = a[0] > 1150, dx = izq ? -22 : 22;
       var top = cima || Math.max(118, a[1] - alto), n = el('g', { 'class': 'nota' }, capaNotas);
       el('circle', { cx: f(a[0]), cy: f(a[1]), r: 2.2 }, n);
       el('circle', { 'class': 'anillo-nota', cx: f(a[0]), cy: f(a[1]), r: 5 }, n);
       el('path', { d: 'M' + f(a[0]) + ' ' + f(a[1] - 4) + ' L' + f(a[0]) + ' ' + f(top) + ' L' + f(a[0] + dx) + ' ' + f(top), pathLength: 1 }, n);
-      var tx = a[0] + dx + (izq ? -6 : 6), anc = izq ? 'end' : 'start';
-      var ancho = Math.max(l1.length, l2.length) * 6.4 + 20;
-      el('rect', { 'class': 'nota-fondo', x: f(izq ? tx - ancho + 10 : tx - 10), y: f(top - 11), width: f(ancho), height: 52, rx: 2 }, n);
+      var ancho = Math.max.apply(null, lineas.map(function (l) { return l.length; })) * 6.3 + 22;
+      var bx = izq ? a[0] + dx - ancho : a[0] + dx, tx = bx + 10, anc = 'start';
+      el('rect', { 'class': 'nota-fondo', x: f(bx), y: f(top - 11), width: f(ancho), height: 22 + lineas.length * 15, rx: 2 }, n);
       var t = el('text', { 'class': 'nota-t', x: f(tx), y: f(top + 3), 'text-anchor': anc }, n); t.textContent = titulo;
       var d = el('text', { 'class': 'nota-d', x: f(tx), y: f(top + 19), 'text-anchor': anc }, n);
-      [l1, l2].forEach(function (l, k) { var sp = el('tspan', { x: f(tx), dy: k ? 15 : 0 }, d); sp.textContent = l; });
+      lineas.forEach(function (l, k) { var sp = el('tspan', { x: f(tx), dy: k ? 15 : 0 }, d); sp.textContent = l; });
       piezas.forEach(function (q) {
         q.classList.add('con-nota');
-        q.addEventListener('pointerenter', function () { n.classList.add('ver'); piezas.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on'); });
-        q.addEventListener('pointerleave', function () { n.classList.remove('ver'); piezas.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on'); });
+        q.addEventListener('pointerenter', function () { n.classList.add('ver'); foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on'); });
+        q.addEventListener('pointerleave', function () { n.classList.remove('ver'); foco.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on'); });
       });
     }
-    nota([b0], [-62, 22, 0], 'Banco óptico', 'Alinea horno, rendijas, imán y pantalla', 'sobre un mismo eje; en el real, en vacío.');
-    nota([h0], [-71, 0, 32.4], 'Horno de plata', 'Evapora plata a ≈ 1300 K: sale un haz', 'de átomos neutros con velocidades térmicas.');
-    nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', 'Dos rendijas recortan el haz', 'hasta dejarlo como una lámina delgada.');
-    nota([m0, m1], [10, -23, 46], 'Electroimán', 'La bobina magnetiza el yugo de hierro;', 'el campo se concentra entre los polos.', 150);
-    nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', 'Filo arriba, canal abajo: B no uniforme.', 'F = μz ∂B/∂z empuja según el espín.', 175);
-    nota([p0], [54, 18, .5], 'Fráncfort, 1922', 'Otto Stern y Walther Gerlach: primera', 'prueba de la cuantización espacial.');
-    nota([pa], [80, -21, 37], 'Placa colectora', 'Clásicamente: una sola banda continua.', 'Se ven dos manchas: espín ±ħ/2.', 300);
+    nota([b0], [-62, 22, 0], 'Banco y vacío', ['Todo va sobre un solo eje. El aparato real', 'trabajaba en vacío: los átomos debían volar', 'sin chocar con el aire.']);
+    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.']);
+    nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.']);
+    nota([m0, m1], [10, -23, 46], 'Electroimán', ['Un campo uniforme solo hace girar al imán', 'atómico (precesión); no lo desvía. Hace', 'falta un campo que cambie con la altura.'], 150);
+    nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 175);
+    nota([p0], [54, 18, .5], 'Fráncfort, 1922', ['Stern y Gerlach buscaban la cuantización', 'espacial de Bohr–Sommerfeld. El espín', '(1925) explicó por qué eran justo dos.']);
+    nota([pa], [79, -21, 37], 'Placa colectora', ['Clásico: μz toma cualquier valor, una banda.', 'Se vieron dos manchas: la proyección del', 'momento magnético está cuantizada.'], 300);
+    nota([pz], [80, 0, 27], '¿Por qué no solo dos líneas?', [
+      'Cada átomo cae arriba o abajo; lo que cambia es cuánto:',
+      '· Δz ∝ 1/v²: los lentos se abren más, los rápidos menos.',
+      '· ∂B/∂z es máximo bajo el filo y cae hacia los lados:',
+      '  de ahí la forma de labios, que se cierra en los bordes.',
+      '· La rendija tiene altura: el haz ya llega con ancho.',
+      'Los puntos cerca del centro son átomos rápidos o de',
+      'los bordes, no espines "intermedios".'], 150, [pa]);
 
     // física: f(v) ∝ v³ e^{−v²/v₀²} → w = v²/v₀² ~ Gamma(2,1); Δz = ±K(y)/w
     // espín: antes del imán, superposición (la flecha "titila"); al entrar al gradiente queda ↑ o ↓
@@ -248,13 +270,13 @@
       el('circle', { 'class': 'atomo-b', r: 2.1 }, a);
       var fl = el('path', { 'class': 'espin', d: 'M0 1.4 L0 -6.5 M-1.7 -4.4 L0 -6.6 L1.7 -4.4' }, a);
       var fl2 = el('path', { 'class': 'espin fantasma', d: 'M0 -1.4 L0 6.5 M-1.7 4.4 L0 6.6 L1.7 4.4' }, a);
-      enVuelo.push({ x: -58, y: y0, v: Math.sqrt(w2), dz: dz, sgn: sgn, el: a, fl: fl, fl2: fl2, tramo: 0, def: false });
+      enVuelo.push({ x: -58, y: y0, z0: (Math.random() * 2 - 1) * .7, v: Math.sqrt(w2), dz: dz, sgn: sgn, el: a, fl: fl, fl2: fl2, tramo: 0, def: false });
     }
     function zEn(a, x) {   // parabólica dentro del imán (−12…32), recta después
-      if (x <= -12) return ZB;
+      if (x <= -12) return ZB + a.z0;
       var L = 44, t = Math.min(x + 12, L) / L, zm = a.dz * .32 * t * t;
-      if (x <= 32) return ZB + zm;
-      return ZB + a.dz * .32 + (2 * .32 * a.dz / L) * (x - 32);
+      if (x <= 32) return ZB + a.z0 + zm;
+      return ZB + a.z0 + a.dz * .32 + (2 * .32 * a.dz / L) * (x - 32);
     }
     return {
       tick: function (dt) {
@@ -262,7 +284,7 @@
         for (var i = enVuelo.length - 1; i >= 0; i--) {
           var a = enVuelo[i]; a.x += a.v * 62 * dt;
           if (a.x >= 80) {
-            var z = ZB + a.dz, q = P(80, a.y, z);
+            var z = ZB + a.z0 + a.dz, q = P(80, a.y, z);
             if (z > 4 && z < 34) el('circle', { 'class': 'impacto ' + (a.sgn > 0 ? 'imp-arriba' : 'imp-abajo'), cx: f(q[0]), cy: f(q[1]), r: 1.15 }, impactos);
             if (impactos.childNodes.length > 1400) impactos.removeChild(impactos.firstChild);
             if (a.sgn > 0) arriba++; else abajo++;

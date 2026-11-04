@@ -139,6 +139,7 @@
       el('circle', { cx: f(a[0]), cy: f(a[1]), r: 2.2 }, n);
       el('circle', { 'class': 'anillo-nota', cx: f(a[0]), cy: f(a[1]), r: 5 }, n);
       el('path', { d: 'M' + f(a[0]) + ' ' + f(a[1] - 4) + ' L' + f(a[0]) + ' ' + f(top) + ' L' + f(a[0] + dx) + ' ' + f(top), pathLength: 1 }, n);
+      if (op && op.flecha) { var sg = dx < 0 ? -1 : 1, ex = a[0] + dx; el('path', { 'class': 'nota-punta', d: 'M' + f(ex - sg * 7) + ' ' + f(top - 3.5) + ' L' + f(ex) + ' ' + f(top) + ' L' + f(ex - sg * 7) + ' ' + f(top + 3.5) + 'Z' }, n); n.classList.add('nota-fuerte'); }
       var ancho = Math.max(op && op.ancho || 0, Math.max.apply(null, lineas.map(function (l) { return l.length; })) * 6.6 + 22);
       var bx = izq ? a[0] + dx - ancho : a[0] + dx, tx = bx + 10, anc = 'start';
       var fondo = el('rect', { 'class': 'nota-fondo', x: f(bx), y: f(top - 11), width: f(ancho), height: 27 + lineas.length * 17 + extra, rx: 2 }, n);
@@ -353,6 +354,178 @@
       var a = Math.random() * Math.PI * 2, sale = el('circle', { 'class': 'bn-hq', r: 2.1 }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: 1.5 }, hawk);
       pares.push({ a: a, r: RSH * .955, rc: RSH * .955, v: 26 + Math.random() * 30, sale: sale, cae: cae, da: gauss() * .08 });
     }
+    // ── medallones de las notas: una lámina circular a lápiz y aguada con una animación de cada parte.
+    // Cada animación sale de la física que cita la nota (geodésicas nulas, luz radial en coordenadas
+    // de Eddington–Finkelstein, órbitas de Kepler con ISCO); solo se mueve mientras su nota está abierta.
+    var medAnim = [], medN = 0, NS = 'http://www.w3.org/2000/svg';
+    function medallon(q, cx, cy, R) {
+      var id = 'bnm' + (medN++), defs = el('defs', {}, q), cp = el('clipPath', { id: id }, defs);
+      el('circle', { cx: f(cx), cy: f(cy), r: f(R) }, cp);
+      el('circle', { 'class': 'med-papel', cx: f(cx), cy: f(cy), r: f(R) }, q);
+      var dentro = el('g', { 'clip-path': 'url(#' + id + ')' }, q);
+      el('circle', { 'class': 'med-borde', cx: f(cx), cy: f(cy), r: f(R) }, q);
+      el('circle', { 'class': 'med-borde2', cx: f(cx), cy: f(cy), r: f(R + 3) }, q);
+      return dentro;
+    }
+    function pie(q, x, y, lineas) {
+      var t = el('text', { 'class': 'med-c', x: f(x), y: f(y) }, q);
+      lineas.forEach(function (l, k) { var s = el('tspan', { x: f(x), dy: k ? 13 : 0 }, t); s.textContent = l; });
+    }
+    function etiqueta(q, x, y, s, cl) { var t = el('text', { 'class': 'med-k' + (cl ? ' ' + cl : ''), x: f(x), y: f(y) }, q); t.textContent = s; return t; }
+    function anima(q, fn) { medAnim.push({ n: q, f: fn }); }
+    function temp(u) {   // u: 0 caliente (crema) … 1 frío (rojizo), la paleta del disco
+      var A = [[255, 244, 218], [252, 204, 138], [240, 140, 61], [179, 77, 33], [102, 56, 56]], k = Math.min(3.999, Math.max(0, u) * 4), i = Math.floor(k), w = k - i;
+      return 'rgb(' + [0, 1, 2].map(function (c) { return Math.round(A[i][c] + (A[i + 1][c] - A[i][c]) * w); }).join(',') + ')';
+    }
+    var R0 = 44;
+    var MED = {
+      // 1 · pozo de curvatura y un cuerpo que cae estirándose por la marea (∝ 1/r³)
+      sing: function (q, x0, y0) {
+        var cx = x0 + 56, cy = y0 + 46, m = medallon(q, cx, cy, R0), radios = [46, 36, 28, 22, 17, 13, 10, 7.5, 5.5, 4], prof = function (r) { return -24 + 520 / (r + 8); };
+        radios.forEach(function (r, k) { el('ellipse', { 'class': k % 3 ? 'med-tr' : 'med-tr med-tr-may', cx: f(cx), cy: f(cy + prof(r)), rx: f(r), ry: f(r * .28) }, m); });
+        for (var j = 0; j < 12; j++) {
+          var a = j / 12 * Math.PI * 2, d = '';
+          for (var r = 46; r >= 3.5; r -= 1.5) d += (r === 46 ? 'M' : 'L') + f(cx + r * Math.cos(a)) + ' ' + f(cy + prof(r) + r * .28 * Math.sin(a));
+          el('path', { 'class': 'med-tr', d: d }, m);
+        }
+        var fondo = cy + prof(3.5) + 2;
+        el('line', { 'class': 'med-eje', x1: f(cx), y1: f(cy + prof(4)), x2: f(cx), y2: f(fondo + 6) }, m);
+        el('circle', { 'class': 'med-sing', cx: f(cx), cy: f(fondo + 6), r: 2.4 }, m);
+        var cuerpo = el('ellipse', { 'class': 'med-cuerpo', rx: 3, ry: 3 }, m);
+        etiqueta(m, cx + 5, fondo + 9, 'r → 0');
+        pie(q, x0 + 116, y0 + 24, ['Un cuerpo que cae se estira:', 'la marea crece como 1/r³ y', 'en r = 0 se vuelve infinita.', 'Pozo ilustrativo, no a escala.']);
+        var ang = 2.2;
+        anima(q, function (t) {
+          var u = (t % 4.2) / 4.2, r = 42 * Math.pow(1 - u, 1.6) + 3.6, a = ang + u * 3.2;
+          var px = cx + r * Math.cos(a), py = cy + prof(r) + r * .28 * Math.sin(a);
+          var est = Math.min(5, Math.pow(14 / r, 1.5)), rad = Math.atan2(prof(r) - prof(r + 2) , 2) * 180 / Math.PI;
+          cuerpo.setAttribute('cx', f(px)); cuerpo.setAttribute('cy', f(py));
+          cuerpo.setAttribute('rx', f(2.6 / Math.sqrt(est))); cuerpo.setAttribute('ry', f(2.6 * est));
+          var dx = cx - px, dy = (fondo + 6) - py;
+          cuerpo.setAttribute('transform', 'rotate(' + f(Math.atan2(dy, dx) * 180 / Math.PI - 90) + ' ' + f(px) + ' ' + f(py) + ')');
+          cuerpo.setAttribute('opacity', f(u > .9 ? (1 - u) * 10 : Math.min(1, u * 12)));
+        });
+      },
+      // 2 · pares de partículas junto al horizonte: una cae, la otra escapa
+      hawk: function (q, x0, y0) {
+        var cx = x0 + 56, cy = y0 + 46, m = medallon(q, cx, cy, R0), Rh = 160, hy = cy + 12;
+        var hc = hy + Rh, d = 'M' + f(cx - 60) + ' ' + f(hc - Math.sqrt(Rh * Rh - 3600)) + ' A' + Rh + ' ' + Rh + ' 0 0 1 ' + f(cx + 60) + ' ' + f(hc - Math.sqrt(Rh * Rh - 3600));
+        el('path', { 'class': 'med-dentro', d: d + ' L' + f(cx + 60) + ' ' + f(cy + 60) + ' L' + f(cx - 60) + ' ' + f(cy + 60) + 'Z' }, m);
+        el('path', { 'class': 'med-hor', d: d }, m);
+        for (var k = 1; k < 4; k++) el('path', { 'class': 'med-tr', d: 'M' + f(cx - 60) + ' ' + f(hc - Math.sqrt(Rh * Rh - 3600) + k * 7) + ' A' + Rh + ' ' + Rh + ' 0 0 1 ' + f(cx + 60) + ' ' + f(hc - Math.sqrt(Rh * Rh - 3600) + k * 7) }, m);
+        etiqueta(m, cx - 34, hy + 13, 'horizonte', 'med-k-claro');
+        pie(q, x0 + 116, y0 + 24, ['El vacío crea pares; junto al', 'horizonte uno cae y el otro', 'escapa: el agujero radia', 'y pierde masa muy despacio.']);
+        var pares = [0, 1, 2].map(function (i) {
+          var g2 = el('g', {}, m);
+          return { g: g2, lazo: el('ellipse', { 'class': 'med-lazo' }, g2), sale: el('circle', { 'class': 'med-sale', r: 2.3 }, g2), cae: el('circle', { 'class': 'med-cae', r: 2 }, g2), fase: i / 3, x: 0, sem: i * 7.1 };
+        });
+        anima(q, function (t) {
+          pares.forEach(function (p) {
+            var c = t / 2.8 + p.fase, u = c % 1, ciclo = Math.floor(c);
+            if (ciclo !== p.ciclo) { p.ciclo = ciclo; var h = Math.sin(ciclo * 12.9898 + p.sem) * 43758.5; p.x = cx - 26 + (h - Math.floor(h)) * 52; }
+            var yh = hc - Math.sqrt(Rh * Rh - (p.x - cx) * (p.x - cx)), y0p = yh - 4;
+            var sep = u < .25 ? u / .25 * 3 : 3, ys = y0p - (u < .25 ? sep : 3 + (u - .25) * 70), yc = y0p + (u < .25 ? sep * .6 : 2 + (u - .25) * 36);
+            p.sale.setAttribute('cx', f(p.x + (u < .25 ? -sep : -3))); p.sale.setAttribute('cy', f(ys));
+            p.cae.setAttribute('cx', f(p.x + (u < .25 ? sep : 3))); p.cae.setAttribute('cy', f(yc));
+            p.lazo.setAttribute('cx', f(p.x)); p.lazo.setAttribute('cy', f(y0p)); p.lazo.setAttribute('rx', f(sep + 1.5)); p.lazo.setAttribute('ry', f(sep * .7 + 1));
+            p.lazo.setAttribute('opacity', f(u < .3 ? .8 * (1 - u / .3) : 0));
+            p.sale.setAttribute('opacity', f(u < .05 ? u * 20 : (u > .85 ? (1 - u) / .15 : 1)));
+            p.cae.setAttribute('opacity', f(u < .05 ? u * 20 : Math.max(0, 1 - (u - .25) * 2.2)));
+          });
+        });
+      },
+      // 3 · pulsos de luz hacia afuera: dr/dv = ½(1 − rₛ/r) (coordenadas de Eddington–Finkelstein)
+      hor: function (q, x0, y0) {
+        var cx = x0 + 56, cy = y0 + 46, m = medallon(q, cx, cy, R0), L = 34, xh = cx - 20, Rh = 150, xc = xh - Rh;
+        var arco = function (rr) { return 'M' + f(xc + Math.sqrt(rr * rr - 3600)) + ' ' + f(cy - 60) + ' A' + rr + ' ' + rr + ' 0 0 1 ' + f(xc + Math.sqrt(rr * rr - 3600)) + ' ' + f(cy + 60); };
+        el('path', { 'class': 'med-dentro', d: arco(Rh) + ' L' + f(cx - 60) + ' ' + f(cy + 60) + ' L' + f(cx - 60) + ' ' + f(cy - 60) + 'Z' }, m);
+        el('path', { 'class': 'med-hor', d: arco(Rh) }, m);
+        [1.5, 2].forEach(function (r) { el('path', { 'class': 'med-tr', d: arco(Rh + (r - 1) * L) }, m); });
+        var X = function (r, y) { return xc + Math.sqrt(Math.pow(Rh + (r - 1) * L, 2) - y * y); };
+        etiqueta(m, X(1, 0) + 2, cy + 39, 'rₛ'); etiqueta(m, X(2, 0) - 3, cy + 39, '2rₛ');
+        var filas = [[1.9, -24], [1.12, -8], [1, 8], [.88, 24]].map(function (fl) {
+          var y = cy + fl[1], g2 = el('g', {}, m), x = X(fl[0], fl[1]);
+          el('circle', { 'class': 'med-emisor', cx: f(x), cy: f(y), r: 1.6 }, g2);
+          return { r0: fl[0], y: y, dy: fl[1], estela: el('line', { 'class': 'med-estela', x1: f(x), y1: f(y), x2: f(x), y2: f(y) }, g2), foton: el('circle', { 'class': 'med-foton', cx: f(x), cy: f(y), r: 2 }, g2) };
+        });
+        pie(q, x0 + 116, y0 + 24, ['Luz emitida hacia afuera:', 'lejos escapa, cerca tarda,', 'en rₛ se queda quieta y', 'dentro también cae.']);
+        anima(q, function (t) {
+          var v = (t % 5) / 5 * 9;
+          filas.forEach(function (p) {
+            var r = p.r0, n = Math.ceil(v / .02), h = v / Math.max(n, 1);
+            for (var i = 0; i < n && r > .25 && r < 4; i++) r += .5 * (1 - 1 / r) * h;
+            var x = X(Math.max(r, .25), p.dy);
+            p.foton.setAttribute('cx', f(x)); p.estela.setAttribute('x2', f(x));
+            var fin = (t % 5) / 5, op = fin > .9 ? (1 - fin) * 10 : 1;
+            p.foton.setAttribute('opacity', f(op * (r < .3 ? 0 : 1))); p.estela.setAttribute('opacity', f(op * .7));
+          });
+        });
+      },
+      // 4 · geodésicas nulas reales en el plano: d²u/dφ² = 3Mu² − u, con b alrededor de √27 M
+      fot: function (q, x0, y0) {
+        var cx = x0 + 56, cy = y0 + 46, m = medallon(q, cx, cy, R0), s = 4.6;
+        el('circle', { 'class': 'med-dentro', cx: f(cx), cy: f(cy), r: f(2 * s) }, m);
+        el('circle', { 'class': 'med-esfera', cx: f(cx), cy: f(cy), r: f(3 * s) }, m);
+        etiqueta(m, cx + 3 * s + 2, cy - 3 * s - 1, '1,5 rₛ');
+        function rayo(b) {
+          var R = 12, ph = Math.asin(b / R), u = 1 / R, du = Math.cos(ph) / b, h = .004, pts = [], k = 0;
+          while (k++ < 9000) {
+            var a = 3 * u * u - u; u += du * h + .5 * a * h * h; var a2 = 3 * u * u - u; du += .5 * (a + a2) * h; ph += h;
+            if (k % 6 === 0) pts.push([cx - Math.cos(ph) / u * s, cy + Math.sin(ph) / u * s]);
+            if (u > .5 || u < 1 / R) break;
+          }
+          return pts;
+        }
+        var rayos = [[4.4, 'cae'], [5.205, 'gira'], [5.6, 'sale'], [7.2, 'sale']].map(function (rb, i) {
+          var pts = rayo(rb[0]);
+          var d = 'M' + pts.map(function (p) { return f(p[0]) + ' ' + f(p[1]); }).join(' L');
+          var largo = 0; for (var k = 1; k < pts.length; k++) largo += Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]);
+          el('path', { 'class': 'med-rayo-t', d: d }, m);
+          var c = el('path', { 'class': 'med-rayo med-rayo-' + rb[1], d: d, pathLength: 1 }, m);
+          return { c: c, largo: largo, fase: i * .23 };
+        });
+        var orbita = el('circle', { 'class': 'med-foton', r: 1.8 }, m);
+        pie(q, x0 + 116, y0 + 24, ['Rayos de luz reales con', 'parámetro b cerca de √27 M:', 'uno cae, otro da vueltas', 'en 1,5 rₛ antes de escapar.']);
+        anima(q, function (t) {
+          rayos.forEach(function (r) { var dur = r.largo / 70 + 1, u = ((t / dur + r.fase) % 1) * 1.25 - .1; r.c.setAttribute('stroke-dashoffset', f(-u)); });
+          var a = t * 1.9; orbita.setAttribute('cx', f(cx + 3 * s * Math.cos(a))); orbita.setAttribute('cy', f(cy - 3 * s * Math.sin(a)));
+        });
+      },
+      // 5 · gas en órbita de Kepler (Ω ∝ r^−3/2) que se acerca despacio y, pasada la ISCO (3 rₛ), cae en picada
+      disco: function (q, x0, y0) {
+        var cx = x0 + 56, cy = y0 + 46, m = medallon(q, cx, cy, R0), s = 2.1, k2 = .42;
+        el('rect', { 'class': 'med-aguada', x: f(cx - R0), y: f(cy - R0), width: f(2 * R0), height: f(2 * R0) }, m);
+        [8, 11, 14, 17, 20].forEach(function (r) { el('ellipse', { 'class': 'med-tr', cx: f(cx), cy: f(cy), rx: f(r * s), ry: f(r * s * k2) }, m); });
+        el('ellipse', { 'class': 'med-isco', cx: f(cx), cy: f(cy), rx: f(6 * s), ry: f(6 * s * k2) }, m);
+        el('circle', { 'class': 'med-dentro', cx: f(cx), cy: f(cy), r: f(2 * s) }, m);
+        etiqueta(m, cx + 6 * s - 6, cy + 6 * s * k2 + 8, 'ISCO', 'med-k-claro');
+        var gas = [];
+        for (var i = 0; i < 26; i++) gas.push({ r: 7 + Math.random() * 14, a: Math.random() * 6.283, el: el('path', { 'class': 'med-gas' }, m), cola: [] });
+        pie(q, x0 + 116, y0 + 24, ['Kepler, Ω² = GM/r³: lo de', 'adentro gira más rápido y', 'está más caliente. Bajo 3 rₛ', 'no hay órbita estable: cae.']);
+        var tPrev = null;
+        anima(q, function (t) {
+          var dt = tPrev == null ? 0 : Math.min(.05, t - tPrev); tPrev = t;
+          gas.forEach(function (g2) {
+            var w = 4.2 * Math.pow(6 / g2.r, 1.5), vr = g2.r > 6 ? -.35 : -4.5 * (6.3 - g2.r) - .6;
+            g2.a += w * dt; g2.r += vr * dt;
+            if (g2.r < 2.05) { g2.r = 19 + Math.random() * 2.5; g2.a = Math.random() * 6.283; g2.cola = []; }
+            var p = [cx + g2.r * s * Math.cos(g2.a), cy + g2.r * s * k2 * Math.sin(g2.a)];
+            g2.cola.push(p); if (g2.cola.length > 7) g2.cola.shift();
+            g2.el.setAttribute('d', 'M' + g2.cola.map(function (c) { return f(c[0]) + ' ' + f(c[1]); }).join(' L'));
+            g2.el.setAttribute('stroke', temp((g2.r - 4) / 17));
+            g2.el.setAttribute('opacity', f(Math.min(1, (21.5 - g2.r) / 2)));
+          });
+        });
+      }
+    };
+    (function bucleMed() {
+      var t = performance.now() / 1000;
+      if (!window.__bnPausa || window.__bnMedT != null) {
+        var tt = window.__bnMedT != null ? window.__bnMedT : t;
+        medAnim.forEach(function (a) { if (a.n.parentNode.classList.contains('ver')) a.f(tt); });
+      }
+      requestAnimationFrame(bucleMed);
+    })();
     return {
       tick: function (dt) {
         tiempo += dt;
@@ -368,22 +541,15 @@
       },
       notas: function () {
         var nota = fabricaNotas(svg, svg, function (x, y) { return [x, y]; });
-        // cinco partes numeradas; la ergosfera no aparece porque solo existe si el agujero rota (Kerr)
+        // cinco partes; la ergosfera no aparece porque solo existe si el agujero rota (Kerr)
         var p3 = enPantalla(Math.cos(2.4) * 1.45, Math.sin(2.4) * 1.45), p4 = enPantalla(Math.cos(2.2) * BC * 1.05, Math.sin(2.2) * BC * 1.05);
         var p2 = enPantalla(Math.cos(-.5) * BC * .95, Math.sin(-.5) * BC * .95), p5 = aPantalla(12, 0, -7);
-        nota([zSing], [C[0], C[1]], '1 · Singularidad', ['En r = 0 la curvatura se vuelve infinita', 'según la relatividad general: ahí la teoría', 'deja de valer. Se espera que una teoría', 'cuántica de la gravedad la describa.'], 110, null, { izq: true, dx: -40 });
-        nota([zHawk], p2, '2 · Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 660, null, { izq: false });
-        nota([zHor, zSombra], p3, '3 · Horizonte de eventos', ['Radio de Schwarzschild rₛ = 2GM/c² (el', 'círculo interior). Lo que lo cruza, ni la', 'luz, ya no sale. Para el Sol, rₛ ≈ 3 km.', 'La sombra mide ≈ 2,6 rₛ: la gravedad', 'curva la luz que pasa cerca.'], 680, null, { izq: true, dx: -30 });
-        nota([zEsf, zFot, zLente], p4, '4 · Esfera de fotones', ['A r = 1,5 rₛ (segundo círculo) la luz', 'puede orbitar, en equilibrio inestable.', 'La que escapa forma el anillo fino junto', 'a la sombra (EHT, M87*, 2019). La lente', 'muestra el disco de atrás arriba y abajo.'], 110, null, { izq: false });
-        nota([zDisco, zDoppler], p5, '5 · Disco de acreción', ['Gas que cae en espiral y se calienta.', 'Empieza en la órbita estable más interna,', 'r = 3 rₛ (ISCO). El lado que se acerca a', 'nosotros brilla más por efecto Doppler.'], 680, null, { izq: false });
-        // números a la vista, como en una lámina
-        var nums = el('g', { 'class': 'bn-num' }, svg);
-        [[C[0], C[1], 1], [p2[0], p2[1], 2], [p3[0], p3[1], 3], [p4[0], p4[1], 4], [p5[0], p5[1], 5]].forEach(function (q) {
-          var x = q[0] + 13, y = q[1] - 13, n = el('g', {}, nums);
-          el('line', { x1: f(q[0]), y1: f(q[1]), x2: f(x - 5), y2: f(y + 5) }, n);
-          el('circle', { cx: f(x), cy: f(y), r: 7.5 }, n);
-          var t = el('text', { x: f(x), y: f(y + 2.8) }, n); t.textContent = q[2];
-        });
+        var M = function (k) { return { alto: 104, ancho: 300, flecha: true, dibujo: MED[k] }; };
+        nota([zSing], [C[0], C[1]], 'Singularidad', ['En r = 0 la curvatura se vuelve infinita', 'según la relatividad general: ahí la teoría', 'deja de valer. Se espera que una teoría', 'cuántica de la gravedad la describa.'], 100, null, Object.assign(M('sing'), { izq: true, dx: -40 }));
+        nota([zHawk], p2, 'Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 560, null, Object.assign(M('hawk'), { izq: false }));
+        nota([zHor, zSombra], p3, 'Horizonte de eventos', ['Radio de Schwarzschild rₛ = 2GM/c² (el', 'círculo interior). Lo que lo cruza, ni la', 'luz, ya no sale. Para el Sol, rₛ ≈ 3 km.', 'La sombra mide ≈ 2,6 rₛ: la gravedad', 'curva la luz que pasa cerca.'], 565, null, Object.assign(M('hor'), { izq: true, dx: -30 }));
+        nota([zEsf, zFot, zLente], p4, 'Esfera de fotones', ['A r = 1,5 rₛ (segundo círculo) la luz', 'puede orbitar, en equilibrio inestable.', 'La que escapa forma el anillo fino junto', 'a la sombra (EHT, M87*, 2019). La lente', 'muestra el disco de atrás arriba y abajo.'], 100, null, Object.assign(M('fot'), { izq: false }));
+        nota([zDisco, zDoppler], p5, 'Disco de acreción', ['Gas que cae en espiral y se calienta.', 'Empieza en la órbita estable más interna,', 'r = 3 rₛ (ISCO). El lado que se acerca a', 'nosotros brilla más por efecto Doppler.'], 575, null, Object.assign(M('disco'), { izq: false }));
       }
     };
   }

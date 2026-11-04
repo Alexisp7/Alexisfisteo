@@ -1591,12 +1591,38 @@
     .mc svg .bn-hq { fill:#C9B2FF; filter:drop-shadow(0 0 3px rgba(168,139,235,.95)); } .mc svg .bn-hq-cae { fill:#7A5CD0; }
     .mc svg .bn-zona { pointer-events:all; }
     .mc-escena .bn-fondo { position:absolute; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
-    .mc svg .bn-num { pointer-events:none; transition:opacity .8s ease 2.6s; }
-    .mc-escena:not(.on) svg .bn-num { opacity:0; transition:none; }
-    .mc svg .bn-num circle { fill:#F7F2E8; stroke:#2E2A33; stroke-width:.7; }
-    .mc svg .bn-num line { stroke:#2E2A33; stroke-width:.6; opacity:.6; }
-    .mc svg .bn-num text { font:700 8.5px 'Space Mono',monospace; fill:#2E2A33; text-anchor:middle; }
-    .mc svg.nota-on .bn-num { opacity:.25; }
+    /* notas del agujero negro: guía en tinta con punta y medallón animado */
+    .mc svg .nota-fuerte > path:not(.nota-punta) { stroke:#FBF5E8; stroke-width:1.6; filter:drop-shadow(0 0 .6px #2E2A33) drop-shadow(0 0 .6px #2E2A33); }
+    .mc svg .nota-fuerte > circle { fill:#FBF5E8; stroke:#2E2A33; stroke-width:1; } .mc svg .nota-fuerte > circle:first-of-type { r:3.4px; }
+    .mc svg .nota-fuerte .anillo-nota { fill:none; stroke:#FBF5E8; stroke-width:1.2; }
+    .mc svg .nota .nota-punta { fill:#FBF5E8; stroke:#2E2A33; stroke-width:.8; stroke-linejoin:round; opacity:0; transition:opacity .2s ease .3s; }
+    .mc svg .nota.ver .nota-punta { opacity:1; }
+    .mc svg .nota .med-papel { fill:#F7F1E4; }
+    .mc svg .nota .med-borde { fill:none; stroke:#2E2A33; stroke-width:1; }
+    .mc svg .nota .med-borde2 { fill:none; stroke:#2E2A33; stroke-width:.4; opacity:.45; }
+    .mc svg .nota .med-aguada { fill:rgba(58,64,104,.10); }
+    .mc svg .nota .med-tr { fill:none; stroke:#2E2A33; stroke-width:.4; opacity:.45; }
+    .mc svg .nota .med-tr-may { stroke-width:.7; opacity:.7; }
+    .mc svg .nota .med-eje { stroke:#2E2A33; stroke-width:.5; stroke-dasharray:1.5 1.5; opacity:.6; }
+    .mc svg .nota .med-sing { fill:#B89CF2; filter:drop-shadow(0 0 3px rgba(168,139,235,.95)); }
+    .mc svg .nota .med-cuerpo { fill:#E98A3C; stroke:#7A3A1C; stroke-width:.5; }
+    .mc svg .nota .med-dentro { fill:#1E1B2A; }
+    .mc svg .nota .med-hor { fill:none; stroke:#B89CF2; stroke-width:1.4; filter:drop-shadow(0 0 3px rgba(168,139,235,.9)); }
+    .mc svg .nota .med-esfera { fill:none; stroke:#C98A3A; stroke-width:.8; stroke-dasharray:2 1.6; }
+    .mc svg .nota .med-isco { fill:none; stroke:#2E2A33; stroke-width:.7; stroke-dasharray:2 1.6; opacity:.8; }
+    .mc svg .nota .med-lazo { fill:none; stroke:#8E7BC4; stroke-width:.6; }
+    .mc svg .nota .med-sale { fill:#C9B2FF; filter:drop-shadow(0 0 3px rgba(168,139,235,.95)); }
+    .mc svg .nota .med-cae { fill:#5B4796; }
+    .mc svg .nota .med-emisor { fill:#2E2A33; }
+    .mc svg .nota .med-foton { fill:#F2B64A; stroke:#7A4A14; stroke-width:.4; }
+    .mc svg .nota .med-estela { stroke:#E8A23C; stroke-width:1; stroke-linecap:round; }
+    .mc svg .nota .med-rayo-t { fill:none; stroke:#2E2A33; stroke-width:.4; opacity:.28; }
+    .mc svg .nota .med-rayo { fill:none; stroke:#E8952F; stroke-width:1.5; stroke-linecap:round; stroke-dasharray:.1 1.2; }
+    .mc svg .nota .med-rayo-gira { stroke:#F2C25A; }
+    .mc svg .nota .med-gas { fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+    .mc svg .nota text.med-c { font:italic 400 11.5px Newsreader,serif; fill:#3A3530; }
+    .mc svg .nota text.med-k { font:400 5.6px 'Space Mono',monospace; fill:#2E2A33; stroke-width:0; letter-spacing:.04em; }
+    .mc svg .nota text.med-k-claro { fill:#D9CCF5; }
     .mc[data-activo="0"] .mc-lectura { background:none; text-shadow:0 0 12px #F4EEE3, 0 0 4px #F4EEE3; }
     .mc .bn-traza ellipse, .mc .bn-traza circle, .mc .bn-traza path { fill:none; stroke:#2E2A33; stroke-width:.6; opacity:.4; }
     .mc .bn-traza * { stroke-dasharray:1; stroke-dashoffset:0; transition:stroke-dashoffset 1.3s cubic-bezier(.6,0,.2,1) var(--d,0ms); }

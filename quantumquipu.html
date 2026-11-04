@@ -322,7 +322,7 @@
       .qq-cell img, .qq-rec-go, .qq-rec--web::after { transition:none; }
     }
     .qq-head { background:#0B0F15; border-top:0.5px solid rgba(200,169,110,.35); }
-    .qq-head-grid { max-width:1280px; margin:0 auto; padding:64px 64px 72px; display:grid; grid-template-columns:minmax(0,1.2fr) minmax(320px,1fr); gap:56px; align-items:center; }
+    .qq-head-grid { max-width:1280px; margin:0 auto; padding:64px 64px 72px; display:grid; grid-template-columns:minmax(0,1fr) minmax(340px,1.15fr); gap:48px; align-items:center; }
     .qq-head-desc { position:relative; padding-left:28px; border-left:0.5px solid rgba(200,169,110,.45); opacity:0; animation:qqUp 1.1s .6s cubic-bezier(0.16,1,0.3,1) forwards; }
     .qq-head-desc .proj-hero-subtitle { opacity:1; animation:none; color:rgba(255,255,255,.66); font-size:22px; line-height:1.55; margin:0; max-width:none; }
     .qq-head .qq-hero-inner { padding:0; max-width:none; margin:0; pointer-events:auto; }
@@ -404,6 +404,51 @@
     .qq-viz-cap { line-height:1.9; }
     .qq-viz-ruta { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; letter-spacing:.02em; text-transform:none; color:rgba(255,255,255,.7); }
     @media (prefers-reduced-motion: reduce) { .g-dist { animation:none; opacity:1; } }
+
+    /* ═══ Red de Orcopampa (igual que en el sitio del Qiskit Fall Fest) ═══ */
+    .qq-head .qq-steps { margin-top:34px; max-width:560px; }
+    .ro-panel { margin:0; background:#fff; border-radius:4px; padding:22px 18px 18px; box-shadow:0 30px 60px -30px rgba(0,0,0,.7); opacity:0; animation:qqUp 1s .5s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .ro-panel .caso-grafo { display:block; width:100%; height:auto; overflow:visible; }
+    .ro-panel .tm-arista { stroke:#1B2A4A; stroke-width:1.5; }
+    .ro-panel .tm-resalte { stroke:#C8A96E; stroke-width:9; stroke-linecap:round; opacity:.45; }
+    .ro-panel .tm-nodo { fill:#fff; stroke:#1B2A4A; stroke-width:2; }
+    .ro-panel .caso-nodo.visitado .tm-nodo { fill:#FBF7EE; }
+    .ro-panel .tm-dir { stroke:#8C6D33; stroke-width:1.8; }
+    .ro-panel .tm-punta { fill:#8C6D33; }
+    .ro-panel .caso-vuelve { stroke:#3E6FB0; }
+    .ro-panel .caso-punta-v { fill:#3E6FB0; }
+    .ro-panel .caso-dist { font-family:'Space Mono',monospace; font-size:12px; font-weight:700; text-anchor:middle; fill:#1B2A4A; paint-order:stroke; stroke:#fff; stroke-width:5px; stroke-linejoin:round; }
+    .ro-panel .caso-letra { font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:700; font-size:18px; text-anchor:middle; fill:#1B2A4A; }
+    .ro-panel .caso-letra-sub { font-size:11px; font-style:normal; }
+    .ro-panel .caso-nombre { font-family:'Inter',sans-serif; font-size:12px; fill:#6b665e; }
+    .ro-panel .camion { pointer-events:none; }
+    .ro-panel .camion-caja { fill:#C8A96E; stroke:#8C6D33; stroke-width:1.2; }
+    .ro-panel .camion-cabina { fill:#1B2A4A; }
+    .ro-panel .camion-rueda { fill:#fff; stroke:#1B2A4A; stroke-width:1.6; }
+    .ro-panel .camion-aire line { stroke:#8C6D33; stroke-width:1.3; stroke-linecap:round; opacity:0; }
+    .ro-panel .camion.mueve .camion-aire line { animation:camionAire 1.05s linear infinite; }
+    @keyframes camionAire { 0% { opacity:0; transform:translateX(6px); } 25% { opacity:.75; } 100% { opacity:0; transform:translateX(-12px); } }
+    .ro-matriz { margin-top:14px; overflow-x:auto; }
+    .ro-panel .caso-tabla { border-collapse:collapse; margin:0 auto; font-family:'Space Mono',monospace; font-size:12px; font-variant-numeric:lining-nums; }
+    .ro-panel .caso-tabla th { font-weight:400; color:#1B2A4A; padding:0 5px; line-height:19px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; transition:color .2s; }
+    .ro-panel .caso-tabla tr:first-child th { border-bottom:1px solid #1B2A4A; }
+    .ro-panel .caso-tabla tr th:first-child { text-align:left; border-right:1px solid #1B2A4A; font-family:'Inter',sans-serif; font-style:normal; font-size:11px; color:#6b665e; white-space:nowrap; padding-right:10px; }
+    .ro-panel .caso-tabla th.ahora { color:#8C6D33; font-weight:700; }
+    .ro-panel .caso-tabla-x { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:#1B2A4A; }
+    .ro-panel .caso-tabla td { text-align:center; min-width:26px; padding:0 3px; line-height:19px; border-left:1px solid #EEE9E0; border-bottom:1px solid #F1EDE5; color:#B0AAA0; }
+    .ro-panel .caso-tabla td.uno { background:rgba(200,169,110,.32); color:#111; font-weight:700; box-shadow:inset 0 0 0 1px rgba(140,109,51,.35); }
+    .ro-panel .caso-tabla td.revisita { background:rgba(62,111,176,.22); box-shadow:inset 0 0 0 1px rgba(62,111,176,.55); color:#1F4E8C; }
+    .ro-cap { margin-top:12px; text-align:center; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#8C6D33; }
+    .qq-head-grid > * { min-width:0; }
+    @media (max-width:900px) {
+      .qq-head-grid { grid-template-columns:1fr; }
+      .qq-head-desc { padding-left:0; border-left:none; }
+      .ro-panel { padding:16px 10px 14px; }
+      .ro-panel .caso-tabla { font-size:10px; }
+      .ro-panel .caso-tabla th { padding:0 2px; font-size:13px; }
+      .ro-panel .caso-tabla td { min-width:18px; padding:0 1px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .ro-panel { animation:none; opacity:1; } .ro-panel .camion-aire line { animation:none !important; } }
   </style>
 </head>
 <body>
@@ -460,25 +505,17 @@
           <span class="qq-link-acts"><button type="button" onclick="openPDF()">Ver</button><a href="arch/Track 1.pdf" download>Descargar</a></span>
         </div>
       </div>
+      <ol class="qq-steps">
+        <li style="--s:0"><span class="qq-step-k">QUBO</span><span class="qq-step-t">La ruta de menor costo como optimización binaria, con distancias reales medidas en Google Earth.</span></li>
+        <li style="--s:1"><span class="qq-step-k">Ising</span><span class="qq-step-t">El costo se reescribe con spins <span class="nw">Z ∈ {−1, +1}</span>: <span class="nw">H = ZᵀJZ + hᵀZ</span>.</span></li>
+        <li style="--s:2"><span class="qq-step-k">VQE</span><span class="qq-step-t">Un ansatz parametrizado en Qiskit; un optimizador clásico ajusta θ hasta llegar a E<sub>min</sub>.</span></li>
+      </ol>
     </div>
     <div class="qq-head-desc">
-      <figure class="qq-viz">
-        <svg class="qq-graph" viewBox="22 6 628 292" role="img" aria-label="Red de la mina Orcopampa: 8 instalaciones unidas por 9 caminos con sus distancias reales, y la ruta encontrada de 13 pasos">
-          <defs><radialGradient id="qqComet"><stop offset="0" stop-color="#F2E6C4"/><stop offset=".4" stop-color="#C8A96E" stop-opacity=".8"/><stop offset="1" stop-color="#C8A96E" stop-opacity="0"/></radialGradient></defs>
-          <g class="g-edges"><line class="g-edge" style="--i:0" x1="74" y1="150" x2="262" y2="96" pathLength="1"/><line class="g-edge" style="--i:1" x1="262" y1="96" x2="176" y2="38" pathLength="1"/><line class="g-edge" style="--i:2" x1="262" y1="96" x2="348" y2="38" pathLength="1"/><line class="g-edge" style="--i:3" x1="262" y1="96" x2="586" y2="150" pathLength="1"/><line class="g-edge" style="--i:4" x1="262" y1="96" x2="348" y2="214" pathLength="1"/><line class="g-edge" style="--i:5" x1="74" y1="150" x2="348" y2="214" pathLength="1"/><line class="g-edge" style="--i:6" x1="586" y1="150" x2="348" y2="214" pathLength="1"/><line class="g-edge" style="--i:7" x1="348" y1="214" x2="250" y2="266" pathLength="1"/><line class="g-edge" style="--i:8" x1="348" y1="214" x2="446" y2="266" pathLength="1"/></g>
-          <path id="qqRoute" class="g-route" d="M74 150 L262 96 L176 38 L262 96 L348 38 L262 96 L586 150 L348 214 L250 266 L348 214 L446 266 L348 214 L74 150" pathLength="1"/>
-          <g class="g-dists"><text class="g-dist" style="--i:0" x="168" y="117" text-anchor="middle">1.6 km</text><text class="g-dist" style="--i:1" x="219" y="61" text-anchor="middle">72 m</text><text class="g-dist" style="--i:2" x="305" y="61" text-anchor="middle">35 m</text><text class="g-dist" style="--i:3" x="424" y="117" text-anchor="middle">1.4 km</text><text class="g-dist" style="--i:4" x="305" y="149" text-anchor="middle">1.4 km</text><text class="g-dist" style="--i:5" x="211" y="176" text-anchor="middle">1.7 km</text><text class="g-dist" style="--i:6" x="467" y="176" text-anchor="middle">1 km</text><text class="g-dist" style="--i:7" x="299" y="234" text-anchor="middle">200 m</text><text class="g-dist" style="--i:8" x="397" y="234" text-anchor="middle">500 m</text></g>
-          <g class="g-nodes"><g class="g-node" style="--i:0"><circle class="g-halo" cx="74" cy="150" r="23"/><circle cx="74" cy="150" r="17"/><text class="g-x" x="74" y="155" text-anchor="middle">x<tspan dy="4" font-size="11">1</tspan></text><text class="g-name" x="74" y="190" text-anchor="middle">Planta</text></g><g class="g-node g-junc" style="--i:1"><circle class="g-halo" cx="262" cy="96" r="23"/><circle cx="262" cy="96" r="17"/><text class="g-x" x="262" y="101" text-anchor="middle">x<tspan dy="4" font-size="11">2</tspan></text><text class="g-name" x="262" y="133" text-anchor="middle">J1</text></g><g class="g-node" style="--i:2"><circle class="g-halo" cx="176" cy="38" r="23"/><circle cx="176" cy="38" r="17"/><text class="g-x" x="176" y="43" text-anchor="middle">x<tspan dy="4" font-size="11">3</tspan></text><text class="g-name" x="148" y="44" text-anchor="end">Tajo</text></g><g class="g-node" style="--i:3"><circle class="g-halo" cx="348" cy="38" r="23"/><circle cx="348" cy="38" r="17"/><text class="g-x" x="348" y="43" text-anchor="middle">x<tspan dy="4" font-size="11">4</tspan></text><text class="g-name" x="376" y="44" text-anchor="start">Botadero</text></g><g class="g-node g-junc" style="--i:4"><circle class="g-halo" cx="348" cy="214" r="23"/><circle cx="348" cy="214" r="17"/><text class="g-x" x="348" y="219" text-anchor="middle">x<tspan dy="4" font-size="11">5</tspan></text><text class="g-name" x="348" y="251" text-anchor="middle">J2</text></g><g class="g-node" style="--i:5"><circle class="g-halo" cx="250" cy="266" r="23"/><circle cx="250" cy="266" r="17"/><text class="g-x" x="250" y="271" text-anchor="middle">x<tspan dy="4" font-size="11">6</tspan></text><text class="g-name" x="222" y="272" text-anchor="end">Lixiviación</text></g><g class="g-node" style="--i:6"><circle class="g-halo" cx="446" cy="266" r="23"/><circle cx="446" cy="266" r="17"/><text class="g-x" x="446" y="271" text-anchor="middle">x<tspan dy="4" font-size="11">7</tspan></text><text class="g-name" x="474" y="272" text-anchor="start">Baja ley</text></g><g class="g-node" style="--i:7"><circle class="g-halo" cx="586" cy="150" r="23"/><circle cx="586" cy="150" r="17"/><text class="g-x" x="586" y="155" text-anchor="middle">x<tspan dy="4" font-size="11">8</tspan></text><text class="g-name" x="586" y="190" text-anchor="middle">Relaves</text></g></g>
-          <circle class="g-comet" r="10" fill="url(#qqComet)"><animateMotion dur="11s" begin="2.2s" repeatCount="indefinite" calcMode="linear"><mpath href="#qqRoute"/></animateMotion></circle>
-        </svg>
-        <figcaption>
-          <ol class="qq-steps">
-            <li style="--s:0"><span class="qq-step-k">QUBO</span><span class="qq-step-t">La ruta de menor costo como optimización binaria, con distancias reales medidas en Google Earth.</span></li>
-            <li style="--s:1"><span class="qq-step-k">Ising</span><span class="qq-step-t">El costo se reescribe con spins <span class="nw">Z ∈ {−1, +1}</span>: <span class="nw">H = ZᵀJZ + hᵀZ</span>.</span></li>
-            <li style="--s:2"><span class="qq-step-k">VQE</span><span class="qq-step-t">Un ansatz parametrizado en Qiskit; un optimizador clásico ajusta θ hasta llegar a E<sub>min</sub>.</span></li>
-          </ol>
-          <p class="qq-viz-cap">Ruta encontrada · 13 pasos · 7,314 km<br/><span class="qq-viz-ruta">1 → 2 → 3 → 2 → 4 → 2 → 8 → 5 → 6 → 5 → 7 → 5 → 1</span></p>
-        </figcaption>
+      <figure class="ro-panel" data-red-orcopampa>
+        <svg class="caso-grafo" data-ro="grafo" viewBox="0 0 660 300" role="img" aria-label="Red de la mina Orcopampa: 8 instalaciones, 9 caminos con distancias reales y la ruta de 13 pasos que recorre un camión"></svg>
+        <div class="ro-matriz" data-ro="matriz"></div>
+        <figcaption class="ro-cap">Ruta encontrada · 13 pasos · 7,314 km</figcaption>
       </figure>
     </div>
 
@@ -568,5 +605,6 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePDF(); });
   </script>
 
+  <script src="js/red-orcopampa.js"></script>
 </body>
 </html>

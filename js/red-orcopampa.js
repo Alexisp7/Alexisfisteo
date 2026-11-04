@@ -15,8 +15,8 @@
   var DIST = {}; CAMINOS.forEach(function (c) { DIST[c[0] + c[1]] = c[2]; DIST[c[1] + c[0]] = c[2]; });
   function camino(a, b) { return a !== b && DIST[a + b] != null; }
   var POS = { x1: [74, 150], x2: [262, 96], x3: [176, 38], x4: [348, 38], x5: [348, 214], x6: [250, 266], x7: [446, 266], x8: [586, 150] };
-  var ETIQ = { x1: [0, 40, 'middle'], x2: [0, 37, 'middle'], x3: [-28, 6, 'end'], x4: [28, 6, 'start'], x5: [0, 37, 'middle'], x6: [-28, 6, 'end'], x7: [28, 6, 'start'], x8: [0, 40, 'middle'] };
-  var R = 20;
+  var ETIQ = { x1: [0, 42, 'middle'], x2: [0, 41, 'middle'], x3: [-31, 5, 'end'], x4: [31, 5, 'start'], x5: [0, 41, 'middle'], x6: [-31, 5, 'end'], x7: [31, 5, 'start'], x8: [0, 42, 'middle'] };
+  var R = 24;
   // Rutas válidas por los caminos reales: salen de la planta, pasan por los 8 lugares y vuelven.
   // La primera es la óptima (7,314 km, la que da el VQE); las demás son recorridos más largos.
   var RUTAS = [
@@ -60,11 +60,17 @@
       var p = POS[k];
       var g = el('g', { 'class': 'tm-nodo-g caso-nodo visitado' + (k === s ? ' es-s' : '') }, svg);
       el('circle', { 'class': 'tm-nodo', cx: p[0], cy: p[1], r: R }, g);
-      var tx = el('text', { 'class': 'caso-letra', x: p[0], y: p[1] + 5 }, g);
-      tx.appendChild(document.createTextNode('x'));
-      el('tspan', { 'class': 'caso-letra-sub', dy: '4' }, tx).textContent = IDX[k];
+      // miniatura del lugar, recortada al círculo
+      var cid = 'ro-clip-' + k;
+      el('circle', { cx: p[0], cy: p[1], r: R - 1.6 }, el('clipPath', { id: cid }, defs));
+      var ic = el('g', { 'class': 'ro-icono', 'clip-path': 'url(#' + cid + ')' }, g);
+      if (window.RO_ICONOS) window.RO_ICONOS(k, el('g', { transform: 'translate(' + p[0] + ' ' + (p[1] + 3.5) + ') scale(1.2)' }, ic));
+      el('circle', { 'class': 'tm-nodo-borde', cx: p[0], cy: p[1], r: R }, g);
       var e = ETIQ[k];
-      el('text', { 'class': 'caso-nombre', x: p[0] + e[0], y: p[1] + e[1], 'text-anchor': e[2] }, g).textContent = NOMBRE[k];
+      var nm = el('text', { 'class': 'caso-nombre', x: p[0] + e[0], y: p[1] + e[1], 'text-anchor': e[2] }, g);
+      var xi = el('tspan', { 'class': 'caso-nombre-x' }, nm); xi.textContent = 'x';
+      el('tspan', { 'class': 'caso-nombre-sub', dy: '3' }, nm).textContent = IDX[k];
+      el('tspan', { dy: '-3', dx: '3' }, nm).textContent = NOMBRE[k];
     });
     if (!quieto) camion(svg);
   }

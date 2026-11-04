@@ -190,8 +190,8 @@
     '  float ar = min(fwidth(r), 3.0) * .7 + 1e-4;',
     '  float flec = ruido(vec3(cs * 3.0, 2.0)) - .5;',
     '  float afuera = 1.0 - smoothstep(11.5 + 2.0 * flec, 16.5 + 1.5 * flec, r);',
-    '  float a0 = mod(ph - 2.6, 6.2831853), pd = smoothstep(.7, 2.4, uArm) * 6.7, barrido = 1.0 - smoothstep(pd - .45, pd, a0);',
-    '  float a = hay * barrido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * mix(1.0, .55 + .45 * n2, smoothstep(10.0, 15.0, r));',
+    '  float fundido = smoothstep(.8, 2.4, uArm);',
+    '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * mix(1.0, .55 + .45 * n2, smoothstep(10.0, 15.0, r));',
     '  return vec4(col * D, clamp(a, 0.0, 1.0)); }',
     // fondo: espacio azul muy oscuro con nubes violáceas dibujadas a curvas de nivel y muchas estrellas.
     // Se consulta en la dirección final del rayo, así que la lente lo deforma alrededor de la sombra.

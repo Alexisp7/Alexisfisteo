@@ -109,11 +109,12 @@
        HEADER
     ──────────────────────────────── */
     .header {
-      background: var(--white);
-      position: sticky;
-      top: 0;
+      background: transparent;   /* en cursos la barra flota sobre la escena */
+      position: absolute;
+      top: 0; left: 0; right: 0;
       z-index: 100;
     }
+    @media (min-width:901px) { .header .header-inner { max-width:none; justify-content:flex-end; padding-right:clamp(24px,4vw,64px); } }   /* sobre el papel, no sobre el velo */
 
     /* Franja griega superior */
     .header-greek-bar {
@@ -1499,7 +1500,7 @@
     /* ═══ Cursos como pantalla de menú: índice a la izquierda, escena viva detrás ═══ */
     .mc { --tinta:#1E1A16; --papel:#F4EEE3; --papel2:#E9E1D1; --cuero:#C9A27A; --rojo:#7A2E22; --azul:#2B3A67;
       --velo:46,22,24; --mtx:240,230,220; --macento:#D8B48A; --macento-rgb:216,180,138;   /* tono del menú: vino */
-      position:relative; height:max(660px, calc(100vh - 72px)); overflow:hidden; background:var(--papel); color:var(--tinta); }
+      position:relative; height:max(660px, 100vh); overflow:hidden; background:var(--papel); color:var(--tinta); }
     .mc::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 45%, #FBF7EF, var(--papel) 60%); }
     .mc-escenas { position:absolute; inset:0; }
     .mc-escena { position:absolute; inset:0; margin:0; opacity:0; transform:scale(1.025); transition:opacity .7s ease, transform 1.2s cubic-bezier(.16,1,.3,1); }
@@ -1513,12 +1514,24 @@
     @keyframes mc-trazo { from { transform:scaleX(0); } }
     .mc-lista { position:relative; list-style:none; margin:0; padding:0 0 0 22px; }
     .mc-lista::before { content:''; position:absolute; left:0; top:4px; bottom:4px; width:1px; background:linear-gradient(rgba(var(--mtx),0), rgba(var(--mtx),.14) 12%, rgba(var(--mtx),.14) 88%, rgba(var(--mtx),0)); }
-    .mc-guia { list-style:none; position:absolute; left:-1px; top:0; width:3px; height:0; border-radius:2px; background:var(--macento); box-shadow:0 0 12px rgba(var(--macento-rgb),.55); transition:transform .22s cubic-bezier(.3,0,.2,1), height .22s cubic-bezier(.3,0,.2,1); }
+    .mc-guia { list-style:none; position:absolute; left:-1px; top:0; width:3px; height:0; border-radius:2px; background:linear-gradient(var(--macento), var(--violeta)); box-shadow:0 0 12px rgba(var(--macento-rgb),.45), 0 0 18px rgba(var(--violeta-rgb),.35); transition:transform .22s cubic-bezier(.3,0,.2,1), height .22s cubic-bezier(.3,0,.2,1); }
     .mc-item { position:static; }
     .mc-a { display:block; padding:9px 0; text-decoration:none; color:rgba(var(--mtx),.36); outline:none; transition:color .35s ease; }
     .mc-t { display:inline-block; font:500 clamp(24px,2.1vw,29px)/1.12 'Cormorant Garamond',serif; letter-spacing:.005em; transition:transform .55s cubic-bezier(.16,1,.3,1), letter-spacing .55s cubic-bezier(.16,1,.3,1); }
     .mc-t em { font-style:italic; transition:color .45s ease; }
     .mc-a:hover { color:rgba(var(--mtx),.62); }
+    /* detalles violeta: barrido bajo el título, halo del activo y guía con estela */
+    .mc { --violeta:#A88BEB; --violeta-rgb:168,139,235; }
+    .mc-a { position:relative; }
+    .mc-a::after { content:''; position:absolute; left:0; bottom:5px; width:min(100%, 300px); height:1px; background:linear-gradient(90deg, rgba(var(--violeta-rgb),.9), rgba(var(--violeta-rgb),0)); transform:scaleX(0); transform-origin:left; transition:transform .55s cubic-bezier(.16,1,.3,1); }
+    .mc-a:hover::after, .mc-a:focus-visible::after { transform:scaleX(1); }
+    .mc-item.on .mc-a::after { transform:scaleX(.35); opacity:.6; }
+    .mc-a::before { content:''; position:absolute; left:-30px; top:50%; width:260px; height:70px; transform:translateY(-50%) scale(.9); border-radius:50%; background:radial-gradient(closest-side, rgba(var(--violeta-rgb),.16), rgba(var(--violeta-rgb),0)); opacity:0; pointer-events:none; transition:opacity .6s ease, transform .8s cubic-bezier(.16,1,.3,1); }
+    .mc-item.on .mc-a::before { opacity:1; transform:translateY(-50%) scale(1); }
+    .mc-a:hover .mc-t { text-shadow:0 0 18px rgba(var(--violeta-rgb),.35); }
+    .mc-ir:hover { color:var(--violeta); }
+    .mc-guia::after { content:''; position:absolute; left:50%; top:0; width:7px; height:7px; margin-left:-3.5px; border-radius:50%; background:var(--violeta); box-shadow:0 0 10px 2px rgba(var(--violeta-rgb),.8); animation:guia-chispa 2.4s cubic-bezier(.45,0,.55,1) infinite; }
+    @keyframes guia-chispa { 0% { transform:translateY(0); opacity:0; } 15% { opacity:1; } 85% { opacity:1; } 100% { transform:translateY(var(--alto,30px)); opacity:0; } }
     .mc-item.on .mc-a { color:rgb(var(--mtx)); }
     .mc-item.on .mc-t { transform:translateX(6px); letter-spacing:.012em; }
     .mc-item.on .mc-t em { color:var(--macento); }
@@ -1703,13 +1716,14 @@
     .mc svg .bola { fill:#B0936D; stroke:var(--tinta); stroke-width:.9; }
     .mc svg .transportador { fill:none; stroke:var(--tinta); stroke-width:.6; stroke-dasharray:1 3; opacity:.6; }
     @media (max-width:900px) {
-      .mc { height:auto; min-height:0; display:flex; flex-direction:column; background:rgb(var(--velo)); }
-      .mc::before { bottom:auto; height:62vw; }
+      .mc { height:auto; min-height:100vh; display:flex; flex-direction:column; background:rgb(var(--velo)); padding-top:58px; }
+      .mc::before { top:0; }
+      .mc::before { bottom:auto; height:calc(62vw + 58px); }
       .mc-escenas { position:relative; height:62vw; min-height:260px; }
       .mc-escena svg { width:100%; height:100%; }
       .mc-velo { display:none; }
       .mc-menu { width:auto; padding:34px 24px 40px; }
-      .mc-lectura { top:8px; bottom:auto; right:10px; padding:6px 10px 6px 40px; } .mc-ec { font-size:18px; } .mc-l2 { display:none; }
+      .mc-lectura { top:64px; bottom:auto; right:10px; padding:6px 10px 6px 40px; } .mc-ec { font-size:18px; } .mc-l2 { display:none; }
       .mc-ec { font-size:19px; }
     }
     @media (prefers-reduced-motion: reduce) { .mc-escena, .mc-info, .mc-t { transition:none; } }
@@ -1768,13 +1782,6 @@
 
 
 
-  <footer class="footer-wrap">
-    <div class="footer">
-      <div class="footer-bottom">
-        <span class="footer-copy">© 2025 Alexis R. Salvatierra · Todos los derechos reservados</span>
-      </div>
-    </div>
-  </footer>
   <script src="js/cursos-escenas.js"></script>
   <script src="js/efectos.js" defer></script>
 </body>

@@ -174,38 +174,40 @@
     // disco a lápiz de color: cientos de rayas finas a lo largo de cada órbita, crema junto al borde interior,
     // naranja y rojizo hacia afuera; el tono de cada raya cambia a lo largo de la órbita y ese dibujo gira (ω ∝ r^−3/2)
     'vec3 paleta(float u) { u = clamp(u, 0.0, 1.0);',
-    '  vec3 A = vec3(1.0, .96, .86), B = vec3(.99, .80, .54), Cc = vec3(.94, .55, .24), Dd = vec3(.70, .30, .13), E = vec3(.40, .22, .22);',
-    '  if (u < .12) return mix(A, B, u / .12); if (u < .35) return mix(B, Cc, (u - .12) / .23);',
-    '  if (u < .65) return mix(Cc, Dd, (u - .35) / .3); return mix(Dd, E, (u - .65) / .35); }',
+    '  vec3 A = vec3(1.0, .97, .88), B = vec3(1.0, .80, .48), Cc = vec3(.96, .52, .16), Dd = vec3(.68, .24, .08), E = vec3(.26, .13, .18);',
+    '  if (u < .1) return mix(A, B, u / .1); if (u < .32) return mix(B, Cc, (u - .1) / .22);',
+    '  if (u < .62) return mix(Cc, Dd, (u - .32) / .3); return mix(Dd, E, (u - .62) / .38); }',
     'vec4 disco(vec3 p, vec3 v, float hay) {',
     '  float r = max(length(p.xz), 2.5), ph = atan(p.z, p.x), b = sqrt(1.0 / max(r - 2.0, .05)); vec3 t = normalize(vec3(-p.z, 0.0, p.x) + 1e-5); vec3 vd = normalize(v + 1e-5);',
     '  float g = sqrt(max(1.0 - 3.0 / r, 0.0)) / (1.0 - b * dot(t, -vd)), D = clamp(pow(g, 2.0), .82, 1.18);',
     '  float u = (r - 6.0) / 10.5, om = 1.1 * pow(6.0 / r, 1.5), fase = ph - om * uT;',
-    '  float sp = .085, s = r / sp, k = floor(s), aa = min(fwidth(s), 2.0) + 1e-4;',
-    '  vec2 cs = vec2(cos(fase), sin(fase));',
-    '  float n = ruido(vec3(cs * (2.0 + 1.5 * hash(vec3(k, 1.0, 2.0))), k * .23)), n2 = ruido(vec3(cs * 7.0, k * .61 + 9.0));',
-    '  vec3 tono = paleta(u + (hash(vec3(k, 4.0, 1.0)) - .5) * .1 + (n - .5) * .22) * (.8 + .32 * n2);',
-    '  float borde = abs(fract(s) - .5), hilo = 1.0 - smoothstep(.36, .36 + aa, borde);',   // filo oscuro entre rayas
-    '  hilo = mix(hilo, .78, smoothstep(.25, .8, aa));',
-    '  vec3 col = tono * mix(.8, 1.0, hilo);',
-    '  float ar = min(fwidth(r), 3.0) * .7 + 1e-4;',
+    '  vec2 cs = vec2(cos(fase), sin(fase)); float fr = fwidth(r) + 1e-4;',
+    // trazos de lápiz: ruido estirado a lo largo de la órbita, fino en el radio; cada octava se apaga si es más fina que el píxel
+    '  float s1 = ruido(vec3(cs * 2.2, r * 9.0)), s2 = ruido(vec3(cs * 4.0 + 3.0, r * 24.0)), s3 = ruido(vec3(cs * 7.0 + 8.0, r * 60.0));',
+    '  float w2 = 1.0 - smoothstep(.02, .06, fr), w3 = 1.0 - smoothstep(.008, .022, fr);',
+    '  float tr = (s1 - .5) * .9 + (s2 - .5) * .8 * w2 + (s3 - .5) * .7 * w3;',
+    '  float n = ruido(vec3(cs * 1.6, r * 1.3 + 5.0));',
+    '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
+    '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',   // la raya oscura tira a siena, no a gris
+    '  float ar = min(fr, 3.0) * .7 + 1e-4;',
     '  float flec = ruido(vec3(cs * 3.0, 2.0)) - .5;',
-    '  float afuera = 1.0 - smoothstep(11.5 + 2.0 * flec, 16.5 + 1.5 * flec, r);',
+    '  float afuera = 1.0 - smoothstep(11.0 + 2.0 * flec, 16.8 + 1.5 * flec, r);',
     '  float fundido = smoothstep(.8, 2.4, uArm);',
-    '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * mix(1.0, .55 + .45 * n2, smoothstep(10.0, 15.0, r));',
+    '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * clamp(.75 + tr * .9 + .6 * (1.0 - smoothstep(7.5, 13.0, r)), 0.0, 1.0);',
     '  return vec4(col * D, clamp(a, 0.0, 1.0)); }',
     // fondo: espacio azul muy oscuro con nubes violáceas dibujadas a curvas de nivel y muchas estrellas.
     // Se consulta en la dirección final del rayo, así que la lente lo deforma alrededor de la sombra.
     'vec3 estrellas(vec3 d, float px) {',
     '  vec3 col = vec3(0.0);',
     '  for (int l = 0; l < 3; l++) {',
-    '    float fl = float(l), K = 34.0 * pow(2.1, fl), umbral = l == 0 ? .42 : (l == 1 ? .72 : .9);',
+    '    float fl = float(l), K = 34.0 * pow(2.1, fl), umbral = l == 0 ? .55 : (l == 1 ? .8 : .92);',
     '    vec3 pp = d * K, c = floor(pp); float h = hash(c + fl * 17.0);',
     '    if (h > umbral && px * K < .4) {',
     '      vec3 sp = c + .22 + .56 * vec3(hash(c + 1.3), hash(c + 2.7), hash(c + 5.1));',
     '      vec3 dd = pp - sp; dd -= d * dot(dd, d); float dist = length(dd) / K;',
-    '      float g = hash(c + 9.0), rad = px * (.35 + 1.1 * g * g * g * (1.0 - .3 * fl));',
-    '      float b = 1.0 - smoothstep(rad, rad + px, dist);',
+    '      float g = hash(c + 9.0), rad = px * (.18 + .75 * g * g * g * g * (1.0 - .3 * fl));',
+    '      float b = 1.0 - smoothstep(rad, rad + px * .8, dist);',
+    '      if (l == 0 && g > .93) { vec3 ax = normalize(cross(d, vec3(0.0, 1.0, 0.0))), ay = cross(d, ax); float x1 = abs(dot(dd, ax)) / K, y1 = abs(dot(dd, ay)) / K; b = max(b, (1.0 - smoothstep(px * .25, px * .9, min(x1, y1))) * (1.0 - smoothstep(0.0, px * 9.0, max(x1, y1))) * .9); }',
     '      vec3 tinte = mix(vec3(.72, .82, 1.0), vec3(1.0, .9, .74), hash(c + 4.4));',
     '      col += tinte * b * (.3 + .7 * hash(c + 3.3)) * (1.0 - .28 * fl);',
     '    }',
@@ -218,16 +220,20 @@
     '  e += (fbm(vec3(sb * .11, 1.0)) - .5) * .75 + (fbm(vec3(sb * .6, 4.0)) - .5) * .2 + (ruido(vec3(sb * 2.4, 5.0)) - .5) * .05;',
     '  float pw = smoothstep(.15, 1.5, uArm); pw = 1.0 - (1.0 - pw) * (1.0 - pw);',
     '  float W = 1.0 - smoothstep(.86 * pw - .07, .93 * pw, e);',
+    // núcleo de pigmento denso (índigo casi negro) y, hacia el borde, una veladura gris azulada que se deshilacha
+    '  float nucleo = 1.0 - smoothstep(.5 * pw, .84 * pw, e + (fbm(vec3(sb * .25, 9.0)) - .5) * .35);',
     '  float n = fbm(d * 2.6 + vec3(1.3, 6.2, 2.9)), n3 = fbm(d * 6.0 + 3.0);',
-    '  float filo = smoothstep(.7, .92, e) * W;',
-    '  float grano = ruido(vec3(sb * 9.0, 7.0));',
-    '  float dens = W * (.38 + .5 * n + .14 * grano * (1.0 - smoothstep(.002, .004, px))) + .3 * filo;',
-    '  dens += .3 * W * (1.0 - smoothstep(6.0, 11.0, length(sb)));',
-    '  vec3 tinta = mix(vec3(.12, .14, .25), vec3(.33, .35, .46), smoothstep(.3, .8, n3));',
+    '  float filo = smoothstep(.72, .92, e) * W;',
+    '  float grano = ruido(vec3(sb * 9.0, 7.0)) * (1.0 - smoothstep(.002, .004, px));',
+    '  float dens = W * (.5 + .38 * n + .12 * grano) + .3 * filo;',
+    '  dens = mix(dens, .9 + .1 * n, nucleo);',
+    '  vec3 velo = mix(vec3(.17, .19, .30), vec3(.36, .37, .47), smoothstep(.3, .8, n3));',
+    '  vec3 hondo = mix(vec3(.04, .045, .10), vec3(.15, .16, .29), smoothstep(.35, .9, n3) * .85 + grano * .12);',
+    '  vec3 tinta = mix(velo, hondo, nucleo);',
     '  vec3 est = estrellas(d, px) * vec3(1.0, .9, .7);',
-    '  float aE = clamp(max(est.r, est.g) * 1.4, 0.0, 1.0) * smoothstep(.15, .5, W);',
+    '  float aE = clamp(max(est.r, est.g) * 1.5, 0.0, 1.0) * smoothstep(.15, .5, W) * (.45 + .55 * nucleo);',
     '  vec3 col = mix(tinta, vec3(1.0, .9, .66), aE);',
-    '  return vec4(col, clamp(max(dens * .95, aE), 0.0, 1.0)); }',
+    '  return vec4(col, clamp(max(dens * .97, aE), 0.0, 1.0)); }',
     'void main() {',
     '  vec2 q = vec2(gl_FragCoord.x / uRes.x, 1.0 - gl_FragCoord.y / uRes.y);',
     '  vec2 d = (uVB.xy + q * uVB.zw - uC) / uSC; float cr = cos(uRoll), sr = sin(uRoll);',
@@ -313,7 +319,7 @@
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
       if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
-      if (previo) { var d = t - previo; lentos = d > 34 ? lentos + 1 : Math.max(0, lentos - 1); if (lentos > 20 && calidad > .42) { calidad *= .85; lentos = 0; } }
+      if (previo) { var d = t - previo; lentos = d > 34 ? lentos + 1 : Math.max(0, lentos - 1); if (lentos > 20 && calidad > .62) { calidad *= .85; lentos = 0; } }
       previo = t; pintar();
     })(0);
     fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas

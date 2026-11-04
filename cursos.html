@@ -114,11 +114,11 @@
       top: 0; left: 0; right: 0;
       z-index: 100;
     }
-    @media (min-width:901px) {   /* arriba a la izquierda, sobre el velo: texto claro */
-      .header .header-inner { max-width:none; justify-content:flex-start; padding-left:clamp(14px,calc(6vw - 20px),76px); }
-      .header nav.main-nav a { color:rgba(240,230,220,.62); }
-      .header nav.main-nav a::before { background:#F4EEE3; }
-      .header nav.main-nav a:hover, .header nav.main-nav a.active { color:#2E1618; }
+    @media (min-width:901px) {   /* centrada arriba sobre el degradado: el color del texto sigue al velo (claro a la izquierda, tinta a la derecha) */
+      .header nav.main-nav a { color:transparent; -webkit-background-clip:text; background-clip:text; background-image:linear-gradient(90deg, #F7F1E6 0, #F7F1E6 calc(50% - 22px), #241A16 calc(50% - 12px)); background-attachment:fixed; text-shadow:none; }
+      .header nav.main-nav a::before { top:auto; bottom:2px; left:20px; right:20px; height:1.5px; background:linear-gradient(90deg, #C9A27A, #A88BEB); }
+      .header nav.main-nav a:hover, .header nav.main-nav a.active { color:transparent; }
+      .header nav.main-nav a.active { font-weight:700; }
     }
 
     /* Franja griega superior */

@@ -13,7 +13,19 @@
   var C30 = 0.8660254, S30 = 0.5;
   function f(v) { return Math.round(v * 10) / 10; }
   function el(tag, at, padre) { var n = document.createElementNS(NS, tag); for (var k in at) n.setAttribute(k, at[k]); if (padre) padre.appendChild(n); return n; }
-  function camara(ox, oy, s) { return function (x, y, z) { return [ox + (x - y) * C30 * s, oy + (x + y) * S30 * s - (z || 0) * s]; }; }
+  // cámara ortográfica: elevación isométrica (35,26°) y azimut θ (45° = isométrica pura)
+  function camara(ox, oy, s, th) {
+    th = (th == null ? 45 : th) * Math.PI / 180;
+    var k = s * 1.2247, se = .57735, xc = Math.cos(th) * k, xs = Math.sin(th) * se * k, yc = -Math.sin(th) * k, ys = Math.cos(th) * se * k;
+    var P = function (x, y, z) { return [ox + x * xc + y * yc, oy + x * xs + y * ys - (z || 0) * s]; };
+    P.ux = [xc / s, xs / s]; P.uy = [yc / s, ys / s];   // ejes x e y en pantalla, por unidad de px de texto
+    return P;
+  }
+  // texto grabado en un plano: 'z' (tapa), 'y' (cara que mira a +y, texto a lo largo de x), 'x' (cara que mira a +x)
+  function enPlano(P, plano, c) {
+    var u = plano === 'x' ? [-P.uy[0], -P.uy[1]] : P.ux, v = plano === 'z' ? P.uy : [0, 1];
+    return 'matrix(' + [u[0], u[1], v[0], v[1]].map(function (n) { return n.toFixed(4); }).join(' ') + ' ' + f(c[0]) + ' ' + f(c[1]) + ')';
+  }
   function pts(a) { return a.map(function (p) { return f(p[0]) + ',' + f(p[1]); }).join(' '); }
   function poly(g, a, cls) { return el('polygon', { points: pts(a), 'class': cls }, g); }
   function linea(g, a, b, cls) { return el('line', { x1: f(a[0]), y1: f(a[1]), x2: f(b[0]), y2: f(b[1]), 'class': cls }, g); }
@@ -88,7 +100,7 @@
   function placa(g, P, x, y, z, w, d, rotulo) {
     caja(g, P, x, y, z, w, d, .5, 'hi');
     var c = P(x + w / 2, y + d / 2, z + .5);
-    var t = el('text', { 'class': 'grabado', x: 0, y: 0, transform: 'matrix(.866 .5 -.866 .5 ' + f(c[0]) + ' ' + f(c[1]) + ')' }, g); t.textContent = rotulo;   // grabado en el plano de la tapa
+    var t = el('text', { 'class': 'grabado', x: 0, y: 0, transform: enPlano(P, 'z', c) }, g); t.textContent = rotulo;   // grabado en el plano de la tapa
     [[x + 1.2, y + 1.2], [x + w - 1.2, y + 1.2], [x + 1.2, y + d - 1.2], [x + w - 1.2, y + d - 1.2]].forEach(function (q) { el('circle', { 'class': 'tornillo', cx: f(P(q[0], q[1], z + .5)[0]), cy: f(P(q[0], q[1], z + .5)[1]), r: 1.3 }, g); });
   }
   // sombra de una base rectangular sobre el plano z: se proyecta la planta real (no una elipse de
@@ -103,7 +115,7 @@
   function placaAg(g, P, x, y, z, w, d, s) {
     caja(g, P, x, y, z, w, d, .6, 'laton');
     poly(g, [P(x + .9, y + .9, z + .6), P(x + w - .9, y + .9, z + .6), P(x + w - .9, y + d - .9, z + .6), P(x + .9, y + d - .9, z + .6)], 'placa-filete');
-    var c = P(x + w / 2, y + d / 2, z + .6), L = el('g', { transform: 'matrix(.866 .5 -.866 .5 ' + f(c[0]) + ' ' + f(c[1]) + ')' }, g), u0 = -w * s / 2 + 9;
+    var c = P(x + w / 2, y + d / 2, z + .6), L = el('g', { transform: enPlano(P, 'z', c) }, g), u0 = -w * s / 2 + 9;
     el('rect', { 'class': 'placa-casilla', x: f(u0), y: -15, width: 26, height: 30, rx: 1 }, L);
     var tz = el('text', { 'class': 'placa-z', x: f(u0 + 2.5), y: -10 }, L); tz.textContent = '47';
     var ts = el('text', { 'class': 'placa-s', x: f(u0 + 13), y: 4.5 }, L); ts.textContent = 'Ag';
@@ -163,7 +175,7 @@
       ruta(z0, aro(q[0], 0, 0, 360, 96), q[0] === RE ? 'bn-marca-fina' : 'bn-marca');
       if (!q[1]) return;
       var e = P(q[0] * .7071, q[0] * .7071, 0);
-      var tx = el('text', { 'class': 'grabado bn-grab', x: 0, y: 0, transform: 'matrix(.866 .5 -.866 .5 ' + f(e[0] + 7) + ' ' + f(e[1] + 2) + ')' }, z0); tx.textContent = q[1];
+      var tx = el('text', { 'class': 'grabado bn-grab', x: 0, y: 0, transform: enPlano(P, 'z', [e[0] + 7, e[1] + 2]) }, z0); tx.textContent = q[1];
     });
     for (var tk = 0; tk <= RE; tk += 3.5) linea(z0, P(tk, 0, 0), P(tk, tk % 7 === 0 ? 2.2 : 1.2, 0), 'tick');   // regla radial
     linea(z0, P(0, 0, 0), P(RE, 0, 0), 'bn-marca');
@@ -252,7 +264,7 @@
 
   // ═════════ II · Mecánica cuántica: Stern–Gerlach ═════════
   function escenaSternGerlach(svg, salida) {
-    var s = 4.7, P = camara(915, 470, s), g = el('g', {}, svg), ZB = 16, orden = 0;
+    var s = 4.7, P = camara(920, 455, s, 38), g = el('g', {}, svg), ZB = 16, orden = 0;
     // cada pieza entra desde abajo (+) o desde arriba (−) cada vez que se muestra la escena
     function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;--d:' + (120 + orden++ * 45) + 'ms' }, g); }
     function arrollamiento(q, x0, x1, y, z0, z1, n) { for (var k = 1; k < n; k++) { var z = z0 + (z1 - z0) * k / n; linea(q, P(x0, y, z), P(x1, y, z), 'espira'); } }
@@ -284,6 +296,7 @@
     cilindro(h0, P, s, -71, 0, 29.4, 3, 3, 'mid');
     // boquilla: tubo corto sobre el eje del haz, con el orificio de salida
     function boquilla(q, cortada) {
+      var nx = -P.ux[1], ny = P.ux[0], tA = Math.atan2(-ny, P.uy[0] * nx + P.uy[1] * ny) * 180 / Math.PI;   // borde del manto visto desde la cámara
       // tubo horizontal sobre el eje del haz (eje x). El aro vive en el plano y-z; desde la cámara
       // se ven la tapa de salida (+x) y el manto con t ∈ (−45°, 135°). Cortada: se quita la mitad
       // y > 0 (el mismo cuadrante que el horno) y queda a la vista la sección en el plano y = 0.
@@ -292,13 +305,13 @@
         var c = el('g', { 'class': 's ' + tono }, q);
         if (!cortada) {
           poly(c, aro(xa, r, 0, 360, 36), 'sd');                                   // fondo (solo asoma su borde)
-          poly(c, aro(xa, r, -45, 135, 24).concat(aro(xb, r, 135, -45, 24)), 'fr'); // manto visible
-          if (sombra) poly(c, aro(xa, r, -45, 15, 10).concat(aro(xb, r, 15, -45, 10)), 'cil-sombra');
-          linea(c, aro(xa + .3, r, 100, 100, 1)[0], aro(xb - .3, r, 100, 100, 1)[0], 'brillo-cil');
+          poly(c, aro(xa, r, tA, tA + 180, 24).concat(aro(xb, r, tA + 180, tA, 24)), 'fr'); // manto visible
+          if (sombra) poly(c, aro(xa, r, tA, tA + 60, 10).concat(aro(xb, r, tA + 60, tA, 10)), 'cil-sombra');
+          linea(c, aro(xa + .3, r, tA + 145, tA + 145, 1)[0], aro(xb - .3, r, tA + 145, tA + 145, 1)[0], 'brillo-cil');
           poly(c, aro(xb, r, 0, 360, 36), 'sd');                                   // tapa que mira a +x
           return c;
         }
-        poly(c, aro(xa, r, 90, 135, 6).concat(aro(xb, r, 135, 90, 6)), 'fr');      // franja superior de la mitad trasera
+        poly(c, aro(xa, r, 90, tA + 180, 6).concat(aro(xb, r, tA + 180, 90, 6)), 'fr');      // franja superior de la mitad trasera
         poly(c, aro(xb, r, 90, 270, 18).concat(aro(xb, ri, 270, 90, 18)), 'sd');   // media corona de la tapa
         [[ri, r], [-r, -ri]].forEach(function (b) {                                // sección de la pared (arriba y abajo)
           poly(q, [P(xa, 0, ZB + b[0]), P(xb, 0, ZB + b[0]), P(xb, 0, ZB + b[1]), P(xa, 0, ZB + b[1])], 'hc hc-acero hc-A');
@@ -428,7 +441,7 @@
     poly(m2, [P(-12, -1.3, 12), P(32, -1.3, 12), P(32, 1.3, 12), P(-12, 1.3, 12)], 'hueco');
     poly(m2, [P(32, -1.3, 12), P(32, 1.3, 12), P(32, 0, 10.2)], 'hueco');
     [[-8, -7], [28, -7], [-8, 7], [28, 7]].forEach(function (t) { tornillo(m2, P(t[0], t[1], 12)); });
-    var pS = P(32, 0, 8.5), tSp = el('text', { 'class': 'polo-b', x: 0, y: 0, transform: 'matrix(.866 -.5 0 1 ' + f(pS[0]) + ' ' + f(pS[1]) + ')' }, m2); tSp.textContent = 'S';
+    var pS = P(32, 0, 8.5), tSp = el('text', { 'class': 'polo-b', x: 0, y: 0, transform: enPlano(P, 'x', pS) }, m2); tSp.textContent = 'S';
     // ── campo magnético en el entrehierro. Líneas calculadas resolviendo Laplace en la sección (y, z) con
     //    los polos de hierro como equipotenciales (μ ≫ μ0 ⇒ B sale perpendicular a TODA la superficie del
     //    polo, no solo del filo). Cada punto lleva [y, z, a], con a = log|B| normalizado: la transparencia
@@ -458,9 +471,9 @@
     caja(m3, P, -12, -20, 34, 44, 30, 6, 'lo');
     for (var la = -10; la < 32; la += 2) linea(m3, P(la, -20, 40), P(la, 10, 40), 'lamina');
     for (var w = 0; w < 6; w++) tornillo(m3, P(-8 + w * 7.6, 6, 40));
-    var rN = P(10, 10, 30), tN = el('text', { 'class': 'grabado', x: 0, y: 0, transform: 'matrix(.866 .5 0 1 ' + f(rN[0]) + ' ' + f(rN[1]) + ')' }, m3); tN.textContent = '∂B/∂z';
+    var rN = P(10, 10, 30), tN = el('text', { 'class': 'grabado', x: 0, y: 0, transform: enPlano(P, 'y', rN) }, m3); tN.textContent = '∂B/∂z';
     var mcF = pieza(-60); mcF.classList.add('campo'); abanico(mcF, 32.3, 1, true);
-    var pN = P(32, 0, 30), tNp = el('text', { 'class': 'polo-b', x: 0, y: 0, transform: 'matrix(.866 -.5 0 1 ' + f(pN[0]) + ' ' + f(pN[1]) + ')' }, m3); tNp.textContent = 'N';
+    var pN = P(32, 0, 30), tNp = el('text', { 'class': 'polo-b', x: 0, y: 0, transform: enPlano(P, 'x', pN) }, m3); tNp.textContent = 'N';
 
     var p0 = pieza(110);
     placaAg(p0, P, 38, 12, 0, 32, 11, s);
@@ -475,7 +488,7 @@
     poly(pa, [P(80, -9, 35), P(80, -7, 35), P(80, 11, 3), P(80, 9, 3)], 'reflejo');
     var impactos = el('g', {}, pa);
     ruta(pa, [P(80, -9, ZB), P(80, 9, ZB)], 'clasico');
-    var rc = P(80, 14.5, ZB + 1.2), tc = el('text', { 'class': 'grabado', x: 0, y: 0, transform: 'matrix(.866 -.5 0 1 ' + f(rc[0]) + ' ' + f(rc[1]) + ')' }, pa); tc.textContent = 'sin campo';
+    var rc = P(80, 14.5, ZB + 1.2), tc = el('text', { 'class': 'grabado', x: 0, y: 0, transform: enPlano(P, 'x', rc) }, pa); tc.textContent = 'sin campo';
     caja(pa, P, 79, 20, 2.5, 2, 2, 34, 'lo');
     caja(pa, P, 79, -22, 35, 2, 44, 2, 'lo');
     var pz = pieza(-170);

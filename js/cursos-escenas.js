@@ -51,7 +51,7 @@
   function placa(g, P, x, y, z, w, d, rotulo) {
     caja(g, P, x, y, z, w, d, .5, 'hi');
     var c = P(x + w / 2, y + d / 2, z + .5);
-    var t = el('text', { 'class': 'grabado', x: f(c[0]), y: f(c[1] + 3) }, g); t.textContent = rotulo;
+    var t = el('text', { 'class': 'grabado', x: 0, y: 0, transform: 'matrix(.866 .5 -.866 .5 ' + f(c[0]) + ' ' + f(c[1]) + ')' }, g); t.textContent = rotulo;   // grabado en el plano de la tapa
     [[x + 1.2, y + 1.2], [x + w - 1.2, y + 1.2], [x + 1.2, y + d - 1.2], [x + w - 1.2, y + d - 1.2]].forEach(function (q) { el('circle', { 'class': 'tornillo', cx: f(P(q[0], q[1], z + .5)[0]), cy: f(P(q[0], q[1], z + .5)[1]), r: 1.3 }, g); });
   }
   function sombra(g, P, s, x, y, rx, ry) { var c = P(x, y, 0); el('ellipse', { 'class': 'halo', cx: f(c[0]), cy: f(c[1]), rx: f(rx * s * 1.2247), ry: f(ry * s * .7071) }, g); }
@@ -200,7 +200,7 @@
     caja(m3, P, -12, -20, 34, 44, 30, 6, 'lo');
     for (var la = -10; la < 32; la += 2) linea(m3, P(la, -20, 40), P(la, 10, 40), 'lamina');
     for (var w = 0; w < 6; w++) tornillo(m3, P(-8 + w * 7.6, 6, 40));
-    var rN = P(10, 10, 30), tN = el('text', { 'class': 'grabado', x: f(rN[0]), y: f(rN[1]) }, m3); tN.textContent = '∂B/∂z';
+    var rN = P(10, 10, 30), tN = el('text', { 'class': 'grabado', x: 0, y: 0, transform: 'matrix(.866 .5 0 1 ' + f(rN[0]) + ' ' + f(rN[1]) + ')' }, m3); tN.textContent = '∂B/∂z';
 
     // ── placa y pantalla de vidrio con marco
     var p0 = pieza(110);
@@ -216,7 +216,7 @@
     poly(pa, [P(80, -9, 35), P(80, -7, 35), P(80, 11, 3), P(80, 9, 3)], 'reflejo');
     var impactos = el('g', {}, pa);
     ruta(pa, [P(80, -9, ZB), P(80, 9, ZB)], 'clasico');
-    var rc = P(80, 12, ZB + 1.5), tc = el('text', { 'class': 'grabado', x: f(rc[0]), y: f(rc[1]) }, pa); tc.textContent = 'clásico';
+    var rc = P(80, 14.5, ZB + 1.2), tc = el('text', { 'class': 'grabado', x: 0, y: 0, transform: 'matrix(.866 -.5 0 1 ' + f(rc[0]) + ' ' + f(rc[1]) + ')' }, pa); tc.textContent = 'sin campo';
     caja(pa, P, 79, 20, 2.5, 2, 2, 34, 'lo');
     caja(pa, P, 79, -22, 35, 2, 44, 2, 'lo');
     var pz = pieza(-170);
@@ -249,7 +249,7 @@
     nota([m0, m1], [10, -23, 46], 'Electroimán', ['Un campo uniforme solo hace girar al imán', 'atómico (precesión); no lo desvía. Hace', 'falta un campo que cambie con la altura.'], 150);
     nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 175);
     nota([p0], [54, 18, .5], 'Fráncfort, 1922', ['Stern y Gerlach buscaban la cuantización', 'espacial de Bohr–Sommerfeld. El espín', '(1925) explicó por qué eran justo dos.']);
-    nota([pa], [79, -21, 37], 'Placa colectora', ['Clásico: μz toma cualquier valor, una banda.', 'Se vieron dos manchas: la proyección del', 'momento magnético está cuantizada.'], 300);
+    nota([pa], [79, -21, 37], 'Placa colectora', ['La línea punteada marca dónde llega el haz', 'sin campo. Con campo, la física clásica', 'esperaba una mancha continua (μz de cualquier', 'valor). Se vieron dos: μz está cuantizado.'], 300);
     nota([pz], [80, 0, 27], '¿Por qué no solo dos líneas?', [
       'Cada átomo cae arriba o abajo; lo que cambia es cuánto:',
       '· Δz ∝ 1/v²: los lentos se abren más, los rápidos menos.',

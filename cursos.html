@@ -1495,6 +1495,99 @@
       .h-reglas::before { display:none; }
       .h-nota br { display:none; }
     }
+
+    /* ═══ Cursos como pantalla de menú: índice a la izquierda, escena viva detrás ═══ */
+    .mc { --tinta:#1E1A16; --papel:#F4EEE3; --papel2:#E9E1D1; --cuero:#C9A27A; --rojo:#7A2E22; --azul:#2B3A67;
+      position:relative; height:max(660px, calc(100vh - 72px)); overflow:hidden; background:var(--papel); color:var(--tinta); }
+    .mc::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(0deg, rgba(60,40,20,.025) 0 1px, transparent 1px 4px), radial-gradient(ellipse at 70% 45%, #FBF7EF, var(--papel) 60%); }
+    .mc-escenas { position:absolute; inset:0; }
+    .mc-escena { position:absolute; inset:0; margin:0; opacity:0; transform:scale(1.025); transition:opacity .7s ease, transform 1.2s cubic-bezier(.16,1,.3,1); }
+    .mc-escena.on { opacity:1; transform:none; }
+    .mc-escena svg { width:100%; height:100%; display:block; }
+    .mc-velo { position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg, rgba(30,26,22,.97) 0%, rgba(30,26,22,.93) 26%, rgba(30,26,22,.55) 40%, rgba(30,26,22,0) 54%); }
+    .mc-menu { position:relative; z-index:2; width:min(560px,46%); padding:clamp(40px,7vh,84px) 0 40px clamp(28px,6vw,96px); color:#EFE8DA; }
+    .mc-k { font:700 9.5px 'Space Mono',monospace; letter-spacing:.34em; text-transform:uppercase; color:var(--cuero); display:flex; align-items:center; gap:14px; }
+    .mc-k::before { content:''; width:32px; height:1px; background:var(--cuero); }
+    .mc-lista { list-style:none; margin:32px 0 0; padding:0; }
+    .mc-item { position:relative; border-top:1px solid rgba(239,232,218,.12); }
+    .mc-item:last-child { border-bottom:1px solid rgba(239,232,218,.12); }
+    .mc-item a { display:flex; align-items:baseline; gap:22px; padding:18px 0; text-decoration:none; color:rgba(239,232,218,.42); transition:color .4s ease; outline:none; }
+    .mc-n { font:700 10px 'Space Mono',monospace; letter-spacing:.18em; color:rgba(201,162,122,.5); width:26px; flex-shrink:0; transition:color .4s ease; }
+    .mc-t { font:500 clamp(28px,2.6vw,36px)/1.08 'Cormorant Garamond',serif; transition:font-size .5s cubic-bezier(.16,1,.3,1), color .4s ease; }
+    .mc-t em { font-style:italic; }
+    .mc-item.on a { color:#F7F2E7; }
+    .mc-item.on .mc-n { color:var(--cuero); }
+    .mc-item.on .mc-t { font-size:clamp(38px,3.6vw,54px); }
+    .mc-item.on .mc-t em { color:var(--cuero); }
+    .mc-item a::before { content:''; position:absolute; left:-34px; top:50%; width:0; height:1px; background:var(--cuero); transition:width .45s cubic-bezier(.16,1,.3,1); }
+    .mc-item.on a::before { width:20px; }
+    .mc-item a:focus-visible .mc-t { text-decoration:underline; text-decoration-color:var(--cuero); text-underline-offset:6px; text-decoration-thickness:1px; }
+    .mc-info { display:grid; grid-template-rows:0fr; padding-left:48px; transition:grid-template-rows .55s cubic-bezier(.16,1,.3,1), opacity .4s ease; opacity:0; }
+    .mc-info > * { overflow:hidden; min-height:0; }
+    .mc-info { grid-template-areas:'x'; }
+    .mc-info > * { grid-area:auto; }
+    .mc-item.on .mc-info { grid-template-rows:1fr; opacity:1; padding-bottom:22px; }
+    .mc-info p { margin:0 0 10px; font:400 15px/1.65 Inter,sans-serif; color:rgba(239,232,218,.72); max-width:380px; }
+    .mc-meta { display:block; font:400 10px 'Space Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:rgba(201,162,122,.85); }
+    .mc-ir { display:inline-block; margin-top:16px; padding:11px 18px; border:1px solid rgba(201,162,122,.6); font:700 9.5px 'Space Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:var(--cuero); pointer-events:none; }
+    .mc-pista { margin-top:34px; font:400 9.5px 'Space Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:rgba(239,232,218,.32); }
+    .mc-lectura { position:absolute; z-index:2; right:clamp(20px,4vw,64px); bottom:clamp(20px,5vh,48px); text-align:right; color:var(--tinta); background:linear-gradient(90deg, rgba(244,238,227,0), rgba(244,238,227,.88) 28%); padding:12px 16px 12px 60px; }
+    .mc-ec { display:none; font:italic 500 26px 'Cormorant Garamond',serif; }
+    .mc[data-activo="0"] .mc-ec[data-ec="0"], .mc[data-activo="1"] .mc-ec[data-ec="1"], .mc[data-activo="2"] .mc-ec[data-ec="2"] { display:block; }
+    .mc-l1, .mc-l2 { display:block; font:400 10.5px 'Space Mono',monospace; letter-spacing:.1em; color:var(--rojo); margin-top:6px; font-variant-numeric:tabular-nums; }
+    .mc-l2 { color:#6B6156; }
+    /* dibujo isométrico: tinta fina, tres tonos por cara, un acento */
+    .mc svg .s polygon, .mc svg .s path, .mc svg .s ellipse { stroke:var(--tinta); stroke-width:.7; stroke-linejoin:round; }
+    .mc svg .lo .tp { fill:#D9C3A3; } .mc svg .lo .fr { fill:#C6AB86; } .mc svg .lo .sd { fill:#B0936D; }
+    .mc svg .mid .tp { fill:#FBF8F1; } .mc svg .mid .fr { fill:#E9E1D1; } .mc svg .mid .sd { fill:#D6CBB6; }
+    .mc svg .hi .tp { fill:#FFFFFF; } .mc svg .hi .fr { fill:#F5F0E6; } .mc svg .hi .sd { fill:#E6DECF; }
+    .mc svg .tinta .tp { fill:#4A4038; } .mc svg .tinta .fr { fill:#2E2721; } .mc svg .tinta .sd { fill:#1E1A16; }
+    .mc svg .rojo .tp { fill:#A2463A; } .mc svg .rojo .fr { fill:#7A2E22; } .mc svg .rojo .sd { fill:#5E2219; }
+    .mc svg .vidrio .tp { fill:rgba(43,58,103,.07); stroke:rgba(30,26,22,.55); }
+    .mc svg .halo { fill:rgba(30,26,22,.10); filter:blur(6px); }
+    .mc svg .tornillo { fill:#D6CBB6; stroke:var(--tinta); stroke-width:.6; } .mc svg .ranura { stroke:var(--tinta); stroke-width:.5; }
+    .mc svg .tick { stroke:var(--tinta); stroke-width:.5; opacity:.55; } .mc svg .tick-may { stroke:var(--tinta); stroke-width:.8; }
+    .mc svg .grabado { font:400 6.5px 'Space Mono',monospace; fill:#6B6156; text-anchor:middle; letter-spacing:.06em; }
+    .mc svg .moleteado { stroke:var(--tinta); stroke-width:.4; opacity:.6; }
+    .mc svg .malla path { fill:none; }
+    .mc svg .anillo { stroke:var(--tinta); stroke-width:.55; opacity:.45; } .mc svg .anillo-may { stroke:var(--tinta); stroke-width:.9; opacity:.75; }
+    .mc svg .meridiano { stroke:var(--tinta); stroke-width:.5; opacity:.35; }
+    .mc svg .horizonte { stroke:var(--rojo); stroke-width:1.6; }
+    .mc svg .aro { fill:none; stroke:var(--tinta); stroke-width:2.4; }
+    .mc svg .estela { fill:none; stroke:var(--azul); stroke-width:1.4; opacity:.75; stroke-linecap:round; }
+    .mc svg .cuerpo { fill:var(--azul); stroke:var(--tinta); stroke-width:.8; } .mc svg .cuerpo-brillo { fill:#fff; opacity:.6; }
+    .mc svg .bobina { stroke:#8C6D33; stroke-width:1.6; opacity:.8; }
+    .mc svg .resistencia { fill:none; stroke:var(--rojo); stroke-width:1; }
+    .mc svg .brasa { fill:#E0703F; filter:blur(1.2px); opacity:.9; }
+    .mc svg .hueco { fill:var(--tinta); stroke:none; }
+    .mc svg .filo { fill:#B0936D; stroke:var(--tinta); stroke-width:.7; }
+    .mc svg .arista { stroke:var(--tinta); stroke-width:.8; }
+    .mc svg .atomo { fill:var(--azul); }
+    .mc svg .impacto { fill:var(--rojo); opacity:.7; }
+    .mc svg .clasico { fill:none; stroke:var(--tinta); stroke-width:.8; stroke-dasharray:2 3; opacity:.5; }
+    .mc svg .papel { fill:#FFFDF8; stroke:var(--tinta); stroke-width:.6; }
+    .mc svg .lima { stroke:var(--tinta); stroke-width:.7; stroke-linecap:round; }
+    .mc svg .polo { font:700 13px 'Space Mono',monospace; fill:#fff; text-anchor:middle; }
+    .mc svg .brujula { fill:#FBF8F1; stroke:var(--tinta); stroke-width:1; }
+    .mc svg .aguja-n { stroke:var(--rojo); stroke-width:2.2; stroke-linecap:round; } .mc svg .aguja-s { stroke:#8E8478; stroke-width:2.2; stroke-linecap:round; }
+    .mc svg .eje { fill:var(--tinta); }
+    .mc svg .cuerda { stroke:var(--tinta); stroke-width:.9; }
+    .mc svg .bola { fill:#B0936D; stroke:var(--tinta); stroke-width:.9; }
+    .mc svg .transportador { fill:none; stroke:var(--tinta); stroke-width:.6; stroke-dasharray:1 3; opacity:.6; }
+    @media (max-width:900px) {
+      .mc { height:auto; min-height:0; display:flex; flex-direction:column; background:var(--tinta); }
+      .mc::before { bottom:auto; height:62vw; }
+      .mc-escenas { position:relative; height:62vw; min-height:260px; }
+      .mc-escena svg { width:100%; height:100%; }
+      .mc-velo { display:none; }
+      .mc-menu { width:auto; padding:34px 24px 40px; }
+      .mc-lectura { top:8px; bottom:auto; right:10px; padding:6px 10px 6px 40px; } .mc-ec { font-size:18px; } .mc-l2 { display:none; }
+      .mc-ec { font-size:19px; }
+      .mc-item.on .mc-t { font-size:34px; }
+      .mc-item a::before { display:none; }
+      .mc-pista { display:none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .mc-escena, .mc-info, .mc-t { transition:none; } }
   </style>
   <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
@@ -1515,78 +1608,37 @@
       <feDisplacementMap in="SourceGraphic" in2="r" scale="1.6"/>
     </filter>
   </svg>
-  <section class="escritorio">
-    <h1 class="escritorio-sr">Cursos</h1>
-    <div class="libro">
-      <div class="libro-pestanas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="libro-correa" aria-hidden="true"><span></span></div>
-      <div class="libro-hojas">
-
-        <article class="hoja hoja--izq" id="cursos-indice">
-          <svg class="clip" viewBox="0 0 14 40" aria-hidden="true"><path d="M7 38 V8 a4 4 0 0 1 8 0 V32 a6 6 0 0 1 -12 0 V12"/></svg>
-          <p class="h-nota">Apuntes, prácticas y exámenes de la carrera<br/>de Física en San Marcos.</p>
-          <a href="relatividad.html" class="cm-curso cm-curso--grande">
-            <span class="cm-titulo">Teoría General de la Relatividad</span>
-            <svg class="cm-flor" viewBox="0 0 320 26" aria-hidden="true"><path d="M4 16 C 60 6, 110 22, 160 13 S 250 4, 290 14 C 300 17, 306 12, 302 8 C 298 4, 290 10, 296 16 C 302 21, 312 18, 316 14"/></svg>
-            <span class="cm-sub">prácticas · exámenes · exposición — 2025</span>
-          </a>
-          <div class="h-reglas">
-            <div class="h-col">
-              <a href="mecanica-cuantica.html" class="cm-curso">
-                <span class="cm-titulo">Mecánica Cuántica</span>
-                <svg class="cm-flor" viewBox="0 0 320 26" aria-hidden="true"><path d="M4 16 C 60 6, 110 22, 160 13 S 250 4, 290 14 C 300 17, 306 12, 302 8 C 298 4, 290 10, 296 16 C 302 21, 312 18, 316 14"/></svg>
-                <span class="cm-sub">próximamente… mientras, juega con el Stern-Gerlach</span>
-              </a>
-              <svg class="dib boceto boceto-atomo" viewBox="0 0 120 120" aria-hidden="true">
-                <g class="dib-tr"><ellipse cx="60" cy="60" rx="52" ry="17"/><ellipse cx="60" cy="60" rx="52" ry="17" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="52" ry="17" transform="rotate(-60 60 60)"/></g>
-                <circle cx="60" cy="60" r="4" class="dib-nucleo"/>
-                <circle r="2.6" class="dib-e"><animateMotion dur="2.2s" repeatCount="indefinite" path="M8 60 a52 17 0 1 0 104 0 a52 17 0 1 0 -104 0"/></circle>
-                <g transform="rotate(60 60 60)"><circle r="2.6" class="dib-e"><animateMotion dur="3s" repeatCount="indefinite" path="M112 60 a52 17 0 1 0 -104 0 a52 17 0 1 0 104 0"/></circle></g>
-                <g transform="rotate(-60 60 60)"><circle r="2.6" class="dib-e"><animateMotion dur="2.6s" repeatCount="indefinite" path="M8 60 a52 17 0 1 1 104 0 a52 17 0 1 1 -104 0"/></circle></g>
-              </svg>
-            </div>
-            <div class="h-col">
-              <a href="problemas.html" class="cm-curso">
-                <span class="cm-titulo">Problemas de física</span>
-                <svg class="cm-flor" viewBox="0 0 320 26" aria-hidden="true"><path d="M4 16 C 60 6, 110 22, 160 13 S 250 4, 290 14 C 300 17, 306 12, 302 8 C 298 4, 290 10, 296 16 C 302 21, 312 18, 316 14"/></svg>
-                <span class="cm-sub">electromagnetismo<br/>física nuclear<br/>termodinámica</span>
-              </a>
-              <svg class="dib boceto boceto-onda" viewBox="0 0 170 60" aria-hidden="true">
-                <defs><clipPath id="bo-cl-onda"><rect x="8" y="0" width="154" height="56"/></clipPath></defs>
-                <line x1="8" y1="30" x2="164" y2="30" class="dib-eje"/>
-                <g clip-path="url(#bo-cl-onda)"><path class="dib-tr" d="M-60 30 q12.5 -18 25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0"><animateTransform attributeName="transform" type="translate" values="0 0;50 0" dur="1.6s" repeatCount="indefinite"/></path></g>
-              </svg>
-            </div>
-          </div>
-          <svg class="ornamento" viewBox="0 0 90 14" aria-hidden="true"><path d="M2 7 h26 M62 7 h26 M45 2 c-6 0 -9 5 -15 5 c6 0 9 5 15 5 c6 0 9 -5 15 -5 c-6 0 -9 -5 -15 -5 z M45 5 v4"/></svg>
-        </article>
-
-        <article class="hoja hoja--der" id="fisitok">
-          <svg class="clip" viewBox="0 0 14 40" aria-hidden="true"><path d="M7 38 V8 a4 4 0 0 1 8 0 V32 a6 6 0 0 1 -12 0 V12"/></svg>
-          <svg class="dib boceto boceto-bloch" viewBox="0 0 140 140" aria-hidden="true">
-            <circle cx="70" cy="70" r="50" class="dib-tr"/>
-            <ellipse cx="70" cy="70" rx="50" ry="14" class="dib-fino"/>
-            <path d="M70 10 V130 M10 70 H130" class="dib-eje"/>
-            <g class="dib-garabato"><circle cx="70" cy="70" r="24"/><circle cx="70" cy="70" r="18"/><circle cx="70" cy="70" r="12"/></g>
-            <line x1="70" y1="70" x2="104" y2="40" class="dib-vector"><animate attributeName="x2" values="104;70;36;70;104" dur="4s" repeatCount="indefinite"/><animate attributeName="y2" values="40;30;40;52;40" dur="4s" repeatCount="indefinite"/></line>
-            <text x="104" y="18" class="dib-txt">|ψ⟩</text>
-          </svg>
-          <p class="h-script">FisiTok</p>
-          <p class="h-nota">preguntas breves para pensar,<br/>una a la vez — próximamente.</p>
-          <div class="h-linea"></div>
-          <svg class="dib boceto boceto-pendulo" viewBox="0 0 120 150" aria-hidden="true">
-            <path d="M20 10 H100" class="dib-tr"/><path d="M28 10 l-6 -6 M40 10 l-6 -6 M52 10 l-6 -6 M64 10 l-6 -6 M76 10 l-6 -6 M88 10 l-6 -6 M100 10 l-6 -6" class="dib-fino"/>
-            <path d="M60 10 V120" class="dib-eje" stroke-dasharray="3 4"/>
-            <g><animateTransform attributeName="transform" type="rotate" values="22 60 10;-22 60 10;22 60 10" dur="2.4s" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" repeatCount="indefinite"/>
-              <line x1="60" y1="10" x2="60" y2="112" class="dib-tr"/><circle cx="60" cy="118" r="7" class="dib-masa"/></g>
-            <path d="M60 40 a30 30 0 0 1 14 4" class="dib-fino"/><text x="76" y="44" class="dib-txt">θ</text>
-            <text x="8" y="146" class="dib-txt">θ̈ + (g/ℓ) sin θ = 0</text>
-          </svg>
-          <svg class="ornamento" viewBox="0 0 90 14" aria-hidden="true"><path d="M2 7 h26 M62 7 h26 M45 2 c-6 0 -9 5 -15 5 c6 0 9 5 15 5 c6 0 9 -5 15 -5 c-6 0 -9 -5 -15 -5 z M45 5 v4"/></svg>
-        </article>
-
-        <canvas class="cm-chispas" aria-hidden="true"></canvas>
-      </div>
+  <section class="mc" data-cursos-menu aria-label="Cursos">
+    <div class="mc-escenas" aria-hidden="true">
+      <figure class="mc-escena on" data-i="0"><svg viewBox="0 0 1440 900" preserveAspectRatio="xMaxYMid slice"></svg></figure>
+      <figure class="mc-escena" data-i="1"><svg viewBox="0 0 1440 900" preserveAspectRatio="xMaxYMid slice"></svg></figure>
+      <figure class="mc-escena" data-i="2"><svg viewBox="0 0 1440 900" preserveAspectRatio="xMaxYMid slice"></svg></figure>
+    </div>
+    <div class="mc-velo" aria-hidden="true"></div>
+    <nav class="mc-menu" aria-label="Elige un curso">
+      <p class="mc-k">Cursos · Física UNMSM</p>
+      <ol class="mc-lista">
+        <li class="mc-item on">
+          <a href="relatividad.html"><span class="mc-n">I</span><span class="mc-t">Teoría General de la <em>Relatividad</em></span></a>
+          <div class="mc-info"><p>Prácticas calificadas, exámenes y una exposición sobre modificación gravitacional unificada.</p><span class="mc-meta">7 documentos · 2025</span><span class="mc-ir">Abrir curso →</span></div>
+        </li>
+        <li class="mc-item">
+          <a href="mecanica-cuantica.html"><span class="mc-n">II</span><span class="mc-t">Mecánica <em>Cuántica</em></span></a>
+          <div class="mc-info"><p>Próximamente. Mientras tanto, juega con el experimento de Stern–Gerlach.</p><span class="mc-meta">simulador interactivo</span><span class="mc-ir">Abrir experimento →</span></div>
+        </li>
+        <li class="mc-item">
+          <a href="problemas.html"><span class="mc-n">III</span><span class="mc-t">Problemas de <em>física</em></span></a>
+          <div class="mc-info"><p>Electromagnetismo, física nuclear y termodinámica.</p><span class="mc-meta">tareas resueltas</span><span class="mc-ir">Ver problemas →</span></div>
+        </li>
+      </ol>
+      <p class="mc-pista">↑ ↓ elegir · enter abrir</p>
+    </nav>
+    <div class="mc-lectura" aria-live="off">
+      <span class="mc-ec" data-ec="0">G<sub>μν</sub> = 8πG T<sub>μν</sub> / c⁴</span>
+      <span class="mc-ec" data-ec="1">F<sub>z</sub> = μ<sub>z</sub> ∂B<sub>z</sub>/∂z</span>
+      <span class="mc-ec" data-ec="2">θ̈ = −(g/ℓ) sin θ</span>
+      <span class="mc-l1" data-lect="1"></span>
+      <span class="mc-l2" data-lect="2"></span>
     </div>
   </section>
 
@@ -1599,79 +1651,7 @@
       </div>
     </div>
   </footer>
-  <script>
-    // Símbolos de física en tinta que brotan del cursor sobre cada curso, como una pluma encantada
-    (function () {
-      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      var pag = document.querySelector('.libro-hojas'), cv = pag && pag.querySelector('.cm-chispas');
-      if (!cv) return;
-      var cx = cv.getContext('2d'), ch = [], dpr = Math.min(2, window.devicePixelRatio || 1), corriendo = false, activo = null, ultimo = 0;
-      function medir() { cv.width = pag.offsetWidth * dpr; cv.height = pag.offsetHeight * dpr; }
-      // el cuaderno puede estar escalado: se pasa de pantalla a coordenadas de la hoja
-      function local(x, y) { var q = pag.getBoundingClientRect(), k = q.width / pag.offsetWidth || 1; return [(x - q.left) / k, (y - q.top) / k]; }
-      medir(); addEventListener('resize', medir);
-      function soltar(x, y, n) {
-        for (var i = 0; i < n; i++) {
-          var a = Math.random() * Math.PI * 2, v = .3 + Math.random() * 1.4;
-          ch.push({ x: x, y: y, vx: Math.cos(a) * v * .6, vy: -(.4 + Math.random() * .9), vida: 1, dec: .008 + Math.random() * .012, r: 13 + Math.random() * 10, giro: (Math.random() - .5) * .6, g: SIMB[Math.floor(Math.random() * SIMB.length)], c: Math.random() < .7 ? '43,58,103' : '110,26,34' });
-        }
-        if (!corriendo) { corriendo = true; requestAnimationFrame(paso); }
-      }
-      var SIMB = ['ψ', 'ħ', '∇', '∂', 'λ', 'γ', 'ν', '∞', 'Σ', 'π', 'Ω', 'δ', 'ε₀', 'μ', '⟨ψ|', '|0⟩', 'c', 'Λ', 'φ', '∮'];
-      function estrella(x, y, r, rot) {
-        cx.beginPath();
-        for (var k = 0; k < 8; k++) { var rr = k % 2 ? r * .35 : r, an = rot + k * Math.PI / 4; cx.lineTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr); }
-        cx.closePath(); cx.fill();
-      }
-      function paso() {
-        cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, cv.width, cv.height);
-        ch = ch.filter(function (p) { return p.vida > 0; });
-        ch.forEach(function (p) {
-          p.x += p.vx + Math.sin(p.vida * 9) * .25; p.y += p.vy; p.vy *= .992; p.vida -= p.dec;
-          var al = Math.max(0, p.vida), ap = Math.min(1, (1 - al) * 6) * al;
-          cx.save(); cx.translate(p.x, p.y); cx.rotate(p.giro * (1 - al));
-          cx.font = 'italic ' + Math.round(p.r) + 'px "Cormorant Garamond", serif'; cx.textAlign = 'center';
-          cx.fillStyle = 'rgba(' + p.c + ',' + Math.min(1, ap * 1.6).toFixed(3) + ')'; cx.shadowColor = 'rgba(' + p.c + ',' + (ap * .35).toFixed(3) + ')'; cx.shadowBlur = 3;
-          cx.fillText(p.g, 0, 0); cx.restore();
-        });
-        if (ch.length) requestAnimationFrame(paso); else { corriendo = false; cx.clearRect(0, 0, cv.width, cv.height); }
-      }
-      Array.prototype.forEach.call(pag.querySelectorAll('.cm-curso'), function (a) {
-        a.addEventListener('pointerenter', function (e) {
-          activo = a; var t = a.querySelector('.cm-titulo').getBoundingClientRect();
-          // un destello que recorre el título al entrar
-          for (var i = 0; i < 7; i++) (function (i) { setTimeout(function () { if (activo !== a) return; var l = local(t.left + t.width * i / 6, t.top + t.height * (.2 + Math.random() * .3)); soltar(l[0], l[1], 1); }, i * 70); })(i);
-        });
-        a.addEventListener('pointermove', function (e) {
-          var ahora = performance.now(); if (ahora - ultimo < 140) return; ultimo = ahora;
-          var l = local(e.clientX, e.clientY); soltar(l[0], l[1], 1);
-        });
-        a.addEventListener('pointerleave', function () { if (activo === a) activo = null; });
-      });
-    })();
-  </script>
-  <script>
-    // En escritorio el cuaderno se escala para que entre completo en la pantalla
-    (function () {
-      var marco = document.querySelector('.cuaderno-marco');
-      var libro = document.querySelector('.cuaderno');
-      var header = document.querySelector('.header');
-      if (!marco || !libro) return;
-      var desktop = window.matchMedia('(min-width: 901px)');
-      function fit() {
-        libro.style.transform = ''; marco.style.height = '';
-        if (!desktop.matches) return;
-        var room = window.innerHeight - (header ? header.offsetHeight : 0) - 68;
-        var k = Math.min(1, room / libro.offsetHeight, (marco.clientWidth) / libro.offsetWidth);
-        libro.style.transformOrigin = 'top center';
-        libro.style.transform = 'translateX(-50%) scale(' + k + ')';
-        marco.style.height = Math.ceil(libro.offsetHeight * k) + 'px';
-      }
-      window.addEventListener('resize', fit);
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
-      fit();
-    })();
-  </script>
+  <script src="js/cursos-escenas.js"></script>
   <script src="js/efectos.js" defer></script>
 </body>
 </html>

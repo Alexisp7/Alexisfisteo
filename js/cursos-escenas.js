@@ -245,6 +245,33 @@
 
     // notas: al pasar el mouse por una pieza, una línea guía sube hasta una explicación corta en gris
     // modelo planetario de la plata (Z = 47): capas 2 · 8 · 18 · 18 · 1, configuración [Kr] 4d¹⁰ 5s¹
+    // electroimán en miniatura: corriente en la bobina → flujo en el yugo → campo no uniforme en el
+    // entrehierro (filo N, canal S) → el haz se separa en ↑ y ↓
+    function imanMini(q, x0, y0) {
+      function T(x, y) { return f(x0 + 8 + x) + ' ' + f(y0 + y); }
+      el('path', { 'class': 'im-hierro', d: 'M' + T(10, 6) + ' L' + T(118, 6) + ' L' + T(118, 30) + ' L' + T(104, 46) + ' L' + T(90, 30) + ' L' + T(34, 30) + ' L' + T(34, 70) + ' L' + T(88, 70) + ' L' + T(88, 60) + ' L' + T(100, 60) + ' L' + T(104, 64) + ' L' + T(108, 60) + ' L' + T(120, 60) + ' L' + T(120, 94) + ' L' + T(10, 94) + ' Z' }, q);
+      el('path', { 'class': 'im-flujo', d: 'M' + T(22, 50) + ' L' + T(22, 18) + ' L' + T(104, 18) + ' L' + T(104, 64) + ' L' + T(104, 82) + ' L' + T(22, 82) + ' Z' }, q);
+      for (var k = 0; k < 7; k++) {
+        var yb = 36 + k * 4.3;
+        el('path', { 'class': 'im-bob', d: 'M' + T(4, yb) + ' L' + T(40, yb) }, q);
+        el('path', { 'class': 'im-carga', d: 'M' + T(4, yb) + ' L' + T(40, yb) }, q);
+      }
+      [-12, -7, -3, 0, 3, 7, 12].forEach(function (dxg) {
+        el('path', { 'class': 'im-gap', d: 'M' + T(104, 46) + ' Q' + T(104 + dxg * .3, 54) + ' ' + T(104 + dxg, 60), 'stroke-opacity': f(1 - Math.abs(dxg) / 15) }, q);
+      });
+      var e1 = el('text', { 'class': 'im-et', x: T(-2, 52).split(' ')[0], y: T(-2, 52).split(' ')[1], 'text-anchor': 'end' }, q); e1.textContent = 'I';
+      var e2 = el('text', { 'class': 'im-et', x: T(122, 40).split(' ')[0], y: T(122, 40).split(' ')[1] }, q); e2.textContent = 'N';
+      var e3 = el('text', { 'class': 'im-et', x: T(124, 70).split(' ')[0], y: T(124, 70).split(' ')[1] }, q); e3.textContent = 'S';
+      // un átomo cruza el entrehierro y sale separado según su espín
+      [['M' + T(128, 53) + ' L' + T(150, 53) + ' Q' + T(168, 53) + ' ' + T(196, 34), 'e-val', 'M0 1.2 L0 -5 M-1.4 -3.3 L0 -5.1 L1.4 -3.3', 'espin-arr'],
+       ['M' + T(128, 53) + ' L' + T(150, 53) + ' Q' + T(168, 53) + ' ' + T(196, 72), 'e-baj', 'M0 -1.2 L0 5 M-1.4 3.3 L0 5.1 L1.4 3.3', 'espin-abj']].forEach(function (r) {
+        el('path', { d: r[0], fill: 'none', stroke: '#8E8478', 'stroke-width': .6, 'stroke-dasharray': '1 3' }, q);
+        var at = el('g', { 'class': 'im-at' }, q);
+        el('circle', { r: 2.6, 'class': r[1] }, at);
+        el('path', { d: r[2], 'class': r[3] }, at);
+        el('animateMotion', { path: r[0], dur: '2.2s', repeatCount: 'indefinite' }, at);
+      });
+    }
     function atomoPlata(q, x0, y0) {
       var cx = x0 + 52, cy = y0 + 46, CAPAS = [2, 8, 18, 18, 1], R = [8, 14.5, 22, 30, 40];
       var orb = el('g', { transform: 'translate(' + f(cx) + ' ' + f(cy) + ')' }, q);
@@ -281,13 +308,13 @@
       el('circle', { cx: f(a[0]), cy: f(a[1]), r: 2.2 }, n);
       el('circle', { 'class': 'anillo-nota', cx: f(a[0]), cy: f(a[1]), r: 5 }, n);
       el('path', { d: 'M' + f(a[0]) + ' ' + f(a[1] - 4) + ' L' + f(a[0]) + ' ' + f(top) + ' L' + f(a[0] + dx) + ' ' + f(top), pathLength: 1 }, n);
-      var ancho = Math.max(op ? op.ancho : 0, Math.max.apply(null, lineas.map(function (l) { return l.length; })) * 6.3 + 22);
+      var ancho = Math.max(op ? op.ancho : 0, Math.max.apply(null, lineas.map(function (l) { return l.length; })) * 6.6 + 22);
       var bx = izq ? a[0] + dx - ancho : a[0] + dx, tx = bx + 10, anc = 'start';
-      el('rect', { 'class': 'nota-fondo', x: f(bx), y: f(top - 11), width: f(ancho), height: 22 + lineas.length * 15 + extra, rx: 2 }, n);
+      el('rect', { 'class': 'nota-fondo', x: f(bx), y: f(top - 11), width: f(ancho), height: 22 + lineas.length * 17 + extra, rx: 2 }, n);
       if (op) op.dibujo(el('g', { 'class': 'nota-dib' }, n), bx, top + 10);
       var t = el('text', { 'class': 'nota-t', x: f(tx), y: f(top + 3), 'text-anchor': anc }, n); t.textContent = titulo;
       var d = el('text', { 'class': 'nota-d', x: f(tx), y: f(top + 19 + extra), 'text-anchor': anc }, n);
-      lineas.forEach(function (l, k) { var sp = el('tspan', { x: f(tx), dy: k ? 15 : 0 }, d); sp.textContent = l; });
+      lineas.forEach(function (l, k) { var sp = el('tspan', { x: f(tx), dy: k ? 17 : 0 }, d); sp.textContent = l; });
       piezas.forEach(function (q) {
         q.classList.add('con-nota');
         q.addEventListener('pointerenter', function () { n.classList.add('ver'); foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on'); });
@@ -297,7 +324,7 @@
     nota([b0], [-62, 22, 0], 'Banco y vacío', ['Todo va sobre un solo eje. El aparato real', 'trabajaba en vacío: los átomos debían volar', 'sin chocar con el aire.']);
     nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.'], 104, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
     nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.']);
-    nota([m0, m1], [10, -23, 46], 'Electroimán', ['Un campo uniforme solo hace girar al imán', 'atómico (precesión); no lo desvía. Hace', 'falta un campo que cambie con la altura.'], 150);
+    nota([m0, m1], [10, -23, 46], 'Electroimán', ['La corriente imanta el hierro; el yugo', 'lleva el campo hasta el entrehierro. Uniforme', 'solo haría girar al átomo: el filo lo desvía.'], 96, null, { alto: 108, ancho: 300, dx: 12, dibujo: imanMini });
     nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 175, [mc, mcF]);
     nota([p0], [54, 18, .5], 'Fráncfort, 1922', ['Stern y Gerlach buscaban la cuantización', 'espacial de Bohr–Sommerfeld. El espín', '(1925) explicó por qué eran justo dos.']);
     nota([pa], [79, -21, 37], 'Placa colectora', ['La línea punteada marca dónde llega el haz', 'sin campo. Con campo, la física clásica', 'esperaba una mancha continua (μz de cualquier', 'valor). Se vieron dos: μz está cuantizado.'], 300);

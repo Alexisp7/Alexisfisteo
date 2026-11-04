@@ -6,7 +6,7 @@
   <title>Cursos — Alexis R. Salvatierra</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Caveat:wght@400;500&family=Pinyon+Script&family=Homemade+Apple&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Caveat:wght@400;500&family=Pinyon+Script&family=Homemade+Apple&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet"/>
   <style>
 
     *, *::before, *::after {
@@ -1578,8 +1578,8 @@
     .mc svg .nota .anillo-nota { fill:none; stroke:#8E8478; stroke-width:.7; transform-box:fill-box; transform-origin:center; transform:scale(.4); opacity:0; }
     .mc svg .nota.ver .anillo-nota { animation:pulso-nota 1.6s ease-out .1s infinite; }
     @keyframes pulso-nota { 0% { transform:scale(.4); opacity:.9; } 100% { transform:scale(2.2); opacity:0; } }
-    .mc svg .nota path { fill:none; stroke:#8E8478; stroke-width:.8; stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset .38s cubic-bezier(.2,.8,.2,1); }
-    .mc svg .nota.ver path { stroke-dashoffset:0; }
+    .mc svg .nota > path { fill:none; stroke:#8E8478; stroke-width:.8; stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset .38s cubic-bezier(.2,.8,.2,1); }
+    .mc svg .nota.ver > path { stroke-dashoffset:0; }
     .mc svg .nota text { paint-order:stroke; stroke:#F4EEE3; stroke-width:4px; stroke-linejoin:round; opacity:0; transform:translateY(4px); transition:opacity .25s ease .22s, transform .35s cubic-bezier(.2,.8,.2,1) .22s; }
     .mc svg .nota.ver text { opacity:1; transform:none; }
     .mc svg .bisel { stroke:#fff; stroke-width:.9; opacity:.55; stroke-linecap:round; }
@@ -1609,7 +1609,18 @@
     .mc svg .polo-b { font:700 8px 'Space Mono',monospace; fill:var(--tinta); text-anchor:middle; dominant-baseline:middle; }
     .mc svg .nota-fondo { fill:rgba(247,243,235,.92); stroke:rgba(142,132,120,.25); stroke-width:.6; opacity:0; transition:opacity .25s ease .18s; } .mc svg .nota.ver .nota-fondo { opacity:1; }
     .mc svg .nota-t { font:700 8.5px 'Space Mono',monospace; letter-spacing:.22em; text-transform:uppercase; fill:#6B6156; }
-    .mc svg .nota-d { font:400 12.5px Inter,sans-serif; fill:#8E8478; }
+    .mc svg .nota-d { font:400 14px/1.3 Newsreader,Georgia,serif; fill:#6F655A; }
+    .mc svg .nota .im-hierro { fill:#D9C3A3; stroke:var(--tinta); stroke-width:.8; stroke-linejoin:round; }
+    .mc svg .nota .im-bob { stroke:#8F4634; stroke-width:2.6; stroke-linecap:round; }
+    .mc svg .nota .im-carga { stroke:#F4D9B8; stroke-width:1.2; stroke-linecap:round; stroke-dasharray:1.5 5; animation:im-corre .6s linear infinite; }
+    .mc svg .nota .im-flujo { fill:none; stroke:var(--azul); stroke-width:1.1; stroke-dasharray:3 4; opacity:.75; animation:im-corre 1.1s linear infinite reverse; }
+    .mc svg .nota .im-gap { stroke:var(--azul); stroke-width:1; fill:none; }
+    .mc svg .nota .im-et { font:700 7px 'Space Mono',monospace; fill:#6B6156; stroke-width:0; }
+    .mc svg .nota .im-at { stroke-width:0; }
+    .mc svg .nota .e-baj { fill:var(--azul); stroke:#F7F3EB; stroke-width:1; }
+    .mc svg .nota .espin-arr { fill:none; stroke:var(--rojo); stroke-width:1.1; stroke-linecap:round; }
+    .mc svg .nota .espin-abj { fill:none; stroke:var(--azul); stroke-width:1.1; stroke-linecap:round; }
+    @keyframes im-corre { to { stroke-dashoffset:-13; } }
     .mc svg .cobre .tp { fill:#B4644A; } .mc svg .cobre .fr { fill:#8F4634; } .mc svg .cobre .sd { fill:#6E3426; }
     .mc svg .espira { stroke:#3A1A12; stroke-width:.5; opacity:.55; }
     .mc svg .cable { stroke:var(--tinta); stroke-width:.8; fill:none; }

@@ -59,13 +59,9 @@
     L.forEach(function (k) {
       var p = POS[k];
       var g = el('g', { 'class': 'tm-nodo-g caso-nodo visitado' + (k === s ? ' es-s' : '') }, svg);
-      el('circle', { 'class': 'tm-nodo', cx: p[0], cy: p[1], r: R }, g);
-      // miniatura del lugar, recortada al círculo
-      var cid = 'ro-clip-' + k;
-      el('circle', { cx: p[0], cy: p[1], r: R - 1.6 }, el('clipPath', { id: cid }, defs));
-      var ic = el('g', { 'class': 'ro-icono', 'clip-path': 'url(#' + cid + ')' }, g);
+      // solo la miniatura animada del lugar, sin círculo
+      var ic = el('g', { 'class': 'ro-icono' }, g);
       if (window.RO_ICONOS) window.RO_ICONOS(k, el('g', { transform: 'translate(' + p[0] + ' ' + (p[1] + 3.5) + ') scale(1.2)' }, ic));
-      el('circle', { 'class': 'tm-nodo-borde', cx: p[0], cy: p[1], r: R }, g);
       var e = ETIQ[k];
       var nm = el('text', { 'class': 'caso-nombre', x: p[0] + e[0], y: p[1] + e[1], 'text-anchor': e[2] }, g);
       var xi = el('tspan', { 'class': 'caso-nombre-x' }, nm); xi.textContent = 'x';

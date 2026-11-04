@@ -39,6 +39,42 @@
     el('ellipse', { 'class': 'tp', cx: f(b[0]), cy: f(b[1]), rx: f(rx), ry: f(ry) }, q);
     return q;
   }
+  // texto justificado sin cortar palabras: se arma por párrafos y se recompone al ancho real de la
+  // caja midiendo cada palabra (con la fuente ya cargada); el último renglón de cada párrafo va a
+  // la izquierda. Las viñetas "·" llevan sangría francesa; un renglón que empieza con dos espacios
+  // continúa la viñeta anterior.
+  function parrafos(lineas) {
+    var o = [], enVineta = false;
+    lineas.forEach(function (l) {
+      var t = l.trim(), sigue = o.length && t.charAt(0) !== '·' && (!enVineta || /^\s\s/.test(l));
+      if (sigue) o[o.length - 1].texto += ' ' + t; else { enVineta = t.charAt(0) === '·'; o.push({ texto: enVineta ? t.replace(/^·\s*/, '') : t, vineta: enVineta }); }
+    });
+    return o;
+  }
+  function maquetar(d, pars, x, ancho, alto) {
+    while (d.firstChild) d.removeChild(d.firstChild);
+    var sonda = el('tspan', {}, d);
+    function mide(t) { sonda.textContent = t; return sonda.getComputedTextLength(); }
+    var esp = mide('a a') - mide('aa'), sang = mide('·') + esp, n = 0;
+    pars.forEach(function (p) {
+      var pal = p.texto.split(/ +/), w = pal.map(mide), ind = p.vineta ? sang : 0, ren = [], cur = [], largo = 0;
+      pal.forEach(function (q, k) {
+        var nuevo = cur.length ? largo + esp + w[k] : w[k];
+        if (cur.length && nuevo > ancho - ind) { ren.push({ p: cur, l: largo }); cur = [q]; largo = w[k]; } else { cur.push(q); largo = nuevo; }
+      });
+      ren.push({ p: cur, l: largo, fin: true });
+      ren.forEach(function (r, k) {
+        if (p.vineta && k === 0) { var b = el('tspan', { x: f(x), dy: n ? alto : 0 }, d); b.textContent = '·'; }
+        var sp = el('tspan', { x: f(x + ind) }, d);
+        if (!(p.vineta && k === 0)) sp.setAttribute('dy', n ? alto : 0);
+        sp.textContent = r.p.join(' ');
+        if (!r.fin && r.p.length > 1) sp.setAttribute('word-spacing', f((ancho - ind - r.l) / (r.p.length - 1)));
+        n++;
+      });
+    });
+    d.removeChild(sonda);
+    return n;
+  }
   function tornillo(g, p) { el('circle', { 'class': 'tornillo', cx: f(p[0]), cy: f(p[1]), r: 2.2 }, g); linea(g, [p[0] - 1.4, p[1] - .6], [p[0] + 1.4, p[1] + .6], 'ranura'); }
   // regla grabada a lo largo del borde frontal (y = y0) de una losa, en la cara frontal
   function regla(g, P, x0, x1, y0, z, paso, cada) {
@@ -155,18 +191,38 @@
     cilindro(h0, P, s, -71, 0, 27, 10, 2.4, 'lo');
     cilindro(h0, P, s, -71, 0, 29.4, 3, 3, 'mid');
     // boquilla: tubo corto sobre el eje del haz, con el orificio de salida
-    function boquilla(q) {
-      var R1 = 1.9, X0 = -62.2, X1 = -57.5, n = [-.5, .866];
-      function aro(x, r) { var o = []; for (var k = 0; k < 24; k++) { var t = k / 24 * Math.PI * 2; o.push(P(x, r * Math.cos(t), ZB + r * Math.sin(t))); } return o; }
-      var a0 = aro(X0, R1), a1 = aro(X1, R1), dmax = -1e9, dmin = 1e9, imx = 0, imn = 0;
-      a0.forEach(function (c, k) { var d = c[0] * n[0] + c[1] * n[1]; if (d > dmax) { dmax = d; imx = k; } if (d < dmin) { dmin = d; imn = k; } });
-      var cuerpo = el('g', { 'class': 's lo' }, q);
-      poly(cuerpo, [a0[imx], a1[imx], a1[imn], a0[imn]], 'fr');
-      poly(cuerpo, a1, 'sd');
-      poly(q, aro(X1, .8), 'hueco');
-      var b = P(X1, 0, ZB); el('circle', { 'class': 'brasa', cx: f(b[0]), cy: f(b[1]), r: 2.2 }, q);
+    function boquilla(q, cortada) {
+      // tubo horizontal sobre el eje del haz (eje x). El aro vive en el plano y-z; desde la cámara
+      // se ven la tapa de salida (+x) y el manto con t ∈ (−45°, 135°). Cortada: se quita la mitad
+      // y > 0 (el mismo cuadrante que el horno) y queda a la vista la sección en el plano y = 0.
+      function aro(x, r, t0, t1, n) { var o = []; for (var k = 0; k <= n; k++) { var t = (t0 + (t1 - t0) * k / n) * Math.PI / 180; o.push(P(x, r * Math.cos(t), ZB + r * Math.sin(t))); } return o; }
+      function tubo(xa, xb, r, ri, tono, sombra) {
+        var c = el('g', { 'class': 's ' + tono }, q);
+        if (!cortada) {
+          poly(c, aro(xa, r, 0, 360, 36), 'sd');                                   // fondo (solo asoma su borde)
+          poly(c, aro(xa, r, -45, 135, 24).concat(aro(xb, r, 135, -45, 24)), 'fr'); // manto visible
+          if (sombra) poly(c, aro(xa, r, -45, 15, 10).concat(aro(xb, r, 15, -45, 10)), 'cil-sombra');
+          linea(c, aro(xa + .3, r, 100, 100, 1)[0], aro(xb - .3, r, 100, 100, 1)[0], 'brillo-cil');
+          poly(c, aro(xb, r, 0, 360, 36), 'sd');                                   // tapa que mira a +x
+          return c;
+        }
+        poly(c, aro(xa, r, 90, 135, 6).concat(aro(xb, r, 135, 90, 6)), 'fr');      // franja superior de la mitad trasera
+        poly(c, aro(xb, r, 90, 270, 18).concat(aro(xb, ri, 270, 90, 18)), 'sd');   // media corona de la tapa
+        [[ri, r], [-r, -ri]].forEach(function (b) {                                // sección de la pared (arriba y abajo)
+          poly(q, [P(xa, 0, ZB + b[0]), P(xb, 0, ZB + b[0]), P(xb, 0, ZB + b[1]), P(xa, 0, ZB + b[1])], 'hc hc-acero hc-A');
+        });
+        poly(q, [P(xa, 0, ZB - ri), P(xb, 0, ZB - ri), P(xb, 0, ZB + ri), P(xa, 0, ZB + ri)], 'hc-canal');   // el canal sigue
+        return c;
+      }
+      var XF = -62.4, XB0 = -61.8, X1 = -57.4, RI = .8;
+      tubo(XF, XB0, 2.9, RI, 'mid', false);                                      // brida contra la carcasa
+      [20, 140, 260].forEach(function (t) { if (cortada && (t < 90 || t > 270)) return; var p0 = aro(XB0, 2.4, t, t, 1)[0]; el('circle', { 'class': 'tornillo-m', cx: f(p0[0]), cy: f(p0[1]), r: .9 }, q); });
+      tubo(XB0, X1, 1.8, RI, 'lo', true);                                        // cuerpo de la boquilla
+      tubo(X1, X1 + .5, 1.5, RI, 'mid', false);                                  // labio de salida
+      if (!cortada) poly(q, aro(X1 + .5, RI, 0, 360, 24), 'hueco');              // orificio
+      var b = P(X1 + .5, 0, ZB); el('circle', { 'class': 'brasa', cx: f(b[0]), cy: f(b[1]), r: 1.6 }, q);
     }
-    boquilla(h0);
+    boquilla(el('g', { 'class': 'boq-entera' }, h0));
     var rotAg = P(-71, 9, 15); var tAg = el('text', { 'class': 'grabado grande ag-rot', x: f(rotAg[0]), y: f(rotAg[1]) }, h0); tAg.textContent = 'Ag';
     // corte del horno (solo al tocarlo): se quita el cuadrante que mira al lector (x>0, y>0) y quedan
     // a la vista dos caras de corte con las capas reales —carcasa de acero, aislante, resistencia,
@@ -213,9 +269,9 @@
     // orificio de efusión: atraviesa crisol, aislante y carcasa hacia la boquilla (cara A, z = ZB)
     poly(hint, [Q(RC, 0, ZB - .8), Q(9, 0, ZB - .8), Q(9, 0, ZB + .8), Q(RC, 0, ZB + .8)], 'hc-canal');
     var ori = Q(RC, 0, ZB); el('circle', { 'class': 'hc-orificio', cx: f(ori[0]), cy: f(ori[1]), r: 3.2 }, hint);
+    boquilla(hint, true);
     var salen = el('g', {}, hint);
     var c0 = Q(RC, 0, ZB), c1 = Q(24, 0, ZB); el('path', { 'class': 'hc-chorro', d: 'M' + f(c0[0]) + ' ' + f(c0[1]) + ' L' + f(c1[0]) + ' ' + f(c1[1]) }, salen);   // eje del chorro
-    boquilla(hint);
     // átomos del vapor: componentes gaussianas (Maxwell), rebotan en la pared y en las caras de corte
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var VT = 7;
@@ -235,7 +291,7 @@
           a.x += a.vx * dt; a.y += a.vy * dt; a.z += a.vz * dt;
           var r = Math.hypot(a.x, a.y);
           if (r > RC - .4) {                                     // pared: si da con el orificio, sale
-            if (a.x > 0 && Math.abs(a.y) < 2.4 && Math.abs(a.z - ZB) < 2.6) { a.sale = 0; a.y = 0; a.z = ZB; a.el.setAttribute('class', 'hc-atomo hc-sale'); a.est = el('line', { 'class': 'hc-estela' }, salen); salen.appendChild(a.el); }
+            if (a.x > 0 && Math.abs(a.y) < 2.4 && Math.abs(a.z - ZB) < 2.6) { a.sale = 0; a.y = 0; a.z = ZB; a.el.setAttribute('class', 'hc-atomo hc-sale'); var qi = Q(RC, 0, ZB); a.est = el('line', { 'class': 'hc-estela', x1: f(qi[0]), y1: f(qi[1]), x2: f(qi[0]), y2: f(qi[1]) }, salen); salen.appendChild(a.el); }
             else { var nx = a.x / r, ny = a.y / r, vn = a.vx * nx + a.vy * ny; a.vx -= 2 * vn * nx; a.vy -= 2 * vn * ny; a.x = nx * (RC - .4); a.y = ny * (RC - .4); }
           }
           if (a.sale < 0 && a.x > 0 && a.y > 0) { if (a.x < a.y) { a.x = 0; a.vx = -Math.abs(a.vx); } else { a.y = 0; a.vy = -Math.abs(a.vy); } }   // caras de corte
@@ -473,13 +529,15 @@
       el('tspan', { 'class': 'conf-val' }, t2).textContent = ' 5s';
       el('tspan', { 'class': 'conf-val sup', 'baseline-shift': 'super' }, t2).textContent = '1';
       // segunda señal, enganchada al átomo: cómo salen los átomos del horno
-      var sx = x0 + 352, sy = y0 - 10, lineasS = ['Nada los acelera. En el vapor a', '1300 K cada átomo ya trae su', 'velocidad térmica (Maxwell,', '≈ 500 m/s). Los que por azar', 'llegan al orificio escapan en', 'línea recta: es efusión.'];
+      var sx = x0 + 352, sy = y0 - 10, lineasS = ['Nada los acelera. En el vapor a', '1300\u00a0K cada átomo ya trae su', 'velocidad térmica (Maxwell,', '≈\u00a0500\u00a0m/s). Los que por azar', 'llegan al orificio escapan en', 'línea recta: es efusión.'];
       el('line', { 'class': 'enlace', x1: f(x0 + 312), y1: f(y0 + 46), x2: f(sx), y2: f(y0 + 46) }, q);
       el('circle', { 'class': 'enlace-p', cx: f(x0 + 312), cy: f(y0 + 46), r: 1.8 }, q); el('circle', { 'class': 'enlace-p', cx: f(sx), cy: f(y0 + 46), r: 1.8 }, q);
-      el('rect', { 'class': 'nota-fondo nota-fondo-2', x: f(sx), y: f(sy - 11), width: 236, height: 32 + lineasS.length * 17, rx: 2 }, q);
+      var fondoS = el('rect', { 'class': 'nota-fondo nota-fondo-2', x: f(sx), y: f(sy - 11), width: 256, height: 37 + lineasS.length * 17, rx: 2 }, q);
       var st = el('text', { 'class': 'nota-t', x: f(sx + 10), y: f(sy + 3) }, q); st.textContent = 'Cómo salen';
-      var sd = el('text', { 'class': 'nota-d', x: f(sx + 10), y: f(sy + 21) }, q);
+      var sd = el('text', { 'class': 'nota-d', x: f(sx + 10), y: f(sy + 26) }, q);
       lineasS.forEach(function (l, k) { var sp = el('tspan', { x: f(sx + 10), dy: k ? 17 : 0 }, sd); sp.textContent = l; });
+      sd.setAttribute('class', 'nota-d nota-d2'); sd.pars = parrafos(lineasS); sd.x0 = sx + 10; sd.ancho = 236; sd.fondo = fondoS;
+      linea(q, [sx + 10, sy + 8.5], [sx + 246, sy + 8.5], 'nota-regla');
     }
     var capaNotas = el('g', { 'class': 'notas' }, g);
     function nota(piezas, ancla, titulo, lineas, cima, foco, op) {
@@ -492,14 +550,16 @@
       el('path', { d: 'M' + f(a[0]) + ' ' + f(a[1] - 4) + ' L' + f(a[0]) + ' ' + f(top) + ' L' + f(a[0] + dx) + ' ' + f(top), pathLength: 1 }, n);
       var ancho = Math.max(op ? op.ancho : 0, Math.max.apply(null, lineas.map(function (l) { return l.length; })) * 6.6 + 22);
       var bx = izq ? a[0] + dx - ancho : a[0] + dx, tx = bx + 10, anc = 'start';
-      el('rect', { 'class': 'nota-fondo', x: f(bx), y: f(top - 11), width: f(ancho), height: 22 + lineas.length * 17 + extra, rx: 2 }, n);
+      var fondo = el('rect', { 'class': 'nota-fondo', x: f(bx), y: f(top - 11), width: f(ancho), height: 27 + lineas.length * 17 + extra, rx: 2 }, n);
       if (op) op.dibujo(el('g', { 'class': 'nota-dib' }, n), bx, top + 10);
       var t = el('text', { 'class': 'nota-t', x: f(tx), y: f(top + 3), 'text-anchor': anc }, n); t.textContent = titulo;
-      var d = el('text', { 'class': 'nota-d', x: f(tx), y: f(top + 19 + extra), 'text-anchor': anc }, n);
-      lineas.forEach(function (l, k) { var sp = el('tspan', { x: f(tx), dy: k ? 17 : 0 }, d); sp.textContent = l; });
+      var d = el('text', { 'class': 'nota-d', x: f(tx), y: f(top + 24 + extra), 'text-anchor': anc }, n);
+      var pars = parrafos(lineas), listo = false;
+      lineas.forEach(function (l, k) { var sp = el('tspan', { x: f(tx), dy: k ? 17 : 0 }, d); sp.textContent = l.trim(); });
+      linea(n, [tx, top + 8.5], [bx + ancho - 10, top + 8.5], 'nota-regla');
       piezas.forEach(function (q) {
         q.classList.add('con-nota');
-        q.addEventListener('pointerenter', function () { n.classList.add('ver'); foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on'); });
+        q.addEventListener('pointerenter', function () { if (!listo) { listo = true; var nl = maquetar(d, pars, tx, ancho - 20, 17); fondo.setAttribute('height', f(27 + nl * 17 + extra)); n.querySelectorAll('.nota-d2').forEach(function (t) { var m = maquetar(t, t.pars, t.x0, t.ancho, 17); t.fondo.setAttribute('height', f(37 + m * 17)); }); } n.classList.add('ver'); foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on'); });
         q.addEventListener('pointerleave', function () { n.classList.remove('ver'); foco.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on'); });
       });
     }

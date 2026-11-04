@@ -12,8 +12,8 @@
     d.body.appendChild(portal);
     requestAnimationFrame(function () {
       portal.classList.add('fx-linea');
-      setTimeout(function () { portal.classList.add('fx-abre'); }, 260);
-      setTimeout(function () { portal.classList.add('fx-fin'); }, 1300);
+      setTimeout(function () { portal.classList.add('fx-abre'); }, 140);
+      setTimeout(function () { portal.classList.add('fx-fin'); }, 720);
     });
     d.addEventListener('click', function (ev) {
       var a = ev.target.closest && ev.target.closest('a[href]');
@@ -23,9 +23,9 @@
       var u = new URL(a.href, location.href);
       if (u.origin !== location.origin || (u.pathname === location.pathname && u.hash)) return;
       ev.preventDefault();
-      portal.className = 'fx-portal fx-linea fx-abre';
+      portal.className = 'fx-portal fx-abre';
       requestAnimationFrame(function () { requestAnimationFrame(function () { portal.className = 'fx-portal fx-linea fx-cierra'; }); });
-      setTimeout(function () { location.href = a.href; }, 480);
+      setTimeout(function () { location.href = a.href; }, 330);
     });
     // al volver con "atrás" desde la caché, el portal no debe quedar cerrado
     window.addEventListener('pageshow', function (e) { if (e.persisted) portal.className = 'fx-portal fx-fin'; });

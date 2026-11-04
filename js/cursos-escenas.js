@@ -345,7 +345,7 @@
 
   // ═════════ II · Mecánica cuántica: Stern–Gerlach ═════════
   function escenaSternGerlach(svg, salida) {
-    var s = 4.7, P = camara(920, 455, s, 38), g = el('g', {}, svg), ZB = 16, orden = 0;
+    var s = 4.7, P = camara(920, 462, s, 38), g = el('g', {}, svg), ZB = 16, orden = 0;
     // cada pieza entra desde abajo (+) o desde arriba (−) cada vez que se muestra la escena
     function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;--d:' + (120 + orden++ * 45) + 'ms' }, g); }
     function arrollamiento(q, x0, x1, y, z0, z1, n) { for (var k = 1; k < n; k++) { var z = z0 + (z1 - z0) * k / n; linea(q, P(x0, y, z), P(x1, y, z), 'espira'); } }

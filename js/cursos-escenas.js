@@ -172,20 +172,20 @@
     '  float g = sqrt(1.0 - 3.0 / r) / (1.0 - b * dot(t, -vd));',          // corrimiento gravitacional + Doppler
     '  float aa = 1.3 * uPix / max(abs(vd.y), .12);',                              // ancho de un píxel sobre el plano del disco
     '  float sp = .42, k = floor(r / sp), h = hash(vec3(k, 1.7, 4.2)), h2 = hash(vec3(k, 9.1, 2.3));',
-    '  float d = abs(fract(r / sp) - .5) * sp, wl = .012 + .016 * h;',
+    '  float d = abs(fract(r / sp) - .5) * sp, wl = .007 + .007 * h;',
     '  float linea = 1.0 - smoothstep(wl, wl + aa, d);',
     '  float dI = abs(r - 6.05), isco = 1.0 - smoothstep(.02, .02 + aa, dI);',   // borde interior (ISCO) a tinta firme
-    '  float rr = (k + .5) * sp, om = 2.4 * pow(6.0 / rr, 1.5) * (.85 + .3 * h2);',
-    '  float ph = atan(p.z, p.x), n = 1.0 + floor(h * 3.0), cola = .18 + .3 * h;',
+    '  float rr = (k + .5) * sp, om = 5.6 * pow(6.0 / rr, 1.5) * (.85 + .3 * h2);',
+    '  float ph = atan(p.z, p.x), n = 2.0 + floor(h * 4.0), cola = .1 + .2 * h;',
     '  float s = fract((ph - om * uT) / 6.2831853 * n + h2);',
-    '  float st = s > 1.0 - cola ? pow((s - 1.0 + cola) / cola, 2.4) : 0.0;',   // cabeza nítida y cola que se apaga
+    '  float st = smoothstep(1.0 - cola, 1.0 - cola + .012, s) * (1.0 - smoothstep(.988, 1.0, s));',   // pedazos de trazo de brillo parejo
     '  float T = pow(r, -.75) * pow(max(1.0 - sqrt(6.0 / r), 0.0), .25) / .1274;',
     '  float D = clamp(pow(g, 3.0), .25, 3.2);',
     '  float fade = smoothstep(5.9, 6.2, r) * (1.0 - smoothstep(13.5, 17.0, r));',
-    '  vec3 mostaza = vec3(.84, .62, .12), claro = vec3(1.0, .9, .52);',
-    '  vec3 col = mix(mostaza, claro, clamp(st * D * .7, 0.0, 1.0)) * (.55 + .5 * T) * D * (.9 + 1.4 * st);',
-    '  float a = max(linea * fade * (.28 + .72 * st), isco * .9);',
-    '  return vec4(col + isco * vec3(1.0, .9, .6), clamp(a, 0.0, 1.0)); }',
+    '  vec3 amarillo = vec3(1.0, .80, .10), claro = vec3(1.0, .93, .55);',
+    '  vec3 col = mix(amarillo, claro, .15 + .5 * st) * (.6 + .25 * T) * clamp(D, .6, 1.4) * (.55 + 1.15 * st);',
+    '  float a = max(linea * fade * (.1 + .9 * st), isco * .9);',
+    '  return vec4(col + isco * vec3(1.0, .9, .45), clamp(a, 0.0, 1.0)); }',
     // la sombra como esfera de tinta: luz arriba a la izquierda, reflejo de ventana, brillo, rebote violeta y sombreado a líneas
     'vec3 esfera(vec2 b) {',
     '  vec2 u = b / 5.196; float q = dot(u, u), au = uPix / 5.196; vec3 nn = vec3(u, sqrt(max(1.0 - q, 0.0)));',

@@ -1374,6 +1374,19 @@
     }
     .pagina-flecha svg { display: block; }
     .pagina-flecha:hover { transform: translateX(5px); }
+
+    /* Otros cursos, debajo del cuaderno */
+    .mas-cursos { max-width:860px; margin:0 auto; padding:28px 24px 80px; }
+    .mas-cursos-titulo { font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--granate); margin-bottom:10px; }
+    .mas-cursos-lista { list-style:none; margin:0; padding:0; border-top:0.5px solid rgba(110,26,34,.25); }
+    .mas-cursos-lista a { display:flex; align-items:baseline; gap:18px; padding:20px 4px; border-bottom:0.5px solid rgba(110,26,34,.25); text-decoration:none; color:#2A211C; transition:padding .35s cubic-bezier(0.16,1,0.3,1), color .25s ease; }
+    .mc-nombre { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:600; flex:1; }
+    .mc-nombre em { color:var(--granate); font-weight:500; }
+    .mc-meta { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.14em; color:#7A6E66; }
+    .mc-flecha { font-size:20px; color:#5B3FC4; transition:transform .35s cubic-bezier(0.16,1,0.3,1); }
+    .mas-cursos-lista a:hover, .mas-cursos-lista a:focus-visible { padding-left:14px; outline:none; }
+    .mas-cursos-lista a:hover .mc-flecha, .mas-cursos-lista a:focus-visible .mc-flecha { transform:translateX(6px); }
+    @media (max-width:640px) { .mc-nombre { font-size:22px; } .mc-meta { display:none; } }
   </style>
 </head>
 <body>
@@ -1452,6 +1465,13 @@
 
     </div>
     </div>
+  </section>
+
+  <section class="mas-cursos" aria-labelledby="mas-cursos-titulo">
+    <h2 class="mas-cursos-titulo" id="mas-cursos-titulo">Otros cursos</h2>
+    <ul class="mas-cursos-lista">
+      <li><a href="relatividad.html"><span class="mc-nombre">Teoría General de la <em>Relatividad</em></span><span class="mc-meta">UNMSM · 2025</span><span class="mc-flecha" aria-hidden="true">→</span></a></li>
+    </ul>
   </section>
 
 

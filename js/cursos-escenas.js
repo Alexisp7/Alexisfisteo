@@ -163,32 +163,43 @@
   // debajo de la sombra (lente gravitacional) y el brillo Doppler del lado que se acerca.
   var GLSL_AGUJERO = [
     'precision highp float;',
-    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl;',
+    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix;',
     'float hash(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
-    'float ruido(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);',
-    '  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
-    '             mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x), mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z); }',
-    'float fbm(vec3 p) { float a = .5, s = 0.0; for (int i = 0; i < 5; i++) { s += a * ruido(p); p = p * 2.03 + 7.1; a *= .5; } return s; }',
-    'float remolino(float r, float ph, float tau) { float a = ph - pow(r, -1.5) * tau * 2.2; return fbm(vec3(cos(a) * 2.2, sin(a) * 2.2, log(r) * 9.0)); }',
-    'vec3 rampa(float x) {',            // tinta → ámbar → oro → marfil → blanco
-    '  vec3 c0 = vec3(.08,.02,.005), c1 = vec3(.50,.17,.02), c2 = vec3(1.0,.52,.10), c3 = vec3(1.0,.78,.36), c4 = vec3(1.0,.95,.78);',
-    '  x = clamp(x, 0.0, 1.0); if (x < .25) return mix(c0, c1, x / .25); if (x < .5) return mix(c1, c2, (x - .25) / .25); if (x < .78) return mix(c2, c3, (x - .5) / .28); return mix(c3, c4, (x - .78) / .22); }',
+    // disco dibujado: cada órbita es una línea fina; por ella corren trazos a la velocidad kepleriana
     'vec4 disco(vec3 p, vec3 v) {',
-    '  float r = length(p.xz); if (r < 6.0 || r > 17.0) return vec4(0.0);',
-    '  float T = pow(r, -.75) * pow(max(1.0 - sqrt(6.0 / r), 0.0), .25) / .1274;',   // Shakura–Sunyaev, máximo en r ≈ 8,2
-    '  float b = sqrt(1.0 / (r - 2.0)); vec3 t = normalize(vec3(-p.z, 0.0, p.x));',  // velocidad orbital local
-    '  float mu = dot(t, -normalize(v)); float g = sqrt(1.0 - 3.0 / r) / (1.0 - b * mu);',   // corrimiento gravitacional + Doppler
-    '  float P = 9.0, t1 = mod(uT, P), t2 = mod(uT + P * .5, P), w = abs(t1 / P * 2.0 - 1.0), ph = atan(p.z, p.x);',
-    '  float n = mix(remolino(r, ph, t1), remolino(r, ph + 1.7, t2), 1.0 - w);',
-    '  float hilos = .45 + 1.0 * n * n;',
-    '  float I = T * pow(g, 3.0) * hilos;',
-    '  float borde = smoothstep(6.0, 6.5, r) * (1.0 - smoothstep(10.5, 17.0, r));',
-    '  vec3 col = rampa(.12 + .6 * T * g + .3 * (n - .5)) * I * 1.5;',
-    '  return vec4(col, clamp(borde * (.45 + .6 * n), 0.0, 1.0)); }',
-    'vec3 cielo(vec3 d) {',
-    '  vec2 s = vec2(atan(d.z, d.x), asin(clamp(d.y, -1.0, 1.0))) * 70.0; vec2 c = floor(s), f = fract(s) - .5;',
-    '  float h = hash(vec3(c, 3.0)), e = 0.0; if (h > .985) e = smoothstep(.22, 0.0, length(f)) * (h - .985) * 60.0;',
-    '  return vec3(.75, .72, .9) * e + vec3(.035, .018, .03); }',
+    '  float r = length(p.xz); if (r < 5.9 || r > 17.0) return vec4(0.0);',
+    '  float b = sqrt(1.0 / (r - 2.0)); vec3 t = normalize(vec3(-p.z, 0.0, p.x)); vec3 vd = normalize(v);',
+    '  float g = sqrt(1.0 - 3.0 / r) / (1.0 - b * dot(t, -vd));',          // corrimiento gravitacional + Doppler
+    '  float aa = 1.3 * uPix / max(abs(vd.y), .12);',                              // ancho de un píxel sobre el plano del disco
+    '  float sp = .42, k = floor(r / sp), h = hash(vec3(k, 1.7, 4.2)), h2 = hash(vec3(k, 9.1, 2.3));',
+    '  float d = abs(fract(r / sp) - .5) * sp, wl = .012 + .016 * h;',
+    '  float linea = 1.0 - smoothstep(wl, wl + aa, d);',
+    '  float dI = abs(r - 6.05), isco = 1.0 - smoothstep(.02, .02 + aa, dI);',   // borde interior (ISCO) a tinta firme
+    '  float rr = (k + .5) * sp, om = 2.4 * pow(6.0 / rr, 1.5) * (.85 + .3 * h2);',
+    '  float ph = atan(p.z, p.x), n = 1.0 + floor(h * 3.0), cola = .18 + .3 * h;',
+    '  float s = fract((ph - om * uT) / 6.2831853 * n + h2);',
+    '  float st = s > 1.0 - cola ? pow((s - 1.0 + cola) / cola, 2.4) : 0.0;',   // cabeza nítida y cola que se apaga
+    '  float T = pow(r, -.75) * pow(max(1.0 - sqrt(6.0 / r), 0.0), .25) / .1274;',
+    '  float D = clamp(pow(g, 3.0), .25, 3.2);',
+    '  float fade = smoothstep(5.9, 6.2, r) * (1.0 - smoothstep(13.5, 17.0, r));',
+    '  vec3 mostaza = vec3(.84, .62, .12), claro = vec3(1.0, .9, .52);',
+    '  vec3 col = mix(mostaza, claro, clamp(st * D * .7, 0.0, 1.0)) * (.55 + .5 * T) * D * (.9 + 1.4 * st);',
+    '  float a = max(linea * fade * (.28 + .72 * st), isco * .9);',
+    '  return vec4(col + isco * vec3(1.0, .9, .6), clamp(a, 0.0, 1.0)); }',
+    // la sombra como esfera de tinta: luz arriba a la izquierda, reflejo de ventana, brillo, rebote violeta y sombreado a líneas
+    'vec3 esfera(vec2 b) {',
+    '  vec2 u = b / 5.196; float q = dot(u, u), au = uPix / 5.196; vec3 nn = vec3(u, sqrt(max(1.0 - q, 0.0)));',
+    '  vec3 L = normalize(vec3(-.55, .62, .58)); float dif = max(dot(nn, L), 0.0);',
+    '  vec3 col = vec3(.010, .007, .012) + vec3(.055, .04, .065) * pow(dif, 1.6);',
+    '  col += vec3(.95, .9, 1.0) * pow(max(dot(reflect(-L, nn), vec3(0.0, 0.0, 1.0)), 0.0), 70.0) * .55;',
+    '  vec2 w = u - vec2(-.38, .44); w = vec2(.8 * w.x + .6 * w.y, -.6 * w.x + .8 * w.y);',
+    '  float e = length(w / vec2(.21, .085)); col += vec3(.75, .7, .85) * (1.0 - smoothstep(1.0 - au * 9.0, 1.0, e)) * .16;',
+    '  vec2 w2 = u - vec2(-.2, .6); float e2 = length(w2 / vec2(.06, .03)); col += vec3(.8, .75, .9) * (1.0 - smoothstep(1.0 - au * 25.0, 1.0, e2)) * .12;',
+    '  float ru = sqrt(q), rim = smoothstep(.8, .99, ru) * max(dot(normalize(u + 1e-5), normalize(vec2(.65, -.55))), 0.0);',
+    '  col += vec3(.5, .38, .9) * rim * .18;',
+    '  float hl = abs(fract((u.x + u.y) * 16.0) - .5) / 16.0;',              // sombreado a líneas en el lado oscuro
+    '  col += vec3(.42, .34, .62) * (1.0 - smoothstep(.0035, .0035 + au, hl)) * (1.0 - smoothstep(.05, .45, dif)) * smoothstep(.97, .85, ru) * .18;',
+    '  return col; }',
     'void main() {',
     '  vec2 q = vec2(gl_FragCoord.x / uRes.x, 1.0 - gl_FragCoord.y / uRes.y);',
     '  vec2 d = (uVB.xy + q * uVB.zw - uC) / uSC; float cr = cos(uRoll), sr = sin(uRoll);',
@@ -198,11 +209,11 @@
     '  vec3 cam = vec3(0.0, ci, -si) * 40.0, fw = -normalize(cam), up = vec3(0.0, si, ci), rt = vec3(-1.0, 0.0, 0.0);',
     '  vec3 p = cam + rt * bx + up * by, v = fw;',
     '  float h2 = dot(cross(p, v), cross(p, v));',
-    '  vec3 acc = vec3(0.0); float al = 0.0; bool cae = false, fuera = false;',
+    '  vec3 acc = vec3(0.0); float al = 0.0; bool cae = false;',
     '  for (int i = 0; i < 260; i++) {',
     '    float r = length(p);',
     '    if (r < 2.02) { cae = true; break; }',
-    '    if (r > 48.0 && dot(p, v) > 0.0) { fuera = true; break; }',
+    '    if (r > 48.0 && dot(p, v) > 0.0) break;',
     '    float dt = clamp(.07 * r - .08, .025, 1.1);',
     '    vec3 a = -3.0 * h2 * p / pow(r, 5.0);',
     '    vec3 vm = v + a * dt * .5, pn = p + vm * dt; float rn = length(pn);',
@@ -211,10 +222,11 @@
     '      acc += (1.0 - al) * c.rgb * c.a; al += (1.0 - al) * c.a; if (al > .98) break; }',
     '    p = pn; v = vn;',
     '  }',
-    '  vec3 fondo = cae ? vec3(0.0) : cielo(normalize(v));',
+    '  float rb = length(vec2(bx, by));',
+    '  vec3 fondo = cae ? esfera(vec2(bx, by)) : vec3(.030, .016, .026) * (1.0 - .45 * smoothstep(8.0, 30.0, rb));',
     '  vec3 col = acc + (1.0 - al) * fondo;',
-    '  col = 1.0 - exp(-col * 1.15);',
-    '  gl_FragColor = vec4(pow(col, vec3(.92)), 1.0); }'
+    '  col = 1.0 - exp(-col * 1.6);',
+    '  gl_FragColor = vec4(col, 1.0); }'
   ].join('\n');
 
   function escenaRelatividad(svg, salida) {
@@ -237,7 +249,7 @@
       var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); gl.useProgram(pr);
       var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
       var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
-      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
       listo = gl.getProgramParameter(pr, gl.LINK_STATUS);
     }
     if (!listo) fig.classList.add('bn-sin-gl');
@@ -250,19 +262,35 @@
       var vb = svg.viewBox.baseVal;
       gl.viewport(0, 0, W, H);
       gl.uniform2f(U.uRes, W, H); gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C[0], C[1]);
-      gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL);
+      gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL); gl.uniform1f(U.uPix, vb.width / W / SC);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
-    var calidad = .62, previo = 0, lentos = 0;
+    var calidad = 1, previo = 0, lentos = 0;
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
       if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
-      if (previo) { var d = t - previo; lentos = d > 34 ? lentos + 1 : Math.max(0, lentos - 1); if (lentos > 20 && calidad > .3) { calidad *= .82; lentos = 0; } }
+      if (previo) { var d = t - previo; lentos = d > 34 ? lentos + 1 : Math.max(0, lentos - 1); if (lentos > 20 && calidad > .42) { calidad *= .85; lentos = 0; } }
       previo = t; pintar();
     })(0);
     fig.bnPintar = function (q) { calidad = q; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
+    // ── estrellas dibujadas a pluma: puntos, cruces de cuatro puntas y alguna con aro; titilan despacio
+    var cielo = el('g', { 'class': 'bn-cielo' }, svg), semilla = 7;
+    function azar() { semilla = (semilla * 16807) % 2147483647; return semilla / 2147483647; }
+    for (var si = 0, puestas = 0; si < 900 && puestas < 130; si++) {
+      var sx = 180 + azar() * 1700, sy = -120 + azar() * 1140, ex = (sx - C[0]) / SC, ey = (sy - C[1]) / SC;
+      var ux = Math.cos(ROLL) * ex + Math.sin(ROLL) * ey, uy = -Math.sin(ROLL) * ex + Math.cos(ROLL) * ey;
+      if ((sx > 980 && sy > 700) || (sy < 80 && sx > 450 && sx < 1000) || (ux / 19) * (ux / 19) + (uy / 8.5) * (uy / 8.5) < 1 || ux * ux + uy * uy < 100) continue;
+      puestas++;
+      var tipo = azar(), tono = azar() < .18 ? ' bn-est-oro' : azar() < .15 ? ' bn-est-vio' : '';
+      var est = el('g', { 'class': 'bn-est' + tono, style: 'animation-delay:' + f(-azar() * 6) + 's;animation-duration:' + f(3 + azar() * 4) + 's' }, cielo);
+      if (tipo < .72) { el('circle', { cx: f(sx), cy: f(sy), r: f(.45 + azar() * .7) }, est); continue; }
+      var L = 2.5 + azar() * 4.5;
+      el('circle', { cx: f(sx), cy: f(sy), r: .9 }, est);
+      el('path', { d: 'M' + f(sx - L) + ' ' + f(sy) + 'H' + f(sx + L) + 'M' + f(sx) + ' ' + f(sy - L * 1.3) + 'V' + f(sy + L * 1.3) }, est);
+      if (tipo > .93) el('circle', { 'class': 'bn-est-aro', cx: f(sx), cy: f(sy), r: f(L * .55) }, est);
+    }
     var g = el('g', {}, svg);
     function anillo(r0, r1) { return 'M' + f(C[0] - r1) + ' ' + f(C[1]) + ' a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(2 * r1) + ' 0 a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(-2 * r1) + ' 0' + (r0 ? ' M' + f(C[0] - r0) + ' ' + f(C[1]) + ' a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(2 * r0) + ' 0 a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(-2 * r0) + ' 0' : ''); }
     el('circle', { 'class': 'bn-hawking-borde', cx: f(C[0]), cy: f(C[1]), r: f(RSH * .965) }, g);

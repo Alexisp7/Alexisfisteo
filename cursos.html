@@ -1587,6 +1587,11 @@
     @keyframes bn-respira { 50% { opacity:.45; } }
     .mc svg .bn-hq { fill:#C9B2FF; filter:drop-shadow(0 0 3px rgba(168,139,235,.95)); } .mc svg .bn-hq-cae { fill:#7A5CD0; }
     .mc svg .bn-zona { pointer-events:all; }
+    .mc svg .bn-est { fill:#EFE6DA; stroke:#EFE6DA; stroke-width:.45; stroke-linecap:round; animation:bn-titila 5s ease-in-out infinite; }
+    .mc svg .bn-est path { fill:none; opacity:.75; } .mc svg .bn-est .bn-est-aro { fill:none; stroke-width:.35; opacity:.5; }
+    .mc svg .bn-est-oro { fill:#D9A92E; stroke:#D9A92E; } .mc svg .bn-est-vio { fill:#B89CF2; stroke:#B89CF2; }
+    @keyframes bn-titila { 0%, 100% { opacity:.85; } 50% { opacity:.3; } }
+    @media (prefers-reduced-motion:reduce) { .mc svg .bn-est { animation:none; } }
     .mc svg.nota-on .bn-zona.foco { fill:rgba(168,139,235,.06); }
     /* notas sobre fondo oscuro */
     .mc-escena[data-i="0"] svg .nota-fondo { fill:rgba(12,8,12,.80); stroke:rgba(168,139,235,.35); }

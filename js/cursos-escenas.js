@@ -271,7 +271,6 @@
     var ori = Q(RC, 0, ZB); el('circle', { 'class': 'hc-orificio', cx: f(ori[0]), cy: f(ori[1]), r: 3.2 }, hint);
     boquilla(hint, true);
     var salen = el('g', {}, hint);
-    var c0 = Q(RC, 0, ZB), c1 = Q(24, 0, ZB); el('path', { 'class': 'hc-chorro', d: 'M' + f(c0[0]) + ' ' + f(c0[1]) + ' L' + f(c1[0]) + ' ' + f(c1[1]) }, salen);   // eje del chorro
     // átomos del vapor: componentes gaussianas (Maxwell), rebotan en la pared y en las caras de corte
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var VT = 7;
@@ -283,7 +282,8 @@
       gas.forEach(function (a) {
         if (a.sale >= 0) {                                       // efusión: sigue recto por el canal y la boquilla
           a.x += (Math.abs(a.vx) * .6 + 7) * dt; a.sale += dt;
-          var qe = Q(Math.max(RC, a.x - 3.5), 0, ZB); a.est.setAttribute('x1', f(qe[0])); a.est.setAttribute('y1', f(qe[1]));
+          var fuera = Math.max(0, a.x - 13.6); a.y = a.sy * fuera; a.z = ZB + a.sz * fuera;   // tras la boquilla cada uno sigue su propia dirección
+          var xe = Math.max(RC, a.x - 3.5), fe = Math.max(0, xe - 13.6), qe = Q(xe, a.sy * fe, ZB + a.sz * fe); a.est.setAttribute('x1', f(qe[0])); a.est.setAttribute('y1', f(qe[1]));
           a.el.setAttribute('opacity', f(Math.max(0, Math.min(1, (24 - a.x) / 6))));
           a.est.setAttribute('opacity', a.el.getAttribute('opacity'));
           if (a.x > 24) { a.el.setAttribute('opacity', 1); a.el.setAttribute('class', 'hc-atomo'); vapor.appendChild(a.el); a.est.parentNode.removeChild(a.est); nace(a); }
@@ -291,7 +291,7 @@
           a.x += a.vx * dt; a.y += a.vy * dt; a.z += a.vz * dt;
           var r = Math.hypot(a.x, a.y);
           if (r > RC - .4) {                                     // pared: si da con el orificio, sale
-            if (a.x > 0 && Math.abs(a.y) < 2.4 && Math.abs(a.z - ZB) < 2.6) { a.sale = 0; a.y = 0; a.z = ZB; a.el.setAttribute('class', 'hc-atomo hc-sale'); var qi = Q(RC, 0, ZB); a.est = el('line', { 'class': 'hc-estela', x1: f(qi[0]), y1: f(qi[1]), x2: f(qi[0]), y2: f(qi[1]) }, salen); salen.appendChild(a.el); }
+            if (a.x > 0 && Math.abs(a.y) < 2.4 && Math.abs(a.z - ZB) < 2.6) { a.sale = 0; a.y = 0; a.z = ZB; a.sy = (Math.random() * 2 - 1) * .3; a.sz = (Math.random() * 2 - 1) * .3; a.el.setAttribute('class', 'hc-atomo hc-sale'); var qi = Q(RC, 0, ZB); a.est = el('line', { 'class': 'hc-estela', x1: f(qi[0]), y1: f(qi[1]), x2: f(qi[0]), y2: f(qi[1]) }, salen); salen.appendChild(a.el); }
             else { var nx = a.x / r, ny = a.y / r, vn = a.vx * nx + a.vy * ny; a.vx -= 2 * vn * nx; a.vy -= 2 * vn * ny; a.x = nx * (RC - .4); a.y = ny * (RC - .4); }
           }
           if (a.sale < 0 && a.x > 0 && a.y > 0) { if (a.x < a.y) { a.x = 0; a.vx = -Math.abs(a.vx); } else { a.y = 0; a.vy = -Math.abs(a.vy); } }   // caras de corte
@@ -581,38 +581,60 @@
 
     // física: f(v) ∝ v³ e^{−v²/v₀²} → w = v²/v₀² ~ Gamma(2,1); Δz = ±K(y)/w
     // espín: antes del imán, superposición (la flecha "titila"); al entrar al gradiente queda ↑ o ↓
-    var K = 11, enVuelo = [], arriba = 0, abajo = 0, acum = 0;
-    function lanzar() {
-      var w2 = -Math.log(Math.random() * Math.random() + 1e-9), y0 = (Math.random() * 2 - 1) * 8;
-      var sgn = Math.random() < .5 ? 1 : -1;
-      var dz = sgn * K * (1 - (y0 / 9.5) * (y0 / 9.5)) / Math.max(w2, .7);
+    // efusión real: cada átomo sale de la boca de la boquilla (x = −57) en su propia dirección recta.
+    // Las dos rendijas (|z − ZB| < 0,7 en x = −46 y x = −36) frenan a los que vienen inclinados;
+    // solo pasan los casi paralelos al eje. En y la ranura es larga: el haz sale como un abanico plano.
+    var K = 11, X0H = -57, enVuelo = [], arriba = 0, abajo = 0, acum = 0, acumB = 0, PLACAS = [-46, -36];
+    function atomoNuevo() {
       var a = el('g', { 'class': 'atomo' }, vuelo[0]);
       el('circle', { 'class': 'atomo-b', r: 2.1 }, a);
       var fl = el('path', { 'class': 'espin', d: 'M0 1.4 L0 -6.5 M-1.7 -4.4 L0 -6.6 L1.7 -4.4' }, a);
       var fl2 = el('path', { 'class': 'espin fantasma', d: 'M0 -1.4 L0 6.5 M-1.7 4.4 L0 6.6 L1.7 4.4' }, a);
-      enVuelo.push({ x: -58, y: y0, z0: (Math.random() * 2 - 1) * .7, v: Math.sqrt(w2), dz: dz, sgn: sgn, el: a, fl: fl, fl2: fl2, tramo: 0, def: false });
+      return { el: a, fl: fl, fl2: fl2, x: X0H, tramo: 0, def: false, alto: 999 };
     }
-    function zEn(a, x) {   // parabólica dentro del imán (−12…32), recta después
-      if (x <= -12) return ZB + a.z0;
+    function lanzar() {
+      var w2 = -Math.log(Math.random() * Math.random() + 1e-9), sy = (Math.random() * 2 - 1) * .1, ym = sy * (10 - X0H);
+      var a = atomoNuevo();
+      a.sgn = Math.random() < .5 ? 1 : -1; a.sy = sy; a.sz = (Math.random() * 2 - 1) * .012; a.v = Math.sqrt(w2);
+      a.dz = a.sgn * K * (1 - (ym / 9.5) * (ym / 9.5)) / Math.max(w2, .7);
+      enVuelo.push(a);
+    }
+    function lanzarFrenado() {                 // sale inclinado: choca con la 1.ª o con la 2.ª rendija
+      var a = atomoNuevo();
+      a.sz = (Math.random() < .5 ? 1 : -1) * (.035 + Math.random() * .3); a.sy = (Math.random() * 2 - 1) * .1;
+      a.v = .7 + Math.random() * .7; a.dz = 0; a.sgn = 1;
+      PLACAS.forEach(function (xp) { if (a.alto === 999 && Math.abs(a.sz * (xp - X0H)) > .7) a.alto = xp - .2; });
+      enVuelo.push(a);
+    }
+    function zEn(a, x) {   // recta desde la boquilla; parabólica dentro del imán (−12…32), recta después
+      var z = ZB + a.sz * (x - X0H);
+      if (x <= -12) return z;
       var L = 44, t = Math.min(x + 12, L) / L, zm = a.dz * .32 * t * t;
-      if (x <= 32) return ZB + a.z0 + zm;
-      return ZB + a.z0 + a.dz * .32 + (2 * .32 * a.dz / L) * (x - 32);
+      if (x <= 32) return z + zm;
+      return z + a.dz * .32 + (2 * .32 * a.dz / L) * (x - 32);
     }
     return {
       tick: function (dt) {
         if (h0.classList.contains('foco')) hornoTick(dt);
         acum += dt; while (acum > .035) { acum -= .035; lanzar(); }
+        acumB += dt; while (acumB > .05) { acumB -= .05; lanzarFrenado(); }
         for (var i = enVuelo.length - 1; i >= 0; i--) {
           var a = enVuelo[i]; a.x += a.v * 62 * dt;
+          if (a.x >= a.alto) {                   // chocó con la placa del colimador
+            a.x = a.alto; var qb = P(a.x, a.sy * (a.x - X0H), zEn(a, a.x)), sale = a.el;
+            sale.setAttribute('transform', 'translate(' + f(qb[0]) + ' ' + f(qb[1]) + ')'); sale.setAttribute('class', 'atomo frenado');
+            (function (e) { setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, 420); })(sale);
+            enVuelo.splice(i, 1); continue;
+          }
           if (a.x >= 80) {
-            var z = ZB + a.z0 + a.dz, q = P(80, a.y, z);
+            var z = zEn(a, 80), q = P(80, a.sy * (80 - X0H), z);
             if (z > 4 && z < 34) el('circle', { 'class': 'impacto ' + (a.sgn > 0 ? 'imp-arriba' : 'imp-abajo'), cx: f(q[0]), cy: f(q[1]), r: 1.15 }, impactos);
             if (impactos.childNodes.length > 1400) impactos.removeChild(impactos.firstChild);
             if (a.sgn > 0) arriba++; else abajo++;
             a.el.parentNode.removeChild(a.el); enVuelo.splice(i, 1); continue;
           }
           while (a.x > tramos[a.tramo]) { a.tramo++; vuelo[a.tramo].appendChild(a.el); }
-          var q2 = P(a.x, a.y, zEn(a, a.x)), jx = 0, jy = 0;
+          var q2 = P(a.x, a.sy * (a.x - X0H), zEn(a, a.x)), jx = 0, jy = 0;
           if (a.x < -12) {                       // superposición: la flecha salta entre ↑ y ↓ y vibra
             var ang = (Math.random() < .5 ? 0 : 180) + (Math.random() - .5) * 70;
             a.fl.setAttribute('transform', 'rotate(' + f(ang) + ')');

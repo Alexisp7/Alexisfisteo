@@ -344,7 +344,24 @@
     });
     [].forEach.call(traza.querySelectorAll('*'), function (e, i) { e.setAttribute('pathLength', 1); e.style.setProperty('--d', (2300 + i * 70) + 'ms'); });
     var capaHawk = el('g', { 'class': 'bn-hawk' }, g);
-    el('circle', { 'class': 'bn-hawking-borde', cx: f(C[0]), cy: f(C[1]), r: f(RSH * .965) }, capaHawk);
+    // borde de Hawking: un trazo violeta finísimo que tiembla rápido alrededor de la sombra (el filo del horizonte aparente)
+    var bordeH = el('path', { 'class': 'bn-hawking-borde' }, capaHawk), bordeH2 = el('path', { 'class': 'bn-hawking-borde bn-hawking-borde2' }, capaHawk);
+    var NB = 220, jit = new Float32Array(NB), jit2 = new Float32Array(NB);
+    function tiembla() {
+      var d = '', d2 = '', R = RSH * .985, t = performance.now() / 1000;
+      for (var i = 0; i < NB; i++) {
+        jit[i] = jit[i] * .55 + (Math.random() - .5) * .9; if (Math.random() < .004) jit[i] += 2.4 + Math.random() * 2;
+        jit2[i] = jit2[i] * .7 + (Math.random() - .5) * 1.2;
+      }
+      for (i = 0; i <= NB; i++) {
+        var k = i % NB, a = k / NB * Math.PI * 2, w = .5 * Math.sin(a * 13 + t * 9) + .35 * Math.sin(a * 29 - t * 14);
+        var r1 = R + jit[k] + w, r2 = R + 1.2 + jit2[k] * 1.4 + w * .6;
+        d += (i ? 'L' : 'M') + f(C[0] + Math.cos(a) * r1) + ' ' + f(C[1] + Math.sin(a) * r1);
+        d2 += (i ? 'L' : 'M') + f(C[0] + Math.cos(a) * r2) + ' ' + f(C[1] + Math.sin(a) * r2);
+      }
+      bordeH.setAttribute('d', d); bordeH2.setAttribute('d', d2);
+      bordeH.setAttribute('opacity', f(.65 + Math.random() * .35)); bordeH2.setAttribute('opacity', f(.15 + Math.random() * .3));
+    }
     var hawk = el('g', {}, capaHawk);
     function zona(d) { return el('path', { 'class': 'zona bn-zona', d: d, 'fill-rule': 'evenodd' }, g); }
     function poligono(pts) { return 'M' + pts.map(function (p) { return f(p[0]) + ' ' + f(p[1]); }).join(' L') + 'Z'; }
@@ -359,8 +376,9 @@
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var pares = [], acum = 0;
     function par() {
-      var a = Math.random() * Math.PI * 2, sale = el('circle', { 'class': 'bn-hq', r: 2.1 }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: 1.5 }, hawk);
-      pares.push({ a: a, r: RSH * .955, rc: RSH * .955, v: 26 + Math.random() * 30, sale: sale, cae: cae, da: gauss() * .08 });
+      // chispas diminutas: nacen en el filo, apenas se alejan unos píxeles y se apagan; su pareja cae hacia dentro
+      var a = Math.random() * Math.PI * 2, sale = el('circle', { 'class': 'bn-hq', r: f(.55 + Math.random() * .5) }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: .5 }, hawk);
+      pares.push({ a: a, r0: RSH * .985, d: 3 + Math.random() * 9, vida: .35 + Math.random() * .55, t: 0, sale: sale, cae: cae, da: gauss() * .05 });
     }
     // ── medallones de las notas: una lámina circular a lápiz y aguada con una animación de cada parte.
     // Cada animación sale de la física que cita la nota (geodésicas nulas, luz radial en coordenadas
@@ -537,12 +555,14 @@
     return {
       tick: function (dt) {
         tiempo += dt;
-        acum += dt; while (acum > .16) { acum -= .16; par(); }
+        acum += dt; while (acum > .045) { acum -= .045; par(); }
+        tiembla();
         for (var i = pares.length - 1; i >= 0; i--) {
-          var p = pares[i]; p.r += p.v * dt; p.rc -= 14 * dt; p.a += p.da * dt;
-          var u = (p.r - RSH) / (RSH * .9);
-          p.sale.setAttribute('cx', f(C[0] + Math.cos(p.a) * p.r)); p.sale.setAttribute('cy', f(C[1] + Math.sin(p.a) * p.r)); p.sale.setAttribute('opacity', f(Math.max(0, 1 - u)));
-          p.cae.setAttribute('cx', f(C[0] + Math.cos(p.a + .05) * p.rc)); p.cae.setAttribute('cy', f(C[1] + Math.sin(p.a + .05) * p.rc)); p.cae.setAttribute('opacity', f(Math.max(0, (p.rc - RSH * .82) / (RSH * .13))));
+          var p = pares[i]; p.t += dt; p.a += p.da * dt;
+          var u = p.t / p.vida, sal = 1 - (1 - u) * (1 - u), r = p.r0 + p.d * sal, rc = p.r0 - p.d * .5 * u * u;
+          var luz = u < .12 ? u / .12 : (1 - u) * (1 - u) / .77;
+          p.sale.setAttribute('cx', f(C[0] + Math.cos(p.a) * r)); p.sale.setAttribute('cy', f(C[1] + Math.sin(p.a) * r)); p.sale.setAttribute('opacity', f(Math.max(0, luz)));
+          p.cae.setAttribute('cx', f(C[0] + Math.cos(p.a + .01) * rc)); p.cae.setAttribute('cy', f(C[1] + Math.sin(p.a + .01) * rc)); p.cae.setAttribute('opacity', f(Math.max(0, luz * .6)));
           if (u >= 1) { hawk.removeChild(p.sale); hawk.removeChild(p.cae); pares.splice(i, 1); }
         }
         salida('rₛ = 2GM/c²', 'sombra b = √27 GM/c² ≈ 2,6 rₛ · ISCO 3 rₛ');

@@ -278,7 +278,7 @@
   function escenaRelatividad(svg, salida) {
     var fig = svg.parentNode, lienzo = document.createElement('canvas');
     lienzo.className = 'bn-lienzo'; fig.insertBefore(lienzo, svg);
-    var C = [995, 450], SC = 25.5, ROLL = -16 * Math.PI / 180, INCL = 82 * Math.PI / 180;
+    var C = [975, 465], SC = 20.5, ROLL = -16 * Math.PI / 180, INCL = 82 * Math.PI / 180;
     // proyección sin lente (ortográfica) del mundo a la pantalla, igual que en el trazador
     function aPantalla(x, y, z) {
       var ci = Math.cos(INCL), si = Math.sin(INCL), bx = -x, by = y * si + z * ci, sx = bx * SC, sy = -by * SC;
@@ -336,12 +336,13 @@
     function copiaVB() { var v = svg.getAttribute('viewBox'); if (v) fondoSvg.setAttribute('viewBox', v); }
     copiaVB(); new MutationObserver(copiaVB).observe(svg, { attributes: true, attributeFilter: ['viewBox'] });
     var traza = el('g', { 'class': 'bn-traza' }, fondoSvg), giro = 'rotate(' + f(ROLL * 180 / Math.PI) + ' ' + f(C[0]) + ' ' + f(C[1]) + ')';
-    [[700, 330], [560, 205], [430, 300]].forEach(function (e) { el('ellipse', { cx: f(C[0]), cy: f(C[1]), rx: e[0], ry: e[1], transform: giro }, traza); });
+    var KT = SC / 25.5;   // las líneas se trazaron para SC = 25,5; escalan con el dibujo
+    [[700, 330], [560, 205], [430, 300]].forEach(function (e) { el('ellipse', { cx: f(C[0]), cy: f(C[1]), rx: f(e[0] * KT), ry: f(e[1] * KT), transform: giro }, traza); });
     el('circle', { cx: f(C[0]), cy: f(C[1]), r: f(RSH * 1.9) }, traza);
-    el('path', { d: 'M' + f(C[0] - 820) + ' ' + f(C[1]) + 'H' + f(C[0] + 820) + 'M' + f(C[0]) + ' ' + f(C[1] - 470) + 'V' + f(C[1] + 470), transform: giro }, traza);
-    el('path', { d: 'M' + f(C[0] - 760) + ' ' + f(C[1] - 175) + 'H' + f(C[0] + 760) + 'M' + f(C[0] - 760) + ' ' + f(C[1] + 175) + 'H' + f(C[0] + 760), transform: giro, 'class': 'bn-traza-fina' }, traza);
+    el('path', { d: 'M' + f(C[0] - 820 * KT) + ' ' + f(C[1]) + 'H' + f(C[0] + 820 * KT) + 'M' + f(C[0]) + ' ' + f(C[1] - 470 * KT) + 'V' + f(C[1] + 470 * KT), transform: giro }, traza);
+    el('path', { d: 'M' + f(C[0] - 760 * KT) + ' ' + f(C[1] - 175 * KT) + 'H' + f(C[0] + 760 * KT) + 'M' + f(C[0] - 760 * KT) + ' ' + f(C[1] + 175 * KT) + 'H' + f(C[0] + 760 * KT), transform: giro, 'class': 'bn-traza-fina' }, traza);
     [[-560, -175], [560, 175], [-700, 0], [700, 0], [0, -330], [0, 330], [380, -175], [-380, 175]].forEach(function (q) {
-      el('path', { d: 'M' + f(C[0] + q[0] - 7) + ' ' + f(C[1] + q[1]) + 'h14M' + f(C[0] + q[0]) + ' ' + f(C[1] + q[1] - 7) + 'v14', transform: giro, 'class': 'bn-cruz' }, traza);
+      el('path', { d: 'M' + f(C[0] + q[0] * KT - 7) + ' ' + f(C[1] + q[1] * KT) + 'h14M' + f(C[0] + q[0] * KT) + ' ' + f(C[1] + q[1] * KT - 7) + 'v14', transform: giro, 'class': 'bn-cruz' }, traza);
     });
     [].forEach.call(traza.querySelectorAll('*'), function (e, i) { e.setAttribute('pathLength', 1); e.style.setProperty('--d', (2300 + i * 70) + 'ms'); });
     var capaHawk = el('g', { 'class': 'bn-hawk' }, g);
@@ -373,6 +374,7 @@
     }
     var zSing = zona(anillo(0, RSH * .12)), zHor = zona(anillo(RSH * .12, RSH * .385)), zEsf = zona(anillo(RSH * .385, RSH * .577)), zSombra = zona(anillo(RSH * .577, RSH * .9)), zHawk = zona(anillo(RSH * .9, RSH * 1.0)), zFot = zona(anillo(RSH * 1.0, RSH * 1.13));
     var zDisco = zona(bandaDisco(9, 22, Math.PI * 1.4, Math.PI * 1.92)), zDoppler = zona(bandaDisco(7, 22, Math.PI * .85, Math.PI * 1.35));
+    [zSing, zHor, zEsf, zSombra, zHawk, zFot].forEach(function (z) { g.appendChild(z); });   // los anillos de la sombra mandan sobre el disco que la cruza
     var zLente = zona((function () { var o = []; for (var k = 0; k <= 20; k++) { var t = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t) * 9.5, Math.sin(t) * 9.5)); } for (k = 20; k >= 0; k--) { var t3 = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t3) * 6.2, Math.sin(t3) * 6.2)); } return poligono(o); })());
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var pares = [], acum = 0;

@@ -164,7 +164,7 @@
 
   // ═════════ II · Mecánica cuántica: Stern–Gerlach ═════════
   function escenaSternGerlach(svg, salida) {
-    var s = 4.7, P = camara(960, 470, s), g = el('g', {}, svg), ZB = 16, orden = 0;
+    var s = 4.7, P = camara(915, 470, s), g = el('g', {}, svg), ZB = 16, orden = 0;
     // cada pieza entra desde abajo (+) o desde arriba (−) cada vez que se muestra la escena
     function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;--d:' + (120 + orden++ * 45) + 'ms' }, g); }
     function arrollamiento(q, x0, x1, y, z0, z1, n) { for (var k = 1; k < n; k++) { var z = z0 + (z1 - z0) * k / n; linea(q, P(x0, y, z), P(x1, y, z), 'espira'); } }
@@ -179,6 +179,9 @@
     regla(b0, P, -80, 94, 26, -1.5, 2, 5);
     linea(b0, P(-84, 0, 0), P(98, 0, 0), 'eje-optico');
     [[-82, -24], [96, -24], [-82, 24], [96, 24]].forEach(function (q) { tornillo(b0, P(q[0], q[1], 0)); });
+    // la banqueta solo responde en su tramo central (no en el extremo bajo el menú)
+    b0.style.pointerEvents = 'none';
+    poly(b0, [P(-20, -30, 0), P(60, -30, 0), P(60, 30, 0), P(60, 30, -12), P(-20, 30, -12), P(-20, 30, 0)], 'zona').style.pointerEvents = 'all';
 
     // ── horno de plata: crisol cilíndrico, resistencia en espiral, tapa y boquilla
     var h0 = pieza(-160);

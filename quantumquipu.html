@@ -375,6 +375,9 @@
       .g-edge { animation:none; stroke-dashoffset:0; } .g-node { animation:none; opacity:1; } .g-halo, .g-route, .g-comet, .qq-steps li, .qq-steps li::before, .qq-step-k { animation:none; opacity:1; } .qq-steps li::before { display:none; } .g-comet, .g-route { display:none; }
     }
     @media (max-width:900px) { .qq-graph { max-width:360px; margin:0 auto; } .qq-steps li { grid-template-columns:54px 1fr; } }
+    /* recorta los bordes de la captura (barra de tareas y marco de ventana) */
+    .qq-c3 img { transform:scale(1.18); transform-origin:45% 42%; }
+    .qq-c3:hover img { transform:scale(1.22); }
   </style>
 </head>
 <body>

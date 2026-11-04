@@ -125,8 +125,8 @@
   // ═════════ II · Mecánica cuántica: Stern–Gerlach ═════════
   function escenaSternGerlach(svg, salida) {
     var s = 4.7, P = camara(960, 470, s), g = el('g', {}, svg), ZB = 16, orden = 0;
-    // cada pieza entra desde abajo (+) o desde arriba (−) la primera vez que se muestra la escena
-    function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;transition-delay:' + (120 + orden++ * 45) + 'ms' }, g); }
+    // cada pieza entra desde abajo (+) o desde arriba (−) cada vez que se muestra la escena
+    function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;--d:' + (120 + orden++ * 45) + 'ms' }, g); }
     function arrollamiento(q, x0, x1, y, z0, z1, n) { for (var k = 1; k < n; k++) { var z = z0 + (z1 - z0) * k / n; linea(q, P(x0, y, z), P(x1, y, z), 'espira'); } }
 
     // ── banco óptico
@@ -160,13 +160,14 @@
 
     // ── colimadores: placa, ranura horizontal, marco y pie
     function rendija(x) {
-      var q = pieza(-150);
+      var q = pieza(-150); rendijas.push(q);
       caja(q, P, x - 3, -9, 0, 7, 18, 2, 'lo');
       caja(q, P, x, -13, 2, 1.8, 26, 26, 'hi');
       poly(q, [P(x + 1.8, -8, ZB - .7), P(x + 1.8, 8, ZB - .7), P(x + 1.8, 8, ZB + .7), P(x + 1.8, -8, ZB + .7)], 'hueco');
       linea(q, P(x + 1.8, -8.6, ZB + 1.6), P(x + 1.8, 8.6, ZB + 1.6), 'guia'); linea(q, P(x + 1.8, -8.6, ZB - 1.6), P(x + 1.8, 8.6, ZB - 1.6), 'guia');
       [[-11, 25], [11, 25], [-11, 5], [11, 5]].forEach(function (t) { var p = P(x + 1.8, t[0], t[1]); el('circle', { 'class': 'tornillo', cx: f(p[0]), cy: f(p[1]), r: 1.2 }, q); });
     }
+    var rendijas = [];
     rendija(-46); capa(); rendija(-36); capa();
 
     // ── electroimán: columna con bobina, brazos, polo inferior acanalado y polo superior en filo
@@ -207,6 +208,34 @@
     var rc = P(80, 12, ZB + 1.5), tc = el('text', { 'class': 'grabado', x: f(rc[0]), y: f(rc[1]) }, pa); tc.textContent = 'clásico';
     caja(pa, P, 79, 20, 2.5, 2, 2, 34, 'lo');
     caja(pa, P, 79, -22, 35, 2, 44, 2, 'lo');
+
+    // notas: al pasar el mouse por una pieza, una línea guía sube hasta una explicación corta en gris
+    var capaNotas = el('g', { 'class': 'notas' }, g);
+    function nota(piezas, ancla, titulo, l1, l2, cima) {
+      var a = P(ancla[0], ancla[1], ancla[2]), alto = 64 + (a[1] > 520 ? 40 : 0), izq = a[0] > 1150, dx = izq ? -22 : 22;
+      var top = cima || Math.max(118, a[1] - alto), n = el('g', { 'class': 'nota' }, capaNotas);
+      el('circle', { cx: f(a[0]), cy: f(a[1]), r: 2.2 }, n);
+      el('circle', { 'class': 'anillo-nota', cx: f(a[0]), cy: f(a[1]), r: 5 }, n);
+      el('path', { d: 'M' + f(a[0]) + ' ' + f(a[1] - 4) + ' L' + f(a[0]) + ' ' + f(top) + ' L' + f(a[0] + dx) + ' ' + f(top), pathLength: 1 }, n);
+      var tx = a[0] + dx + (izq ? -6 : 6), anc = izq ? 'end' : 'start';
+      var ancho = Math.max(l1.length, l2.length) * 6.4 + 20;
+      el('rect', { 'class': 'nota-fondo', x: f(izq ? tx - ancho + 10 : tx - 10), y: f(top - 11), width: f(ancho), height: 52, rx: 2 }, n);
+      var t = el('text', { 'class': 'nota-t', x: f(tx), y: f(top + 3), 'text-anchor': anc }, n); t.textContent = titulo;
+      var d = el('text', { 'class': 'nota-d', x: f(tx), y: f(top + 19), 'text-anchor': anc }, n);
+      [l1, l2].forEach(function (l, k) { var sp = el('tspan', { x: f(tx), dy: k ? 15 : 0 }, d); sp.textContent = l; });
+      piezas.forEach(function (q) {
+        q.classList.add('con-nota');
+        q.addEventListener('pointerenter', function () { n.classList.add('ver'); piezas.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on'); });
+        q.addEventListener('pointerleave', function () { n.classList.remove('ver'); piezas.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on'); });
+      });
+    }
+    nota([b0], [-62, 22, 0], 'Banco óptico', 'Alinea horno, rendijas, imán y pantalla', 'sobre un mismo eje; en el real, en vacío.');
+    nota([h0], [-71, 0, 32.4], 'Horno de plata', 'Evapora plata a ≈ 1300 K: sale un haz', 'de átomos neutros con velocidades térmicas.');
+    nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', 'Dos rendijas recortan el haz', 'hasta dejarlo como una lámina delgada.');
+    nota([m0, m1], [10, -23, 46], 'Electroimán', 'La bobina magnetiza el yugo de hierro;', 'el campo se concentra entre los polos.', 150);
+    nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', 'Filo arriba, canal abajo: B no uniforme.', 'F = μz ∂B/∂z empuja según el espín.', 175);
+    nota([p0], [54, 18, .5], 'Fráncfort, 1922', 'Otto Stern y Walther Gerlach: primera', 'prueba de la cuantización espacial.');
+    nota([pa], [80, -21, 37], 'Placa colectora', 'Clásicamente: una sola banda continua.', 'Se ven dos manchas: espín ±ħ/2.', 300);
 
     // física: f(v) ∝ v³ e^{−v²/v₀²} → w = v²/v₀² ~ Gamma(2,1); Δz = ±K(y)/w
     // espín: antes del imán, superposición (la flecha "titila"); al entrar al gradiente queda ↑ o ↓
@@ -340,12 +369,18 @@
   var activo = 0;
   function salida(i) { return function (a, b) { if (i === activo) { lect1.textContent = a; lect2.textContent = b; } }; }
   var mods = [escenaRelatividad, escenaSternGerlach, escenaProblemas].map(function (fn, i) { return fn(escenas[i].querySelector('svg'), salida(i)); });
+  var tArmado = null;
+  function armar(e) {          // se rearma cada vez que se entra a la escena
+    clearTimeout(tArmado);
+    e.classList.remove('armado'); e.classList.add('armando'); void e.getBoundingClientRect();
+    requestAnimationFrame(function () { requestAnimationFrame(function () { e.classList.remove('armando'); e.classList.add('armado'); tArmado = setTimeout(function () { e.classList.remove('armado'); }, 1700); }); });
+  }
   function elegir(i) {
-    activo = i;
+    var previo = activo; activo = i;
     items.forEach(function (it, k) { it.classList.toggle('on', k === i); it.setAttribute('aria-current', k === i ? 'true' : 'false'); });
     escenas.forEach(function (e, k) { e.classList.toggle('on', k === i); });
     var e = escenas[i];
-    if (e.classList.contains('armando')) requestAnimationFrame(function () { requestAnimationFrame(function () { e.classList.remove('armando'); }); });
+    if (i !== previo && !quieto && e.querySelector('.pieza')) armar(e);
     raiz.setAttribute('data-activo', i);
     mods[i].tick(1 / 60);
   }
@@ -359,7 +394,6 @@
       items[n].querySelector('a').focus();
     }
   });
-  if (!quieto) escenas.forEach(function (e) { if (e.querySelector('.pieza')) e.classList.add('armando'); });
   elegir(0);
   if (quieto) { for (var w = 0; w < 3; w++) for (var k = 0; k < 400; k++) mods[w].tick(1 / 60); elegir(0); return; }
   // precalienta cada escena para que no empiece vacía

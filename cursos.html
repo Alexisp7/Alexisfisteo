@@ -114,7 +114,12 @@
       top: 0; left: 0; right: 0;
       z-index: 100;
     }
-    @media (min-width:901px) { .header .header-inner { max-width:none; justify-content:flex-end; padding-right:clamp(24px,4vw,64px); } }   /* sobre el papel, no sobre el velo */
+    @media (min-width:901px) {   /* arriba a la izquierda, sobre el velo: texto claro */
+      .header .header-inner { max-width:none; justify-content:flex-start; padding-left:clamp(14px,calc(6vw - 20px),76px); }
+      .header nav.main-nav a { color:rgba(240,230,220,.62); }
+      .header nav.main-nav a::before { background:#F4EEE3; }
+      .header nav.main-nav a:hover, .header nav.main-nav a.active { color:#2E1618; }
+    }
 
     /* Franja griega superior */
     .header-greek-bar {

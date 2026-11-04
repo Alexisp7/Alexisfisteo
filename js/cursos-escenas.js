@@ -157,38 +157,77 @@
     caja(h0, P, -63, -2.5, ZB - 2.5, 5, 5, 5, 'lo');
     var boca = P(-58, 0, ZB); el('ellipse', { 'class': 'brasa', cx: f(boca[0]), cy: f(boca[1]), rx: 2.6, ry: 3.6 }, h0);
     var rotAg = P(-71, 9, 15); var tAg = el('text', { 'class': 'grabado grande ag-rot', x: f(rotAg[0]), y: f(rotAg[1]) }, h0); tAg.textContent = 'Ag';
-    // interior del horno (solo al tocarlo): la plata fundida se evapora y los átomos, neutros, rebotan
-    // con velocidades térmicas (componentes gaussianas, Maxwell en 2D); los que encuentran la boquilla salen.
-    var cV = P(-71 + 6.4, 6.4, 15), VW = 56, VH = 84, vx0 = cV[0] - VW / 2, vy0 = cV[1] - VH / 2;
+    // corte del horno (solo al tocarlo): se quita el cuadrante que mira al lector (x>0, y>0) y quedan
+    // a la vista dos caras de corte con las capas reales —carcasa de acero, aislante, resistencia,
+    // crisol cerámico, plata fundida— y la cámara de vapor. Todo en la misma cámara isométrica.
+    var HX = -71, HY = 0, Z0 = 3, ZT = 27;
+    var CAPA = [   // [radio interior, radio exterior, clase]
+      [8.6, 9, 'hc-acero'], [6.6, 8.6, 'hc-aislante'], [5.8, 6.6, 'hc-resist'], [5, 5.8, 'hc-crisol']];
+    var RC = 5, ZPOOL0 = 6, ZPOOL = 8.5, ZTECHO = 24;
     var hint = el('g', { 'class': 'horno-int' }, h0);
-    var clip = el('clipPath', { id: 'clip-horno' }, svg); el('rect', { x: f(vx0), y: f(vy0), width: VW, height: VH, rx: 4 }, clip);
-    el('rect', { 'class': 'hi-fondo', x: f(vx0), y: f(vy0), width: VW, height: VH, rx: 4 }, hint);
-    var hc = el('g', { 'clip-path': 'url(#clip-horno)' }, hint);
-    el('rect', { 'class': 'hi-calor', x: f(vx0), y: f(vy0 + VH * .35), width: VW, height: VH * .65 }, hc);
-    var liq = el('ellipse', { 'class': 'hi-liquido', cx: f(vx0 + VW / 2), cy: f(vy0 + VH - 7), rx: VW / 2 - 4, ry: 4 }, hc);
-    el('rect', { 'class': 'hi-boca', x: f(vx0 + VW - 2.5), y: f(vy0 + 24), width: 3, height: 12 }, hint);
-    var tK = el('text', { 'class': 'hi-t', x: f(vx0 + 4), y: f(vy0 + 9) }, hint); tK.textContent = '≈1300 K';
-    var tN0 = el('text', { 'class': 'hi-t', x: f(vx0 + 4), y: f(vy0 + VH - 15) }, hint); tN0.textContent = 'Ag⁰';
-    el('rect', { 'class': 'hi-marco', x: f(vx0), y: f(vy0), width: VW, height: VH, rx: 4 }, hint);
+    function Q(x, y, z) { return P(HX + x, HY + y, z); }
+    function arco(r, z, a0, a1, n) { var o = []; for (var k = 0; k <= n; k++) { var a = (a0 + (a1 - a0) * k / n) * Math.PI / 180; o.push(Q(r * Math.cos(a), r * Math.sin(a), z)); } return o; }
+    // cara de corte: rectángulo en el plano y = 0 (cara A, mira a +y) o x = 0 (cara B, mira a +x)
+    function corte(cara, u0, u1, z0, z1, cls) {
+      var p = cara === 'A' ? [Q(u0, 0, z0), Q(u1, 0, z0), Q(u1, 0, z1), Q(u0, 0, z1)] : [Q(0, u0, z0), Q(0, u1, z0), Q(0, u1, z1), Q(0, u0, z1)];
+      return poly(hint, p, 'hc ' + cls + ' hc-' + cara);
+    }
+    // 1. lo que queda a la vista detrás: la base bajo el cuadrante quitado
+    poly(hint, [Q(0, 0, Z0)].concat(arco(9.5, Z0, -2, 92, 18)), 'hc-base');
+    // 2. interior de la cámara: pared cóncava del crisol (90°→360°), charco de plata y vapor
+    poly(hint, arco(RC, ZTECHO, 90, 360, 36).concat(arco(RC, ZPOOL, 360, 90, 36)), 'hc-pared');
+    poly(hint, [Q(0, 0, ZPOOL)].concat(arco(RC, ZPOOL, 90, 360, 36)), 'hc-plata');
+    var brilloPlata = el('ellipse', { 'class': 'hc-reflejo', cx: f(Q(-2, -2, ZPOOL)[0]), cy: f(Q(-2, -2, ZPOOL)[1]), rx: 7, ry: 2.4 }, hint);
+    var vapor = el('g', {}, hint);
+    // 3. caras de corte, capa por capa, primero B (izquierda) y luego A (derecha)
+    ['B', 'A'].forEach(function (c) {
+      corte(c, 0, 9, Z0, Z0 + .6, 'hc-acero');                 // fondo de acero
+      corte(c, 0, 8.6, Z0 + .6, Z0 + 2.2, 'hc-aislante');      // aislante inferior
+      corte(c, 0, RC + .8, Z0 + 2.2, ZPOOL0, 'hc-crisol');      // fondo del crisol
+      corte(c, 0, RC, ZPOOL0, ZPOOL, 'hc-plata-c');             // plata fundida cortada
+      CAPA.forEach(function (k) { corte(c, k[0], k[1], Z0 + .6, ZT - .6, k[2]); });
+      corte(c, 0, RC + .8, ZTECHO, ZTECHO + .8, 'hc-crisol');   // tapa del crisol
+      corte(c, 0, 8.6, ZTECHO + .8, ZT - .6, 'hc-aislante');    // aislante superior
+      corte(c, 0, 9, ZT - .6, ZT, 'hc-acero');                  // tapa de acero
+      corte(c, 0, 10, ZT, ZT + 2.4, 'hc-tapa');                 // tapa exterior
+      for (var e = 0; e < 8; e++) {                              // espiras de la resistencia vistas en corte
+        var zz = Z0 + 4 + e * 2.3, pc = c === 'A' ? Q(6.2, 0, zz) : Q(0, 6.2, zz);
+        el('circle', { 'class': 'hc-espira', cx: f(pc[0]), cy: f(pc[1]), r: 1.5 }, hint);
+      }
+      for (var fb = 0; fb < 7; fb++) {                           // fibra del aislante
+        var zf = Z0 + 5 + fb * 2.6, a1 = c === 'A' ? Q(7, 0, zf) : Q(0, 7, zf), a2 = c === 'A' ? Q(8.2, 0, zf + .7) : Q(0, 8.2, zf + .7);
+        linea(hint, a1, a2, 'hc-fibra');
+      }
+    });
+    // orificio de efusión: atraviesa crisol, aislante y carcasa hacia la boquilla (cara A, z = ZB)
+    poly(hint, [Q(RC, 0, ZB - .5), Q(9, 0, ZB - .5), Q(9, 0, ZB + .5), Q(RC, 0, ZB + .5)], 'hc-canal');
+    caja(hint, P, -63, -2.5, ZB - 2.5, 5, 5, 5, 'lo');
+    var bocaB = P(-58, 0, ZB); el('ellipse', { 'class': 'brasa', cx: f(bocaB[0]), cy: f(bocaB[1]), rx: 2.6, ry: 3.6 }, hint);
+    var salen = el('g', {}, hint);
+    // átomos del vapor: componentes gaussianas (Maxwell), rebotan en la pared y en las caras de corte
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
-    function nace(a) { a.x = 5 + Math.random() * (VW - 10); a.y = VH - 10; a.vx = gauss() * 26; a.vy = -Math.abs(gauss()) * 26 - 8; a.sale = 0; return a; }
-    var gas = []; for (var gi = 0; gi < 16; gi++) { var ga = nace({ el: el('circle', { 'class': 'hi-atomo', r: 2 }, hc) }); ga.y = 6 + Math.random() * (VH - 18); gas.push(ga); }
-    var tHorno = 0;
+    var VT = 7;
+    function nace(a) { var ang = Math.PI / 2 + Math.random() * Math.PI * 1.5, r = Math.random() * (RC - .6); a.x = r * Math.cos(ang); a.y = r * Math.sin(ang); a.z = ZPOOL + .3; a.vx = gauss() * VT; a.vy = gauss() * VT; a.vz = Math.abs(gauss()) * VT; a.sale = -1; return a; }
+    var gas = []; for (var gi = 0; gi < 26; gi++) { var ga = nace({ el: el('circle', { 'class': 'hc-atomo', r: 1.35 }, vapor) }); ga.z = ZPOOL + 1 + Math.random() * (ZTECHO - ZPOOL - 2); gas.push(ga); }
     function hornoTick(dt) {
-      tHorno += dt; liq.setAttribute('ry', f(3.6 + .6 * Math.sin(tHorno * 5)));
       gas.forEach(function (a) {
-        if (a.sale) { a.x += a.vx * dt; a.sale -= dt; a.el.setAttribute('opacity', f(Math.max(0, a.sale * 3))); if (a.sale <= 0) { nace(a); a.el.setAttribute('opacity', 1); } }
-        else {
-          a.x += a.vx * dt; a.y += a.vy * dt;
-          if (a.x > VW - 3 && a.y > 24 && a.y < 36) { a.sale = .35; a.vx = Math.abs(a.vx) + 30; }
-          else {
-            if (a.x < 3) { a.x = 3; a.vx = Math.abs(a.vx); } if (a.x > VW - 3) { a.x = VW - 3; a.vx = -Math.abs(a.vx); }
-            if (a.y < 3) { a.y = 3; a.vy = Math.abs(a.vy); }
-            if (a.y > VH - 9) { if (Math.random() < .5) nace(a); else { a.y = VH - 9; a.vy = -Math.abs(a.vy); } }   // recondensa o rebota
+        if (a.sale >= 0) {                                       // efusión: sigue recto por el canal y la boquilla
+          a.x += Math.abs(a.vx) * dt + 9 * dt; a.sale += dt;
+          if (a.x > 13) { vapor.appendChild(a.el); nace(a); }
+        } else {
+          a.x += a.vx * dt; a.y += a.vy * dt; a.z += a.vz * dt;
+          var r = Math.hypot(a.x, a.y);
+          if (r > RC - .4) {                                     // pared: si da con el orificio, sale
+            if (a.x > 0 && Math.abs(a.y) < 1.2 && Math.abs(a.z - ZB) < 1.4) { a.sale = 0; a.y = 0; a.z = ZB; salen.appendChild(a.el); }
+            else { var nx = a.x / r, ny = a.y / r, vn = a.vx * nx + a.vy * ny; a.vx -= 2 * vn * nx; a.vy -= 2 * vn * ny; a.x = nx * (RC - .4); a.y = ny * (RC - .4); }
           }
+          if (a.sale < 0 && a.x > 0 && a.y > 0) { if (a.x < a.y) { a.x = 0; a.vx = -Math.abs(a.vx); } else { a.y = 0; a.vy = -Math.abs(a.vy); } }   // caras de corte
+          if (a.z > ZTECHO - .4) { a.z = ZTECHO - .4; a.vz = -Math.abs(a.vz); }
+          if (a.z < ZPOOL + .2) { if (Math.random() < .35) nace(a); else { a.z = ZPOOL + .2; a.vz = Math.abs(a.vz); } }   // recondensa o rebota
         }
-        a.el.setAttribute('cx', f(vx0 + a.x)); a.el.setAttribute('cy', f(vy0 + a.y));
+        var q = Q(a.x, a.y, a.z); a.el.setAttribute('cx', f(q[0])); a.el.setAttribute('cy', f(q[1]));
       });
+      brilloPlata.setAttribute('opacity', f(.55 + .25 * Math.sin(performance.now() / 300)));
     }
 
     // capas de vuelo: cada tramo del haz se pinta detrás de lo que tiene delante
@@ -331,6 +370,14 @@
       el('tspan', { 'class': 'sup', 'baseline-shift': 'super' }, t2).textContent = '10';
       el('tspan', { 'class': 'conf-val' }, t2).textContent = ' 5s';
       el('tspan', { 'class': 'conf-val sup', 'baseline-shift': 'super' }, t2).textContent = '1';
+      // segunda señal, enganchada al átomo: cómo salen los átomos del horno
+      var sx = x0 + 352, sy = y0 - 10, lineasS = ['Nada los acelera. En el vapor a', '1300 K cada átomo ya trae su', 'velocidad térmica (Maxwell,', '≈ 500 m/s). Los que por azar', 'llegan al orificio escapan en', 'línea recta: es efusión.'];
+      el('line', { 'class': 'enlace', x1: f(x0 + 312), y1: f(y0 + 46), x2: f(sx), y2: f(y0 + 46) }, q);
+      el('circle', { 'class': 'enlace-p', cx: f(x0 + 312), cy: f(y0 + 46), r: 1.8 }, q); el('circle', { 'class': 'enlace-p', cx: f(sx), cy: f(y0 + 46), r: 1.8 }, q);
+      el('rect', { 'class': 'nota-fondo nota-fondo-2', x: f(sx), y: f(sy - 11), width: 236, height: 32 + lineasS.length * 17, rx: 2 }, q);
+      var st = el('text', { 'class': 'nota-t', x: f(sx + 10), y: f(sy + 3) }, q); st.textContent = 'Cómo salen';
+      var sd = el('text', { 'class': 'nota-d', x: f(sx + 10), y: f(sy + 21) }, q);
+      lineasS.forEach(function (l, k) { var sp = el('tspan', { x: f(sx + 10), dy: k ? 17 : 0 }, sd); sp.textContent = l; });
     }
     var capaNotas = el('g', { 'class': 'notas' }, g);
     function nota(piezas, ancla, titulo, lineas, cima, foco, op) {

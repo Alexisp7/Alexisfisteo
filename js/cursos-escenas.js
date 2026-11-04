@@ -162,30 +162,35 @@
   // la sombra (b = √27 ≈ 5,2), el anillo de fotones, la imagen del disco de atrás por encima y por
   // debajo de la sombra (lente gravitacional) y el brillo Doppler del lado que se acerca.
   var GLSL_AGUJERO = [
+    '#extension GL_OES_standard_derivatives : enable',
     'precision highp float;',
     'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix;',
     'float hash(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
-    // disco dibujado: cada órbita es una línea fina; por ella corren trazos a la velocidad kepleriana
-    'vec4 disco(vec3 p, vec3 v) {',
-    '  float r = length(p.xz); if (r < 5.9 || r > 17.0) return vec4(0.0);',
-    '  float b = sqrt(1.0 / (r - 2.0)); vec3 t = normalize(vec3(-p.z, 0.0, p.x)); vec3 vd = normalize(v);',
-    '  float g = sqrt(1.0 - 3.0 / r) / (1.0 - b * dot(t, -vd));',          // corrimiento gravitacional + Doppler
-    '  float aa = 1.3 * uPix / max(abs(vd.y), .12);',                              // ancho de un píxel sobre el plano del disco
-    '  float sp = .42, k = floor(r / sp), h = hash(vec3(k, 1.7, 4.2)), h2 = hash(vec3(k, 9.1, 2.3));',
-    '  float d = abs(fract(r / sp) - .5) * sp, wl = .007 + .007 * h;',
-    '  float linea = 1.0 - smoothstep(wl, wl + aa, d);',
-    '  float dI = abs(r - 6.05), isco = 1.0 - smoothstep(.02, .02 + aa, dI);',   // borde interior (ISCO) a tinta firme
-    '  float rr = (k + .5) * sp, om = 5.6 * pow(6.0 / rr, 1.5) * (.85 + .3 * h2);',
-    '  float ph = atan(p.z, p.x), n = 2.0 + floor(h * 4.0), cola = .1 + .2 * h;',
-    '  float s = fract((ph - om * uT) / 6.2831853 * n + h2);',
-    '  float st = smoothstep(1.0 - cola, 1.0 - cola + .012, s) * (1.0 - smoothstep(.988, 1.0, s));',   // pedazos de trazo de brillo parejo
-    '  float T = pow(r, -.75) * pow(max(1.0 - sqrt(6.0 / r), 0.0), .25) / .1274;',
-    '  float D = clamp(pow(g, 3.0), .25, 3.2);',
-    '  float fade = smoothstep(5.9, 6.2, r) * (1.0 - smoothstep(13.5, 17.0, r));',
-    '  vec3 amarillo = vec3(1.0, .80, .10), claro = vec3(1.0, .93, .55);',
-    '  vec3 col = mix(amarillo, claro, .15 + .5 * st) * (.6 + .25 * T) * clamp(D, .6, 1.4) * (.55 + 1.15 * st);',
-    '  float a = max(linea * fade * (.1 + .9 * st), isco * .9);',
-    '  return vec4(col + isco * vec3(1.0, .9, .45), clamp(a, 0.0, 1.0)); }',
+    // disco a garabatos de marcador: relleno opaco por bandas (rojo adentro, naranja, mostaza, amarillo afuera)
+    // y cientos de trazos continuos y ondulados que giran muy rápido, más rápido cuanto más adentro (ω ∝ r^−3/2)
+    'vec3 paleta(float u) { u = clamp(u, 0.0, 1.0);',
+    '  vec3 R = vec3(.80, .09, .05), O = vec3(.97, .40, .09), M = vec3(.88, .58, .09), Y = vec3(1.0, .87, .12), P = vec3(1.0, .96, .52);',
+    '  if (u < .24) return mix(R, O, smoothstep(.1, .24, u)); if (u < .46) return mix(O, M, smoothstep(.34, .46, u));',
+    '  if (u < .66) return mix(M, Y, smoothstep(.54, .66, u)); return mix(Y, P, smoothstep(.8, 1.0, u) * .55); }',
+    // se evalúa fuera del bucle de integración, así fwidth() mide de verdad cuánto cambia r entre píxeles (también en las imágenes de la lente)
+    'vec4 disco(vec3 p, vec3 v, float hay) {',
+    '  float r = max(length(p.xz), 2.5), ph = atan(p.z, p.x), b = sqrt(1.0 / max(r - 2.0, .05)); vec3 t = normalize(vec3(-p.z, 0.0, p.x) + 1e-5); vec3 vd = normalize(v + 1e-5);',
+    '  float g = sqrt(max(1.0 - 3.0 / r, 0.0)) / (1.0 - b * dot(t, -vd)), D = clamp(pow(g, 3.0), .78, 1.25);',
+    '  float u = (r - 6.0) / 10.5, om = 9.0 * pow(6.0 / r, 1.5);',
+    '  vec3 col = paleta(u) * .48;',
+    '  for (int j = 0; j < 4; j++) {',
+    '    float fj = float(j), sp = .55 + .12 * fj, o = fj * .37;',
+    '    float rr = r + (.5 + .15 * fj) * sin(ph * (1.0 + fj) - om * uT * (1.0 + .3 * fj) + fj * 2.1) + .12 * sin(ph * (2.0 + fj) + om * uT * .8 + fj * 4.0);',
+    '    float aa = min(fwidth(rr), 3.0) * .8 + 1e-4;',
+    '    float k = floor(rr / sp + o), h = hash(vec3(k, fj, 3.3));',
+    '    float d = abs(fract(rr / sp + o) - .5) * sp, wl = sp * (.1 + .16 * h);',
+    '    float m = mix(1.0 - smoothstep(wl - aa * .5, wl + aa * .5, d), 2.0 * wl / sp, smoothstep(.3 * sp, .9 * sp, aa));',
+    '    col = mix(col, paleta(u + (h - .5) * .42) * (.85 + .35 * hash(vec3(k, fj, 7.7))), m);',
+    '  }',
+    '  float ar = min(fwidth(r), 3.0) * .7 + 1e-4;',
+    '  float borde = 16.3 + .6 * sin(ph * 3.0 + 1.0) + .35 * sin(ph * 7.0 - om * uT * .5);',
+    '  float a = hay * smoothstep(5.9, 5.9 + ar + .05, r) * (1.0 - smoothstep(borde - ar, borde + ar, r));',
+    '  return vec4(col * D, a); }',
     // fondo: espacio azul muy oscuro con nubes violáceas dibujadas a curvas de nivel y muchas estrellas.
     // Se consulta en la dirección final del rayo, así que la lente lo deforma alrededor de la sombra.
     'float ruido(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);',
@@ -227,7 +232,7 @@
     '  vec3 cam = vec3(0.0, ci, -si) * 40.0, fw = -normalize(cam), up = vec3(0.0, si, ci), rt = vec3(-1.0, 0.0, 0.0);',
     '  vec3 p = cam + rt * bx + up * by, v = fw;',
     '  float h2 = dot(cross(p, v), cross(p, v));',
-    '  vec3 acc = vec3(0.0); float al = 0.0; bool cae = false;',
+    '  vec3 hA = vec3(0.0), vA = vec3(0.0, 1.0, 0.0), hB = vec3(0.0), vB = vec3(0.0, 1.0, 0.0); int n = 0; bool cae = false;',
     '  for (int i = 0; i < 260; i++) {',
     '    float r = length(p);',
     '    if (r < 2.02) { cae = true; break; }',
@@ -236,8 +241,8 @@
     '    vec3 a = -3.0 * h2 * p / pow(r, 5.0);',
     '    vec3 vm = v + a * dt * .5, pn = p + vm * dt; float rn = length(pn);',
     '    vec3 an = -3.0 * h2 * pn / pow(rn, 5.0); vec3 vn = vm + an * dt * .5;',
-    '    if (p.y * pn.y < 0.0) { float k = p.y / (p.y - pn.y); vec4 c = disco(mix(p, pn, k), vn);',
-    '      acc += (1.0 - al) * c.rgb * c.a; al += (1.0 - al) * c.a; if (al > .98) break; }',
+    '    if (p.y * pn.y < 0.0) { float k = p.y / (p.y - pn.y); vec3 q = mix(p, pn, k);',
+    '      float rq = length(q.xz); if (rq > 5.85 && rq < 17.6) { if (n == 0) { hA = q; vA = vn; } else { hB = q; vB = vn; } n++; if (n > 1) break; } }',
     '    p = pn; v = vn;',
     '  }',
     // dirección hacia el fondo: la de una cámara estenopeica más la desviación que sufrió el rayo; el cielo gira despacio
@@ -245,8 +250,8 @@
     '  vec3 dg = normalize(normalize(fw + (rt * bx + up * by) / F) + (normalize(v) - fw));',
     '  float ag = uT * .03, cg = cos(ag), sg = sin(ag); dg = vec3(cg * dg.x - sg * dg.z, dg.y, sg * dg.x + cg * dg.z);',
     '  vec3 fondo = cae ? vec3(0.0) : cielo(dg, px);',
-    '  vec3 col = acc + (1.0 - al) * fondo;',
-    '  col = 1.0 - exp(-col * 1.6);',
+    '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0);',
+    '  vec3 col = c1.rgb * c1.a + (1.0 - c1.a) * (c2.rgb * c2.a + (1.0 - c2.a) * (1.0 - exp(-fondo * 1.6)));',
     '  gl_FragColor = vec4(col, 1.0); }'
   ].join('\n');
 
@@ -263,6 +268,7 @@
     var BC = Math.sqrt(27), RSH = BC * SC;   // radio de la sombra en pantalla
     // ── WebGL
     var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true }), U = {}, listo = false;
+    if (gl) gl.getExtension('OES_standard_derivatives');
     if (gl) {
       var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }'); gl.compileShader(vs);
       var fs = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(fs, GLSL_AGUJERO); gl.compileShader(fs);

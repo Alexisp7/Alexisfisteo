@@ -912,7 +912,9 @@
     mods[i].tick(1 / 60);
   }
   items.forEach(function (it, i) {
-    it.addEventListener('pointerenter', function () { elegir(i); });
+    // en pantallas táctiles el primer toque solo selecciona; el segundo, sobre el título ya activo, abre el curso
+    it.addEventListener('pointerenter', function (ev) { if (ev.pointerType !== 'mouse') it.estaba = i === activo; elegir(i); });
+    it.querySelector('.mc-a').addEventListener('click', function (ev) { if (it.estaba === false) ev.preventDefault(); it.estaba = undefined; });
     it.addEventListener('focus', function () { elegir(i); });
   });
   raiz.addEventListener('keydown', function (ev) {

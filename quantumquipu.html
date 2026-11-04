@@ -448,6 +448,51 @@
       .ro-panel .caso-tabla th { padding:0 2px; font-size:13px; }
       .ro-panel .caso-tabla td { min-width:18px; padding:0 1px; }
     }
+
+    /* ═══ La sección del título trabaja sobre blanco, como el grafo ═══ */
+    .qq-head { background:#fff; border-top:none; }
+    .qq-head .proj-hero-title { color:#111; }
+    .qq-head .proj-hero-title em { color:#8C6D33; }
+    .qq-head .proj-hero-eyebrow { color:#8C6D33; }
+    .qq-head .proj-hero-eyebrow::before { background:#8C6D33; }
+    .qq-head .qq-links { border-top-color:#E5E0D6; }
+    .qq-head .qq-link::before { background:linear-gradient(90deg,#C8A96E,transparent); }
+    .qq-head .qq-link-k { color:#8C6D33; }
+    .qq-head .qq-link-t { color:#111; }
+    .qq-head .qq-link-go { color:#8C6D33; }
+    .qq-head .qq-link-acts button, .qq-head .qq-link-acts a { color:#1B2A4A; border-bottom-color:rgba(140,109,51,.55); }
+    .qq-head .qq-link-acts button:hover, .qq-head .qq-link-acts a:hover { color:#8C6D33; border-color:#8C6D33; }
+    .qq-head .qq-head-desc { border-left:1px solid #EEE9E0; }
+    .qq-head .ro-panel { background:transparent; box-shadow:none; padding:0; border-radius:0; overflow:visible; }
+    .ro-barra { display:flex; align-items:center; gap:22px; margin-bottom:18px; }
+    .ro-select { position:relative; flex:1; min-width:0; }
+    .ro-select .tm-sel-btn { width:100%; display:flex; align-items:baseline; gap:10px; padding:8px 14px; background:#FBF7EE; border:1px solid #C8A96E; box-shadow:inset 3px 0 0 #C8A96E; cursor:pointer; font-family:'Cormorant Garamond',serif; color:#111; text-align:left; font-variant-numeric:lining-nums; }
+    .ro-select .tm-sel-btn:hover { border-color:#8C6D33; }
+    .ro-select .tm-sel-chev { align-self:center; flex-shrink:0; width:8px; height:8px; border-right:1.5px solid #1B2A4A; border-bottom:1.5px solid #1B2A4A; transform:rotate(45deg); margin:0 2px 4px auto; transition:transform .25s; }
+    .ro-select.abierto .tm-sel-chev { transform:rotate(-135deg); margin-bottom:-2px; }
+    .ro-select .tm-rutas { list-style:none; margin:0; padding:0; position:absolute; z-index:20; top:calc(100% + 4px); left:0; right:0; display:none; background:#fff; border:1px solid #1B2A4A; box-shadow:0 14px 30px rgba(27,42,74,.14); }
+    .ro-select.abierto .tm-rutas { display:block; animation:roAbre .25s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes roAbre { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+    .ro-select .tm-ruta button { width:100%; display:flex; align-items:baseline; gap:10px; padding:7px 14px; background:#fff; border:none; border-bottom:1px solid #EEE9E0; cursor:pointer; font-family:'Cormorant Garamond',serif; color:#111; text-align:left; font-variant-numeric:lining-nums; transition:background .2s; }
+    .ro-select .tm-ruta:last-child button { border-bottom:none; }
+    .ro-select .tm-ruta button:hover { background:#F6F3EE; }
+    .ro-select .tm-ruta.elegida button { background:#FBF7EE; box-shadow:inset 3px 0 0 #C8A96E; }
+    .ro-select .tm-r-n { font-style:italic; font-size:18px; color:#1B2A4A; flex-shrink:0; }
+    .ro-select .tm-r-camino { font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.02em; color:#1B2A4A; flex:1; min-width:0; overflow-wrap:anywhere; }
+    .ro-select .tm-r-min { font-family:'Space Mono',monospace; font-size:8.5px; letter-spacing:.14em; text-transform:uppercase; color:#2F7A4F; flex-shrink:0; }
+    .ro-select .tm-ruta .tm-r-coste { font-size:19px; font-weight:700; color:#8C6D33; flex-shrink:0; }
+    .ro-select .tm-ruta .tm-r-min { display:none; }
+    .ro-select .tm-ruta.minima .tm-r-min { display:inline; }
+    .ro-costo { margin:0; flex-shrink:0; text-align:right; line-height:1; }
+    .ro-costo small { display:block; font-family:'Space Mono',monospace; font-size:8.5px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:#8C6D33; margin-bottom:6px; }
+    .ro-costo b { font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:700; color:#111; font-variant-numeric:lining-nums; }
+    .ro-costo b span { font-size:18px; font-weight:500; color:#6b665e; margin-left:4px; }
+    @media (max-width:900px) {
+      .qq-head .qq-head-desc { border-left:none; }
+      .ro-barra { flex-direction:column; align-items:stretch; gap:12px; }
+      .ro-costo { text-align:left; }
+      .ro-select .tm-r-camino { font-size:10.5px; }
+    }
     @media (prefers-reduced-motion: reduce) { .ro-panel { animation:none; opacity:1; } .ro-panel .camion-aire line { animation:none !important; } }
   </style>
 </head>
@@ -505,17 +550,18 @@
           <span class="qq-link-acts"><button type="button" onclick="openPDF()">Ver</button><a href="arch/Track 1.pdf" download>Descargar</a></span>
         </div>
       </div>
-      <ol class="qq-steps">
-        <li style="--s:0"><span class="qq-step-k">QUBO</span><span class="qq-step-t">La ruta de menor costo como optimización binaria, con distancias reales medidas en Google Earth.</span></li>
-        <li style="--s:1"><span class="qq-step-k">Ising</span><span class="qq-step-t">El costo se reescribe con spins <span class="nw">Z ∈ {−1, +1}</span>: <span class="nw">H = ZᵀJZ + hᵀZ</span>.</span></li>
-        <li style="--s:2"><span class="qq-step-k">VQE</span><span class="qq-step-t">Un ansatz parametrizado en Qiskit; un optimizador clásico ajusta θ hasta llegar a E<sub>min</sub>.</span></li>
-      </ol>
     </div>
     <div class="qq-head-desc">
       <figure class="ro-panel" data-red-orcopampa>
-        <svg class="caso-grafo" data-ro="grafo" viewBox="0 0 660 300" role="img" aria-label="Red de la mina Orcopampa: 8 instalaciones, 9 caminos con distancias reales y la ruta de 13 pasos que recorre un camión"></svg>
+        <div class="ro-barra">
+          <div class="tm-select ro-select" data-ro="select">
+            <button type="button" class="tm-sel-btn" data-ro="sel-btn" aria-haspopup="listbox" aria-expanded="false"></button>
+            <ol class="tm-rutas" data-ro="rutas" role="listbox" aria-label="Rutas por la red"></ol>
+          </div>
+          <p class="ro-costo" data-ro="costo" aria-live="polite"></p>
+        </div>
+        <svg class="caso-grafo" data-ro="grafo" viewBox="0 0 660 300" role="img" aria-label="Red de la mina Orcopampa: 8 instalaciones, 9 caminos con distancias reales y la ruta elegida que recorre un camión"></svg>
         <div class="ro-matriz" data-ro="matriz"></div>
-        <figcaption class="ro-cap">Ruta encontrada · 13 pasos · 7,314 km</figcaption>
       </figure>
     </div>
 

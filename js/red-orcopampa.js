@@ -1,4 +1,4 @@
-// Red minera de Orcopampa con la ruta de 13 pasos y el camión que la recorre.
+// Red minera de Orcopampa: un selector de rutas por la red real y el camión que recorre la elegida.
 // Adaptado del caso real del sitio del Qiskit Fall Fest 2026 (js/caso-minero.js, vista de resumen).
 (function () {
   var raiz = document.querySelector('[data-red-orcopampa]');
@@ -8,7 +8,7 @@
   function sub(t) { return '<sub>' + t + '</sub>'; }
   function km(v) { return v < 1 ? Math.round(v * 1000) + ' m' : (Math.round(v * 1000) / 1000) + ' km'; }
 
-  var L = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8'], T = 13, s = 'x1';
+  var L = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8'], s = 'x1';
   var IDX = {}; L.forEach(function (k, i) { IDX[k] = i + 1; });
   var NOMBRE = { x1: 'Planta', x2: 'J1', x3: 'Tajo', x4: 'Botadero', x5: 'J2', x6: 'Lixiviación', x7: 'Baja ley', x8: 'Relaves' };
   var CAMINOS = [['x1', 'x2', 1.6], ['x2', 'x3', 0.072], ['x2', 'x4', 0.035], ['x2', 'x8', 1.4], ['x2', 'x5', 1.4], ['x1', 'x5', 1.7], ['x8', 'x5', 1.0], ['x5', 'x6', 0.2], ['x5', 'x7', 0.5]];
@@ -17,7 +17,18 @@
   var POS = { x1: [74, 150], x2: [262, 96], x3: [176, 38], x4: [348, 38], x5: [348, 214], x6: [250, 266], x7: [446, 266], x8: [586, 150] };
   var ETIQ = { x1: [0, 40, 'middle'], x2: [0, 37, 'middle'], x3: [-28, 6, 'end'], x4: [28, 6, 'start'], x5: [0, 37, 'middle'], x6: [-28, 6, 'end'], x7: [28, 6, 'start'], x8: [0, 40, 'middle'] };
   var R = 20;
-  var ruta = ['x1', 'x5', 'x7', 'x5', 'x6', 'x5', 'x8', 'x2', 'x4', 'x2', 'x3', 'x2', 'x1'];
+  // Rutas válidas por los caminos reales: salen de la planta, pasan por los 8 lugares y vuelven.
+  // La primera es la óptima (7,314 km, la que da el VQE); las demás son recorridos más largos.
+  var RUTAS = [
+    [1, 5, 7, 5, 6, 5, 8, 2, 4, 2, 3, 2, 1],
+    [1, 5, 6, 5, 7, 5, 8, 5, 2, 3, 2, 4, 2, 1],
+    [1, 2, 3, 2, 4, 2, 5, 6, 5, 7, 5, 8, 2, 1],
+    [1, 5, 2, 3, 2, 4, 2, 8, 5, 6, 5, 7, 5, 1],
+    [1, 5, 6, 5, 7, 5, 2, 3, 2, 4, 2, 8, 2, 1]
+  ].map(function (r) { return r.map(function (i) { return 'x' + i; }); });
+  function largo(r) { var c = 0; for (var i = 1; i < r.length; i++) c += DIST[r[i - 1] + r[i]]; return c; }
+  function kmTxt(v) { return (Math.round(v * 1000) / 1000).toFixed(3).replace('.', ','); }
+  var elegida = 0, ruta = RUTAS[0], T = ruta.length;
 
   function el(tag, attrs, padre) { var n = document.createElementNS(NS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); padre.appendChild(n); return n; }
 
@@ -107,8 +118,38 @@
     celdas = Array.prototype.slice.call(caja.querySelectorAll('tr:first-child th')).slice(1);
   }
 
-  var svg = raiz.querySelector('[data-ro="grafo"]');
-  grafo(svg);
-  matriz(raiz.querySelector('[data-ro="matriz"]'));
+  // ── selector de rutas: solo el costo total ──
+  function $(n) { return raiz.querySelector('[data-ro="' + n + '"]'); }
+  var selector = $('select'), selBtn = $('sel-btn'), lista = $('rutas'), costo = $('costo');
+  var minimo = Math.min.apply(null, RUTAS.map(largo));
+  function fila(r, n) {
+    return '<span class="tm-r-n">R<sup>' + (n + 1) + '</sup></span><span class="tm-r-camino">' + r.map(function (k) { return IDX[k]; }).join('·') + '</span>' +
+      '<span class="tm-r-min">óptima</span><span class="tm-r-coste">' + kmTxt(largo(r)) + ' km</span>';
+  }
+  function abrir(si) { selector.classList.toggle('abierto', si); selBtn.setAttribute('aria-expanded', si ? 'true' : 'false'); }
+  function pintar() {
+    ruta = RUTAS[elegida]; T = ruta.length; t0 = 0;
+    selBtn.innerHTML = '<span class="tm-r-n">R<sup>' + (elegida + 1) + '</sup></span><span class="tm-r-camino">' + ruta.map(function (k) { return IDX[k]; }).join('·') + '</span><i class="tm-sel-chev" aria-hidden="true"></i>';
+    costo.innerHTML = '<small>Costo total</small><b>' + kmTxt(largo(ruta)) + '<span>km</span></b>';
+    lista.innerHTML = '';
+    RUTAS.forEach(function (r, n) {
+      var li = document.createElement('li');
+      li.className = 'tm-ruta' + (n === elegida ? ' elegida' : '') + (Math.abs(largo(r) - minimo) < 1e-9 ? ' minima' : '');
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', n === elegida ? 'true' : 'false');
+      li.innerHTML = '<button type="button">' + fila(r, n) + '</button>';
+      li.querySelector('button').addEventListener('click', function () { elegida = n; abrir(false); pintar(); });
+      lista.appendChild(li);
+    });
+    svg.innerHTML = '';
+    grafo(svg);
+    matriz($('matriz'));
+  }
+  selBtn.addEventListener('click', function () { abrir(!selector.classList.contains('abierto')); });
+  document.addEventListener('click', function (ev) { if (!selector.contains(ev.target)) abrir(false); });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') abrir(false); });
+
+  var svg = $('grafo');
+  pintar();
   if (!quieto) requestAnimationFrame(andar);
 })();

@@ -124,58 +124,108 @@
 
   // ═════════ II · Mecánica cuántica: Stern–Gerlach ═════════
   function escenaSternGerlach(svg, salida) {
-    var s = 4.7, P = camara(960, 470, s), g = el('g', {}, svg);
-    sombra(g, P, s, 10, 0, 110, 46);
-    // banco óptico
-    caja(g, P, -86, -30, -8, 186, 60, 5, 'lo');
-    caja(g, P, -84, -26, -3, 182, 52, 3, 'mid');
-    regla(g, P, -80, 94, 26, -1.5, 2, 5);
-    [[-82, -24], [96, -24], [-82, 24], [96, 24]].forEach(function (q) { tornillo(g, P(q[0], q[1], 0)); });
-    [[-80, -28], [94, -28], [-80, 28], [94, 28]].forEach(function (q) { caja(g, P, q[0] - 3, q[1] - 3, -12, 6, 6, 4, 'lo'); });
-    placa(g, P, 54, 12, 0, 26, 10, 'Ag · 1922 · T ≈ 1300 K');
-    // yugo del imán (atrás), bobinas y polos
-    caja(g, P, -12, -24, 0, 44, 6, 42, 'lo');
-    for (var k = 0; k < 11; k++) { var zz = 4 + k * 3.4; linea(g, P(-12, -18, zz), P(32, -18, zz), 'bobina'); }
-    // horno con resistencia y brillo
-    caja(g, P, -78, -10, 0, 18, 20, 26, 'mid');
-    for (var j = 0; j < 7; j++) { var x0 = -76 + j * 2.4; ruta(g, [P(x0, 10, 5), P(x0 + 1.2, 10, 21), P(x0 + 2.4, 10, 5)], 'resistencia'); }
-    caja(g, P, -74, -6, 26, 10, 12, 3, 'lo');
-    var boca = P(-60, 0, 16); el('ellipse', { 'class': 'brasa', cx: f(boca[0]), cy: f(boca[1]), rx: 3.4, ry: 5 }, g);
-    // colimadores
-    function rendija(x) {
-      caja(g, P, x, -14, 0, 1.6, 28, 28, 'hi');
-      poly(g, [P(x + 1.6, -8, 15.4), P(x + 1.6, 8, 15.4), P(x + 1.6, 8, 16.6), P(x + 1.6, -8, 16.6)], 'hueco');
-      caja(g, P, x - 2, -16, 0, 5.6, 4, 3, 'lo'); caja(g, P, x - 2, 12, 0, 5.6, 4, 3, 'lo');
+    var s = 4.7, P = camara(960, 470, s), g = el('g', {}, svg), ZB = 16, orden = 0;
+    // cada pieza entra desde abajo (+) o desde arriba (−) la primera vez que se muestra la escena
+    function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;transition-delay:' + (120 + orden++ * 45) + 'ms' }, g); }
+    function arrollamiento(q, x0, x1, y, z0, z1, n) { for (var k = 1; k < n; k++) { var z = z0 + (z1 - z0) * k / n; linea(q, P(x0, y, z), P(x1, y, z), 'espira'); } }
+
+    // ── banco óptico
+    var b0 = pieza(120);
+    sombra(b0, P, s, 10, 0, 110, 46);
+    [[-80, -28], [94, -28], [-80, 28], [94, 28]].forEach(function (q) { caja(b0, P, q[0] - 3, q[1] - 3, -12, 6, 6, 4, 'lo'); });
+    caja(b0, P, -86, -30, -8, 186, 60, 5, 'lo');
+    caja(b0, P, -84, -26, -3, 182, 52, 3, 'mid');
+    regla(b0, P, -80, 94, 26, -1.5, 2, 5);
+    linea(b0, P(-84, 0, 0), P(98, 0, 0), 'eje-optico');
+    [[-82, -24], [96, -24], [-82, 24], [96, 24]].forEach(function (q) { tornillo(b0, P(q[0], q[1], 0)); });
+
+    // ── horno de plata: crisol cilíndrico, resistencia en espiral, tapa y boquilla
+    var h0 = pieza(-160);
+    caja(h0, P, -82, -12, 0, 22, 24, 3, 'lo');
+    cilindro(h0, P, s, -71, 0, 3, 9, 24, 'mid');
+    for (var j = 0; j < 9; j++) {
+      var zc = 6 + j * 2.3, c = P(-71, 0, zc), rx = 9 * 1.2247 * s, ry = 9 * .7071 * s;
+      el('path', { 'class': 'resistencia', d: 'M' + f(c[0] - rx) + ' ' + f(c[1]) + ' A' + f(rx) + ' ' + f(ry) + ' 0 0 0 ' + f(c[0] + rx) + ' ' + f(c[1] - 1.2) }, h0);
     }
-    rendija(-46); rendija(-36);
-    // polo inferior (con canal) y polo superior en filo
-    caja(g, P, -12, -14, 0, 44, 28, 12, 'lo');
-    poly(g, [P(-12, -2, 12), P(32, -2, 12), P(32, 2, 12), P(-12, 2, 12)], 'hueco');
-    var vuelos = el('g', {}, g);              // átomos en vuelo (entre polos y hacia la pantalla)
-    caja(g, P, -12, -14, 24, 44, 28, 10, 'mid');
-    poly(g, [P(32, -14, 24), P(32, 14, 24), P(32, 0, 19)], 'filo');
-    linea(g, P(-12, 0, 19), P(32, 0, 19), 'arista');
-    for (var w = 0; w < 6; w++) { tornillo(g, P(-8 + w * 7.6, -12, 34)); }
-    // pantalla de vidrio con soporte
-    caja(g, P, 76, -4, 0, 6, 8, 3, 'lo');
-    var pantalla = el('g', { 'class': 's vidrio' }, g);
-    poly(pantalla, [P(80, -20, 1), P(80, 20, 1), P(80, 20, 34), P(80, -20, 34)], 'tp');
-    var impactos = el('g', {}, g);
-    ruta(g, [P(80, -9, 16), P(80, 9, 16)], 'clasico');
-    linea(g, P(80, -20, 34), P(80, 20, 34), 'arista'); linea(g, P(80, 20, 1), P(80, 20, 34), 'arista');
-    // física: f(v) ∝ v³ e^{−v²/v₀²}  →  w = v²/v₀² ~ Gamma(2,1);  Δz = ±K(y)/w
+    cilindro(h0, P, s, -71, 0, 27, 10, 2.4, 'lo');
+    cilindro(h0, P, s, -71, 0, 29.4, 3, 3, 'mid');
+    caja(h0, P, -63, -2.5, ZB - 2.5, 5, 5, 5, 'lo');
+    var boca = P(-58, 0, ZB); el('ellipse', { 'class': 'brasa', cx: f(boca[0]), cy: f(boca[1]), rx: 2.6, ry: 3.6 }, h0);
+    var rotAg = P(-71, 9, 15); var tAg = el('text', { 'class': 'grabado grande', x: f(rotAg[0]), y: f(rotAg[1]) }, h0); tAg.textContent = 'Ag';
+
+    // capas de vuelo: cada tramo del haz se pinta detrás de lo que tiene delante
+    var vuelo = [], tramos = [-46, -36, -12, 32, 999];
+    function capa() { var q = el('g', { 'class': 'vuelo' }, g); vuelo.push(q); return q; }
+    capa();                                   // horno → 1.ª rendija
+
+    // ── colimadores: placa, ranura horizontal, marco y pie
+    function rendija(x) {
+      var q = pieza(-150);
+      caja(q, P, x - 3, -9, 0, 7, 18, 2, 'lo');
+      caja(q, P, x, -13, 2, 1.8, 26, 26, 'hi');
+      poly(q, [P(x + 1.8, -8, ZB - .7), P(x + 1.8, 8, ZB - .7), P(x + 1.8, 8, ZB + .7), P(x + 1.8, -8, ZB + .7)], 'hueco');
+      linea(q, P(x + 1.8, -8.6, ZB + 1.6), P(x + 1.8, 8.6, ZB + 1.6), 'guia'); linea(q, P(x + 1.8, -8.6, ZB - 1.6), P(x + 1.8, 8.6, ZB - 1.6), 'guia');
+      [[-11, 25], [11, 25], [-11, 5], [11, 5]].forEach(function (t) { var p = P(x + 1.8, t[0], t[1]); el('circle', { 'class': 'tornillo', cx: f(p[0]), cy: f(p[1]), r: 1.2 }, q); });
+    }
+    rendija(-46); capa(); rendija(-36); capa();
+
+    // ── electroimán: columna con bobina, brazos, polo inferior acanalado y polo superior en filo
+    var m0 = pieza(150);
+    caja(m0, P, -12, -26, 0, 44, 6, 46, 'lo');
+    caja(m0, P, -12, -20, 0, 44, 30, 5, 'lo');
+    var m1 = pieza(-160);
+    caja(m1, P, -14, -28, 13, 48, 10, 16, 'cobre');
+    arrollamiento(m1, -14, 34, -18, 13, 29, 9);
+    for (var k = 1; k < 5; k++) { var yy = -28 + k * 2; linea(m1, P(34, yy, 13), P(34, yy, 29), 'espira'); }
+    var m2 = pieza(130);
+    caja(m2, P, -12, -10, 5, 44, 20, 7, 'mid');
+    poly(m2, [P(-12, -1.3, 12), P(32, -1.3, 12), P(32, 1.3, 12), P(-12, 1.3, 12)], 'hueco');
+    poly(m2, [P(32, -1.3, 12), P(32, 1.3, 12), P(32, 0, 10.2)], 'hueco');
+    [[-8, -7], [28, -7], [-8, 7], [28, 7]].forEach(function (t) { tornillo(m2, P(t[0], t[1], 12)); });
+    capa();                                   // dentro del imán
+    var m3 = pieza(-180);
+    var cu = el('g', { 'class': 's mid' }, m3);
+    poly(cu, [P(-12, 10, 26), P(32, 10, 26), P(32, 0, 19), P(-12, 0, 19)], 'fr');
+    poly(cu, [P(32, -10, 26), P(32, 10, 26), P(32, 0, 19)], 'sd');
+    linea(m3, P(-12, 0, 19), P(32, 0, 19), 'arista');
+    caja(m3, P, -12, -10, 26, 44, 20, 8, 'mid');
+    caja(m3, P, -12, -20, 34, 44, 30, 6, 'lo');
+    for (var w = 0; w < 6; w++) tornillo(m3, P(-8 + w * 7.6, 6, 40));
+    var rN = P(10, 10, 30), tN = el('text', { 'class': 'grabado', x: f(rN[0]), y: f(rN[1]) }, m3); tN.textContent = '∂B/∂z';
+
+    // ── placa y pantalla de vidrio con marco
+    var p0 = pieza(110);
+    placa(p0, P, 40, 13, 0, 28, 10, 'Ag · 1922 · T ≈ 1300 K');
+    capa();                                   // imán → pantalla
+    var pa = pieza(-170);
+    caja(pa, P, 76, -24, 0, 8, 6, 2.5, 'lo'); caja(pa, P, 76, 18, 0, 8, 6, 2.5, 'lo');
+    caja(pa, P, 79, -22, 2.5, 2, 2, 34, 'lo');
+    var pantalla = el('g', { 'class': 's vidrio' }, pa);
+    poly(pantalla, [P(80, -20, 3), P(80, 20, 3), P(80, 20, 35), P(80, -20, 35)], 'tp');
+    var impactos = el('g', {}, pa);
+    ruta(pa, [P(80, -9, ZB), P(80, 9, ZB)], 'clasico');
+    var rc = P(80, 12, ZB + 1.5), tc = el('text', { 'class': 'grabado', x: f(rc[0]), y: f(rc[1]) }, pa); tc.textContent = 'clásico';
+    caja(pa, P, 79, 20, 2.5, 2, 2, 34, 'lo');
+    caja(pa, P, 79, -22, 35, 2, 44, 2, 'lo');
+
+    // física: f(v) ∝ v³ e^{−v²/v₀²} → w = v²/v₀² ~ Gamma(2,1); Δz = ±K(y)/w
+    // espín: antes del imán, superposición (la flecha "titila"); al entrar al gradiente queda ↑ o ↓
     var K = 11, enVuelo = [], arriba = 0, abajo = 0, acum = 0;
     function lanzar() {
       var w2 = -Math.log(Math.random() * Math.random() + 1e-9), y0 = (Math.random() * 2 - 1) * 8;
       var sgn = Math.random() < .5 ? 1 : -1;
-      var dz = sgn * K * (1 - (y0 / 9.5) * (y0 / 9.5)) / Math.max(w2, .7);   // el gradiente es mayor bajo el filo: forma de labios
-      enVuelo.push({ x: -58, y: y0, v: Math.sqrt(w2), dz: dz, sgn: sgn, el: el('circle', { 'class': 'atomo', r: 1.6 }, vuelos) });
+      var dz = sgn * K * (1 - (y0 / 9.5) * (y0 / 9.5)) / Math.max(w2, .7);
+      var a = el('g', { 'class': 'atomo' }, vuelo[0]);
+      el('circle', { 'class': 'atomo-b', r: 2.1 }, a);
+      var fl = el('path', { 'class': 'espin', d: 'M0 1.4 L0 -6.5 M-1.7 -4.4 L0 -6.6 L1.7 -4.4' }, a);
+      var fl2 = el('path', { 'class': 'espin fantasma', d: 'M0 -1.4 L0 6.5 M-1.7 4.4 L0 6.6 L1.7 4.4' }, a);
+      enVuelo.push({ x: -58, y: y0, v: Math.sqrt(w2), dz: dz, sgn: sgn, el: a, fl: fl, fl2: fl2, tramo: 0, def: false });
     }
     function zEn(a, x) {   // parabólica dentro del imán (−12…32), recta después
-      if (x <= -12) return 16;
+      if (x <= -12) return ZB;
       var L = 44, t = Math.min(x + 12, L) / L, zm = a.dz * .32 * t * t;
-      if (x <= 32) return 16 + zm;
-      return 16 + a.dz * .32 + (2 * .32 * a.dz / L) * (x - 32);
+      if (x <= 32) return ZB + zm;
+      return ZB + a.dz * .32 + (2 * .32 * a.dz / L) * (x - 32);
     }
     return {
       tick: function (dt) {
@@ -183,13 +233,27 @@
         for (var i = enVuelo.length - 1; i >= 0; i--) {
           var a = enVuelo[i]; a.x += a.v * 62 * dt;
           if (a.x >= 80) {
-            var z = 16 + a.dz, q = P(80, a.y, z);
-            if (z > 4 && z < 33) el('circle', { 'class': 'impacto', cx: f(q[0]), cy: f(q[1]), r: 1.15 }, impactos);
+            var z = ZB + a.dz, q = P(80, a.y, z);
+            if (z > 4 && z < 34) el('circle', { 'class': 'impacto ' + (a.sgn > 0 ? 'imp-arriba' : 'imp-abajo'), cx: f(q[0]), cy: f(q[1]), r: 1.15 }, impactos);
             if (impactos.childNodes.length > 1400) impactos.removeChild(impactos.firstChild);
             if (a.sgn > 0) arriba++; else abajo++;
-            vuelos.removeChild(a.el); enVuelo.splice(i, 1); continue;
+            a.el.parentNode.removeChild(a.el); enVuelo.splice(i, 1); continue;
           }
-          var q2 = P(a.x, a.y, zEn(a, a.x)); a.el.setAttribute('cx', f(q2[0])); a.el.setAttribute('cy', f(q2[1]));
+          while (a.x > tramos[a.tramo]) { a.tramo++; vuelo[a.tramo].appendChild(a.el); }
+          var q2 = P(a.x, a.y, zEn(a, a.x)), jx = 0, jy = 0;
+          if (a.x < -12) {                       // superposición: la flecha salta entre ↑ y ↓ y vibra
+            var ang = (Math.random() < .5 ? 0 : 180) + (Math.random() - .5) * 70;
+            a.fl.setAttribute('transform', 'rotate(' + f(ang) + ')');
+            a.fl.setAttribute('opacity', f(.45 + Math.random() * .55));
+            a.fl2.setAttribute('opacity', f(Math.random() * .5));
+            jx = (Math.random() - .5) * 1.4; jy = (Math.random() - .5) * 1.4;
+          } else if (!a.def) {                   // el gradiente "mide": queda definido
+            a.def = true; a.fl.removeAttribute('transform'); a.fl.setAttribute('opacity', 1);
+            a.fl2.parentNode.removeChild(a.fl2);
+            a.el.setAttribute('class', 'atomo ' + (a.sgn > 0 ? 'arriba' : 'abajo'));
+            if (a.sgn < 0) a.fl.setAttribute('transform', 'rotate(180)');
+          }
+          a.el.setAttribute('transform', 'translate(' + f(q2[0] + jx) + ' ' + f(q2[1] + jy) + ')');
         }
         var n = arriba + abajo;
         salida('N↑ = ' + arriba + '   N↓ = ' + abajo, n ? 'P(↑) = ' + (arriba / n).toFixed(2).replace('.', ',') + ' · dos manchas, no una banda' : 'esperando átomos…');
@@ -280,6 +344,8 @@
     activo = i;
     items.forEach(function (it, k) { it.classList.toggle('on', k === i); it.setAttribute('aria-current', k === i ? 'true' : 'false'); });
     escenas.forEach(function (e, k) { e.classList.toggle('on', k === i); });
+    var e = escenas[i];
+    if (e.classList.contains('armando')) requestAnimationFrame(function () { requestAnimationFrame(function () { e.classList.remove('armando'); }); });
     raiz.setAttribute('data-activo', i);
     mods[i].tick(1 / 60);
   }
@@ -293,6 +359,7 @@
       items[n].querySelector('a').focus();
     }
   });
+  if (!quieto) escenas.forEach(function (e) { if (e.querySelector('.pieza')) e.classList.add('armando'); });
   elegir(0);
   if (quieto) { for (var w = 0; w < 3; w++) for (var k = 0; k < 400; k++) mods[w].tick(1 / 60); elegir(0); return; }
   // precalienta cada escena para que no empiece vacía

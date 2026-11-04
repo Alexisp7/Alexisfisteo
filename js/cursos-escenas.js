@@ -154,8 +154,19 @@
     }
     cilindro(h0, P, s, -71, 0, 27, 10, 2.4, 'lo');
     cilindro(h0, P, s, -71, 0, 29.4, 3, 3, 'mid');
-    caja(h0, P, -63, -2.5, ZB - 2.5, 5, 5, 5, 'lo');
-    var boca = P(-58, 0, ZB); el('ellipse', { 'class': 'brasa', cx: f(boca[0]), cy: f(boca[1]), rx: 2.6, ry: 3.6 }, h0);
+    // boquilla: tubo corto sobre el eje del haz, con el orificio de salida
+    function boquilla(q) {
+      var R1 = 1.9, X0 = -62.2, X1 = -57.5, n = [-.5, .866];
+      function aro(x, r) { var o = []; for (var k = 0; k < 24; k++) { var t = k / 24 * Math.PI * 2; o.push(P(x, r * Math.cos(t), ZB + r * Math.sin(t))); } return o; }
+      var a0 = aro(X0, R1), a1 = aro(X1, R1), dmax = -1e9, dmin = 1e9, imx = 0, imn = 0;
+      a0.forEach(function (c, k) { var d = c[0] * n[0] + c[1] * n[1]; if (d > dmax) { dmax = d; imx = k; } if (d < dmin) { dmin = d; imn = k; } });
+      var cuerpo = el('g', { 'class': 's lo' }, q);
+      poly(cuerpo, [a0[imx], a1[imx], a1[imn], a0[imn]], 'fr');
+      poly(cuerpo, a1, 'sd');
+      poly(q, aro(X1, .8), 'hueco');
+      var b = P(X1, 0, ZB); el('circle', { 'class': 'brasa', cx: f(b[0]), cy: f(b[1]), r: 2.2 }, q);
+    }
+    boquilla(h0);
     var rotAg = P(-71, 9, 15); var tAg = el('text', { 'class': 'grabado grande ag-rot', x: f(rotAg[0]), y: f(rotAg[1]) }, h0); tAg.textContent = 'Ag';
     // corte del horno (solo al tocarlo): se quita el cuadrante que mira al lector (x>0, y>0) y quedan
     // a la vista dos caras de corte con las capas reales —carcasa de acero, aislante, resistencia,
@@ -200,25 +211,31 @@
       }
     });
     // orificio de efusión: atraviesa crisol, aislante y carcasa hacia la boquilla (cara A, z = ZB)
-    poly(hint, [Q(RC, 0, ZB - .5), Q(9, 0, ZB - .5), Q(9, 0, ZB + .5), Q(RC, 0, ZB + .5)], 'hc-canal');
-    caja(hint, P, -63, -2.5, ZB - 2.5, 5, 5, 5, 'lo');
-    var bocaB = P(-58, 0, ZB); el('ellipse', { 'class': 'brasa', cx: f(bocaB[0]), cy: f(bocaB[1]), rx: 2.6, ry: 3.6 }, hint);
+    poly(hint, [Q(RC, 0, ZB - .8), Q(9, 0, ZB - .8), Q(9, 0, ZB + .8), Q(RC, 0, ZB + .8)], 'hc-canal');
+    var ori = Q(RC, 0, ZB); el('circle', { 'class': 'hc-orificio', cx: f(ori[0]), cy: f(ori[1]), r: 3.2 }, hint);
     var salen = el('g', {}, hint);
+    var c0 = Q(RC, 0, ZB), c1 = Q(24, 0, ZB); el('path', { 'class': 'hc-chorro', d: 'M' + f(c0[0]) + ' ' + f(c0[1]) + ' L' + f(c1[0]) + ' ' + f(c1[1]) }, salen);   // eje del chorro
+    boquilla(hint);
     // átomos del vapor: componentes gaussianas (Maxwell), rebotan en la pared y en las caras de corte
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var VT = 7;
-    function nace(a) { var ang = Math.PI / 2 + Math.random() * Math.PI * 1.5, r = Math.random() * (RC - .6); a.x = r * Math.cos(ang); a.y = r * Math.sin(ang); a.z = ZPOOL + .3; a.vx = gauss() * VT; a.vy = gauss() * VT; a.vz = Math.abs(gauss()) * VT; a.sale = -1; return a; }
-    var gas = []; for (var gi = 0; gi < 26; gi++) { var ga = nace({ el: el('circle', { 'class': 'hc-atomo', r: 1.35 }, vapor) }); ga.z = ZPOOL + 1 + Math.random() * (ZTECHO - ZPOOL - 2); gas.push(ga); }
+    function nace(a) { var ang = Math.PI / 2 + Math.random() * Math.PI * 1.5, r = Math.random() * (RC - .6); a.x = r * Math.cos(ang); a.y = r * Math.sin(ang); a.z = ZPOOL + .3; a.vx = gauss() * VT; a.vy = gauss() * VT; a.vz = Math.abs(gauss()) * VT; a.sale = -1;
+      if (Math.random() < .22) { var dx = RC - a.x, dy = -a.y, dzz = ZB - a.z, dn = Math.hypot(dx, dy, dzz), vv = VT * (1.1 + Math.random() * .6); a.vx = vv * dx / dn; a.vy = vv * dy / dn; a.vz = vv * dzz / dn; }   // algunos van justo hacia el orificio
+      return a; }
+    var gas = []; for (var gi = 0; gi < 32; gi++) { var ga = nace({ el: el('circle', { 'class': 'hc-atomo', r: 1.35 }, vapor) }); ga.z = ZPOOL + 1 + Math.random() * (ZTECHO - ZPOOL - 2); gas.push(ga); }
     function hornoTick(dt) {
       gas.forEach(function (a) {
         if (a.sale >= 0) {                                       // efusión: sigue recto por el canal y la boquilla
-          a.x += Math.abs(a.vx) * dt + 9 * dt; a.sale += dt;
-          if (a.x > 13) { vapor.appendChild(a.el); nace(a); }
+          a.x += (Math.abs(a.vx) * .6 + 7) * dt; a.sale += dt;
+          var qe = Q(Math.max(RC, a.x - 3.5), 0, ZB); a.est.setAttribute('x1', f(qe[0])); a.est.setAttribute('y1', f(qe[1]));
+          a.el.setAttribute('opacity', f(Math.max(0, Math.min(1, (24 - a.x) / 6))));
+          a.est.setAttribute('opacity', a.el.getAttribute('opacity'));
+          if (a.x > 24) { a.el.setAttribute('opacity', 1); a.el.setAttribute('class', 'hc-atomo'); vapor.appendChild(a.el); a.est.parentNode.removeChild(a.est); nace(a); }
         } else {
           a.x += a.vx * dt; a.y += a.vy * dt; a.z += a.vz * dt;
           var r = Math.hypot(a.x, a.y);
           if (r > RC - .4) {                                     // pared: si da con el orificio, sale
-            if (a.x > 0 && Math.abs(a.y) < 1.2 && Math.abs(a.z - ZB) < 1.4) { a.sale = 0; a.y = 0; a.z = ZB; salen.appendChild(a.el); }
+            if (a.x > 0 && Math.abs(a.y) < 2.4 && Math.abs(a.z - ZB) < 2.6) { a.sale = 0; a.y = 0; a.z = ZB; a.el.setAttribute('class', 'hc-atomo hc-sale'); a.est = el('line', { 'class': 'hc-estela' }, salen); salen.appendChild(a.el); }
             else { var nx = a.x / r, ny = a.y / r, vn = a.vx * nx + a.vy * ny; a.vx -= 2 * vn * nx; a.vy -= 2 * vn * ny; a.x = nx * (RC - .4); a.y = ny * (RC - .4); }
           }
           if (a.sale < 0 && a.x > 0 && a.y > 0) { if (a.x < a.y) { a.x = 0; a.vx = -Math.abs(a.vx); } else { a.y = 0; a.vy = -Math.abs(a.vy); } }   // caras de corte
@@ -226,6 +243,7 @@
           if (a.z < ZPOOL + .2) { if (Math.random() < .35) nace(a); else { a.z = ZPOOL + .2; a.vz = Math.abs(a.vz); } }   // recondensa o rebota
         }
         var q = Q(a.x, a.y, a.z); a.el.setAttribute('cx', f(q[0])); a.el.setAttribute('cy', f(q[1]));
+        if (a.sale >= 0) { a.est.setAttribute('x2', f(q[0])); a.est.setAttribute('y2', f(q[1])); }
       });
       brilloPlata.setAttribute('opacity', f(.55 + .25 * Math.sin(performance.now() / 300)));
     }
@@ -344,6 +362,31 @@
         el('animateMotion', { path: r[0], dur: '2.2s', repeatCount: 'indefinite' }, at);
       });
     }
+    // contraejemplo de los colimadores: el mismo imán con un haz fino y con uno ancho.
+    // Cada átomo se desvía lo mismo (±D); con haz ancho las dos franjas se pisan.
+    function colimMini(q, x0, y0) {
+      [[0, 1.6, 'haz fino'], [160, 15, 'haz ancho']].forEach(function (cfg, kp) {
+        var ox = x0 + 10 + cfg[0], cy = y0 + 46, A = cfg[1], D = 15, sem = 11 + kp * 7;
+        function rnd() { sem = (sem * 16807) % 2147483647; return sem / 2147483647; }
+        el('rect', { 'class': 'cm-ranura', x: f(ox + 18), y: f(cy - 30), width: 3, height: f(30 - A) }, q);
+        el('rect', { 'class': 'cm-ranura', x: f(ox + 18), y: f(cy + A), width: 3, height: f(30 - A) }, q);
+        el('path', { 'class': 'cm-polo', d: 'M' + f(ox + 46) + ' ' + f(cy - 30) + ' H' + f(ox + 86) + ' V' + f(cy - 22) + ' L' + f(ox + 66) + ' ' + f(cy - 14) + ' L' + f(ox + 46) + ' ' + f(cy - 22) + ' Z' }, q);
+        el('rect', { 'class': 'cm-polo', x: f(ox + 46), y: f(cy + 22), width: 40, height: 8 }, q);
+        el('line', { 'class': 'cm-pantalla', x1: f(ox + 132), y1: f(cy - 38), x2: f(ox + 132), y2: f(cy + 38) }, q);
+        for (var k = 0; k < 60; k++) {                          // impactos acumulados en la pantalla
+          var arriba = k % 2 === 0, y0k = (rnd() * 2 - 1) * A, yf = y0k + (arriba ? -D : D) * (.8 + .4 * rnd());
+          el('circle', { 'class': arriba ? 'cm-imp-a' : 'cm-imp-b', cx: f(ox + 133 + rnd() * 2.5), cy: f(cy + yf), r: 1.1 }, q);
+        }
+        for (var t = 0; t < 8; t++) {                           // átomos en vuelo
+          var up = t % 2 === 0, ys = (t / 7 * 2 - 1) * A * .9, d = up ? -1 : 1;
+          var path = 'M' + f(ox) + ' ' + f(cy + ys) + ' L' + f(ox + 46) + ' ' + f(cy + ys) + ' Q' + f(ox + 70) + ' ' + f(cy + ys) + ' ' + f(ox + 86) + ' ' + f(cy + ys + d * D * .4) + ' L' + f(ox + 132) + ' ' + f(cy + ys + d * D);
+          el('path', { 'class': 'cm-tray ' + (up ? 'cm-ta' : 'cm-tb'), d: path }, q);
+          var at = el('circle', { 'class': up ? 'cm-at-a' : 'cm-at-b', r: 1.8 }, q);
+          el('animateMotion', { path: path, dur: '1.9s', begin: f(-t * .24) + 's', repeatCount: 'indefinite' }, at);
+        }
+        var et = el('text', { 'class': 'cm-et', x: f(ox), y: f(cy + 44) }, q); et.textContent = cfg[2];
+      });
+    }
     function atomoPlata(q, x0, y0) {
       var cx = x0 + 52, cy = y0 + 46, CAPAS = [2, 8, 18, 18, 1], R = [8, 14.5, 22, 30, 40];
       var orb = el('g', { transform: 'translate(' + f(cx) + ' ' + f(cy) + ')' }, q);
@@ -403,7 +446,7 @@
     }
     nota([b0], [-62, 22, 0], 'Banco y vacío', ['Todo va sobre un solo eje. El aparato real', 'trabajaba en vacío: los átomos debían volar', 'sin chocar con el aire.']);
     nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.'], 60, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
-    nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.']);
+    nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.'], null, null, { alto: 104, ancho: 330, dibujo: colimMini });
     nota([m0, m1], [10, -23, 46], 'Electroimán', ['La corriente imanta el hierro; el yugo', 'lleva el campo hasta el entrehierro. Uniforme', 'solo haría girar al átomo: el filo lo desvía.'], 96, null, { alto: 108, ancho: 300, dx: 12, dibujo: imanMini });
     nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 175, [mc, mcF]);
     nota([p0], [54, 18, .5], 'Fráncfort, 1922', ['Stern y Gerlach buscaban la cuantización', 'espacial de Bohr–Sommerfeld. El espín', '(1925) explicó por qué eran justo dos.']);

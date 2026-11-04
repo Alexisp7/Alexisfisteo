@@ -91,6 +91,29 @@
     var t = el('text', { 'class': 'grabado', x: 0, y: 0, transform: 'matrix(.866 .5 -.866 .5 ' + f(c[0]) + ' ' + f(c[1]) + ')' }, g); t.textContent = rotulo;   // grabado en el plano de la tapa
     [[x + 1.2, y + 1.2], [x + w - 1.2, y + 1.2], [x + 1.2, y + d - 1.2], [x + w - 1.2, y + d - 1.2]].forEach(function (q) { el('circle', { 'class': 'tornillo', cx: f(P(q[0], q[1], z + .5)[0]), cy: f(P(q[0], q[1], z + .5)[1]), r: 1.3 }, g); });
   }
+  // sombra de una base rectangular sobre el plano z: se proyecta la planta real (no una elipse de
+  // pantalla), un poco corrida hacia +x, −y (la luz viene de arriba, del lado del lector), en dos capas.
+  function sombraPlanta(g, P, x0, y0, x1, y1, z) {
+    [[1.5, 'halo halo-cerca'], [4, 'halo halo-lejos']].forEach(function (k) {
+      var e = k[0];
+      poly(g, [P(x0 + e * .5, y0 - e * .4, z), P(x1 + e, y0 - e * .4, z), P(x1 + e, y1 - e * .2, z), P(x0 + e * .5, y1 - e * .2, z)], k[1]);
+    });
+  }
+  // placa de latón con el elemento grabado como casilla de tabla periódica
+  function placaAg(g, P, x, y, z, w, d, s) {
+    caja(g, P, x, y, z, w, d, .6, 'laton');
+    poly(g, [P(x + .9, y + .9, z + .6), P(x + w - .9, y + .9, z + .6), P(x + w - .9, y + d - .9, z + .6), P(x + .9, y + d - .9, z + .6)], 'placa-filete');
+    var c = P(x + w / 2, y + d / 2, z + .6), L = el('g', { transform: 'matrix(.866 .5 -.866 .5 ' + f(c[0]) + ' ' + f(c[1]) + ')' }, g), u0 = -w * s / 2 + 9;
+    el('rect', { 'class': 'placa-casilla', x: f(u0), y: -15, width: 26, height: 30, rx: 1 }, L);
+    var tz = el('text', { 'class': 'placa-z', x: f(u0 + 2.5), y: -10 }, L); tz.textContent = '47';
+    var ts = el('text', { 'class': 'placa-s', x: f(u0 + 13), y: 4.5 }, L); ts.textContent = 'Ag';
+    var tm = el('text', { 'class': 'placa-m', x: f(u0 + 13), y: 12.2 }, L); tm.textContent = 'plata';
+    var tx = u0 + 34;
+    var t1 = el('text', { 'class': 'placa-k', x: f(tx), y: -6 }, L); t1.textContent = 'STERN · GERLACH';
+    el('line', { 'class': 'placa-raya', x1: f(tx), y1: -1.5, x2: f(w * s / 2 - 9), y2: -1.5 }, L);
+    var t2 = el('text', { 'class': 'placa-d', x: f(tx), y: 8 }, L); t2.textContent = 'Fráncfort, 1922 · T ≈ 1300 K';
+    [[x + 1.6, y + 1.6], [x + w - 1.6, y + 1.6], [x + 1.6, y + d - 1.6], [x + w - 1.6, y + d - 1.6]].forEach(function (q) { var p = P(q[0], q[1], z + .6); el('circle', { 'class': 'tornillo', cx: f(p[0]), cy: f(p[1]), r: 1.2 }, g); });
+  }
   function sombra(g, P, s, x, y, rx, ry) { var c = P(x, y, 0); el('ellipse', { 'class': 'halo', cx: f(c[0]), cy: f(c[1]), rx: f(rx * s * 1.2247), ry: f(ry * s * .7071) }, g); }
 
   // ═════════ I · Relatividad: embudo de Flamm y órbita de Schwarzschild ═════════
@@ -171,7 +194,7 @@
 
     // ── banco óptico
     var b0 = pieza(120);
-    sombra(b0, P, s, 10, 0, 110, 46);
+    sombraPlanta(b0, P, -89, -31, 103, 31, -12);
     [[-80, -28], [94, -28], [-80, 28], [94, 28]].forEach(function (q) { caja(b0, P, q[0] - 3, q[1] - 3, -12, 6, 6, 4, 'lo'); });
     caja(b0, P, -86, -30, -8, 186, 60, 5, 'lo');
     for (var v = 0; v < 5; v++) { var vt = []; for (var xv = -86; xv <= 100; xv += 3) vt.push(P(xv, 30, -7.2 + v * .9 + .28 * Math.sin(xv * .09 + v * 1.7) + .15 * Math.sin(xv * .31 + v))); ruta(b0, vt, 'veta'); }
@@ -327,7 +350,7 @@
 
     // ── electroimán: columna con bobina, brazos, polo inferior acanalado y polo superior en filo
     var m0 = pieza(150);
-    sombra(m0, P, s, 10, -8, 32, 24);
+    sombraPlanta(m0, P, -12, -26, 32, 10, 0);
     caja(m0, P, -12, -26, 0, 44, 6, 46, 'lo');
     for (var lm = -10; lm < 32; lm += 2) linea(m0, P(lm, -26, 46), P(lm, -20, 46), 'lamina');
     caja(m0, P, -12, -20, 0, 44, 30, 5, 'lo');
@@ -375,10 +398,10 @@
     var pN = P(32, 0, 30), tNp = el('text', { 'class': 'polo-b', x: 0, y: 0, transform: 'matrix(.866 -.5 0 1 ' + f(pN[0]) + ' ' + f(pN[1]) + ')' }, m3); tNp.textContent = 'N';
 
     var p0 = pieza(110);
-    placa(p0, P, 40, 13, 0, 28, 10, 'Ag · 1922 · T ≈ 1300 K');
+    placaAg(p0, P, 38, 12, 0, 32, 11, s);
     capa();                                   // imán → pantalla
     var pa = pieza(-170);
-    sombra(pa, P, s, 80, 0, 7, 28);
+    sombraPlanta(pa, P, 76, -24, 84, 24, 0);
     caja(pa, P, 76, -24, 0, 8, 6, 2.5, 'lo'); caja(pa, P, 76, 18, 0, 8, 6, 2.5, 'lo');
     caja(pa, P, 79, -22, 2.5, 2, 2, 34, 'lo');
     var pantalla = el('g', { 'class': 's vidrio' }, pa);

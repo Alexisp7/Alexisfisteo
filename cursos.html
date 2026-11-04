@@ -6,7 +6,7 @@
   <title>Cursos — Alexis R. Salvatierra</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Caveat:wght@400;500&family=Pinyon+Script&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Caveat:wght@400;500&family=Pinyon+Script&family=Homemade+Apple&display=swap" rel="stylesheet"/>
   <style>
 
     *, *::before, *::after {
@@ -1440,6 +1440,61 @@
     @keyframes anRendija { from { r:4; opacity:.9; } to { r:120; opacity:0; } }
     @media (max-width:900px) { .dib { position:static; display:block; width:120px !important; height:auto; } .stickers > .dib { max-width:40%; } }
     @media (prefers-reduced-motion: reduce) { .cm-curso, .cm-titulo, .cm-flor path { transition:none; } .cm-curso:hover { transform:none; } .cm-titulo { animation:none !important; } .cm-chispas { display:none; } .sticker, .dib { animation:none !important; filter:none; } }
+
+    /* ═══ Cuaderno de cuero claro, hojas blancas y tinta fina (como la referencia) ═══ */
+    .escritorio { padding:36px 24px 70px; }
+    .libro { position:relative; max-width:1180px; margin:0 auto; padding:22px 26px 24px 30px; border-radius:10px;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%),
+        repeating-linear-gradient(35deg, rgba(90,60,30,.025) 0 2px, transparent 2px 5px),
+        #C9A27A;
+      box-shadow:0 30px 60px -28px rgba(70,45,20,.55), 0 4px 10px rgba(70,45,20,.18), inset 0 0 0 1px rgba(110,75,40,.25); }
+    .libro::before { content:''; position:absolute; inset:8px; border:1px dashed rgba(110,75,40,.35); border-radius:7px; pointer-events:none; }
+    .libro-pestanas { position:absolute; left:18px; top:46px; bottom:46px; width:16px; display:flex; flex-direction:column; gap:3px; z-index:2; }
+    .libro-pestanas i { flex:1; border-radius:2px 0 0 2px; box-shadow:inset -2px 0 0 rgba(0,0,0,.08); }
+    .libro-pestanas i:nth-child(1) { background:#F0E9DA; } .libro-pestanas i:nth-child(2) { background:#E2483D; } .libro-pestanas i:nth-child(3) { background:#F28C3A; }
+    .libro-pestanas i:nth-child(4) { background:#F5C04A; } .libro-pestanas i:nth-child(5) { background:#E2483D; } .libro-pestanas i:nth-child(6) { background:#F3D27A; }
+    .libro-correa { position:absolute; left:-30px; top:50%; margin-top:-14px; width:62px; height:28px; z-index:3; }
+    .libro-correa::before { content:''; position:absolute; right:0; top:4px; width:40px; height:20px; background:#8A5A33; border-radius:3px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.15); }
+    .libro-correa span { position:absolute; left:0; top:0; width:30px; height:28px; border-radius:14px 4px 4px 14px; background:linear-gradient(#F4EEE2,#DCD3C2); box-shadow:0 2px 4px rgba(0,0,0,.2); }
+    .libro-hojas { position:relative; display:grid; grid-template-columns:1fr 1fr; background:#FDFCF8; border-radius:3px;
+      box-shadow:0 0 0 1px rgba(110,75,40,.18), 3px 0 0 #F1ECE2, 6px 0 0 #E7E1D5, -3px 0 0 #F1ECE2, -6px 0 0 #E7E1D5, 0 6px 14px rgba(60,40,20,.18); }
+    .libro-hojas::after { content:''; position:absolute; top:0; bottom:0; left:50%; width:44px; margin-left:-22px; pointer-events:none;
+      background:linear-gradient(90deg, rgba(0,0,0,0), rgba(70,50,30,.10) 45%, rgba(70,50,30,.16) 50%, rgba(70,50,30,.10) 55%, rgba(0,0,0,0)); }
+    .hoja { position:relative; min-height:620px; padding:58px 64px 64px; color:#2A2622; }
+    .hoja .clip { position:absolute; top:-6px; width:12px; height:36px; fill:none; stroke:#A9A9A9; stroke-width:1.4; stroke-linecap:round; }
+    .hoja--izq .clip { left:46px; } .hoja--der .clip { right:46px; }
+    .hoja .ornamento { position:absolute; left:50%; bottom:26px; width:80px; margin-left:-40px; fill:none; stroke:#8C877E; stroke-width:.9; }
+    .h-nota { font-family:'Homemade Apple',cursive; font-size:14px; line-height:2.1; color:#3A3530; margin:0 0 30px; }
+    .h-script { font-family:'Pinyon Script',cursive; font-size:38px; color:#2A2622; margin:6px 0 4px; }
+    .h-linea { height:1px; background:#2A2622; opacity:.55; margin:28px 0 24px; width:85%; }
+    .hoja .cm-curso { display:inline-block; margin-left:-12px; padding:8px 12px 10px; }
+    .hoja .cm-titulo { font-size:clamp(28px,2.5vw,36px); color:#2A2622; }
+    .hoja .cm-curso--grande .cm-titulo { font-size:clamp(34px,3.1vw,46px); }
+    .hoja .cm-sub { font-family:'Homemade Apple',cursive; font-size:12.5px; line-height:2; color:#5A534C; margin-top:4px; }
+    .hoja .cm-flor { width:min(260px,90%); }
+    .h-reglas { position:relative; display:grid; grid-template-columns:1fr 1fr; gap:0 34px; margin-top:30px; padding-top:30px; border-top:1px solid rgba(42,38,34,.55); }
+    .h-reglas::before { content:''; position:absolute; left:50%; top:-14px; bottom:0; width:1px; background:rgba(42,38,34,.45); }
+    .h-col { min-width:0; }
+    .boceto { display:block; position:static !important; margin:14px 0 0 10px; overflow:visible; filter:url(#hervir); }
+    .boceto-atomo { width:104px; } .boceto-onda { width:160px; margin-top:24px; }
+    .boceto-bloch { width:150px; margin:0 0 18px auto; }
+    .boceto-pendulo { width:130px; margin:6px auto 0; }
+    .dib .dib-vector { stroke:#2B3A67; stroke-width:1.6; stroke-linecap:round; }
+    .dib .dib-garabato circle { fill:none; stroke:#2A2622; stroke-width:.8; opacity:.55; }
+    .libro-hojas .cm-chispas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:4; }
+    @media (max-width:900px) {
+      .libro { padding:16px 14px 18px 26px; }
+      .libro-correa { left:-22px; transform:scale(.8); }
+      .libro-pestanas { left:10px; width:12px; }
+      .libro-hojas { grid-template-columns:1fr; }
+      .libro-hojas::after { display:none; }
+      .hoja { min-height:0; padding:46px 26px 64px; }
+      .hoja--der { border-top:1px dashed rgba(110,75,40,.3); }
+      .h-reglas { grid-template-columns:1fr; gap:24px; }
+      .h-reglas::before { display:none; }
+      .h-nota br { display:none; }
+    }
   </style>
   <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
@@ -1462,106 +1517,76 @@
   </svg>
   <section class="escritorio">
     <h1 class="escritorio-sr">Cursos</h1>
-    <div class="cuaderno-marco">
-    <div class="cuaderno">
+    <div class="libro">
+      <div class="libro-pestanas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="libro-correa" aria-hidden="true"><span></span></div>
+      <div class="libro-hojas">
 
-      <article class="pagina pagina--izq" id="cursos-indice">
-        <p class="cm-encabezado">Cursos</p>
-        <ol class="cursos-mano">
-          <li><a href="relatividad.html" class="cm-curso">
+        <article class="hoja hoja--izq" id="cursos-indice">
+          <svg class="clip" viewBox="0 0 14 40" aria-hidden="true"><path d="M7 38 V8 a4 4 0 0 1 8 0 V32 a6 6 0 0 1 -12 0 V12"/></svg>
+          <p class="h-nota">Apuntes, prácticas y exámenes de la carrera<br/>de Física en San Marcos.</p>
+          <a href="relatividad.html" class="cm-curso cm-curso--grande">
             <span class="cm-titulo">Teoría General de la Relatividad</span>
             <svg class="cm-flor" viewBox="0 0 320 26" aria-hidden="true"><path d="M4 16 C 60 6, 110 22, 160 13 S 250 4, 290 14 C 300 17, 306 12, 302 8 C 298 4, 290 10, 296 16 C 302 21, 312 18, 316 14"/></svg>
-            <span class="cm-sub">Prácticas, exámenes y exposición · UNMSM 2025</span>
-          </a></li>
-          <li><a href="mecanica-cuantica.html" class="cm-curso">
-            <span class="cm-titulo">Mecánica Cuántica</span>
-            <svg class="cm-flor" viewBox="0 0 320 26" aria-hidden="true"><path d="M4 16 C 60 6, 110 22, 160 13 S 250 4, 290 14 C 300 17, 306 12, 302 8 C 298 4, 290 10, 296 16 C 302 21, 312 18, 316 14"/></svg>
-            <span class="cm-sub">Próximamente… mientras tanto, diviértete con el Stern-Gerlach</span>
-          </a></li>
-          <li><a href="problemas.html" class="cm-curso">
-            <span class="cm-titulo">Problemas de física</span>
-            <svg class="cm-flor" viewBox="0 0 320 26" aria-hidden="true"><path d="M4 16 C 60 6, 110 22, 160 13 S 250 4, 290 14 C 300 17, 306 12, 302 8 C 298 4, 290 10, 296 16 C 302 21, 312 18, 316 14"/></svg>
-            <span class="cm-sub">Electromagnetismo, física nuclear y termodinámica</span>
-          </a></li>
-        </ol>
+            <span class="cm-sub">prácticas · exámenes · exposición — 2025</span>
+          </a>
+          <div class="h-reglas">
+            <div class="h-col">
+              <a href="mecanica-cuantica.html" class="cm-curso">
+                <span class="cm-titulo">Mecánica Cuántica</span>
+                <svg class="cm-flor" viewBox="0 0 320 26" aria-hidden="true"><path d="M4 16 C 60 6, 110 22, 160 13 S 250 4, 290 14 C 300 17, 306 12, 302 8 C 298 4, 290 10, 296 16 C 302 21, 312 18, 316 14"/></svg>
+                <span class="cm-sub">próximamente… mientras, juega con el Stern-Gerlach</span>
+              </a>
+              <svg class="dib boceto boceto-atomo" viewBox="0 0 120 120" aria-hidden="true">
+                <g class="dib-tr"><ellipse cx="60" cy="60" rx="52" ry="17"/><ellipse cx="60" cy="60" rx="52" ry="17" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="52" ry="17" transform="rotate(-60 60 60)"/></g>
+                <circle cx="60" cy="60" r="4" class="dib-nucleo"/>
+                <circle r="2.6" class="dib-e"><animateMotion dur="2.2s" repeatCount="indefinite" path="M8 60 a52 17 0 1 0 104 0 a52 17 0 1 0 -104 0"/></circle>
+                <g transform="rotate(60 60 60)"><circle r="2.6" class="dib-e"><animateMotion dur="3s" repeatCount="indefinite" path="M112 60 a52 17 0 1 0 -104 0 a52 17 0 1 0 104 0"/></circle></g>
+                <g transform="rotate(-60 60 60)"><circle r="2.6" class="dib-e"><animateMotion dur="2.6s" repeatCount="indefinite" path="M8 60 a52 17 0 1 1 104 0 a52 17 0 1 1 -104 0"/></circle></g>
+              </svg>
+            </div>
+            <div class="h-col">
+              <a href="problemas.html" class="cm-curso">
+                <span class="cm-titulo">Problemas de física</span>
+                <svg class="cm-flor" viewBox="0 0 320 26" aria-hidden="true"><path d="M4 16 C 60 6, 110 22, 160 13 S 250 4, 290 14 C 300 17, 306 12, 302 8 C 298 4, 290 10, 296 16 C 302 21, 312 18, 316 14"/></svg>
+                <span class="cm-sub">electromagnetismo<br/>física nuclear<br/>termodinámica</span>
+              </a>
+              <svg class="dib boceto boceto-onda" viewBox="0 0 170 60" aria-hidden="true">
+                <defs><clipPath id="bo-cl-onda"><rect x="8" y="0" width="154" height="56"/></clipPath></defs>
+                <line x1="8" y1="30" x2="164" y2="30" class="dib-eje"/>
+                <g clip-path="url(#bo-cl-onda)"><path class="dib-tr" d="M-60 30 q12.5 -18 25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0"><animateTransform attributeName="transform" type="translate" values="0 0;50 0" dur="1.6s" repeatCount="indefinite"/></path></g>
+              </svg>
+            </div>
+          </div>
+          <svg class="ornamento" viewBox="0 0 90 14" aria-hidden="true"><path d="M2 7 h26 M62 7 h26 M45 2 c-6 0 -9 5 -15 5 c6 0 9 5 15 5 c6 0 9 -5 15 -5 c-6 0 -9 -5 -15 -5 z M45 5 v4"/></svg>
+        </article>
+
+        <article class="hoja hoja--der" id="fisitok">
+          <svg class="clip" viewBox="0 0 14 40" aria-hidden="true"><path d="M7 38 V8 a4 4 0 0 1 8 0 V32 a6 6 0 0 1 -12 0 V12"/></svg>
+          <svg class="dib boceto boceto-bloch" viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="50" class="dib-tr"/>
+            <ellipse cx="70" cy="70" rx="50" ry="14" class="dib-fino"/>
+            <path d="M70 10 V130 M10 70 H130" class="dib-eje"/>
+            <g class="dib-garabato"><circle cx="70" cy="70" r="24"/><circle cx="70" cy="70" r="18"/><circle cx="70" cy="70" r="12"/></g>
+            <line x1="70" y1="70" x2="104" y2="40" class="dib-vector"><animate attributeName="x2" values="104;70;36;70;104" dur="4s" repeatCount="indefinite"/><animate attributeName="y2" values="40;30;40;52;40" dur="4s" repeatCount="indefinite"/></line>
+            <text x="104" y="18" class="dib-txt">|ψ⟩</text>
+          </svg>
+          <p class="h-script">FisiTok</p>
+          <p class="h-nota">preguntas breves para pensar,<br/>una a la vez — próximamente.</p>
+          <div class="h-linea"></div>
+          <svg class="dib boceto boceto-pendulo" viewBox="0 0 120 150" aria-hidden="true">
+            <path d="M20 10 H100" class="dib-tr"/><path d="M28 10 l-6 -6 M40 10 l-6 -6 M52 10 l-6 -6 M64 10 l-6 -6 M76 10 l-6 -6 M88 10 l-6 -6 M100 10 l-6 -6" class="dib-fino"/>
+            <path d="M60 10 V120" class="dib-eje" stroke-dasharray="3 4"/>
+            <g><animateTransform attributeName="transform" type="rotate" values="22 60 10;-22 60 10;22 60 10" dur="2.4s" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" repeatCount="indefinite"/>
+              <line x1="60" y1="10" x2="60" y2="112" class="dib-tr"/><circle cx="60" cy="118" r="7" class="dib-masa"/></g>
+            <path d="M60 40 a30 30 0 0 1 14 4" class="dib-fino"/><text x="76" y="44" class="dib-txt">θ</text>
+            <text x="8" y="146" class="dib-txt">θ̈ + (g/ℓ) sin θ = 0</text>
+          </svg>
+          <svg class="ornamento" viewBox="0 0 90 14" aria-hidden="true"><path d="M2 7 h26 M62 7 h26 M45 2 c-6 0 -9 5 -15 5 c6 0 9 5 15 5 c6 0 9 -5 15 -5 c-6 0 -9 -5 -15 -5 z M45 5 v4"/></svg>
+        </article>
+
         <canvas class="cm-chispas" aria-hidden="true"></canvas>
-
-        <div class="stickers" aria-hidden="true">
-          <img class="sticker an-flota" src="img/garabatos/integral.webp" alt="" style="left:30px;top:590px;width:140px;"/>
-          <img class="sticker" src="img/garabatos/esperanza.webp" alt="" style="left:160px;top:575px;width:190px;"/>
-          <img class="sticker an-onda" src="img/garabatos/onda-roja.webp" alt="" style="left:500px;top:600px;width:46px;"/>
-          <svg class="dib dib-atomo" viewBox="0 0 120 120" style="left:448px;top:6px;width:124px;">
-            <g class="dib-tr"><ellipse cx="60" cy="60" rx="52" ry="17"/><ellipse cx="60" cy="60" rx="52" ry="17" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="52" ry="17" transform="rotate(-60 60 60)"/></g>
-            <circle cx="60" cy="60" r="5" class="dib-nucleo"/>
-            <circle r="3" class="dib-e"><animateMotion dur="2.2s" repeatCount="indefinite" path="M8 60 a52 17 0 1 0 104 0 a52 17 0 1 0 -104 0"/></circle>
-            <g transform="rotate(60 60 60)"><circle r="3" class="dib-e"><animateMotion dur="3s" repeatCount="indefinite" path="M112 60 a52 17 0 1 0 -104 0 a52 17 0 1 0 104 0"/></circle></g>
-            <g transform="rotate(-60 60 60)"><circle r="3" class="dib-e"><animateMotion dur="2.6s" repeatCount="indefinite" path="M8 60 a52 17 0 1 1 104 0 a52 17 0 1 1 -104 0"/></circle></g>
-          </svg>
-          <svg class="dib dib-resorte" viewBox="0 0 90 150" style="left:486px;top:132px;width:62px;">
-            <path d="M8 8 h74" class="dib-tr"/><path d="M12 8 l-6 -6 M24 8 l-6 -6 M36 8 l-6 -6 M48 8 l-6 -6 M60 8 l-6 -6 M72 8 l-6 -6 M84 8 l-6 -6" class="dib-fino"/>
-            <g><animateTransform attributeName="transform" type="translate" values="0 0;0 26;0 0" dur="1.8s" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" repeatCount="indefinite"/>
-              <rect x="27" y="78" width="36" height="28" rx="2" class="dib-masa"/><text x="40" y="97" class="dib-txt">m</text></g>
-            <path class="dib-tr" d="M45 8 v8 l14 5 -28 8 28 8 -28 8 28 8 -28 8 14 5 v12"><animateTransform attributeName="transform" type="scale" values="1 1;1 1.37;1 1" dur="1.8s" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" repeatCount="indefinite" additive="sum"/></path>
-            <text x="6" y="146" class="dib-txt">F = −kx</text>
-          </svg>
-          <svg class="dib dib-kepler" viewBox="0 0 140 100" style="left:446px;top:262px;width:122px;">
-            <ellipse cx="70" cy="46" rx="62" ry="34" class="dib-tr"/>
-            <circle cx="40" cy="46" r="6" class="dib-sol"/><path d="M40 34 v-5 M40 58 v5 M28 46 h-5 M52 46 h5 M31 37 l-4 -4 M49 55 l4 4 M31 55 l-4 4 M49 37 l4 -4" class="dib-fino"/>
-            <circle r="4" class="dib-planeta"><animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;.18;.5;.82;1" keyTimes="0;.12;.5;.88;1" calcMode="linear" path="M8 46 a62 34 0 1 0 124 0 a62 34 0 1 0 -124 0"/></circle>
-            <text x="44" y="96" class="dib-txt">T² ∝ a³</text>
-          </svg>
-          <svg class="dib dib-rendija" viewBox="0 0 150 90" style="left:372px;top:585px;width:122px;">
-            <defs><clipPath id="dib-cl-rend"><rect x="21" y="0" width="117" height="90"/></clipPath></defs>
-            <path d="M20 4 v28 M20 40 v10 M20 58 v28" class="dib-grueso"/>
-            <g class="dib-ondas" clip-path="url(#dib-cl-rend)"><circle cx="20" cy="36" r="10"/><circle cx="20" cy="54" r="10"/><circle cx="20" cy="36" r="10" style="animation-delay:-1.1s"/><circle cx="20" cy="54" r="10" style="animation-delay:-1.1s"/></g>
-            <path d="M138 6 C 128 16, 148 24, 138 34 S 148 54, 138 64 S 128 78, 138 86" class="dib-tr"/>
-          </svg>
-        </div>
-      </article>
-
-      <article class="pagina pagina--der" id="problemas">
-        <div class="stickers" aria-hidden="true">
-          <img class="sticker an-pendulo" src="img/garabatos/pendulo.webp" alt="" style="left:18px;top:26px;width:150px;"/>
-          <img class="sticker" src="img/garabatos/schrodinger.webp" alt="" style="left:182px;top:40px;width:138px;"/>
-          <img class="sticker an-giro-suave" src="img/garabatos/bloch.webp" alt="" style="left:336px;top:22px;width:104px;"/>
-          <img class="sticker an-pulso" src="img/garabatos/cono-chico.webp" alt="" style="left:462px;top:40px;width:34px;"/>
-          <img class="sticker an-pulso" src="img/garabatos/cono.webp" alt="" style="left:506px;top:26px;width:50px;"/>
-          <img class="sticker an-empuje" src="img/garabatos/fuerza.webp" alt="" style="left:18px;top:150px;width:96px;"/>
-          <img class="sticker" src="img/garabatos/metrica.webp" alt="" style="left:132px;top:162px;width:196px;"/>
-          <img class="sticker" src="img/garabatos/energia.webp" alt="" style="left:346px;top:150px;width:88px;"/>
-          <img class="sticker an-giro-suave" src="img/garabatos/elipse.webp" alt="" style="left:470px;top:134px;width:54px;"/>
-          <img class="sticker" src="img/garabatos/gauss.webp" alt="" style="left:18px;top:222px;width:112px;"/>
-          <img class="sticker" src="img/garabatos/superposicion.webp" alt="" style="left:146px;top:208px;width:158px;"/>
-          <img class="sticker an-giro" src="img/garabatos/rotacional.webp" alt="" style="left:322px;top:206px;width:84px;"/>
-          <img class="sticker an-temblor" src="img/garabatos/feynman.webp" alt="" style="left:424px;top:208px;width:82px;"/>
-          <img class="sticker an-onda" src="img/garabatos/onda.webp" alt="" style="left:18px;top:306px;width:118px;"/>
-          <img class="sticker" src="img/garabatos/parabola.webp" alt="" style="left:150px;top:312px;width:100px;"/>
-          <img class="sticker" src="img/garabatos/pauli-x.webp" alt="" style="left:266px;top:322px;width:52px;"/>
-          <img class="sticker" src="img/garabatos/pauli-z.webp" alt="" style="left:330px;top:316px;width:78px;"/>
-          <img class="sticker an-empuje" src="img/garabatos/vectores.webp" alt="" style="left:426px;top:318px;width:92px;"/>
-          <img class="sticker" src="img/garabatos/circuito.webp" alt="" style="left:18px;top:410px;width:196px;"/>
-          <img class="sticker an-giro-suave" src="img/garabatos/tetraedro.webp" alt="" style="left:230px;top:404px;width:48px;"/>
-          <img class="sticker" src="img/garabatos/laplaciano.webp" alt="" style="left:292px;top:416px;width:72px;"/>
-          <img class="sticker an-giro" src="img/garabatos/espiral.webp" alt="" style="left:18px;top:500px;width:124px;"/>
-          <img class="sticker" src="img/garabatos/psi.webp" alt="" style="left:160px;top:520px;width:132px;"/>
-          <svg class="dib dib-onda" viewBox="0 0 170 70" style="left:376px;top:404px;width:170px;">
-            <defs><clipPath id="dib-cl-onda"><rect x="8" y="0" width="154" height="56"/></clipPath></defs>
-            <line x1="8" y1="30" x2="164" y2="30" class="dib-eje"/><path d="M160 26 l4 4 -4 4" class="dib-eje"/>
-            <g clip-path="url(#dib-cl-onda)"><path class="dib-tr" d="M-60 30 q12.5 -18 25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0 t25 0"><animateTransform attributeName="transform" type="translate" values="0 0;50 0" dur="1.6s" repeatCount="indefinite"/></path></g>
-            <text x="22" y="66" class="dib-txt">y = A sin(kx − ωt)</text>
-          </svg>
-        </div>
-
-        <div class="postit" id="fisitok">
-          <span class="postit-cinta" aria-hidden="true"></span>
-          <h3>FisiTok</h3>
-          <p>Preguntas breves para pensar.</p>
-          <span class="postit-pronto">Próximamente</span>
-        </div>
-
-      </article>
-
-    </div>
+      </div>
     </div>
   </section>
 
@@ -1578,7 +1603,7 @@
     // Símbolos de física en tinta que brotan del cursor sobre cada curso, como una pluma encantada
     (function () {
       if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      var pag = document.querySelector('.pagina--izq'), cv = pag && pag.querySelector('.cm-chispas');
+      var pag = document.querySelector('.libro-hojas'), cv = pag && pag.querySelector('.cm-chispas');
       if (!cv) return;
       var cx = cv.getContext('2d'), ch = [], dpr = Math.min(2, window.devicePixelRatio || 1), corriendo = false, activo = null, ultimo = 0;
       function medir() { cv.width = pag.offsetWidth * dpr; cv.height = pag.offsetHeight * dpr; }

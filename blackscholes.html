@@ -245,6 +245,7 @@
     .content-wrap:not(.content-wrap--sigue) { padding-bottom: 48px; }
     .content-wrap--sigue { padding-top: 56px; }
   </style>
+  <link rel="stylesheet" href="css/efectos.css"/>
 </head>
 <body>
 
@@ -421,5 +422,6 @@
     function closePDFOutside(e) { if(e.target===backdrop) closePDF(); }
     document.addEventListener('keydown',(e)=>{if(e.key==='Escape')closePDF();});
   </script>
+  <script src="js/efectos.js" defer></script>
 </body>
 </html>

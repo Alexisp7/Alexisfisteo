@@ -174,13 +174,13 @@
     // disco a lápiz de color: cientos de rayas finas a lo largo de cada órbita, crema junto al borde interior,
     // naranja y rojizo hacia afuera; el tono de cada raya cambia a lo largo de la órbita y ese dibujo gira (ω ∝ r^−3/2)
     'vec3 paleta(float u) { u = clamp(u, 0.0, 1.0);',
-    '  vec3 A = vec3(1.0, .97, .88), B = vec3(1.0, .80, .48), Cc = vec3(.96, .52, .16), Dd = vec3(.68, .24, .08), E = vec3(.26, .13, .18);',
+    '  vec3 A = vec3(1.0, .93, .76), B = vec3(1.0, .80, .48), Cc = vec3(.96, .52, .16), Dd = vec3(.68, .24, .08), E = vec3(.26, .13, .18);',
     '  if (u < .1) return mix(A, B, u / .1); if (u < .32) return mix(B, Cc, (u - .1) / .22);',
     '  if (u < .62) return mix(Cc, Dd, (u - .32) / .3); return mix(Dd, E, (u - .62) / .38); }',
     'vec4 disco(vec3 p, vec3 v, float hay) {',
     '  float r = max(length(p.xz), 2.5), ph = atan(p.z, p.x), b = sqrt(1.0 / max(r - 2.0, .05)); vec3 t = normalize(vec3(-p.z, 0.0, p.x) + 1e-5); vec3 vd = normalize(v + 1e-5);',
     '  float g = sqrt(max(1.0 - 3.0 / r, 0.0)) / (1.0 - b * dot(t, -vd)), D = clamp(pow(g, 2.0), .82, 1.18);',
-    '  float u = (r - 6.0) / 13.5, om = 1.1 * pow(6.0 / r, 1.5), fase = ph - om * uT;',
+    '  float u = (r - 6.0) / 13.5, om = .7 * pow(6.0 / r, 1.5), fase = ph - om * uT;',
     '  vec2 cs = vec2(cos(fase), sin(fase)); float fr = fwidth(r) + 1e-4;',
     // trazos de lápiz: ruido estirado a lo largo de la órbita, fino en el radio; cada octava se apaga si es más fina que el píxel
     '  float s1 = ruido(vec3(cs * 2.2, r * 9.0)), s2 = ruido(vec3(cs * 4.0 + 3.0, r * 24.0)), s3 = ruido(vec3(cs * 7.0 + 8.0, r * 60.0));',
@@ -189,7 +189,7 @@
     '  float n = ruido(vec3(cs * 1.6, r * 1.3 + 5.0));',
     '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
     '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',   // la raya oscura tira a siena, no a gris
-    '  float ar = min(fr, 3.0) * .7 + 1e-4;',
+    '  float ar = min(fr, .12) * .7 + 1e-4;',
     '  float flec = ruido(vec3(cs * 3.0, 2.0)) - .5;',
     '  float afuera = 1.0 - smoothstep(15.0 + 2.5 * flec, 21.5 + 1.0 * flec, r);',
     '  float fundido = smoothstep(.8, 2.4, uArm);',
@@ -219,16 +219,16 @@
     '  float e = length(vec2(sb.x / 23.0, sb.y / 12.5));',
     '  e += (fbm(vec3(sb * .11, 1.0)) - .5) * .75 + (fbm(vec3(sb * .6, 4.0)) - .5) * .2 + (ruido(vec3(sb * 2.4, 5.0)) - .5) * .05;',
     '  float pw = smoothstep(.15, 1.5, uArm); pw = 1.0 - (1.0 - pw) * (1.0 - pw);',
-    '  float W = 1.0 - smoothstep(.86 * pw - .07, .93 * pw, e);',
+    '  float W = 1.0 - smoothstep(.9 * pw - .035, .93 * pw, e);',
     // núcleo de pigmento denso (índigo casi negro) y, hacia el borde, una veladura gris azulada que se deshilacha
     '  float nucleo = 1.0 - smoothstep(.5 * pw, .84 * pw, e + (fbm(vec3(sb * .25, 9.0)) - .5) * .35);',
     '  float n = fbm(d * 2.6 + vec3(1.3, 6.2, 2.9)), n3 = fbm(d * 6.0 + 3.0);',
     '  float filo = smoothstep(.72, .92, e) * W;',
     '  float grano = ruido(vec3(sb * 9.0, 7.0)) * (1.0 - smoothstep(.002, .004, px));',
-    '  float dens = W * (.62 + .3 * n + .1 * grano) + .3 * filo;',
+    '  float dens = W * (.74 + .22 * n + .08 * grano) + .3 * filo;',
     '  dens = mix(dens, .9 + .1 * n, nucleo);',
-    '  vec3 velo = mix(vec3(.08, .09, .17), vec3(.20, .22, .32), smoothstep(.3, .8, n3));',
-    '  vec3 hondo = mix(vec3(.02, .025, .06), vec3(.07, .085, .17), smoothstep(.35, .9, n3) * .85 + grano * .12);',
+    '  vec3 velo = mix(vec3(.05, .06, .11), vec3(.14, .16, .24), smoothstep(.3, .8, n3));',
+    '  vec3 hondo = mix(vec3(.012, .016, .035), vec3(.05, .065, .12), smoothstep(.35, .9, n3) * .85 + grano * .12);',
     '  vec3 tinta = mix(velo, hondo, nucleo);',
     '  vec3 est = estrellas(d, px) * vec3(1.0, .9, .7);',
     '  float aE = clamp(max(est.r, est.g) * 1.5, 0.0, 1.0) * smoothstep(.15, .5, W) * (.45 + .55 * nucleo);',
@@ -261,13 +261,12 @@
     // la desviación pesa entera cerca de la sombra y se apaga lejos: allí las estrellas conservan su forma
     '  float bb = length(vec2(bx, by)), pesoL = 1.0 / (1.0 + pow(bb / 9.5, 4.0));',
     '  vec3 dg = normalize(normalize(fw + (rt * bx + up * by) / F) + (normalize(v) - fw) * pesoL);',
-    '  float ag = uT * .03, cg = cos(ag), sg = sin(ag); dg = vec3(cg * dg.x - sg * dg.z, dg.y, sg * dg.x + cg * dg.z);',
+    // el cielo queda quieto: solo se mueve el disco
     // dentro de la sombra, marcas a escala (sin lente): singularidad, horizonte rₛ = 2 y esfera de fotones 1,5 rₛ = 3
-    '  float ab = fwidth(bb) + 1e-4;',
-    '  vec3 sombra = bb < 2.0 ? vec3(.045, .03, .035) : (bb < 3.0 ? vec3(.075, .05, .055) : vec3(.10, .07, .07) + .04 * (1.0 - bb / 5.2));',
-    '  float marca = max(1.0 - smoothstep(.025, .025 + ab, abs(bb - 2.0)), (1.0 - smoothstep(.02, .02 + ab, abs(bb - 3.0))) * .7);',
-    '  sombra = mix(sombra, vec3(.86, .74, .58), marca * .55); sombra = mix(sombra, vec3(.82, .72, 1.0), 1.0 - smoothstep(.12, .12 + ab, bb));',
-    '  vec4 fondo = cae ? vec4(sombra, smoothstep(.5, 1.3, uArm)) : aguada(vec2(bx, by), dg, px);',
+    // sombra negra limpia; su borde (b = √27 M) se suaviza un píxel para que no se vea escalonado
+    '  float ab = fwidth(bb) + 1e-4, sA = cae ? 1.0 : 1.0 - smoothstep(5.196 - ab, 5.196 + ab, bb);',
+    '  vec4 tinta = sA < .999 ? aguada(vec2(bx, by), dg, px) : vec4(0.0);',
+    '  vec4 fondo = mix(tinta, vec4(.012, .014, .02, smoothstep(.5, 1.3, uArm)), sA);',
     '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0);',
     // composición «sobre» con alfa directo: el papel de la página se ve donde no hay tinta
     '  float a2 = c2.a + fondo.a * (1.0 - c2.a); vec3 k2 = (c2.rgb * c2.a + fondo.rgb * fondo.a * (1.0 - c2.a)) / max(a2, 1e-4);',
@@ -304,7 +303,7 @@
     function pintar() {
       if (!listo) return;
       var r = lienzo.getBoundingClientRect(); if (!r.width) return;
-      var q = Math.min(window.devicePixelRatio || 1, 1.5) * calidad, W = Math.round(r.width * q), H = Math.round(r.height * q);
+      var q = Math.min(window.devicePixelRatio || 1, 2) * calidad, W = Math.round(r.width * q), H = Math.round(r.height * q);
       if (lienzo.width !== W || lienzo.height !== H) { lienzo.width = W; lienzo.height = H; }
       var vb = svg.viewBox.baseVal;
       gl.viewport(0, 0, W, H);
@@ -313,14 +312,17 @@
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
-    var calidad = 1, previo = 0, lentos = 0, inicio = performance.now(), armT = null;
+    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, inicio = performance.now(), armT = null;
     // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
       if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
-      if (previo) { var d = t - previo; lentos = d > 34 ? lentos + 1 : Math.max(0, lentos - 1); if (lentos > 20 && calidad > .62) { calidad *= .85; lentos = 0; } }
-      previo = t; pintar();
+      // la resolución no baja nunca: si la GPU va lenta se pinta un cuadro de cada dos o tres (el disco gira despacio)
+      if (++cuadro % salto) return;
+      pintar();
+      if (previo) { var d = (t - previo) / salto; lentos = d > 30 ? lentos + 1 : Math.max(0, lentos - 1); if (lentos > 25 && salto < 3) { salto++; lentos = 0; } }
+      previo = t;
     })(0);
     fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
@@ -553,8 +555,8 @@
         var M = function (k) { return { alto: 104, ancho: 300, flecha: true, dibujo: MED[k] }; };
         nota([zSing], [C[0], C[1]], 'Singularidad', ['En r = 0 la curvatura se vuelve infinita', 'según la relatividad general: ahí la teoría', 'deja de valer. Se espera que una teoría', 'cuántica de la gravedad la describa.'], 100, null, Object.assign(M('sing'), { izq: true, dx: -40 }));
         nota([zHawk], p2, 'Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 560, null, Object.assign(M('hawk'), { izq: false }));
-        nota([zHor, zSombra], p3, 'Horizonte de eventos', ['Radio de Schwarzschild rₛ = 2GM/c² (el', 'círculo interior). Lo que lo cruza, ni la', 'luz, ya no sale. Para el Sol, rₛ ≈ 3 km.', 'La sombra mide ≈ 2,6 rₛ: la gravedad', 'curva la luz que pasa cerca.'], 565, null, Object.assign(M('hor'), { izq: true, dx: -30 }));
-        nota([zEsf, zFot, zLente], p4, 'Esfera de fotones', ['A r = 1,5 rₛ (segundo círculo) la luz', 'puede orbitar, en equilibrio inestable.', 'La que escapa forma el anillo fino junto', 'a la sombra (EHT, M87*, 2019). La lente', 'muestra el disco de atrás arriba y abajo.'], 100, null, Object.assign(M('fot'), { izq: false }));
+        nota([zHor, zSombra], p3, 'Horizonte de eventos', ['Radio de Schwarzschild rₛ = 2GM/c². Lo', 'que lo cruza, ni la luz, ya no sale.', 'Para el Sol, rₛ ≈ 3 km.', 'La sombra mide ≈ 2,6 rₛ: la gravedad', 'curva la luz que pasa cerca.'], 565, null, Object.assign(M('hor'), { izq: true, dx: -30 }));
+        nota([zEsf, zFot, zLente], p4, 'Esfera de fotones', ['A r = 1,5 rₛ la luz puede orbitar,', 'en equilibrio inestable.', 'La que escapa forma el anillo fino junto', 'a la sombra (EHT, M87*, 2019). La lente', 'muestra el disco de atrás arriba y abajo.'], 100, null, Object.assign(M('fot'), { izq: false }));
         nota([zDisco, zDoppler], p5, 'Disco de acreción', ['Gas que cae en espiral y se calienta.', 'Empieza en la órbita estable más interna,', 'r = 3 rₛ (ISCO). El lado que se acerca a', 'nosotros brilla más por efecto Doppler.'], 575, null, Object.assign(M('disco'), { izq: false }));
       }
     };

@@ -1583,37 +1583,19 @@
     .mc svg .vidrio .tp { fill:rgba(43,58,103,.07); stroke:rgba(30,26,22,.55); }
     .mc svg .halo { fill:rgba(30,26,22,.10); filter:blur(6px); }
     /* I · agujero negro: el lienzo WebGL pinta cielo, disco y lente; el SVG encima lleva Hawking y notas */
-    .mc .bn-lienzo { position:absolute; inset:0; width:100%; height:100%; display:block; background:#070406; }
+    .mc .bn-lienzo { position:absolute; inset:0; width:100%; height:100%; display:block; }
     .mc-escena[data-i="0"] svg { position:relative; }
     .mc-escena.bn-sin-gl .bn-lienzo { background:radial-gradient(circle at 70% 49%, #000 0 118px, rgba(255,226,160,.95) 121px, rgba(236,160,60,.5) 128px, rgba(120,60,20,.12) 170px, #070406 260px); }
     .mc svg .bn-hawking-borde { fill:none; stroke:#B89CF2; stroke-width:1.1; opacity:.85; filter:drop-shadow(0 0 4px rgba(168,139,235,.95)) drop-shadow(0 0 10px rgba(168,139,235,.5)); animation:bn-respira 4.8s ease-in-out infinite; }
     @keyframes bn-respira { 50% { opacity:.45; } }
     .mc svg .bn-hq { fill:#C9B2FF; filter:drop-shadow(0 0 3px rgba(168,139,235,.95)); } .mc svg .bn-hq-cae { fill:#7A5CD0; }
     .mc svg .bn-zona { pointer-events:all; }
-    .mc svg .bn-est { fill:#EFE6DA; stroke:#EFE6DA; stroke-width:.45; stroke-linecap:round; animation:bn-titila 5s ease-in-out infinite; }
-    .mc svg .bn-est path { fill:none; opacity:.75; } .mc svg .bn-est .bn-est-aro { fill:none; stroke-width:.35; opacity:.5; }
-    .mc svg .bn-est-oro { fill:#D9A92E; stroke:#D9A92E; } .mc svg .bn-est-vio { fill:#B89CF2; stroke:#B89CF2; }
-    @keyframes bn-titila { 0%, 100% { opacity:.85; } 50% { opacity:.3; } }
-    @media (prefers-reduced-motion:reduce) { .mc svg .bn-est { animation:none; } }
+    .mc[data-activo="0"] .mc-lectura { background:none; text-shadow:0 0 12px #F4EEE3, 0 0 4px #F4EEE3; }
+    .mc svg .bn-traza ellipse, .mc svg .bn-traza circle, .mc svg .bn-traza path { fill:none; stroke:#2E2A33; stroke-width:.55; opacity:.32; }
+    .mc svg .bn-traza .bn-traza-fina { stroke-width:.4; opacity:.2; } .mc svg .bn-traza .bn-cruz { stroke-width:.7; opacity:.5; }
     .mc svg.nota-on .bn-zona.foco { fill:rgba(168,139,235,.06); }
     /* notas sobre fondo oscuro */
-    .mc-escena[data-i="0"] svg .nota-fondo { fill:rgba(12,8,12,.80); stroke:rgba(168,139,235,.35); }
-    .mc-escena[data-i="0"] svg .nota text { stroke:none; }
-    .mc-escena[data-i="0"] svg .nota-t { fill:#D8B48A; }
-    .mc-escena[data-i="0"] svg .nota-d { fill:#E9E0D3; }
-    .mc-escena[data-i="0"] svg .nota circle { fill:#E9D9B8; }
-    .mc-escena[data-i="0"] svg .nota .anillo-nota { fill:none; stroke:#E9D9B8; }
-    .mc-escena[data-i="0"] svg .nota > path { stroke:rgba(233,217,184,.7); }
-    /* con la relatividad activa, la pantalla se vuelve noche */
-    .mc::after { content:''; position:absolute; inset:0; z-index:0; background:#070406; opacity:0; transition:opacity .7s ease; pointer-events:none; }
     .mc-escenas { z-index:1; } .mc-velo { z-index:1; }
-    .mc[data-activo="0"]::after { opacity:1; }
-    .mc[data-activo="0"] .mc-l1 { color:#C9B2FF; } .mc[data-activo="0"] .mc-l2 { color:#B8AC9C; }
-    .mc[data-activo="0"] .mc-lectura { color:#EFE6DA; background:rgba(5,7,20,.8); box-shadow:0 0 36px 28px rgba(5,7,20,.8); border-radius:24px; }
-    .mc[data-activo="0"] { --velo:10,13,24; }
-    @media (min-width:901px) {
-      body:has(.mc[data-activo="0"]) .header nav.main-nav a { background-image:linear-gradient(90deg, #F7F1E6, #F7F1E6); }
-    }
     .mc svg .halo-cerca { fill:rgba(30,26,22,.13); filter:blur(3px); stroke:none; }
     .mc svg .halo-lejos { fill:rgba(30,26,22,.07); filter:blur(10px); stroke:none; }
     .mc svg .laton .tp { fill:#E2CDA6; } .mc svg .laton .fr { fill:#C9A877; } .mc svg .laton .sd { fill:#B08F60; }
@@ -1768,7 +1750,7 @@
     @media (max-width:900px) {
       .mc { height:auto; min-height:100vh; display:flex; flex-direction:column; background:rgb(var(--velo)); padding-top:58px; }
       .mc::before { top:0; }
-      .mc::before, .mc::after { bottom:auto; height:calc(62vw + 58px); }
+      .mc::before { bottom:auto; height:calc(62vw + 58px); }
       .mc-escenas { position:relative; height:62vw; min-height:260px; }
       .mc-escena svg { width:100%; height:100%; }
       .mc-velo { display:none; }

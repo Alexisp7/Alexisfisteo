@@ -156,7 +156,40 @@
     cilindro(h0, P, s, -71, 0, 29.4, 3, 3, 'mid');
     caja(h0, P, -63, -2.5, ZB - 2.5, 5, 5, 5, 'lo');
     var boca = P(-58, 0, ZB); el('ellipse', { 'class': 'brasa', cx: f(boca[0]), cy: f(boca[1]), rx: 2.6, ry: 3.6 }, h0);
-    var rotAg = P(-71, 9, 15); var tAg = el('text', { 'class': 'grabado grande', x: f(rotAg[0]), y: f(rotAg[1]) }, h0); tAg.textContent = 'Ag';
+    var rotAg = P(-71, 9, 15); var tAg = el('text', { 'class': 'grabado grande ag-rot', x: f(rotAg[0]), y: f(rotAg[1]) }, h0); tAg.textContent = 'Ag';
+    // interior del horno (solo al tocarlo): la plata fundida se evapora y los átomos, neutros, rebotan
+    // con velocidades térmicas (componentes gaussianas, Maxwell en 2D); los que encuentran la boquilla salen.
+    var cV = P(-71 + 6.4, 6.4, 15), VW = 56, VH = 84, vx0 = cV[0] - VW / 2, vy0 = cV[1] - VH / 2;
+    var hint = el('g', { 'class': 'horno-int' }, h0);
+    var clip = el('clipPath', { id: 'clip-horno' }, svg); el('rect', { x: f(vx0), y: f(vy0), width: VW, height: VH, rx: 4 }, clip);
+    el('rect', { 'class': 'hi-fondo', x: f(vx0), y: f(vy0), width: VW, height: VH, rx: 4 }, hint);
+    var hc = el('g', { 'clip-path': 'url(#clip-horno)' }, hint);
+    el('rect', { 'class': 'hi-calor', x: f(vx0), y: f(vy0 + VH * .35), width: VW, height: VH * .65 }, hc);
+    var liq = el('ellipse', { 'class': 'hi-liquido', cx: f(vx0 + VW / 2), cy: f(vy0 + VH - 7), rx: VW / 2 - 4, ry: 4 }, hc);
+    el('rect', { 'class': 'hi-boca', x: f(vx0 + VW - 2.5), y: f(vy0 + 24), width: 3, height: 12 }, hint);
+    var tK = el('text', { 'class': 'hi-t', x: f(vx0 + 4), y: f(vy0 + 9) }, hint); tK.textContent = '≈1300 K';
+    var tN0 = el('text', { 'class': 'hi-t', x: f(vx0 + 4), y: f(vy0 + VH - 15) }, hint); tN0.textContent = 'Ag⁰';
+    el('rect', { 'class': 'hi-marco', x: f(vx0), y: f(vy0), width: VW, height: VH, rx: 4 }, hint);
+    function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
+    function nace(a) { a.x = 5 + Math.random() * (VW - 10); a.y = VH - 10; a.vx = gauss() * 26; a.vy = -Math.abs(gauss()) * 26 - 8; a.sale = 0; return a; }
+    var gas = []; for (var gi = 0; gi < 16; gi++) { var ga = nace({ el: el('circle', { 'class': 'hi-atomo', r: 2 }, hc) }); ga.y = 6 + Math.random() * (VH - 18); gas.push(ga); }
+    var tHorno = 0;
+    function hornoTick(dt) {
+      tHorno += dt; liq.setAttribute('ry', f(3.6 + .6 * Math.sin(tHorno * 5)));
+      gas.forEach(function (a) {
+        if (a.sale) { a.x += a.vx * dt; a.sale -= dt; a.el.setAttribute('opacity', f(Math.max(0, a.sale * 3))); if (a.sale <= 0) { nace(a); a.el.setAttribute('opacity', 1); } }
+        else {
+          a.x += a.vx * dt; a.y += a.vy * dt;
+          if (a.x > VW - 3 && a.y > 24 && a.y < 36) { a.sale = .35; a.vx = Math.abs(a.vx) + 30; }
+          else {
+            if (a.x < 3) { a.x = 3; a.vx = Math.abs(a.vx); } if (a.x > VW - 3) { a.x = VW - 3; a.vx = -Math.abs(a.vx); }
+            if (a.y < 3) { a.y = 3; a.vy = Math.abs(a.vy); }
+            if (a.y > VH - 9) { if (Math.random() < .5) nace(a); else { a.y = VH - 9; a.vy = -Math.abs(a.vy); } }   // recondensa o rebota
+          }
+        }
+        a.el.setAttribute('cx', f(vx0 + a.x)); a.el.setAttribute('cy', f(vy0 + a.y));
+      });
+    }
 
     // capas de vuelo: cada tramo del haz se pinta detrás de lo que tiene delante
     var vuelo = [], tramos = [-46, -36, -12, 32, 999];
@@ -322,7 +355,7 @@
       });
     }
     nota([b0], [-62, 22, 0], 'Banco y vacío', ['Todo va sobre un solo eje. El aparato real', 'trabajaba en vacío: los átomos debían volar', 'sin chocar con el aire.']);
-    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['Calienta la plata hasta evaporarla: salen', 'átomos neutros a ≈ 500 m/s, solo por agitación', 'térmica. Neutros: sin carga no hay fuerza de', 'Lorentz que tape el efecto. Con un solo electrón', 'externo, su momento es el de ese electrón.'], 60, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
+    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.'], 60, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
     nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.']);
     nota([m0, m1], [10, -23, 46], 'Electroimán', ['La corriente imanta el hierro; el yugo', 'lleva el campo hasta el entrehierro. Uniforme', 'solo haría girar al átomo: el filo lo desvía.'], 96, null, { alto: 108, ancho: 300, dx: 12, dibujo: imanMini });
     nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 175, [mc, mcF]);
@@ -358,6 +391,7 @@
     }
     return {
       tick: function (dt) {
+        if (h0.classList.contains('foco')) hornoTick(dt);
         acum += dt; while (acum > .035) { acum -= .035; lanzar(); }
         for (var i = enVuelo.length - 1; i >= 0; i--) {
           var a = enVuelo[i]; a.x += a.v * 62 * dt;

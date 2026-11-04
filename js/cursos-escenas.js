@@ -387,6 +387,65 @@
         var et = el('text', { 'class': 'cm-et', x: f(ox), y: f(cy + 44) }, q); et.textContent = cfg[2];
       });
     }
+    function polosMini(q, x0, y0) {
+      // vista lateral: filo arriba, polo plano abajo, pantalla. El gradiente sube y baja solo;
+      // cada átomo sigue siendo ↑ o ↓ (50 %), lo único que cambia con ∂B/∂z es cuánto se separan.
+      var ox = x0 + 14, cy = y0 + 46, XA = ox + 62, XB = ox + 152, XS = ox + 236, gx = ox + 268;
+      var lineas = el('g', {}, q);
+      for (var k = -3; k <= 3; k++) {
+        var xt = (XA + XB) / 2 + k * 9, xb = (XA + XB) / 2 + k * 15;
+        el('path', { 'class': 'pm-campo', d: 'M' + f(xt) + ' ' + f(cy - 14 - Math.abs(k) * 2.4) + ' Q' + f(xt + k * 1.5) + ' ' + f(cy) + ' ' + f(xb) + ' ' + f(cy + 20) }, lineas);
+      }
+      el('path', { 'class': 'cm-polo', d: 'M' + f(XA) + ' ' + f(cy - 36) + ' H' + f(XB) + ' V' + f(cy - 28) + ' L' + f((XA + XB) / 2) + ' ' + f(cy - 12) + ' L' + f(XA) + ' ' + f(cy - 28) + ' Z' }, q);
+      el('path', { 'class': 'cm-polo', d: 'M' + f(XA) + ' ' + f(cy + 20) + ' H' + f((XA + XB) / 2 - 4) + ' V' + f(cy + 23) + ' H' + f((XA + XB) / 2 + 4) + ' V' + f(cy + 20) + ' H' + f(XB) + ' V' + f(cy + 28) + ' H' + f(XA) + ' Z' }, q);
+      el('rect', { 'class': 'cm-ranura', x: f(ox + 22), y: f(cy - 26), width: 3, height: 24 }, q);
+      el('rect', { 'class': 'cm-ranura', x: f(ox + 22), y: f(cy + 2), width: 3, height: 24 }, q);
+      el('line', { 'class': 'cm-pantalla', x1: f(XS), y1: f(cy - 40), x2: f(XS), y2: f(cy + 40) }, q);
+      el('line', { 'class': 'pm-cero', x1: f(ox), y1: f(cy), x2: f(XS), y2: f(cy) }, q);
+      // medidor de ∂B/∂z
+      el('rect', { 'class': 'pm-med', x: f(gx), y: f(cy - 32), width: 5, height: 64, rx: 1 }, q);
+      var lleno = el('rect', { 'class': 'pm-lleno', x: f(gx), width: 5, rx: 1 }, q);
+      var tg = el('text', { 'class': 'cm-et pm-et', x: f(gx + 2.5), y: f(cy + 44), 'text-anchor': 'middle' }, q); tg.textContent = '∂B/∂z';
+      var trA = el('path', { 'class': 'cm-tray cm-ta pm-tray' }, q), trB = el('path', { 'class': 'cm-tray cm-tb pm-tray' }, q);
+      var imps = el('g', {}, q), vuelan = el('g', {}, q), atomos = [], marcas = [], g = .5, t0 = performance.now(), ult = t0, acu = 0;
+      function zDe(x, d) {                       // recta, parábola dentro del imán, recta después
+        if (x <= XA) return 0;
+        if (x <= XB) { var u = (x - XA) / (XB - XA); return d * .4 * u * u; }
+        return d * .4 + d * .8 * (x - XB) / (XB - XA);
+      }
+      var D0 = 34 / (.4 + .8 * (XS - XB) / (XB - XA));   // desviación en la pantalla para g = 1
+      function ruta(sgn) { var o = 'M' + f(ox) + ' ' + f(cy); for (var x = XA; x <= XS; x += 6) o += ' L' + f(x) + ' ' + f(cy + zDe(x, -sgn * g * D0)); return o; }
+      function nuevo() {
+        var a = { x: ox, z0: (Math.random() * 2 - 1) * 1.6, s: Math.random() < .5 ? 1 : -1, def: false, v: .85 + Math.random() * .3 };
+        a.el = el('g', {}, vuelan); el('circle', { 'class': 'pm-at', r: 2.4 }, a.el);
+        a.fl = el('path', { 'class': 'pm-espin', d: 'M0 1.2 L0 -5.6 M-1.6 -3.6 L0 -5.7 L1.6 -3.6' }, a.el);
+        atomos.push(a);
+      }
+      function paso(now) {
+        requestAnimationFrame(paso);
+        if (!q.parentNode.classList.contains('ver')) { ult = now; return; }
+        var dt = Math.min(.05, (now - ult) / 1000); ult = now;
+        g = .1 + .9 * (.5 - .5 * Math.cos((now - t0) / 1000 * Math.PI * 2 / 7));
+        lleno.setAttribute('y', f(cy + 32 - 64 * g)); lleno.setAttribute('height', f(64 * g));
+        lineas.setAttribute('opacity', f(.15 + .85 * g));
+        trA.setAttribute('d', ruta(1)); trB.setAttribute('d', ruta(-1));
+        acu += dt; while (acu > .16) { acu -= .16; nuevo(); }
+        for (var i = atomos.length - 1; i >= 0; i--) {
+          var a = atomos[i]; a.x += 120 * a.v * dt;
+          var dz = -a.s * g * D0 / (a.v * a.v), z = cy + a.z0 + zDe(Math.min(a.x, XS), dz);
+          if (a.x >= XS) {
+            marcas.push(el('circle', { 'class': a.s > 0 ? 'cm-imp-a' : 'cm-imp-b', cx: f(XS + 1 + Math.random() * 2), cy: f(z), r: 1.2 }, imps));
+            if (marcas.length > 46) imps.removeChild(marcas.shift());
+            vuelan.removeChild(a.el); atomos.splice(i, 1); continue;
+          }
+          if (a.x < XA) { a.fl.setAttribute('transform', 'rotate(' + f((Math.random() < .5 ? 0 : 180) + (Math.random() - .5) * 60) + ')'); a.fl.setAttribute('opacity', f(.4 + Math.random() * .6)); }
+          else if (!a.def) { a.def = true; a.fl.setAttribute('opacity', 1); a.fl.setAttribute('transform', a.s > 0 ? '' : 'rotate(180)'); a.el.setAttribute('class', a.s > 0 ? 'pm-a' : 'pm-b'); }
+          a.el.setAttribute('transform', 'translate(' + f(a.x) + ' ' + f(z) + ')');
+        }
+        marcas.forEach(function (m, k) { m.setAttribute('opacity', f(.25 + .75 * k / marcas.length)); });
+      }
+      requestAnimationFrame(paso);
+    }
     function atomoPlata(q, x0, y0) {
       var cx = x0 + 52, cy = y0 + 46, CAPAS = [2, 8, 18, 18, 1], R = [8, 14.5, 22, 30, 40];
       var orb = el('g', { transform: 'translate(' + f(cx) + ' ' + f(cy) + ')' }, q);
@@ -448,7 +507,7 @@
     nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.'], 60, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
     nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.'], null, null, { alto: 104, ancho: 330, dibujo: colimMini });
     nota([m0, m1], [10, -23, 46], 'Electroimán', ['La corriente imanta el hierro; el yugo', 'lleva el campo hasta el entrehierro. Uniforme', 'solo haría girar al átomo: el filo lo desvía.'], 96, null, { alto: 108, ancho: 300, dx: 12, dibujo: imanMini });
-    nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 175, [mc, mcF]);
+    nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 64, [mc, mcF], { alto: 104, ancho: 320, dibujo: polosMini });
     nota([p0], [54, 18, .5], 'Fráncfort, 1922', ['Stern y Gerlach buscaban la cuantización', 'espacial de Bohr–Sommerfeld. El espín', '(1925) explicó por qué eran justo dos.']);
     nota([pa], [79, -21, 37], 'Placa colectora', ['La línea punteada marca dónde llega el haz', 'sin campo. Con campo, la física clásica', 'esperaba una mancha continua (μz de cualquier', 'valor). Se vieron dos: μz está cuantizado.'], 300);
     nota([pz], [80, 0, 27], '¿Por qué no solo dos líneas?', [

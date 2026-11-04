@@ -1366,6 +1366,21 @@
     .stu-letra { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; fill: #111; }
     .stu-sub { font-size: 13px; }
     .stu-nombre { font-family: 'Cormorant Garamond', serif; font-size: 22px; fill: #111; }
+
+    /* Aviso: curso próximamente */
+    .mq-aviso { background:var(--white); max-width:760px; margin:0 auto; padding:64px 24px 8px; text-align:center; }
+    .mq-aviso-tag { display:inline-flex; align-items:center; gap:10px; padding:6px 16px; border-radius:999px; background:rgba(110,26,34,.08); font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:#6E1A22; }
+    .mq-punto { position:relative; width:7px; height:7px; border-radius:50%; background:#6E1A22; }
+    .mq-punto::after { content:''; position:absolute; inset:0; border-radius:50%; background:#6E1A22; animation:mqPulso 2s ease-out infinite; }
+    .mq-aviso-titulo { font-family:'Cormorant Garamond',serif; font-weight:700; font-size:clamp(34px,5vw,52px); color:#2A211C; line-height:1.05; margin:20px 0 14px; }
+    .mq-aviso-titulo em { font-weight:500; color:#6E1A22; }
+    .mq-aviso-texto { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:21px; line-height:1.5; color:#4A3D35; }
+    .mq-aviso-link { display:inline-block; margin-top:20px; font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:#5B3FC4; text-decoration:none; border-bottom:1px solid rgba(91,63,196,.35); padding-bottom:3px; transition:border-color .3s ease; }
+    .mq-aviso-link:hover { border-color:#5B3FC4; }
+    .mq-aviso-link span { display:inline-block; animation:mqBaja 1.8s ease-in-out infinite; }
+    @keyframes mqPulso { 0% { transform:scale(1); opacity:.6; } 100% { transform:scale(3); opacity:0; } }
+    @keyframes mqBaja { 0%,100% { transform:translateY(0); } 50% { transform:translateY(3px); } }
+    @media (prefers-reduced-motion: reduce) { .mq-punto::after, .mq-aviso-link span { animation:none; } }
   </style>
 </head>
 <body>
@@ -1377,6 +1392,13 @@
       </nav>
     </div>
   </header>
+
+  <section class="mq-aviso" aria-labelledby="mq-aviso-titulo">
+    <p class="mq-aviso-tag"><span class="mq-punto" aria-hidden="true"></span>Próximamente</p>
+    <h1 class="mq-aviso-titulo" id="mq-aviso-titulo">Curso de <em>Mecánica Cuántica</em></h1>
+    <p class="mq-aviso-texto">El contenido del curso estará disponible pronto. Mientras tanto, diviértete con el experimento de Stern-Gerlach: más abajo puedes girar los aparatos en serie y ver qué pasa con el haz.</p>
+    <a href="#sgx" class="mq-aviso-link">Ir a los experimentos <span aria-hidden="true">↓</span></a>
+  </section>
 
   <section class="carrusel" aria-roledescription="carrusel" aria-label="Experimentos fundamentales">
     <button class="carrusel-flecha carrusel-flecha--izq" type="button" aria-label="Anterior"><svg viewBox="0 0 30 46" width="20" height="30" aria-hidden="true"><path d="M23 6 L7 23 L23 40" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1491,7 +1513,7 @@
   </section>
 
 
-  <section class="sgx-wrap" aria-label="Experimentos mentales con aparatos de Stern-Gerlach en serie">
+  <section class="sgx-wrap" id="sgx" aria-label="Experimentos mentales con aparatos de Stern-Gerlach en serie">
     <h2 class="sgx-encabezado">Experimentos mentales con Stern-Gerlach en serie</h2>
       <figure class="sgx">
         <figcaption class="sgx-titulo"><span class="sgx-num">1</span> Un solo aparato</figcaption>

@@ -180,7 +180,7 @@
     'vec4 disco(vec3 p, vec3 v, float hay) {',
     '  float r = max(length(p.xz), 2.5), ph = atan(p.z, p.x), b = sqrt(1.0 / max(r - 2.0, .05)); vec3 t = normalize(vec3(-p.z, 0.0, p.x) + 1e-5); vec3 vd = normalize(v + 1e-5);',
     '  float g = sqrt(max(1.0 - 3.0 / r, 0.0)) / (1.0 - b * dot(t, -vd)), D = clamp(pow(g, 2.0), .82, 1.18);',
-    '  float u = (r - 6.0) / 10.5, om = 1.1 * pow(6.0 / r, 1.5), fase = ph - om * uT;',
+    '  float u = (r - 6.0) / 13.5, om = 1.1 * pow(6.0 / r, 1.5), fase = ph - om * uT;',
     '  vec2 cs = vec2(cos(fase), sin(fase)); float fr = fwidth(r) + 1e-4;',
     // trazos de lápiz: ruido estirado a lo largo de la órbita, fino en el radio; cada octava se apaga si es más fina que el píxel
     '  float s1 = ruido(vec3(cs * 2.2, r * 9.0)), s2 = ruido(vec3(cs * 4.0 + 3.0, r * 24.0)), s3 = ruido(vec3(cs * 7.0 + 8.0, r * 60.0));',
@@ -191,9 +191,9 @@
     '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',   // la raya oscura tira a siena, no a gris
     '  float ar = min(fr, 3.0) * .7 + 1e-4;',
     '  float flec = ruido(vec3(cs * 3.0, 2.0)) - .5;',
-    '  float afuera = 1.0 - smoothstep(11.0 + 2.0 * flec, 16.8 + 1.5 * flec, r);',
+    '  float afuera = 1.0 - smoothstep(15.0 + 2.5 * flec, 21.5 + 1.0 * flec, r);',
     '  float fundido = smoothstep(.8, 2.4, uArm);',
-    '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * clamp(.75 + tr * .9 + .6 * (1.0 - smoothstep(7.5, 13.0, r)), 0.0, 1.0);',
+    '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * clamp(.75 + tr * .9 + .6 * (1.0 - smoothstep(8.0, 16.0, r)), 0.0, 1.0);',
     '  return vec4(col * D, clamp(a, 0.0, 1.0)); }',
     // fondo: espacio azul muy oscuro con nubes violáceas dibujadas a curvas de nivel y muchas estrellas.
     // Se consulta en la dirección final del rayo, así que la lente lo deforma alrededor de la sombra.
@@ -225,10 +225,10 @@
     '  float n = fbm(d * 2.6 + vec3(1.3, 6.2, 2.9)), n3 = fbm(d * 6.0 + 3.0);',
     '  float filo = smoothstep(.72, .92, e) * W;',
     '  float grano = ruido(vec3(sb * 9.0, 7.0)) * (1.0 - smoothstep(.002, .004, px));',
-    '  float dens = W * (.5 + .38 * n + .12 * grano) + .3 * filo;',
+    '  float dens = W * (.62 + .3 * n + .1 * grano) + .3 * filo;',
     '  dens = mix(dens, .9 + .1 * n, nucleo);',
-    '  vec3 velo = mix(vec3(.17, .19, .30), vec3(.36, .37, .47), smoothstep(.3, .8, n3));',
-    '  vec3 hondo = mix(vec3(.04, .045, .10), vec3(.15, .16, .29), smoothstep(.35, .9, n3) * .85 + grano * .12);',
+    '  vec3 velo = mix(vec3(.08, .09, .17), vec3(.20, .22, .32), smoothstep(.3, .8, n3));',
+    '  vec3 hondo = mix(vec3(.02, .025, .06), vec3(.07, .085, .17), smoothstep(.35, .9, n3) * .85 + grano * .12);',
     '  vec3 tinta = mix(velo, hondo, nucleo);',
     '  vec3 est = estrellas(d, px) * vec3(1.0, .9, .7);',
     '  float aE = clamp(max(est.r, est.g) * 1.5, 0.0, 1.0) * smoothstep(.15, .5, W) * (.45 + .55 * nucleo);',
@@ -253,7 +253,7 @@
     '    vec3 vm = v + a * dt * .5, pn = p + vm * dt; float rn = length(pn);',
     '    vec3 an = -3.0 * h2 * pn / pow(rn, 5.0); vec3 vn = vm + an * dt * .5;',
     '    if (p.y * pn.y < 0.0) { float k = p.y / (p.y - pn.y); vec3 q = mix(p, pn, k);',
-    '      float rq = length(q.xz); if (rq > 5.85 && rq < 17.6) { if (n == 0) { hA = q; vA = vn; } else { hB = q; vB = vn; } n++; if (n > 1) break; } }',
+    '      float rq = length(q.xz); if (rq > 5.85 && rq < 22.5) { if (n == 0) { hA = q; vA = vn; } else { hB = q; vB = vn; } n++; if (n > 1) break; } }',
     '    p = pn; v = vn;',
     '  }',
     // dirección hacia el fondo: la de una cámara estenopeica más la desviación que sufrió el rayo; el cielo gira despacio
@@ -352,7 +352,7 @@
       return poligono(o);
     }
     var zSing = zona(anillo(0, RSH * .12)), zHor = zona(anillo(RSH * .12, RSH * .385)), zEsf = zona(anillo(RSH * .385, RSH * .577)), zSombra = zona(anillo(RSH * .577, RSH * .9)), zHawk = zona(anillo(RSH * .9, RSH * 1.0)), zFot = zona(anillo(RSH * 1.0, RSH * 1.13));
-    var zDisco = zona(bandaDisco(9, 16, Math.PI * 1.4, Math.PI * 1.92)), zDoppler = zona(bandaDisco(7, 16, Math.PI * .85, Math.PI * 1.35));
+    var zDisco = zona(bandaDisco(9, 22, Math.PI * 1.4, Math.PI * 1.92)), zDoppler = zona(bandaDisco(7, 22, Math.PI * .85, Math.PI * 1.35));
     var zLente = zona((function () { var o = []; for (var k = 0; k <= 20; k++) { var t = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t) * 9.5, Math.sin(t) * 9.5)); } for (k = 20; k >= 0; k--) { var t3 = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t3) * 6.2, Math.sin(t3) * 6.2)); } return poligono(o); })());
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var pares = [], acum = 0;

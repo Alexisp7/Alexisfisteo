@@ -378,6 +378,22 @@
     /* recorta los bordes de la captura (barra de tareas y marco de ventana) */
     .qq-c3 img { transform:scale(1.18); transform-origin:45% 42%; }
     .qq-c3:hover img { transform:scale(1.22); }
+
+    /* Enlaces bajo el título */
+    .qq-links { display:grid; grid-template-columns:1fr 1fr; gap:0 36px; margin-top:44px; border-top:0.5px solid rgba(200,169,110,.25); opacity:0; animation:qqUp 1s .7s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .qq-link { position:relative; display:flex; flex-direction:column; gap:8px; padding:22px 0 4px; text-decoration:none; color:inherit; }
+    .qq-link::before { content:''; position:absolute; left:0; top:-0.5px; height:1px; width:100%; background:linear-gradient(90deg,#E8D5A3,transparent); transform:scaleX(0); transform-origin:left; transition:transform .6s cubic-bezier(0.16,1,0.3,1); }
+    .qq-link:hover::before, .qq-link:focus-within::before { transform:scaleX(1); }
+    .qq-link-k { font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); line-height:1.6; }
+    .qq-link-t { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:600; color:var(--white); line-height:1.15; }
+    .qq-link-go { display:inline-block; color:var(--gold); font-size:18px; transition:transform .4s cubic-bezier(0.16,1,0.3,1); }
+    .qq-link:hover .qq-link-go { transform:translate(3px,-3px); }
+    .qq-link-acts { display:flex; gap:18px; margin-top:4px; }
+    .qq-link-acts button, .qq-link-acts a { font-family:'Space Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-light); background:none; border:0; border-bottom:0.5px solid rgba(200,169,110,.5); padding:0 0 3px; cursor:pointer; text-decoration:none; transition:color .25s ease, border-color .25s ease; }
+    .qq-link-acts button:hover, .qq-link-acts a:hover { color:var(--white); border-color:var(--gold-light); }
+    .qq-link:focus-visible, .qq-link-acts :focus-visible { outline:1px solid var(--gold); outline-offset:4px; }
+    @media (max-width:640px) { .qq-links { grid-template-columns:1fr; } }
+    @media (prefers-reduced-motion: reduce) { .qq-links { animation:none; opacity:1; } }
   </style>
 </head>
 <body>
@@ -423,6 +439,17 @@
     <div class="qq-hero-inner">
       <p class="proj-hero-eyebrow">Hackathon Quantum Quipu 2025 · 2.do lugar</p>
       <h1 class="proj-hero-title">QuantumQuipu —<br/><em>Optimización de Rutas</em><br/>en Minería</h1>
+      <div class="qq-links">
+        <a class="qq-link" href="https://qiskit-fall-fest-2026-uop.vercel.app/index.html" target="_blank" rel="noopener">
+          <span class="qq-link-k">Mejora · Qiskit Fall Fest 2026</span>
+          <span class="qq-link-t">Página web de la solución <span class="qq-link-go" aria-hidden="true">↗</span></span>
+        </a>
+        <div class="qq-link qq-link--doc">
+          <span class="qq-link-k">Presentación · 26 diapositivas</span>
+          <span class="qq-link-t">Presentación completa</span>
+          <span class="qq-link-acts"><button type="button" onclick="openPDF()">Ver</button><a href="arch/Track 1.pdf" download>Descargar</a></span>
+        </div>
+      </div>
     </div>
     <div class="qq-head-desc">
       <figure class="qq-viz">
@@ -447,24 +474,6 @@
    </div>
   </section>
 
-  <!-- RECURSOS: página web de la solución + presentación -->
-  <section class="qq-recursos">
-    <a class="qq-rec qq-rec--web" href="https://qiskit-fall-fest-2026-uop.vercel.app/index.html" target="_blank" rel="noopener">
-      <p class="qq-rec-eyebrow">Mejora para la presentación · Qiskit Fall Fest 2026</p>
-      <h2 class="qq-rec-title">Página web de la solución</h2>
-      <p class="qq-rec-url">qiskit-fall-fest-2026-uop.vercel.app</p>
-      <span class="qq-rec-go" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 11L11 5"/><path d="M6 5h5v5"/></svg></span>
-    </a>
-    <div class="qq-rec qq-rec--doc">
-      <p class="qq-rec-eyebrow">Documentación técnica</p>
-      <h2 class="qq-rec-title">Presentación completa</h2>
-      <p class="qq-rec-url">26 diapositivas · PDF</p>
-      <div class="qq-rec-actions">
-        <button class="qq-btn qq-btn--solid" onclick="openPDF()">Ver presentación</button>
-        <a href="arch/Track 1.pdf" download class="qq-btn">Descargar</a>
-      </div>
-    </div>
-  </section>
 
   
 

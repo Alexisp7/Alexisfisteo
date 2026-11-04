@@ -164,7 +164,7 @@
   var GLSL_AGUJERO = [
     '#extension GL_OES_standard_derivatives : enable',
     'precision highp float;',
-    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix;',
+    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix, uArm;',
     'float hash(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
     'float ruido(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);',
     '  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
@@ -190,7 +190,8 @@
     '  float ar = min(fwidth(r), 3.0) * .7 + 1e-4;',
     '  float flec = ruido(vec3(cs * 3.0, 2.0)) - .5;',
     '  float afuera = 1.0 - smoothstep(11.5 + 2.0 * flec, 16.5 + 1.5 * flec, r);',
-    '  float a = hay * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * mix(1.0, .55 + .45 * n2, smoothstep(10.0, 15.0, r));',
+    '  float a0 = mod(ph - 2.6, 6.2831853), pd = smoothstep(.7, 2.4, uArm) * 6.7, barrido = 1.0 - smoothstep(pd - .45, pd, a0);',
+    '  float a = hay * barrido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * mix(1.0, .55 + .45 * n2, smoothstep(10.0, 15.0, r));',
     '  return vec4(col * D, clamp(a, 0.0, 1.0)); }',
     // fondo: espacio azul muy oscuro con nubes violáceas dibujadas a curvas de nivel y muchas estrellas.
     // Se consulta en la dirección final del rayo, así que la lente lo deforma alrededor de la sombra.
@@ -214,7 +215,8 @@
     'vec4 aguada(vec2 sb, vec3 d, float px) {',
     '  float e = length(vec2(sb.x / 23.0, sb.y / 12.5));',
     '  e += (fbm(vec3(sb * .11, 1.0)) - .5) * .75 + (fbm(vec3(sb * .6, 4.0)) - .5) * .2 + (ruido(vec3(sb * 2.4, 5.0)) - .5) * .05;',
-    '  float W = 1.0 - smoothstep(.86, .93, e);',
+    '  float pw = smoothstep(.15, 1.5, uArm); pw = 1.0 - (1.0 - pw) * (1.0 - pw);',
+    '  float W = 1.0 - smoothstep(.86 * pw - .07, .93 * pw, e);',
     '  float n = fbm(d * 2.6 + vec3(1.3, 6.2, 2.9)), n3 = fbm(d * 6.0 + 3.0);',
     '  float filo = smoothstep(.7, .92, e) * W;',
     '  float grano = ruido(vec3(sb * 9.0, 7.0));',
@@ -253,7 +255,7 @@
     '  float bb = length(vec2(bx, by)), pesoL = 1.0 / (1.0 + pow(bb / 9.5, 4.0));',
     '  vec3 dg = normalize(normalize(fw + (rt * bx + up * by) / F) + (normalize(v) - fw) * pesoL);',
     '  float ag = uT * .03, cg = cos(ag), sg = sin(ag); dg = vec3(cg * dg.x - sg * dg.z, dg.y, sg * dg.x + cg * dg.z);',
-    '  vec4 fondo = cae ? vec4(vec3(.10, .07, .07) + .05 * (1.0 - bb / 5.2), 1.0) : aguada(vec2(bx, by), dg, px);',
+    '  vec4 fondo = cae ? vec4(vec3(.10, .07, .07) + .05 * (1.0 - bb / 5.2), smoothstep(.5, 1.3, uArm)) : aguada(vec2(bx, by), dg, px);',
     '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0);',
     // composición «sobre» con alfa directo: el papel de la página se ve donde no hay tinta
     '  float a2 = c2.a + fondo.a * (1.0 - c2.a); vec3 k2 = (c2.rgb * c2.a + fondo.rgb * fondo.a * (1.0 - c2.a)) / max(a2, 1e-4);',
@@ -282,7 +284,7 @@
       var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); gl.useProgram(pr);
       var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
       var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
-      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
       listo = gl.getProgramParameter(pr, gl.LINK_STATUS);
     }
     if (!listo) fig.classList.add('bn-sin-gl');
@@ -295,18 +297,20 @@
       var vb = svg.viewBox.baseVal;
       gl.viewport(0, 0, W, H);
       gl.uniform2f(U.uRes, W, H); gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C[0], C[1]);
-      gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL); gl.uniform1f(U.uPix, vb.width / W / SC);
+      gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL); gl.uniform1f(U.uPix, vb.width / W / SC); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
-    var calidad = 1, previo = 0, lentos = 0;
+    var calidad = 1, previo = 0, lentos = 0, inicio = performance.now(), armT = null;
+    // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
+    new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
       if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
       if (previo) { var d = t - previo; lentos = d > 34 ? lentos + 1 : Math.max(0, lentos - 1); if (lentos > 20 && calidad > .42) { calidad *= .85; lentos = 0; } }
       previo = t; pintar();
     })(0);
-    fig.bnPintar = function (q) { calidad = q; pintar(); };   // para capturas fijas
+    fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
     var g = el('g', {}, svg);
     function anillo(r0, r1) { return 'M' + f(C[0] - r1) + ' ' + f(C[1]) + ' a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(2 * r1) + ' 0 a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(-2 * r1) + ' 0' + (r0 ? ' M' + f(C[0] - r0) + ' ' + f(C[1]) + ' a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(2 * r0) + ' 0 a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(-2 * r0) + ' 0' : ''); }
@@ -319,8 +323,10 @@
     [[-560, -175], [560, 175], [-700, 0], [700, 0], [0, -330], [0, 330], [380, -175], [-380, 175]].forEach(function (q) {
       el('path', { d: 'M' + f(C[0] + q[0] - 7) + ' ' + f(C[1] + q[1]) + 'h14M' + f(C[0] + q[0]) + ' ' + f(C[1] + q[1] - 7) + 'v14', transform: giro, 'class': 'bn-cruz' }, traza);
     });
-    el('circle', { 'class': 'bn-hawking-borde', cx: f(C[0]), cy: f(C[1]), r: f(RSH * .965) }, g);
-    var hawk = el('g', {}, g);
+    [].forEach.call(traza.querySelectorAll('*'), function (e, i) { e.setAttribute('pathLength', 1); e.style.setProperty('--d', (i * 60) + 'ms'); });
+    var capaHawk = el('g', { 'class': 'bn-hawk' }, g);
+    el('circle', { 'class': 'bn-hawking-borde', cx: f(C[0]), cy: f(C[1]), r: f(RSH * .965) }, capaHawk);
+    var hawk = el('g', {}, capaHawk);
     function zona(d) { return el('path', { 'class': 'zona bn-zona', d: d, 'fill-rule': 'evenodd' }, g); }
     function poligono(pts) { return 'M' + pts.map(function (p) { return f(p[0]) + ' ' + f(p[1]); }).join(' L') + 'Z'; }
     function bandaDisco(r0, r1, a0, a1) {   // franja del disco (sin lente) entre radios y ángulos

@@ -1592,6 +1592,10 @@
     .mc svg .bn-zona { pointer-events:all; }
     .mc[data-activo="0"] .mc-lectura { background:none; text-shadow:0 0 12px #F4EEE3, 0 0 4px #F4EEE3; }
     .mc svg .bn-traza ellipse, .mc svg .bn-traza circle, .mc svg .bn-traza path { fill:none; stroke:#2E2A33; stroke-width:.55; opacity:.32; }
+    .mc svg .bn-traza * { stroke-dasharray:1; stroke-dashoffset:0; transition:stroke-dashoffset 1.3s cubic-bezier(.6,0,.2,1) var(--d,0ms); }
+    .mc-escena:not(.on) svg .bn-traza * { stroke-dashoffset:1; transition:none; }
+    .mc-escena[data-i="0"] svg .bn-hawk { transition:opacity .9s ease 2.2s; }
+    .mc-escena[data-i="0"]:not(.on) svg .bn-hawk { opacity:0; transition:none; }
     .mc svg .bn-traza .bn-traza-fina { stroke-width:.4; opacity:.2; } .mc svg .bn-traza .bn-cruz { stroke-width:.7; opacity:.5; }
     .mc svg.nota-on .bn-zona.foco { fill:rgba(168,139,235,.06); }
     /* notas sobre fondo oscuro */

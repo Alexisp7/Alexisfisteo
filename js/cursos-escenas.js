@@ -68,7 +68,8 @@
         var sp = el('tspan', { x: f(x + ind) }, d);
         if (!(p.vineta && k === 0)) sp.setAttribute('dy', n ? alto : 0);
         sp.textContent = r.p.join(' ');
-        if (!r.fin && r.p.length > 1) sp.setAttribute('word-spacing', f((ancho - ind - r.l) / (r.p.length - 1)));
+        var huecos = r.p.length - 1 + (sp.textContent.match(/\u00a0/g) || []).length;   // word-spacing también ensancha los espacios duros
+        if (!r.fin && r.p.length > 1) sp.setAttribute('word-spacing', f((ancho - ind - r.l) / huecos));
         n++;
       });
     });
@@ -532,12 +533,12 @@
       var sx = x0 + 352, sy = y0 - 10, lineasS = ['Nada los acelera. En el vapor a', '1300\u00a0K cada átomo ya trae su', 'velocidad térmica (Maxwell,', '≈\u00a0500\u00a0m/s). Los que por azar', 'llegan al orificio escapan en', 'línea recta: es efusión.'];
       el('line', { 'class': 'enlace', x1: f(x0 + 312), y1: f(y0 + 46), x2: f(sx), y2: f(y0 + 46) }, q);
       el('circle', { 'class': 'enlace-p', cx: f(x0 + 312), cy: f(y0 + 46), r: 1.8 }, q); el('circle', { 'class': 'enlace-p', cx: f(sx), cy: f(y0 + 46), r: 1.8 }, q);
-      var fondoS = el('rect', { 'class': 'nota-fondo nota-fondo-2', x: f(sx), y: f(sy - 11), width: 256, height: 37 + lineasS.length * 17, rx: 2 }, q);
+      var fondoS = el('rect', { 'class': 'nota-fondo nota-fondo-2', x: f(sx), y: f(sy - 11), width: 280, height: 37 + lineasS.length * 17, rx: 2 }, q);
       var st = el('text', { 'class': 'nota-t', x: f(sx + 10), y: f(sy + 3) }, q); st.textContent = 'Cómo salen';
       var sd = el('text', { 'class': 'nota-d', x: f(sx + 10), y: f(sy + 26) }, q);
       lineasS.forEach(function (l, k) { var sp = el('tspan', { x: f(sx + 10), dy: k ? 17 : 0 }, sd); sp.textContent = l; });
-      sd.setAttribute('class', 'nota-d nota-d2'); sd.pars = parrafos(lineasS); sd.x0 = sx + 10; sd.ancho = 236; sd.fondo = fondoS;
-      linea(q, [sx + 10, sy + 8.5], [sx + 246, sy + 8.5], 'nota-regla');
+      sd.setAttribute('class', 'nota-d nota-d2'); sd.pars = parrafos(lineasS); sd.x0 = sx + 10; sd.ancho = 260; sd.fondo = fondoS;
+      linea(q, [sx + 10, sy + 8.5], [sx + 270, sy + 8.5], 'nota-regla');
     }
     var capaNotas = el('g', { 'class': 'notas' }, g);
     function nota(piezas, ancla, titulo, lineas, cima, foco, op) {
@@ -747,7 +748,18 @@
     var t0 = performance.now(), id = ++tGuia;
     (function paso() { guiar(); if (id === tGuia && performance.now() - t0 < 700) requestAnimationFrame(paso); })();
   }
-  window.addEventListener('resize', guiar);
+  // encuadre: a medio camino entre "cubrir" (slice, recorta) y "contener" (meet, deja márgenes):
+  // escala = media geométrica de ambas. Si sobra alto se recorta más abajo que arriba, donde están las notas.
+  function encuadrar() {
+    escenas.forEach(function (e) {
+      var sv = e.querySelector('svg'), r = sv.getBoundingClientRect(); if (!r.width || !r.height) return;
+      var a = r.width / 1440, b = r.height / 900, k = Math.sqrt(Math.max(a, b) * Math.min(a, b)), W = r.width / k, H = r.height / k;
+      var y0 = H < 900 ? Math.min((900 - H) / 2, 30) : (900 - H) / 2;
+      sv.setAttribute('viewBox', f(1440 - W) + ' ' + f(y0) + ' ' + f(W) + ' ' + f(H));
+    });
+  }
+  encuadrar();
+  window.addEventListener('resize', function () { encuadrar(); guiar(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(guiar);
   var tArmado = null;
   function armar(e) {          // se rearma cada vez que se entra a la escena

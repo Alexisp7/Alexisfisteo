@@ -1324,6 +1324,7 @@
     .project-card--soon { cursor:default; }
     .project-card--soon .soon { position:absolute; inset:0; }
   </style>
+  <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
 </head>
 <body>
@@ -1452,7 +1453,7 @@
         </div>
 
         <!-- SQUARE: Ver todos los proyectos -->
-        <div class="project-card square project-card--all" onclick="window.location='proyectos.html'">
+        <div class="project-card square project-card--all" onclick="(window.fxIr||function(u){location.href=u})('proyectos.html')">
           <div class="project-img-ph" style="background:#0e0e0e; min-height:100%;"></div>
           <div class="all-projects-content">
             <div class="all-projects-label">Ver todos los<br/>proyectos</div>
@@ -1543,7 +1544,7 @@
     document.querySelectorAll('.project-card[data-href]').forEach(function (card) {
       card.addEventListener('click', function (e) {
         if (e.target.closest('a')) return;
-        window.location = card.dataset.href;
+        (window.fxIr || function (u) { location.href = u; })(card.dataset.href);
       });
     });
   </script>

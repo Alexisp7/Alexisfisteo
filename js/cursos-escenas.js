@@ -156,108 +156,161 @@
     };
   }
 
-  // ═════════ I · Relatividad: agujero negro de Schwarzschild ═════════
-  // Modelo a escala sobre un zócalo: horizonte (rₛ), esfera de fotones (1,5 rₛ), disco de acreción
-  // desde la ISCO (3 rₛ) y radiación de Hawking naciendo junto al horizonte.
+  // ═════════ I · Relatividad: agujero negro de Schwarzschild, trazado de rayos ═════════
+  // Cada píxel lanza un rayo de luz hacia atrás y lo integra como geodésica nula de Schwarzschild
+  // (unidades G = c = M = 1, rₛ = 2): x'' = −(3/2)·rₛ·h²·x / r⁵, con h = |x × v|. Así salen solos
+  // la sombra (b = √27 ≈ 5,2), el anillo de fotones, la imagen del disco de atrás por encima y por
+  // debajo de la sombra (lente gravitacional) y el brillo Doppler del lado que se acerca.
+  var GLSL_AGUJERO = [
+    'precision highp float;',
+    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl;',
+    'float hash(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
+    'float ruido(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);',
+    '  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
+    '             mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x), mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z); }',
+    'float fbm(vec3 p) { float a = .5, s = 0.0; for (int i = 0; i < 5; i++) { s += a * ruido(p); p = p * 2.03 + 7.1; a *= .5; } return s; }',
+    'float remolino(float r, float ph, float tau) { float a = ph - pow(r, -1.5) * tau * 2.2; return fbm(vec3(cos(a) * 2.2, sin(a) * 2.2, log(r) * 9.0)); }',
+    'vec3 rampa(float x) {',            // tinta → ámbar → oro → marfil → blanco
+    '  vec3 c0 = vec3(.08,.02,.005), c1 = vec3(.50,.17,.02), c2 = vec3(1.0,.52,.10), c3 = vec3(1.0,.78,.36), c4 = vec3(1.0,.95,.78);',
+    '  x = clamp(x, 0.0, 1.0); if (x < .25) return mix(c0, c1, x / .25); if (x < .5) return mix(c1, c2, (x - .25) / .25); if (x < .78) return mix(c2, c3, (x - .5) / .28); return mix(c3, c4, (x - .78) / .22); }',
+    'vec4 disco(vec3 p, vec3 v) {',
+    '  float r = length(p.xz); if (r < 6.0 || r > 17.0) return vec4(0.0);',
+    '  float T = pow(r, -.75) * pow(max(1.0 - sqrt(6.0 / r), 0.0), .25) / .1274;',   // Shakura–Sunyaev, máximo en r ≈ 8,2
+    '  float b = sqrt(1.0 / (r - 2.0)); vec3 t = normalize(vec3(-p.z, 0.0, p.x));',  // velocidad orbital local
+    '  float mu = dot(t, -normalize(v)); float g = sqrt(1.0 - 3.0 / r) / (1.0 - b * mu);',   // corrimiento gravitacional + Doppler
+    '  float P = 9.0, t1 = mod(uT, P), t2 = mod(uT + P * .5, P), w = abs(t1 / P * 2.0 - 1.0), ph = atan(p.z, p.x);',
+    '  float n = mix(remolino(r, ph, t1), remolino(r, ph + 1.7, t2), 1.0 - w);',
+    '  float hilos = .45 + 1.0 * n * n;',
+    '  float I = T * pow(g, 3.0) * hilos;',
+    '  float borde = smoothstep(6.0, 6.5, r) * (1.0 - smoothstep(10.5, 17.0, r));',
+    '  vec3 col = rampa(.12 + .6 * T * g + .3 * (n - .5)) * I * 1.5;',
+    '  return vec4(col, clamp(borde * (.45 + .6 * n), 0.0, 1.0)); }',
+    'vec3 cielo(vec3 d) {',
+    '  vec2 s = vec2(atan(d.z, d.x), asin(clamp(d.y, -1.0, 1.0))) * 70.0; vec2 c = floor(s), f = fract(s) - .5;',
+    '  float h = hash(vec3(c, 3.0)), e = 0.0; if (h > .985) e = smoothstep(.22, 0.0, length(f)) * (h - .985) * 60.0;',
+    '  return vec3(.75, .72, .9) * e + vec3(.035, .018, .03); }',
+    'void main() {',
+    '  vec2 q = vec2(gl_FragCoord.x / uRes.x, 1.0 - gl_FragCoord.y / uRes.y);',
+    '  vec2 d = (uVB.xy + q * uVB.zw - uC) / uSC; float cr = cos(uRoll), sr = sin(uRoll);',
+    '  d = vec2(cr * d.x + sr * d.y, -sr * d.x + cr * d.y);',
+    '  float bx = d.x, by = -d.y;',
+    '  float ci = cos(uIncl), si = sin(uIncl);',
+    '  vec3 cam = vec3(0.0, ci, -si) * 40.0, fw = -normalize(cam), up = vec3(0.0, si, ci), rt = vec3(-1.0, 0.0, 0.0);',
+    '  vec3 p = cam + rt * bx + up * by, v = fw;',
+    '  float h2 = dot(cross(p, v), cross(p, v));',
+    '  vec3 acc = vec3(0.0); float al = 0.0; bool cae = false, fuera = false;',
+    '  for (int i = 0; i < 260; i++) {',
+    '    float r = length(p);',
+    '    if (r < 2.02) { cae = true; break; }',
+    '    if (r > 48.0 && dot(p, v) > 0.0) { fuera = true; break; }',
+    '    float dt = clamp(.07 * r - .08, .025, 1.1);',
+    '    vec3 a = -3.0 * h2 * p / pow(r, 5.0);',
+    '    vec3 vm = v + a * dt * .5, pn = p + vm * dt; float rn = length(pn);',
+    '    vec3 an = -3.0 * h2 * pn / pow(rn, 5.0); vec3 vn = vm + an * dt * .5;',
+    '    if (p.y * pn.y < 0.0) { float k = p.y / (p.y - pn.y); vec4 c = disco(mix(p, pn, k), vn);',
+    '      acc += (1.0 - al) * c.rgb * c.a; al += (1.0 - al) * c.a; if (al > .98) break; }',
+    '    p = pn; v = vn;',
+    '  }',
+    '  vec3 fondo = cae ? vec3(0.0) : cielo(normalize(v));',
+    '  vec3 col = acc + (1.0 - al) * fondo;',
+    '  col = 1.0 - exp(-col * 1.15);',
+    '  gl_FragColor = vec4(pow(col, vec3(.92)), 1.0); }'
+  ].join('\n');
+
   function escenaRelatividad(svg, salida) {
-    var s = 5, P = camara(985, 470, s), g = el('g', {}, svg), orden = 0, K3 = 1.2247 * s;
-    function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;--d:' + (120 + orden++ * 70) + 'ms' }, g); }
-    var RS = 7, RF = 1.5 * RS, RI = 3 * RS, RE = 50, ZC = 30, C = P(0, 0, ZC);
-    function aro(r, z, a0, a1, n) { var o = []; for (var k = 0; k <= n; k++) { var t = (a0 + (a1 - a0) * k / n) * Math.PI / 180; o.push(P(r * Math.cos(t), r * Math.sin(t), z)); } return o; }
-    function circulo(r) { return 'M' + f(C[0] - r) + ' ' + f(C[1]) + ' a' + f(r) + ' ' + f(r) + ' 0 1 0 ' + f(2 * r) + ' 0 a' + f(r) + ' ' + f(r) + ' 0 1 0 ' + f(-2 * r) + ' 0'; }
-    // ── zócalo redondo con la escala de radios grabada
-    var z0 = pieza(140);
-    sombra(z0, P, s, 3, -2, 60, 60);
-    cilindro(z0, P, s, 0, 0, -10, 62, 6, 'lo');
-    cilindro(z0, P, s, 0, 0, -4, 59, 4, 'mid');
-    for (var k = 0; k < 12; k++) { var t = k / 12 * Math.PI * 2, pt = P(56 * Math.cos(t), 56 * Math.sin(t), 0); el('circle', { 'class': 'tornillo', cx: f(pt[0]), cy: f(pt[1]), r: 1.4 }, z0); }
-    [[RS, 'rₛ'], [RF, '1,5 rₛ'], [RI, '3 rₛ'], [RE, '']].forEach(function (q) {
-      ruta(z0, aro(q[0], 0, 0, 360, 96), q[0] === RE ? 'bn-marca-fina' : 'bn-marca');
-      if (!q[1]) return;
-      var e = P(q[0] * .7071, q[0] * .7071, 0);
-      var tx = el('text', { 'class': 'grabado bn-grab', x: 0, y: 0, transform: enPlano(P, 'z', [e[0] + 7, e[1] + 2]) }, z0); tx.textContent = q[1];
-    });
-    for (var tk = 0; tk <= RE; tk += 3.5) linea(z0, P(tk, 0, 0), P(tk, tk % 7 === 0 ? 2.2 : 1.2, 0), 'tick');   // regla radial
-    linea(z0, P(0, 0, 0), P(RE, 0, 0), 'bn-marca');
-    placa(z0, P, -26, 40, 0, 26, 8, 'SCHWARZSCHILD · rₛ = 2GM/c²');
-    el('ellipse', { 'class': 'bn-sombra-disco', cx: f(P(0, 0, 0)[0]), cy: f(P(0, 0, 0)[1]), rx: f(RE * K3 * 1.0), ry: f(RE * .7071 * s) }, z0);   // sombra del disco sobre el zócalo
-    var eje = el('g', {}, z0); linea(eje, P(0, 0, 0), P(0, 0, ZC - RS * 1.1), 'bn-eje');
-    // ── disco de acreción: bandas doradas, más claras (más calientes) hacia dentro
-    var NB = 16;
-    function banda(i) { return RI + (RE - RI) * i / NB; }
-    function tono(i) {
-      var u = i / (NB - 1), a = [255, 246, 214], b = [236, 186, 92], c = [150, 98, 34], m = u < .35 ? u / .35 : (u - .35) / .65, x = u < .35 ? a : b, y = u < .35 ? b : c;
-      return 'rgb(' + [0, 1, 2].map(function (j) { return Math.round(x[j] + (y[j] - x[j]) * m); }).join(',') + ')';
+    var fig = svg.parentNode, lienzo = document.createElement('canvas');
+    lienzo.className = 'bn-lienzo'; fig.insertBefore(lienzo, svg);
+    var C = [995, 450], SC = 25.5, ROLL = -16 * Math.PI / 180, INCL = 82 * Math.PI / 180;
+    // proyección sin lente (ortográfica) del mundo a la pantalla, igual que en el trazador
+    function aPantalla(x, y, z) {
+      var ci = Math.cos(INCL), si = Math.sin(INCL), bx = -x, by = y * si + z * ci, sx = bx * SC, sy = -by * SC;
+      return [C[0] + Math.cos(ROLL) * sx - Math.sin(ROLL) * sy, C[1] + Math.sin(ROLL) * sx + Math.cos(ROLL) * sy];
     }
-    function medioDisco(q, a0, a1) {
-      for (var i = 0; i < NB; i++) {
-        var p = poly(q, aro(banda(i + 1), ZC, a0, a1, 40).concat(aro(banda(i), ZC, a1, a0, 40)), 'bn-banda');
-        p.style.fill = tono(i);
-      }
-      ruta(q, aro(RI, ZC, a0, a1, 40), 'bn-borde-int'); ruta(q, aro(RE, ZC, a0, a1, 60), 'bn-borde-ext');
+    function enPantalla(bx, by) { var sx = bx * SC, sy = -by * SC; return [C[0] + Math.cos(ROLL) * sx - Math.sin(ROLL) * sy, C[1] + Math.sin(ROLL) * sx + Math.cos(ROLL) * sy]; }
+    var BC = Math.sqrt(27), RSH = BC * SC;   // radio de la sombra en pantalla
+    // ── WebGL
+    var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true }), U = {}, listo = false;
+    if (gl) {
+      var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }'); gl.compileShader(vs);
+      var fs = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(fs, GLSL_AGUJERO); gl.compileShader(fs);
+      if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(fs));
+      var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); gl.useProgram(pr);
+      var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
+      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+      listo = gl.getProgramParameter(pr, gl.LINK_STATUS);
     }
-    var dA = pieza(-120);                                    // mitad trasera (x + y < 0)
-    poly(dA, aro(RE + 4, ZC, 0, 360, 80), 'bn-resplandor');
-    medioDisco(dA, 135, 315);
-    var gasA = el('g', {}, dA);
-    // ── agujero: horizonte, borde violeta de Hawking y esfera de fotones
-    var hz = pieza(-180), rH = RS * K3, rF = RF * K3; hz.classList.add('bn-fijo');
-    el('circle', { 'class': 'bn-halo-h', cx: f(C[0]), cy: f(C[1]), r: f(rH * 1.18) }, hz);
-    el('circle', { 'class': 'bn-horizonte', cx: f(C[0]), cy: f(C[1]), r: f(rH) }, hz);
-    el('circle', { 'class': 'bn-brillo', cx: f(C[0] - rH * .35), cy: f(C[1] - rH * .4), r: f(rH * .32) }, hz);
-    var hw = pieza(-200);
-    el('circle', { 'class': 'bn-borde-hawking', cx: f(C[0]), cy: f(C[1]), r: f(rH * 1.03) }, hw);
-    el('path', { 'class': 'zona', d: circulo(rH * 1.16) + ' ' + circulo(rH * .9), 'fill-rule': 'evenodd' }, hw);
-    var fo = pieza(-220);
-    el('circle', { 'class': 'bn-fotones', cx: f(C[0]), cy: f(C[1]), r: f(rF) }, fo);
-    el('ellipse', { 'class': 'bn-fotones-ec', cx: f(C[0]), cy: f(C[1]), rx: f(rF), ry: f(rF * .577) }, fo);
-    var fotones = el('g', {}, fo);
-    for (var fi = 0; fi < 3; fi++) { var ph = el('circle', { 'class': 'bn-foton', r: 1.6 }, fotones); el('animateMotion', { dur: '2.4s', begin: f(-fi * .8) + 's', repeatCount: 'indefinite', path: 'M' + f(C[0] + rF) + ' ' + f(C[1]) + ' A' + f(rF) + ' ' + f(rF * .577) + ' 0 1 1 ' + f(C[0] - rF) + ' ' + f(C[1]) + ' A' + f(rF) + ' ' + f(rF * .577) + ' 0 1 1 ' + f(C[0] + rF) + ' ' + f(C[1]) }, ph); }
-    el('path', { 'class': 'zona', d: circulo(rF * 1.06) + ' ' + circulo(rH * 1.16), 'fill-rule': 'evenodd' }, fo);
-    var dB = pieza(-120);                                    // mitad delantera
-    medioDisco(dB, -45, 135);
-    var gasB = el('g', {}, dB);
-    var hawk = el('g', { 'class': 'bn-hawking' }, g);
-    // ── gas del disco: órbitas keplerianas (ω ∝ r^−3/2) que derivan hacia dentro; bajo la ISCO caen en picada
+    if (!listo) fig.classList.add('bn-sin-gl');
+    var tiempo = 0;
+    function pintar() {
+      if (!listo) return;
+      var r = lienzo.getBoundingClientRect(); if (!r.width) return;
+      var q = Math.min(window.devicePixelRatio || 1, 1.5) * calidad, W = Math.round(r.width * q), H = Math.round(r.height * q);
+      if (lienzo.width !== W || lienzo.height !== H) { lienzo.width = W; lienzo.height = H; }
+      var vb = svg.viewBox.baseVal;
+      gl.viewport(0, 0, W, H);
+      gl.uniform2f(U.uRes, W, H); gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C[0], C[1]);
+      gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+    // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
+    var calidad = .62, previo = 0, lentos = 0;
+    (function bucleGL(t) {
+      requestAnimationFrame(bucleGL);
+      if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
+      if (previo) { var d = t - previo; lentos = d > 34 ? lentos + 1 : Math.max(0, lentos - 1); if (lentos > 20 && calidad > .3) { calidad *= .82; lentos = 0; } }
+      previo = t; pintar();
+    })(0);
+    fig.bnPintar = function (q) { calidad = q; pintar(); };   // para capturas fijas
+    // ── capa SVG: zonas para las notas y radiación de Hawking
+    var g = el('g', {}, svg);
+    function anillo(r0, r1) { return 'M' + f(C[0] - r1) + ' ' + f(C[1]) + ' a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(2 * r1) + ' 0 a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(-2 * r1) + ' 0' + (r0 ? ' M' + f(C[0] - r0) + ' ' + f(C[1]) + ' a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(2 * r0) + ' 0 a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(-2 * r0) + ' 0' : ''); }
+    el('circle', { 'class': 'bn-hawking-borde', cx: f(C[0]), cy: f(C[1]), r: f(RSH * .965) }, g);
+    var hawk = el('g', {}, g);
+    function zona(d) { return el('path', { 'class': 'zona bn-zona', d: d, 'fill-rule': 'evenodd' }, g); }
+    function poligono(pts) { return 'M' + pts.map(function (p) { return f(p[0]) + ' ' + f(p[1]); }).join(' L') + 'Z'; }
+    function bandaDisco(r0, r1, a0, a1) {   // franja del disco (sin lente) entre radios y ángulos
+      var o = [], k; for (k = 0; k <= 24; k++) { var t = (a0 + (a1 - a0) * k / 24); o.push(aPantalla(r1 * Math.cos(t), 0, r1 * Math.sin(t))); }
+      for (k = 24; k >= 0; k--) { var t2 = (a0 + (a1 - a0) * k / 24); o.push(aPantalla(r0 * Math.cos(t2), 0, r0 * Math.sin(t2))); }
+      return poligono(o);
+    }
+    var zSombra = zona(anillo(0, RSH * .9)), zHawk = zona(anillo(RSH * .9, RSH * 1.0)), zFot = zona(anillo(RSH * 1.0, RSH * 1.13));
+    var zDisco = zona(bandaDisco(9, 16, Math.PI * 1.4, Math.PI * 1.92)), zDoppler = zona(bandaDisco(7, 16, Math.PI * .85, Math.PI * 1.35));
+    var zLente = zona((function () { var o = []; for (var k = 0; k <= 20; k++) { var t = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t) * 9.5, Math.sin(t) * 9.5)); } for (k = 20; k >= 0; k--) { var t3 = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t3) * 6.2, Math.sin(t3) * 6.2)); } return poligono(o); })());
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
-    var gas = [];
-    function nace(a, lejos) { a.r = lejos ? RE - Math.random() * 3 : RI + Math.pow(Math.random(), .7) * (RE - RI); a.t = Math.random() * Math.PI * 2; return a; }
-    for (var gi = 0; gi < 110; gi++) gas.push(nace({ el: el('circle', { 'class': 'bn-gas', r: f(.9 + Math.random() * .9) }, gasA) }));
-    // ── radiación de Hawking: pares junto al horizonte; uno cae, el otro escapa
-    var pares = [], acum = 0, V = [.577, .577, .577];
+    var pares = [], acum = 0;
     function par() {
-      var n; do { n = [gauss(), gauss(), gauss()]; var m = Math.hypot(n[0], n[1], n[2]); n = n.map(function (c) { return c / m; }); } while (n[0] * V[0] + n[1] * V[1] + n[2] * V[2] < .25);
-      var sale = el('circle', { 'class': 'bn-hq', r: 2.2 }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: 1.6 }, hawk);
-      pares.push({ n: n, r: RS * 1.04, rc: RS * 1.04, sale: sale, cae: cae, v: 7 + Math.random() * 5 });
+      var a = Math.random() * Math.PI * 2, sale = el('circle', { 'class': 'bn-hq', r: 2.1 }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: 1.5 }, hawk);
+      pares.push({ a: a, r: RSH * .955, rc: RSH * .955, v: 26 + Math.random() * 30, sale: sale, cae: cae, da: gauss() * .08 });
     }
     return {
       tick: function (dt) {
-        gas.forEach(function (a) {
-          var w = 1.3 * Math.pow(RI / Math.max(a.r, RS), 1.5);
-          a.t += w * dt; a.r -= (a.r > RI ? .35 : 9 + (RI - a.r) * 2) * dt;
-          if (a.r < RS * .98) nace(a, true);
-          var x = a.r * Math.cos(a.t), y = a.r * Math.sin(a.t), q = P(x, y, ZC), atras = x + y < 0;
-          if (atras !== a.atras) { a.atras = atras; (atras ? gasA : gasB).appendChild(a.el); }
-          a.el.setAttribute('cx', f(q[0])); a.el.setAttribute('cy', f(q[1]));
-          a.el.setAttribute('class', a.r < RI ? 'bn-gas bn-gas-cae' : 'bn-gas');
-        });
-        acum += dt; while (acum > .13) { acum -= .13; par(); }
+        tiempo += dt;
+        acum += dt; while (acum > .16) { acum -= .16; par(); }
         for (var i = pares.length - 1; i >= 0; i--) {
-          var p = pares[i]; p.r += p.v * dt; p.rc -= 3 * dt;
-          var u = (p.r - RS) / (2.6 * RS), q = P(p.n[0] * p.r, p.n[1] * p.r, ZC + p.n[2] * p.r), qc = P(p.n[0] * p.rc, p.n[1] * p.rc, ZC + p.n[2] * p.rc);
-          p.sale.setAttribute('cx', f(q[0])); p.sale.setAttribute('cy', f(q[1])); p.sale.setAttribute('opacity', f(Math.max(0, 1 - u)));
-          p.cae.setAttribute('cx', f(qc[0])); p.cae.setAttribute('cy', f(qc[1])); p.cae.setAttribute('opacity', f(Math.max(0, (p.rc - RS * .8) / (RS * .24))));
+          var p = pares[i]; p.r += p.v * dt; p.rc -= 14 * dt; p.a += p.da * dt;
+          var u = (p.r - RSH) / (RSH * .9);
+          p.sale.setAttribute('cx', f(C[0] + Math.cos(p.a) * p.r)); p.sale.setAttribute('cy', f(C[1] + Math.sin(p.a) * p.r)); p.sale.setAttribute('opacity', f(Math.max(0, 1 - u)));
+          p.cae.setAttribute('cx', f(C[0] + Math.cos(p.a + .05) * p.rc)); p.cae.setAttribute('cy', f(C[1] + Math.sin(p.a + .05) * p.rc)); p.cae.setAttribute('opacity', f(Math.max(0, (p.rc - RSH * .82) / (RSH * .13))));
           if (u >= 1) { hawk.removeChild(p.sale); hawk.removeChild(p.cae); pares.splice(i, 1); }
         }
-        salida('rₛ = 2GM/c²', 'fotones 1,5 rₛ · ISCO 3 rₛ · Hawking (1 M☉) ≈ 6 × 10⁻⁸ K');
+        salida('rₛ = 2GM/c²', 'sombra b = √27 GM/c² ≈ 2,6 rₛ · ISCO 3 rₛ');
       },
       notas: function () {
-        var nota = fabricaNotas(svg, svg, P);
-        nota([hz], [0, 0, ZC + RS * 1.22], 'Horizonte de eventos', ['Radio de Schwarzschild: rₛ = 2GM/c².', 'Desde dentro de esta superficie ni la luz', 'puede salir. Para el Sol, rₛ ≈ 3 km.'], 92);
-        nota([fo], [-RF * .7071, RF * .7071, ZC], 'Esfera de fotones', ['A 1,5 rₛ la luz puede girar en círculo,', 'en una órbita inestable. De ella nace el', 'anillo que fotografió el EHT (M87*, 2019).'], 205, null, { izq: true });
-        nota([hw], [RS * 1.06 * .7071, -RS * 1.06 * .7071, ZC], 'Radiación de Hawking', ['Hawking (1974): por efectos cuánticos junto', 'al horizonte, el agujero emite como cuerpo', 'negro a T = ħc³/(8πGMk_B). Para una masa', 'solar, T ≈ 6 × 10⁻⁸ K: imperceptible.'], 92);
-        nota([dA, dB], [34, 26, ZC], 'Disco de acreción', ['Gas que cae en espiral y se calienta hasta', 'brillar; más caliente cuanto más adentro.', 'Su borde interior es la órbita circular', 'estable más interna: r = 3 rₛ (ISCO). Más', 'cerca, el gas ya no orbita: cae.'], null);
-        nota([z0], [40, 40, 0], 'Escala', ['Los círculos del zócalo marcan rₛ, 1,5 rₛ', 'y 3 rₛ medidos desde el centro.'], null);
+        var nota = fabricaNotas(svg, svg, function (x, y) { return [x, y]; });
+        var top = enPantalla(-Math.sin(.6) * BC * .45, Math.cos(.6) * BC * .45);
+        nota([zSombra], [C[0], C[1]], 'Sombra y horizonte', ['La luz que pasa a menos de b = √27 GM/c²', '(≈ 2,6 rₛ) cae sin remedio: eso es la sombra.', 'El horizonte, rₛ = 2GM/c², queda dentro;', 'la curvatura lo agranda hasta llenarla.'], 110, null, { izq: true, dx: -40, ancho: 300 });
+        var pf = enPantalla(Math.cos(2.2) * BC * 1.05, Math.sin(2.2) * BC * 1.05);
+        nota([zFot], pf, 'Anillo de fotones', ['Luz que dio una o más vueltas cerca de', 'r = 1,5 rₛ (esfera de fotones) antes de', 'escapar. El EHT lo fotografió en M87* (2019).'], 110);
+        var ph = enPantalla(Math.cos(-.5) * BC * .95, Math.sin(-.5) * BC * .95);
+        nota([zHawk], ph, 'Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 660, null, { izq: false });
+        var pl = enPantalla(Math.cos(1.25) * 8.2, Math.sin(1.25) * 8.2);
+        nota([zLente], pl, 'Lente gravitacional', ['El arco sobre la sombra es la parte de', 'atrás del disco: su luz se curva por', 'encima del agujero y llega hasta aquí.'], 110);
+        var pd = aPantalla(12, 0, -7);
+        nota([zDisco], pd, 'Disco de acreción', ['Gas en órbita que se calienta al caer en', 'espiral. Empieza en la órbita circular', 'estable más interna, r = 3 rₛ (ISCO).'], 680, null, { izq: false });
+        var pp = aPantalla(-12, 0, 2);
+        nota([zDoppler], pp, 'Doppler relativista', ['El gas de este lado viene hacia nosotros', 'a casi la mitad de c: su luz se concentra', 'y brilla más que la del lado que se aleja.'], 130, null, { izq: true });
+        void top;
       }
     };
   }

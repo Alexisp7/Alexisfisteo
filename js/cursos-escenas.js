@@ -223,19 +223,51 @@
     poly(pz, [P(80, -10, 4), P(80, 10, 4), P(80, 10, 33), P(80, -10, 33)], 'zona');
 
     // notas: al pasar el mouse por una pieza, una línea guía sube hasta una explicación corta en gris
+    // modelo planetario de la plata (Z = 47): capas 2 · 8 · 18 · 18 · 1, configuración [Kr] 4d¹⁰ 5s¹
+    function atomoPlata(q, x0, y0) {
+      var cx = x0 + 70, cy = y0 + 58, CAPAS = [2, 8, 18, 18, 1], R = [11, 19, 29, 41, 56];
+      var orb = el('g', { transform: 'translate(' + f(cx) + ' ' + f(cy) + ') rotate(-18) scale(1 .58)' }, q);
+      CAPAS.forEach(function (n, k) {
+        var ultima = k === CAPAS.length - 1;
+        el('circle', { 'class': ultima ? 'orbita orbita-ext' : 'orbita', r: R[k] }, orb);
+        var giro = el('g', {}, orb);
+        for (var e = 0; e < n; e++) {
+          var a = e / n * Math.PI * 2 + k * .7;
+          el('circle', { 'class': ultima ? 'e-val' : 'e-int', cx: f(R[k] * Math.cos(a)), cy: f(R[k] * Math.sin(a)), r: ultima ? 3.4 : 1.5 }, giro);
+        }
+        el('animateTransform', { attributeName: 'transform', type: 'rotate', from: '0', to: (k % 2 ? '-360' : '360'), dur: (2.6 + k * 1.9) + 's', repeatCount: 'indefinite' }, giro);
+      });
+      el('circle', { 'class': 'nucleo', cx: f(cx), cy: f(cy), r: 6 }, q);
+      var tz = el('text', { 'class': 'nucleo-t', x: f(cx), y: f(cy + 2.4) }, q); tz.textContent = '47';
+      // configuración electrónica
+      var x1 = x0 + 150;
+      var t1 = el('text', { 'class': 'conf-k', x: f(x1), y: f(y0 + 22) }, q); t1.textContent = 'Ag · Z = 47';
+      var t2 = el('text', { 'class': 'conf', x: f(x1), y: f(y0 + 52) }, q);
+      el('tspan', {}, t2).textContent = '[Kr] 4d';
+      el('tspan', { 'class': 'sup', 'baseline-shift': 'super' }, t2).textContent = '10';
+      el('tspan', { 'class': 'conf-val' }, t2).textContent = ' 5s';
+      el('tspan', { 'class': 'conf-val sup', 'baseline-shift': 'super' }, t2).textContent = '1';
+      var t3 = el('text', { 'class': 'conf-k', x: f(x1), y: f(y0 + 76) }, q);
+      el('tspan', {}, t3).textContent = '2 · 8 · 18 · 18 · ';
+      el('tspan', { 'class': 'conf-val' }, t3).textContent = '1';
+      var t4 = el('text', { 'class': 'conf-n', x: f(x1), y: f(y0 + 98) }, q);
+      t4.textContent = 'capas llenas: μ = 0 · todo es del 5s';
+    }
     var capaNotas = el('g', { 'class': 'notas' }, g);
-    function nota(piezas, ancla, titulo, lineas, cima, foco) {
+    function nota(piezas, ancla, titulo, lineas, cima, foco, op) {
+      var extra = op ? op.alto : 0;
       foco = piezas.concat(foco || []);
       var a = P(ancla[0], ancla[1], ancla[2]), alto = 64 + (a[1] > 520 ? 40 : 0), izq = a[0] > 1150, dx = izq ? -22 : 22;
       var top = cima || Math.max(118, a[1] - alto), n = el('g', { 'class': 'nota' }, capaNotas);
       el('circle', { cx: f(a[0]), cy: f(a[1]), r: 2.2 }, n);
       el('circle', { 'class': 'anillo-nota', cx: f(a[0]), cy: f(a[1]), r: 5 }, n);
       el('path', { d: 'M' + f(a[0]) + ' ' + f(a[1] - 4) + ' L' + f(a[0]) + ' ' + f(top) + ' L' + f(a[0] + dx) + ' ' + f(top), pathLength: 1 }, n);
-      var ancho = Math.max.apply(null, lineas.map(function (l) { return l.length; })) * 6.3 + 22;
+      var ancho = Math.max(op ? op.ancho : 0, Math.max.apply(null, lineas.map(function (l) { return l.length; })) * 6.3 + 22);
       var bx = izq ? a[0] + dx - ancho : a[0] + dx, tx = bx + 10, anc = 'start';
-      el('rect', { 'class': 'nota-fondo', x: f(bx), y: f(top - 11), width: f(ancho), height: 22 + lineas.length * 15, rx: 2 }, n);
+      el('rect', { 'class': 'nota-fondo', x: f(bx), y: f(top - 11), width: f(ancho), height: 22 + lineas.length * 15 + extra, rx: 2 }, n);
+      if (op) op.dibujo(el('g', { 'class': 'nota-dib' }, n), bx, top + 10);
       var t = el('text', { 'class': 'nota-t', x: f(tx), y: f(top + 3), 'text-anchor': anc }, n); t.textContent = titulo;
-      var d = el('text', { 'class': 'nota-d', x: f(tx), y: f(top + 19), 'text-anchor': anc }, n);
+      var d = el('text', { 'class': 'nota-d', x: f(tx), y: f(top + 19 + extra), 'text-anchor': anc }, n);
       lineas.forEach(function (l, k) { var sp = el('tspan', { x: f(tx), dy: k ? 15 : 0 }, d); sp.textContent = l; });
       piezas.forEach(function (q) {
         q.classList.add('con-nota');
@@ -244,7 +276,7 @@
       });
     }
     nota([b0], [-62, 22, 0], 'Banco y vacío', ['Todo va sobre un solo eje. El aparato real', 'trabajaba en vacío: los átomos debían volar', 'sin chocar con el aire.']);
-    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.']);
+    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.'], null, null, { alto: 128, ancho: 350, dibujo: atomoPlata });
     nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.']);
     nota([m0, m1], [10, -23, 46], 'Electroimán', ['Un campo uniforme solo hace girar al imán', 'atómico (precesión); no lo desvía. Hace', 'falta un campo que cambie con la altura.'], 150);
     nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 175);

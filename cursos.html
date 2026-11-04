@@ -1588,6 +1588,18 @@
     .mc svg .lamina { stroke:var(--tinta); stroke-width:.35; opacity:.32; }
     .mc svg .reflejo { fill:#fff; opacity:.3; }
     .mc svg .zona { fill:transparent; }
+    .mc svg .nota .orbita { fill:none; stroke:#8E8478; stroke-width:.6; opacity:.45; }
+    .mc svg .nota .orbita-ext { stroke:var(--rojo); stroke-dasharray:2 3; opacity:.7; }
+    .mc svg .nota .e-int { fill:#6B6156; }
+    .mc svg .nota .e-val { fill:var(--rojo); stroke:#F7F3EB; stroke-width:1; filter:drop-shadow(0 0 3px rgba(122,46,34,.55)); }
+    .mc svg .nota .nucleo { fill:var(--tinta); }
+    .mc svg .nota .nucleo-t { font:700 5.5px 'Space Mono',monospace; fill:#F4EEE3; text-anchor:middle; stroke:none; }
+    .mc svg .nota .conf { font:italic 500 22px 'Cormorant Garamond',serif; fill:var(--tinta); stroke-width:0; }
+    .mc svg .nota .sup { font-size:13px; }
+    .mc svg .nota .conf-val { fill:var(--rojo); font-weight:700; }
+    .mc svg .nota .conf-k { font:700 8.5px 'Space Mono',monospace; letter-spacing:.16em; fill:#6B6156; stroke-width:0; }
+    .mc svg .nota .conf-n { font:400 9px Inter,sans-serif; fill:#8E8478; stroke-width:0; }
+    .mc svg .nota-dib { opacity:0; transition:opacity .35s ease .25s; } .mc svg .nota.ver .nota-dib { opacity:1; }
     .mc svg .nota-fondo { fill:rgba(247,243,235,.92); stroke:rgba(142,132,120,.25); stroke-width:.6; opacity:0; transition:opacity .25s ease .18s; } .mc svg .nota.ver .nota-fondo { opacity:1; }
     .mc svg .nota-t { font:700 8.5px 'Space Mono',monospace; letter-spacing:.22em; text-transform:uppercase; fill:#6B6156; }
     .mc svg .nota-d { font:400 12.5px Inter,sans-serif; fill:#8E8478; }

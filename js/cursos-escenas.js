@@ -261,7 +261,8 @@
     // la desviación pesa entera cerca de la sombra y se apaga lejos: allí las estrellas conservan su forma
     '  float bb = length(vec2(bx, by)), pesoL = 1.0 / (1.0 + pow(bb / 9.5, 4.0));',
     '  vec3 dg = normalize(normalize(fw + (rt * bx + up * by) / F) + (normalize(v) - fw) * pesoL);',
-    // el cielo queda quieto: solo se mueve el disco
+    // el cielo gira despacio: al pasar junto a la sombra las estrellas se estiran y doblan (lente gravitacional)
+    '  float ag = uT * .025, cg = cos(ag), sg = sin(ag); dg = vec3(cg * dg.x - sg * dg.z, dg.y, sg * dg.x + cg * dg.z);',
     // dentro de la sombra, marcas a escala (sin lente): singularidad, horizonte rₛ = 2 y esfera de fotones 1,5 rₛ = 3
     // sombra negra limpia; su borde (b = √27 M) se suaviza un píxel para que no se vea escalonado
     '  float ab = fwidth(bb) + 1e-4, sA = cae ? 1.0 : 1.0 - smoothstep(5.196 - ab, 5.196 + ab, bb);',

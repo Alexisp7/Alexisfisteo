@@ -190,19 +190,48 @@
     poly(m2, [P(-12, -1.3, 12), P(32, -1.3, 12), P(32, 1.3, 12), P(-12, 1.3, 12)], 'hueco');
     poly(m2, [P(32, -1.3, 12), P(32, 1.3, 12), P(32, 0, 10.2)], 'hueco');
     [[-8, -7], [28, -7], [-8, 7], [28, 7]].forEach(function (t) { tornillo(m2, P(t[0], t[1], 12)); });
+    var pS = P(32, 0, 8.5), tSp = el('text', { 'class': 'polo-b', x: 0, y: 0, transform: 'matrix(.866 -.5 0 1 ' + f(pS[0]) + ' ' + f(pS[1]) + ')' }, m2); tSp.textContent = 'S';
+    // ── campo magnético en el entrehierro: el filo actúa como una línea de "carga magnética" sobre
+    //    el polo plano; con su imagen, las líneas son arcos de circunferencia que llegan perpendiculares
+    //    al hierro. Se juntan bajo el filo (campo intenso) y se abren abajo: B no uniforme, ∂B/∂z ≠ 0.
+    //    Grosor ∝ √|B|, con |B| ∝ d/(r₁r₂); las flechas bajan del polo N (filo) al S (canal).
+    var mc = pieza(-60); mc.classList.add('campo');
+    var ZF = 19, ZP = 12, H = ZF - ZP;
+    function Bmod(y, z) { var r1 = Math.hypot(y, z - ZF), r2 = Math.hypot(y, z - (ZP - H)); return (2 * H) / (Math.max(r1, .5) * r2); }
+    var B0 = Bmod(0, ZP);
+    [-8, 0, 8, 16, 24, 31.5].forEach(function (XC, nf) {
+      var frente = nf === 5;
+      for (var kb = -5; kb <= 5; kb++) {
+        var beta = Math.abs(kb) * Math.PI / 12, sg = kb < 0 ? -1 : 1, pts3 = [], NS = 12;
+        if (kb === 0) { for (var u = 0; u <= NS; u++) pts3.push([0, ZF - H * u / NS]); }
+        else {
+          var cc = H / Math.tan(beta), rr = H / Math.sin(beta), th0 = Math.atan2(H, -cc);
+          for (var u2 = 0; u2 <= NS; u2++) { var th = th0 + (Math.PI - th0) * u2 / NS; pts3.push([sg * -(cc + rr * Math.cos(th)), ZP + rr * Math.sin(th)]); }
+        }
+        var trazo = pts3.map(function (q) { return P(XC, q[0], q[1]); });
+        for (var sgm = 0; sgm < NS; sgm++) {
+          var ym = (pts3[sgm][0] + pts3[sgm + 1][0]) / 2, zm2 = (pts3[sgm][1] + pts3[sgm + 1][1]) / 2;
+          var ib = Math.min(Bmod(ym, zm2) / B0, 5);
+          var ln = linea(mc, trazo[sgm], trazo[sgm + 1], 'linea-b'); ln.setAttribute('stroke-width', f(.4 + .75 * Math.sqrt(ib))); ln.setAttribute('opacity', f(.5 + .1 * nf));
+        }
+        if (nf % 2 === 1 || frente) {
+          var dpath = 'M' + trazo.map(function (c) { return f(c[0]) + ' ' + f(c[1]); }).join(' L');
+          var fl = el('path', { 'class': 'flecha-b', d: 'M-2.8 -1.8 L1.6 0 L-2.8 1.8 Z' }, mc);
+          el('animateMotion', { path: dpath, rotate: 'auto', dur: '1.3s', begin: f(-((kb + 5) * .17 + nf * .23)) + 's', repeatCount: 'indefinite' }, fl);
+        }
+      }
+    });
     capa();                                   // dentro del imán
     var m3 = pieza(-180);
     var cu = el('g', { 'class': 's mid' }, m3);
-    poly(cu, [P(-12, 10, 26), P(32, 10, 26), P(32, 0, 19), P(-12, 0, 19)], 'fr');
     poly(cu, [P(32, -10, 26), P(32, 10, 26), P(32, 0, 19)], 'sd');
-    linea(m3, P(-12, 0, 19), P(32, 0, 19), 'arista');
     caja(m3, P, -12, -10, 26, 44, 20, 8, 'mid');
     caja(m3, P, -12, -20, 34, 44, 30, 6, 'lo');
     for (var la = -10; la < 32; la += 2) linea(m3, P(la, -20, 40), P(la, 10, 40), 'lamina');
     for (var w = 0; w < 6; w++) tornillo(m3, P(-8 + w * 7.6, 6, 40));
     var rN = P(10, 10, 30), tN = el('text', { 'class': 'grabado', x: 0, y: 0, transform: 'matrix(.866 .5 0 1 ' + f(rN[0]) + ' ' + f(rN[1]) + ')' }, m3); tN.textContent = '∂B/∂z';
+    var pN = P(32, 0, 30), tNp = el('text', { 'class': 'polo-b', x: 0, y: 0, transform: 'matrix(.866 -.5 0 1 ' + f(pN[0]) + ' ' + f(pN[1]) + ')' }, m3); tNp.textContent = 'N';
 
-    // ── placa y pantalla de vidrio con marco
     var p0 = pieza(110);
     placa(p0, P, 40, 13, 0, 28, 10, 'Ag · 1922 · T ≈ 1300 K');
     capa();                                   // imán → pantalla

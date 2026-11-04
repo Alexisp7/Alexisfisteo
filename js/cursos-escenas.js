@@ -322,7 +322,7 @@
       });
     }
     nota([b0], [-62, 22, 0], 'Banco y vacío', ['Todo va sobre un solo eje. El aparato real', 'trabajaba en vacío: los átomos debían volar', 'sin chocar con el aire.']);
-    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.'], 104, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
+    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['Calienta la plata hasta evaporarla: salen', 'átomos neutros a ≈ 500 m/s, solo por agitación', 'térmica. Neutros: sin carga no hay fuerza de', 'Lorentz que tape el efecto. Con un solo electrón', 'externo, su momento es el de ese electrón.'], 60, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
     nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.']);
     nota([m0, m1], [10, -23, 46], 'Electroimán', ['La corriente imanta el hierro; el yugo', 'lleva el campo hasta el entrehierro. Uniforme', 'solo haría girar al átomo: el filo lo desvía.'], 96, null, { alto: 108, ancho: 300, dx: 12, dibujo: imanMini });
     nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 175, [mc, mcF]);

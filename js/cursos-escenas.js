@@ -255,7 +255,12 @@
     '  float bb = length(vec2(bx, by)), pesoL = 1.0 / (1.0 + pow(bb / 9.5, 4.0));',
     '  vec3 dg = normalize(normalize(fw + (rt * bx + up * by) / F) + (normalize(v) - fw) * pesoL);',
     '  float ag = uT * .03, cg = cos(ag), sg = sin(ag); dg = vec3(cg * dg.x - sg * dg.z, dg.y, sg * dg.x + cg * dg.z);',
-    '  vec4 fondo = cae ? vec4(vec3(.10, .07, .07) + .05 * (1.0 - bb / 5.2), smoothstep(.5, 1.3, uArm)) : aguada(vec2(bx, by), dg, px);',
+    // dentro de la sombra, marcas a escala (sin lente): singularidad, horizonte rₛ = 2 y esfera de fotones 1,5 rₛ = 3
+    '  float ab = fwidth(bb) + 1e-4;',
+    '  vec3 sombra = bb < 2.0 ? vec3(.045, .03, .035) : (bb < 3.0 ? vec3(.075, .05, .055) : vec3(.10, .07, .07) + .04 * (1.0 - bb / 5.2));',
+    '  float marca = max(1.0 - smoothstep(.025, .025 + ab, abs(bb - 2.0)), (1.0 - smoothstep(.02, .02 + ab, abs(bb - 3.0))) * .7);',
+    '  sombra = mix(sombra, vec3(.86, .74, .58), marca * .55); sombra = mix(sombra, vec3(.82, .72, 1.0), 1.0 - smoothstep(.12, .12 + ab, bb));',
+    '  vec4 fondo = cae ? vec4(sombra, smoothstep(.5, 1.3, uArm)) : aguada(vec2(bx, by), dg, px);',
     '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0);',
     // composición «sobre» con alfa directo: el papel de la página se ve donde no hay tinta
     '  float a2 = c2.a + fondo.a * (1.0 - c2.a); vec3 k2 = (c2.rgb * c2.a + fondo.rgb * fondo.a * (1.0 - c2.a)) / max(a2, 1e-4);',
@@ -315,7 +320,12 @@
     var g = el('g', {}, svg);
     function anillo(r0, r1) { return 'M' + f(C[0] - r1) + ' ' + f(C[1]) + ' a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(2 * r1) + ' 0 a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(-2 * r1) + ' 0' + (r0 ? ' M' + f(C[0] - r0) + ' ' + f(C[1]) + ' a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(2 * r0) + ' 0 a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(-2 * r0) + ' 0' : ''); }
     // ── líneas de construcción a tinta, como en una lámina: elipses del plano del disco, ejes y marcas
-    var traza = el('g', { 'class': 'bn-traza' }, g), giro = 'rotate(' + f(ROLL * 180 / Math.PI) + ' ' + f(C[0]) + ' ' + f(C[1]) + ')';
+    // las líneas de cartografía van en un SVG aparte, debajo del lienzo: quedan detrás de la tinta y del disco
+    var fondoSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); fondoSvg.setAttribute('class', 'bn-fondo'); fondoSvg.setAttribute('aria-hidden', 'true');
+    fondoSvg.setAttribute('preserveAspectRatio', svg.getAttribute('preserveAspectRatio') || 'none'); fig.appendChild(fondoSvg);
+    function copiaVB() { var v = svg.getAttribute('viewBox'); if (v) fondoSvg.setAttribute('viewBox', v); }
+    copiaVB(); new MutationObserver(copiaVB).observe(svg, { attributes: true, attributeFilter: ['viewBox'] });
+    var traza = el('g', { 'class': 'bn-traza' }, fondoSvg), giro = 'rotate(' + f(ROLL * 180 / Math.PI) + ' ' + f(C[0]) + ' ' + f(C[1]) + ')';
     [[700, 330], [560, 205], [430, 300]].forEach(function (e) { el('ellipse', { cx: f(C[0]), cy: f(C[1]), rx: e[0], ry: e[1], transform: giro }, traza); });
     el('circle', { cx: f(C[0]), cy: f(C[1]), r: f(RSH * 1.9) }, traza);
     el('path', { d: 'M' + f(C[0] - 820) + ' ' + f(C[1]) + 'H' + f(C[0] + 820) + 'M' + f(C[0]) + ' ' + f(C[1] - 470) + 'V' + f(C[1] + 470), transform: giro }, traza);
@@ -323,7 +333,7 @@
     [[-560, -175], [560, 175], [-700, 0], [700, 0], [0, -330], [0, 330], [380, -175], [-380, 175]].forEach(function (q) {
       el('path', { d: 'M' + f(C[0] + q[0] - 7) + ' ' + f(C[1] + q[1]) + 'h14M' + f(C[0] + q[0]) + ' ' + f(C[1] + q[1] - 7) + 'v14', transform: giro, 'class': 'bn-cruz' }, traza);
     });
-    [].forEach.call(traza.querySelectorAll('*'), function (e, i) { e.setAttribute('pathLength', 1); e.style.setProperty('--d', (i * 60) + 'ms'); });
+    [].forEach.call(traza.querySelectorAll('*'), function (e, i) { e.setAttribute('pathLength', 1); e.style.setProperty('--d', (2300 + i * 70) + 'ms'); });
     var capaHawk = el('g', { 'class': 'bn-hawk' }, g);
     el('circle', { 'class': 'bn-hawking-borde', cx: f(C[0]), cy: f(C[1]), r: f(RSH * .965) }, capaHawk);
     var hawk = el('g', {}, capaHawk);
@@ -334,7 +344,7 @@
       for (k = 24; k >= 0; k--) { var t2 = (a0 + (a1 - a0) * k / 24); o.push(aPantalla(r0 * Math.cos(t2), 0, r0 * Math.sin(t2))); }
       return poligono(o);
     }
-    var zSombra = zona(anillo(0, RSH * .9)), zHawk = zona(anillo(RSH * .9, RSH * 1.0)), zFot = zona(anillo(RSH * 1.0, RSH * 1.13));
+    var zSing = zona(anillo(0, RSH * .12)), zHor = zona(anillo(RSH * .12, RSH * .385)), zEsf = zona(anillo(RSH * .385, RSH * .577)), zSombra = zona(anillo(RSH * .577, RSH * .9)), zHawk = zona(anillo(RSH * .9, RSH * 1.0)), zFot = zona(anillo(RSH * 1.0, RSH * 1.13));
     var zDisco = zona(bandaDisco(9, 16, Math.PI * 1.4, Math.PI * 1.92)), zDoppler = zona(bandaDisco(7, 16, Math.PI * .85, Math.PI * 1.35));
     var zLente = zona((function () { var o = []; for (var k = 0; k <= 20; k++) { var t = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t) * 9.5, Math.sin(t) * 9.5)); } for (k = 20; k >= 0; k--) { var t3 = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t3) * 6.2, Math.sin(t3) * 6.2)); } return poligono(o); })());
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
@@ -358,19 +368,22 @@
       },
       notas: function () {
         var nota = fabricaNotas(svg, svg, function (x, y) { return [x, y]; });
-        var top = enPantalla(-Math.sin(.6) * BC * .45, Math.cos(.6) * BC * .45);
-        nota([zSombra], [C[0], C[1]], 'Sombra y horizonte', ['La luz que pasa a menos de b = √27 GM/c²', '(≈ 2,6 rₛ) cae sin remedio: eso es la sombra.', 'El horizonte, rₛ = 2GM/c², queda dentro;', 'la curvatura lo agranda hasta llenarla.'], 110, null, { izq: true, dx: -40, ancho: 300 });
-        var pf = enPantalla(Math.cos(2.2) * BC * 1.05, Math.sin(2.2) * BC * 1.05);
-        nota([zFot], pf, 'Anillo de fotones', ['Luz que dio una o más vueltas cerca de', 'r = 1,5 rₛ (esfera de fotones) antes de', 'escapar. El EHT lo fotografió en M87* (2019).'], 110);
-        var ph = enPantalla(Math.cos(-.5) * BC * .95, Math.sin(-.5) * BC * .95);
-        nota([zHawk], ph, 'Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 660, null, { izq: false });
-        var pl = enPantalla(Math.cos(1.25) * 8.2, Math.sin(1.25) * 8.2);
-        nota([zLente], pl, 'Lente gravitacional', ['El arco sobre la sombra es la parte de', 'atrás del disco: su luz se curva por', 'encima del agujero. Por lo mismo, las', 'estrellas y nubes del fondo se deforman', 'al pasar junto a la sombra.'], 110);
-        var pd = aPantalla(12, 0, -7);
-        nota([zDisco], pd, 'Disco de acreción', ['Gas en órbita que se calienta al caer en', 'espiral. Empieza en la órbita circular', 'estable más interna, r = 3 rₛ (ISCO).'], 680, null, { izq: false });
-        var pp = aPantalla(-12, 0, 2);
-        nota([zDoppler], pp, 'Doppler relativista', ['El gas de este lado viene hacia nosotros', 'a casi la mitad de c: su luz se concentra', 'y brilla más que la del lado que se aleja.'], 130, null, { izq: true });
-        void top;
+        // cinco partes numeradas; la ergosfera no aparece porque solo existe si el agujero rota (Kerr)
+        var p3 = enPantalla(Math.cos(2.4) * 1.45, Math.sin(2.4) * 1.45), p4 = enPantalla(Math.cos(2.2) * BC * 1.05, Math.sin(2.2) * BC * 1.05);
+        var p2 = enPantalla(Math.cos(-.5) * BC * .95, Math.sin(-.5) * BC * .95), p5 = aPantalla(12, 0, -7);
+        nota([zSing], [C[0], C[1]], '1 · Singularidad', ['En r = 0 la curvatura se vuelve infinita', 'según la relatividad general: ahí la teoría', 'deja de valer. Se espera que una teoría', 'cuántica de la gravedad la describa.'], 110, null, { izq: true, dx: -40 });
+        nota([zHawk], p2, '2 · Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 660, null, { izq: false });
+        nota([zHor, zSombra], p3, '3 · Horizonte de eventos', ['Radio de Schwarzschild rₛ = 2GM/c² (el', 'círculo interior). Lo que lo cruza, ni la', 'luz, ya no sale. Para el Sol, rₛ ≈ 3 km.', 'La sombra mide ≈ 2,6 rₛ: la gravedad', 'curva la luz que pasa cerca.'], 680, null, { izq: true, dx: -30 });
+        nota([zEsf, zFot, zLente], p4, '4 · Esfera de fotones', ['A r = 1,5 rₛ (segundo círculo) la luz', 'puede orbitar, en equilibrio inestable.', 'La que escapa forma el anillo fino junto', 'a la sombra (EHT, M87*, 2019). La lente', 'muestra el disco de atrás arriba y abajo.'], 110, null, { izq: false });
+        nota([zDisco, zDoppler], p5, '5 · Disco de acreción', ['Gas que cae en espiral y se calienta.', 'Empieza en la órbita estable más interna,', 'r = 3 rₛ (ISCO). El lado que se acerca a', 'nosotros brilla más por efecto Doppler.'], 680, null, { izq: false });
+        // números a la vista, como en una lámina
+        var nums = el('g', { 'class': 'bn-num' }, svg);
+        [[C[0], C[1], 1], [p2[0], p2[1], 2], [p3[0], p3[1], 3], [p4[0], p4[1], 4], [p5[0], p5[1], 5]].forEach(function (q) {
+          var x = q[0] + 13, y = q[1] - 13, n = el('g', {}, nums);
+          el('line', { x1: f(q[0]), y1: f(q[1]), x2: f(x - 5), y2: f(y + 5) }, n);
+          el('circle', { cx: f(x), cy: f(y), r: 7.5 }, n);
+          var t = el('text', { x: f(x), y: f(y + 2.8) }, n); t.textContent = q[2];
+        });
       }
     };
   }

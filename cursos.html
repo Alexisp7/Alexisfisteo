@@ -1590,13 +1590,20 @@
     @keyframes bn-respira { 50% { opacity:.45; } }
     .mc svg .bn-hq { fill:#C9B2FF; filter:drop-shadow(0 0 3px rgba(168,139,235,.95)); } .mc svg .bn-hq-cae { fill:#7A5CD0; }
     .mc svg .bn-zona { pointer-events:all; }
+    .mc-escena .bn-fondo { position:absolute; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
+    .mc svg .bn-num { pointer-events:none; transition:opacity .8s ease 2.6s; }
+    .mc-escena:not(.on) svg .bn-num { opacity:0; transition:none; }
+    .mc svg .bn-num circle { fill:#F7F2E8; stroke:#2E2A33; stroke-width:.7; }
+    .mc svg .bn-num line { stroke:#2E2A33; stroke-width:.6; opacity:.6; }
+    .mc svg .bn-num text { font:700 8.5px 'Space Mono',monospace; fill:#2E2A33; text-anchor:middle; }
+    .mc svg.nota-on .bn-num { opacity:.25; }
     .mc[data-activo="0"] .mc-lectura { background:none; text-shadow:0 0 12px #F4EEE3, 0 0 4px #F4EEE3; }
-    .mc svg .bn-traza ellipse, .mc svg .bn-traza circle, .mc svg .bn-traza path { fill:none; stroke:#2E2A33; stroke-width:.55; opacity:.32; }
-    .mc svg .bn-traza * { stroke-dasharray:1; stroke-dashoffset:0; transition:stroke-dashoffset 1.3s cubic-bezier(.6,0,.2,1) var(--d,0ms); }
-    .mc-escena:not(.on) svg .bn-traza * { stroke-dashoffset:1; transition:none; }
+    .mc .bn-traza ellipse, .mc .bn-traza circle, .mc .bn-traza path { fill:none; stroke:#2E2A33; stroke-width:.6; opacity:.4; }
+    .mc .bn-traza * { stroke-dasharray:1; stroke-dashoffset:0; transition:stroke-dashoffset 1.3s cubic-bezier(.6,0,.2,1) var(--d,0ms); }
+    .mc-escena:not(.on) .bn-traza * { stroke-dashoffset:1; transition:none; }
     .mc-escena[data-i="0"] svg .bn-hawk { transition:opacity .9s ease 2.2s; }
     .mc-escena[data-i="0"]:not(.on) svg .bn-hawk { opacity:0; transition:none; }
-    .mc svg .bn-traza .bn-traza-fina { stroke-width:.4; opacity:.2; } .mc svg .bn-traza .bn-cruz { stroke-width:.7; opacity:.5; }
+    .mc .bn-traza .bn-traza-fina { stroke-width:.4; opacity:.2; } .mc .bn-traza .bn-cruz { stroke-width:.7; opacity:.5; }
     .mc svg.nota-on .bn-zona.foco { fill:rgba(168,139,235,.06); }
     /* notas sobre fondo oscuro */
     .mc-escenas { z-index:1; } .mc-velo { z-index:1; }

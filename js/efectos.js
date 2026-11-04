@@ -44,7 +44,7 @@
 
   // ── aparición por warp ──
   var WARP = ['.section-title', '.project-card', '.course-card', '.courses-show-more', '.page-hero-title', '.page-hero p', '.rg-titulo', '.rg-lista li',
-    '.mas-cursos-titulo', '.mas-cursos li', '.contact-info-item', '.contact-form-group', '.about-photo', '.about-text > *', '.skills-tags', '.form-group', '.qq-links', '.ro-panel',
+    '.contact-info-item', '.contact-form-group', '.about-photo', '.about-text > *', '.skills-tags', '.form-group', '.qq-links', '.ro-panel',
     '.proj-section', '.pagina', '.carousel', '.problema-card', '.problemas-lista > *'];
   if (!quieto && 'IntersectionObserver' in window) {
     var vistos = new Set();
@@ -77,7 +77,7 @@
     while (e && e !== d.documentElement) { var bg = getComputedStyle(e).backgroundColor.match(/[\d.]+/g); if (bg && (bg.length < 4 || +bg[3] > 0.5)) return (+bg[0] + +bg[1] + +bg[2]) / 3 > 140; e = e.parentElement; }
     return true;
   }
-  todos('.project-card, .course-card, .qq-link--web, .mas-cursos a, .rg-lista a').forEach(function (n) {
+  todos('.project-card, .course-card, .qq-link--web, .rg-lista a').forEach(function (n) {
     if (getComputedStyle(n).position === 'static') n.style.position = 'relative';
     n.classList.add('fx-carta'); if (claro(n)) n.classList.add('fx-claro');
     var r = d.createElement('span'); r.className = 'fx-resplandor'; r.setAttribute('aria-hidden', 'true');

@@ -708,7 +708,7 @@
           c.appendChild(h); c.appendChild(fila); ficha.appendChild(c);
           function bajoRotulo() {   // el título queda donde termina la raya; todo dentro de la sección
             var rr = rot.getBoundingClientRect(), rm = sec.getBoundingClientRect(), w = c.offsetWidth, hh = c.offsetHeight, pad = 22;
-            var x = izq ? rr.right - rm.left - w + pad : rr.left - rm.left - pad, y = rr.top + rr.height / 2 - rm.top - h.offsetHeight / 2 - pad;
+            var x = izq ? rr.right - rm.left - w + 4 : rr.left - rm.left - 4, y = rr.top + rr.height / 2 - rm.top - h.offsetTop - (h.offsetHeight - 11) / 2;   // la raya toca el borde de la tarjeta a la altura del título
             x = Math.max(8, Math.min(x, rm.width - w - 8)); y = Math.max(60, Math.min(y, rm.height - hh - 8));
             c.style.left = x + 'px'; c.style.top = y + 'px';
           }

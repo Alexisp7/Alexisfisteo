@@ -183,9 +183,12 @@
     '  float u = (r - 6.0) / 13.5, om = 1.7 * pow(6.0 / r, 1.5), fase = ph - om * uT;',
     '  vec2 cs = vec2(cos(fase), sin(fase)); float fr = fwidth(r) + 1e-4;',
     // trazos de lápiz: ruido estirado a lo largo de la órbita, fino en el radio; cada octava se apaga si es más fina que el píxel
-    '  float s1 = ruido(vec3(cs * 2.2, r * 9.0)), s2 = ruido(vec3(cs * 4.0 + 3.0, r * 24.0)), s3 = ruido(vec3(cs * 7.0 + 8.0, r * 60.0));',
-    '  float w1 = 1.0 - smoothstep(.05, .11, fr), w2 = 1.0 - smoothstep(.012, .024, fr), w3 = 1.0 - smoothstep(.0045, .009, fr);',   // cada octava solo si su raya mide ≥ 3 px
-    '  float tr = (s1 - .5) * .9 * w1 + (s2 - .5) * .8 * w2 + (s3 - .5) * .7 * w3;',
+    // trazos de lápiz como rayas suaves (coseno) a lo largo de la órbita: dos familias, cada una se apaga antes de ser más fina
+    // que ~2 px, así no hay moiré; su fase varía despacio a lo largo de la órbita para que las rayas ondulen y se corten
+    '  float s1 = ruido(vec3(cs * 2.2, r * 3.0));',
+    '  float f1 = r / .11 + (ruido(vec3(cs * 1.4, r * .8 + 2.0)) - .5) * 1.6, f2 = r / .05 + (ruido(vec3(cs * 2.6 + 5.0, r * 1.7)) - .5) * 3.0;',
+    '  float w2 = 1.0 - smoothstep(.22, .42, fr / .11), w3 = 1.0 - smoothstep(.22, .42, fr / .05);',
+    '  float tr = (s1 - .5) * .7 + cos(6.2832 * f1) * .38 * w2 + cos(6.2832 * f2) * .3 * w3;',
     '  float n = ruido(vec3(cs * 1.6, r * 1.3 + 5.0));',
     '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
     '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',   // la raya oscura tira a siena, no a gris
@@ -281,6 +284,14 @@
     '  float ab = fwidth(bb) + 1e-4, sA = cae ? 1.0 : 1.0 - smoothstep(5.196 - ab, 5.196 + ab, bb);',
     '  vec4 tinta = sA < .999 ? aguada(vec2(bx, by), dg, px) : vec4(0.0); tinta.a *= uDim.y;',
     '  vec4 fondo = mix(tinta, vec4(.012, .014, .02, smoothstep(.05, .55, uArm)), sA);',
+    // radiación de Hawking: filo rojo finísimo justo fuera de la sombra, que chisporrotea; va en la capa del fondo,
+    // así queda delante de la sombra y detrás de las dos imágenes del disco, sin recortes
+    '  float ang = atan(by, bx), chis = ruido(vec3(ang * 38.0, uT * 26.0, 1.0)) * .7 + ruido(vec3(ang * 90.0, uT * 41.0, 4.0)) * .3;',
+    '  float ancho = ab * (.9 + 1.6 * chis * chis), dr = bb - 5.196 - ab * .6;',
+    '  float filoH = (1.0 - smoothstep(ancho * .55, ancho * .55 + ab, abs(dr))) * smoothstep(.55, 1.3, uArm) * uDim.y;',
+    '  float halo = exp(-max(dr, 0.0) / (ab * 3.0)) * step(0.0, dr) * .35 * chis;',
+    '  vec3 rojo = mix(vec3(.62, .07, .05), vec3(.95, .25, .17), chis);',
+    '  float mH = max(filoH, halo); fondo = vec4(mix(fondo.rgb, rojo, mH), max(fondo.a, mH));',
     '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0); c1.a *= uDim.x; c2.a *= uDim.x;',   // foco de las notas: lo demás se vuelve transparente
     // composición «sobre» con alfa directo: el papel de la página se ve donde no hay tinta
     '  float a2 = c2.a + fondo.a * (1.0 - c2.a); vec3 k2 = (c2.rgb * c2.a + fondo.rgb * fondo.a * (1.0 - c2.a)) / max(a2, 1e-4);',
@@ -400,7 +411,7 @@
     var zLente = zona((function () { var o = []; for (var k = 0; k <= 20; k++) { var t = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t) * 9.5, Math.sin(t) * 9.5)); } for (k = 20; k >= 0; k--) { var t3 = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t3) * 6.2, Math.sin(t3) * 6.2)); } return poligono(o); })());
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var pares = [], acum = 0;
-    function mezclaRB(u) { var k = Math.min(1, Math.max(0, (u - .1) / .6)); return 'rgb(' + Math.round(225 + 30 * k) + ',' + Math.round(50 + 205 * k) + ',' + Math.round(40 + 215 * k) + ')'; }
+    function mezclaRB(u) { var k = Math.min(1, Math.max(0, (u - .02) / .18)); return 'rgb(' + Math.round(225 + 30 * k) + ',' + Math.round(50 + 205 * k) + ',' + Math.round(40 + 215 * k) + ')'; }
     function par() {
       // chispas diminutas: nacen en el filo, apenas se alejan unos píxeles y se apagan; su pareja cae hacia dentro
       var a = Math.random() * Math.PI * 2, sale = el('circle', { 'class': 'bn-hq', r: f(.55 + Math.random() * .5) }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: .5 }, hawk);
@@ -582,7 +593,6 @@
       tick: function (dt) {
         tiempo += dt;
         acum += dt; while (acum > .045) { acum -= .045; par(); }
-        tiembla();
         for (var i = pares.length - 1; i >= 0; i--) {
           var p = pares[i]; p.t += dt; p.a += p.da * dt;
           var u = p.t / p.vida, sal = 1 - (1 - u) * (1 - u), r = p.r0 + p.d * sal, rc = p.r0 - 1 - p.d * .35 * u * u;

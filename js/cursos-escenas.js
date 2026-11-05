@@ -177,33 +177,33 @@
     '  vec3 A = vec3(1.0, .93, .76), B = vec3(1.0, .80, .48), Cc = vec3(.96, .52, .16), Dd = vec3(.68, .24, .08), E = vec3(.26, .13, .18);',
     '  if (u < .1) return mix(A, B, u / .1); if (u < .32) return mix(B, Cc, (u - .1) / .22);',
     '  if (u < .62) return mix(Cc, Dd, (u - .32) / .3); return mix(Dd, E, (u - .62) / .38); }',
-    'vec4 disco(vec3 p, vec3 v, float hay) {',
-    '  float r = max(length(p.xz), 2.5), ph = atan(p.z, p.x), b = sqrt(1.0 / max(r - 2.0, .05)); vec3 t = normalize(vec3(-p.z, 0.0, p.x) + 1e-5); vec3 vd = normalize(v + 1e-5);',
-    '  float g = sqrt(max(1.0 - 3.0 / r, 0.0)) / (1.0 - b * dot(t, -vd)), D = clamp(pow(g, 2.0), .82, 1.18);',
-    '  float u = (r - 6.0) / 13.5, om = 1.7 * pow(6.0 / r, 1.5), fase = ph - om * uTD;',
-    '  vec2 cs = vec2(cos(fase), sin(fase)); float fr = fwidth(r) + 1e-4;',
-    // trazos de lápiz: ruido estirado a lo largo de la órbita, fino en el radio; cada octava se apaga si es más fina que el píxel
-    // trazos de lápiz como rayas suaves (coseno) a lo largo de la órbita: dos familias, cada una se apaga antes de ser más fina
-    // que ~2 px, así no hay moiré; su fase varía despacio a lo largo de la órbita para que las rayas ondulen y se corten
+    // dibujo de los trazos en una fase dada: (raya, tono, flecos, huecos)
+    'vec4 patron(float r, vec2 cs, float fr) {',
     '  float s1 = ruido(vec3(cs * 2.2, r * 3.0));',
     '  float f1 = r / .11 + (ruido(vec3(cs * 1.4, r * .8 + 2.0)) - .5) * 1.6, f2 = r / .05 + (ruido(vec3(cs * 2.6 + 5.0, r * 1.7)) - .5) * 3.0;',
     '  float w2 = 1.0 - smoothstep(.22, .42, fr / .11), w3 = 1.0 - smoothstep(.22, .42, fr / .05);',
     '  float tr = (s1 - .5) * .7 + cos(6.2832 * f1) * .38 * w2 + cos(6.2832 * f2) * .3 * w3;',
-    '  float n = ruido(vec3(cs * 1.6, r * 1.3 + 5.0));',
-    '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
-    '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',   // la raya oscura tira a siena, no a gris
-    '  float ar = min(fr, .12) * .7 + 1e-4;',
-    '  float flec = ruido(vec3(cs * 3.0, 2.0)) - .5;',
-    '  float afuera = 1.0 - smoothstep(15.0 + 2.5 * flec, 21.5 + 1.0 * flec, r);',
-    '  float fundido = smoothstep(.3, 1.3, uArm);',
-    // cortes irregulares en cada trazo: huecos que viajan con su órbita (más rápido adentro), distintos en cada raya
-    '  float h1 = 0.0, h2 = 0.0;',
-    // el patrón se lee sobre el círculo (cos, sin de la fase): sin costura en φ = ±π; cada familia se apaga si su raya es más fina que ~2 px
+    '  float n = ruido(vec3(cs * 1.6, r * 1.3 + 5.0)), flec = ruido(vec3(cs * 3.0, 2.0)) - .5, h1, h2;',
     '  { float kb = floor(r * 5.0), N = 2.0 + 4.0 * hash(vec3(kb, 3.0, 1.0));',
     '    h1 = smoothstep(.69, .75, ruido(vec3(cs * N + hash(vec3(kb, 8.0, 2.0)) * 40.0, kb * 1.7))) * smoothstep(3.0, 6.0, .2 / fr); }',
     '  { float kb = floor(r * 9.0 + .5), N = 4.0 + 7.0 * hash(vec3(kb, 5.0, 4.0));',
     '    h2 = smoothstep(.73, .79, ruido(vec3(cs * N + hash(vec3(kb, 1.0, 6.0)) * 40.0, kb * 2.3 + 7.0))) * smoothstep(3.0, 6.0, .111 / fr); }',
-    '  float hueco = max(h1, h2 * .9);',
+    '  return vec4(tr, n, flec, max(h1, h2 * .9)); }',
+    'vec4 disco(vec3 p, vec3 v, float hay) {',
+    '  float r = max(length(p.xz), 2.5), ph = atan(p.z, p.x), b = sqrt(1.0 / max(r - 2.0, .05)); vec3 t = normalize(vec3(-p.z, 0.0, p.x) + 1e-5); vec3 vd = normalize(v + 1e-5);',
+    '  float g = sqrt(max(1.0 - 3.0 / r, 0.0)) / (1.0 - b * dot(t, -vd)), D = clamp(pow(g, 2.0), .82, 1.18);',
+    '  float u = (r - 6.0) / 13.5, fr = fwidth(r) + 1e-4;',
+    // bucle perfecto de 40 s: cada anillo da un número entero de vueltas por ciclo (más adentro, más vueltas, como Kepler),
+    // así el último cuadro es idéntico al primero y los trazos nunca se enrollan; entre dos anillos vecinos se funde en una franja fina
+    '  float x = 10.8 * pow(6.0 / r, 1.5), nA = floor(x), fx = x - nA, wB = smoothstep(.44, .56, fx), ang = 6.2832 * uTD / 40.0;',
+    '  vec4 P = patron(r, vec2(cos(ph - nA * ang), sin(ph - nA * ang)), fr);',
+    '  if (wB > 0.0) P = mix(P, patron(r, vec2(cos(ph - (nA + 1.0) * ang), sin(ph - (nA + 1.0) * ang)), fr), wB);',
+    '  float tr = P.x, n = P.y, flec = P.z, hueco = P.w;',
+    '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
+    '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',
+    '  float ar = min(fr, .12) * .7 + 1e-4;',
+    '  float afuera = 1.0 - smoothstep(15.0 + 2.5 * flec, 21.5 + 1.0 * flec, r);',
+    '  float fundido = smoothstep(.3, 1.3, uArm);',
     '  col *= 1.0 - .25 * hueco;',
     '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * clamp(.75 + tr * .9 + .6 * (1.0 - smoothstep(8.0, 16.0, r)), 0.0, 1.0) * (1.0 - .75 * hueco);',
     // donde la lente comprime los trazos (las puntas en que se juntan las imágenes del disco) el borde interior se funde en vez de terminar en punta
@@ -325,11 +325,8 @@
     }
     if (!listo) fig.classList.add('bn-sin-gl');
     var tiempo = 0, dim = [1, 1], dimMeta = [1, 1], hk = 0, hkMeta = 0;
-    // el disco no gira sin fin (las órbitas de distinto radio se enrollarían en espirales cada vez más finas y aparecería moiré):
-    // va 4 s en un sentido y 4 s de vuelta a la misma velocidad, con el giro suavizado solo en el cambio de sentido
-    var VAI = (function () { var n = 800, o = new Float32Array(n + 1), acc = 0; o[0] = 0;
-      for (var k = 1; k <= n; k++) { var th = 2 * Math.PI * (k - .5) / n; acc += Math.max(-1, Math.min(1, 6 * Math.sin(th))) * 8 / n; o[k] = acc; } return o; })();
-    function tDisco(t) { var u = ((t % 8) + 8) % 8 / 8 * 800, k = Math.floor(u), w = u - k; return VAI[k] + (VAI[Math.min(k + 1, 800)] - VAI[k]) * w; }
+    // el disco gira en un bucle perfecto de 40 s (ver patron/disco en el shader)
+    function tDisco(t) { return ((t % 40) + 40) % 40; }
     function pintar() {
       if (!listo) return;
       var r = lienzo.getBoundingClientRect(); if (!r.width) return;
@@ -358,6 +355,7 @@
         if (lentos > 25) { lentos = 0; if (salto < 2) salto = 2; } }
       previo = t;
     })(0);
+    fig.bnT = function (t) { tiempo = t; };
     fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
     var g = el('g', {}, svg);

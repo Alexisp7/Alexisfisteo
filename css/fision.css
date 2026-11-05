@@ -37,3 +37,29 @@
 .fz-cap.fz-pronto:hover { color:#8E8478; }
 .fz-cap:focus-visible { outline:1px solid #C9A27A; outline-offset:4px; }
 @media (max-width:900px) { .fz-caps { top:auto; bottom:10px; right:auto; left:14px; gap:14px; } .fz-cap-t { display:none; } }
+
+/* IV · noche: notas en tinta clara, escalera de órdenes de magnitud y lectura sin caja */
+.mc svg .fz-luz text { stroke:rgba(14,14,22,.85); stroke-width:3px; }
+.mc svg .fz-luz .fz-k { fill:#CDB79A; }
+.mc svg .fz-luz .fz-tit { fill:#F4EEE3; }
+.mc svg .fz-luz .fz-d { fill:#D3C6B2; }
+.mc svg .fz-luz .fz-pt { fill:#E8C48A; }
+.mc svg .fz-luz .fz-aro, .mc svg .fz-luz .fz-guia { stroke:#E8C48A; }
+.mc svg .fz-esc { opacity:0; transition:opacity .8s ease; }
+.mc svg .fz-esc.ver { opacity:1; }
+.mc svg .fz-esc-l { stroke:rgba(232,196,138,.35); stroke-width:.8; }
+.mc svg .fz-esc-p line { stroke:rgba(232,196,138,.45); stroke-width:.8; }
+.mc svg .fz-esc-n { font:italic 500 15px 'Cormorant Garamond',serif; fill:rgba(244,238,227,.4); transition:fill .5s ease; }
+.mc svg .fz-esc-t { font:400 8px 'Space Mono',monospace; letter-spacing:.18em; text-transform:uppercase; fill:rgba(205,183,154,.35); transition:fill .5s ease; }
+.mc svg .fz-esc-p.on .fz-esc-n { fill:#F4EEE3; }
+.mc svg .fz-esc-p.on .fz-esc-t { fill:#E8C48A; }
+.mc svg .fz-esc-m { fill:#FFF1D6; stroke:#E8A23C; stroke-width:1.2; }
+.mc.fz-noche .mc-lectura { background:none; color:#F4EEE3; transition:color .8s ease; }
+.mc.fz-noche .mc-l1 { color:#E8C48A; } .mc.fz-noche .mc-l2 { color:rgba(244,238,227,.6); }
+.mc.fz-noche .fz-cap { color:rgba(244,238,227,.45); }
+.mc.fz-noche .fz-cap.on, .mc.fz-noche .fz-cap:hover { color:#F4EEE3; }
+.mc.fz-noche .fz-cap-l { background:rgba(244,238,227,.18); }
+.mc[data-activo="2"] .mc-lectura { background:none; }
+.mc[data-activo="2"] .mc-lectura::before { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, rgba(244,238,227,0), rgba(244,238,227,.88) 28%); transition:opacity .9s ease; }
+.mc.fz-noche .mc-lectura::before { opacity:0; }
+@media (max-width:600px) { .mc svg .fz-nota { display:none; } }

@@ -4,7 +4,8 @@
 //  II  Fisión: n + ²³⁵U → ¹⁴¹Ba + ⁹²Kr + 3n (Q ≈ 173 MeV con las masas atómicas);
 //      los neutrones se evaporan de los fragmentos ya acelerados: ¹⁴²Ba* + ⁹⁴Kr* → ¹⁴¹Ba + ⁹²Kr + 3n..
 //  III Reacción en cadena (ν = 2 o 3, k ≈ 1,8) con alejamiento progresivo de la cámara; espacio comprimido.
-//  IV  Cambio de escala hasta la explosión.
+//  IV  Cambio de escala (10⁻¹⁴ m → 10³ m): destello, bola de fuego (Wien), onda de choque de Taylor
+//      (R ∝ t^(2/5)) y nube en hongo como anillo de vórtice que sube; la noche se cierra como un iris.
 // Todo se pinta en un lienzo 2D (sin filtros por cuadro); el SVG encima solo lleva las notas.
 (function () {
   var NS = 'http://www.w3.org/2000/svg';
@@ -59,7 +60,7 @@
     var T_CAP = 9.2, ROT = .16, TILT = .38;
     // capítulo II
     var T_P2 = 17, T_SC = 21;
-    var T_P3 = 27.8, FIN = 43.4, DUR = 45;
+    var T_P3 = 27.8, T_P4 = 40.8, T_FL = T_P4 + 3.6, FIN = 66.5, DUR = 70.5;
     function angulo(t) { return t < T_CAP ? ROT * t : ROT * T_CAP + ROT * 1.6 * (1 - Math.exp(-(t - T_CAP) / 1.6)); }
     function gira(q, a) {
       var c = Math.cos(a), s = Math.sin(a), x = q[0] * c + q[2] * s, z = -q[0] * s + q[2] * c, y = q[1];
@@ -160,7 +161,7 @@
     }
 
     // cámara: escala (px/fm) interpolada en logaritmo entre cuadros clave, con tangentes suaves
-    var CLAVE = [[0, 19], [T_SC, 19], [T_SC + 1.5, 17], [T_SC + 5, 6.5], [T_P3 + .4, 2.3], [T_P3 + 3, 1.25], [T_P3 + 8, .85], [T_P3 + 12, .66], [T_P3 + 15.6, .55], [T_P3 + 30, .3]]
+    var CLAVE = [[0, 19], [T_SC, 19], [T_SC + 1.5, 17], [T_SC + 5, 6.5], [T_P3 + .4, 2.3], [T_P3 + 3, 1.25], [T_P3 + 8, .85], [T_P3 + 12, .66], [T_P4, .58], [T_P4 + 1.8, .17], [T_FL, .0006], [T_FL + 30, .0005]]
       .map(function (k) { return [k[0], Math.log(k[1])]; });
     function escala(t) {
       var K = CLAVE, i = 0; if (t <= K[0][0]) return Math.exp(K[0][1]);
@@ -214,7 +215,7 @@
     // ── notas: punto, guía que se dibuja, regla, rótulo, título y texto ──
     var notas = [];
     function nota(o) {
-      var g = el('g', { 'class': 'fz-nota' }, capa), lado = o.lado || 1, ancho = o.ancho || 236;
+      var g = el('g', { 'class': 'fz-nota' + (o.luz ? ' fz-luz' : '') }, capa), lado = o.lado || 1, ancho = o.ancho || 236;
       var gp = el('g', { 'class': 'fz-ancla' }, g); el('circle', { 'class': 'fz-pt', r: 2.3 }, gp); el('circle', { 'class': 'fz-aro', r: 2.3 }, gp);
       var guia = el('path', { 'class': 'fz-guia', pathLength: 1 }, g);
       // con pie: la regla queda debajo del bloque y la guía llega por abajo (para notas encima del núcleo)
@@ -267,10 +268,19 @@
       d: ['En un sólido los núcleos distan ~10⁻¹⁰ m', 'y un neutrón recorre del orden de', 'centímetros entre choques: unas 10¹²', 'veces el tamaño del núcleo. Aquí las', 'distancias se acortan para poder verlo.'] });
     var nW = en(ABA, { k: 'Energía', tit: '≈ 200 MeV por fisión',
       d: ['Son 3,2 × 10⁻¹¹ J: muy poco. Un', 'kilotón de TNT (4,184 × 10¹² J) equivale', 'a ≈ 1,3 × 10²³ fisiones, 23 órdenes de', 'magnitud más que este destello.'] });
-    var AGENDA = [[nK, T_P3 + 1.6, T_P3 + 8], [nX, T_P3 + 4.6, T_P3 + 11], [nW, T_P3 + 8.6, FIN], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, 18, 22], [nF, 21.8, 27], [nP, 23, 28.6], [nE, 25.4, T_P3 + 1.4]];
+    var ARR4 = { tx: 960, ty: 282, ancho: 200, lado: -1, pie: true };
+    var nB = en(ARR4, { luz: true, k: 'Bola de fuego', tit: 'Brilla como un cuerpo negro',
+      d: ['La energía calienta el aire hasta', 'que emite luz térmica. La esfera se', 'expande y, al enfriarse, su color', 'pasa del blanco al naranja (Wien).'] });
+    var nT = en(DER, { luz: true, k: 'Onda de choque', tit: 'R(t) ≈ (E t² / ρ)¹ᐟ⁵',
+      d: ['G. I. Taylor (1950), por análisis', 'dimensional: el frente crece como', 't²ᐟ⁵ y solo depende de la energía', 'E y de la densidad del aire ρ.'] });
+    var nH = en(ARR4, { luz: true, k: 'Nube en forma de hongo', tit: 'Flotación y vórtice',
+      d: ['El aire caliente, menos denso,', 'sube (Rayleigh–Taylor). Su borde', 'se enrolla en un toro que gira y', 'aspira polvo del suelo: el tallo.'] });
+    var nO = en(DER, { luz: true, k: 'Epílogo', tit: 'E = Δm c²',
+      d: ['Todo empezó con un neutrón de', '0,025 eV. Cada fisión convierte en', 'energía ≈ 0,08 % de la masa del', 'núcleo; más de 10²³ fisiones llegan', 'a la escala del paisaje.'] });
+    var AGENDA = [[nB, T_FL + 1.4, T_FL + 7.6], [nT, T_FL + 2.8, T_FL + 10.6], [nH, T_FL + 8.2, FIN - .4], [nO, T_FL + 11.4, FIN - .4], [nK, T_P3 + 1.6, T_P3 + 8], [nX, T_P3 + 4.6, T_P3 + 11], [nW, T_P3 + 8.6, T_P4 + 1.2], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, 18, 22], [nF, 21.8, 27], [nP, 23, 28.6], [nE, 25.4, T_P3 + 1.4]];
 
     // ── capítulos ──
-    var CAPS = [['I', 'Captura', 0], ['II', 'Fisión', T_P2], ['III', 'Cadena', T_P3], ['IV', 'Escala', null]];
+    var CAPS = [['I', 'Captura', 0], ['II', 'Fisión', T_P2], ['III', 'Cadena', T_P3], ['IV', 'Escala', T_P4]];
     var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Capítulos de la animación');
     CAPS.forEach(function (c) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fz-cap' + (c[2] == null ? ' fz-pronto' : '');
@@ -286,7 +296,7 @@
     var fijo = false;
     fig.fzInfo = function () { return { ev: CAD.ev.length, ne: CAD.ne.length, gen: CAD.gen, tUlt: CAD.ev[CAD.ev.length - 1].t, campo: CAD.campo.length }; };
     fig.fzSalta = salta; fig.fzFija = function (t) { salta(t); fijo = true; }; fig.fzSuelta = function () { fijo = false; };   // para capturas
-    new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.fzOn) reinicia(); fig.fzOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
+    new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.fzOn) reinicia(); if (!on && raiz) { raiz.classList.remove('fz-noche'); nocheOn = false; } fig.fzOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
 
     function aPantalla(q) { return [CAM.x + q[0] * CAM.s, CAM.y + q[1] * CAM.s]; }
     function jit(n, t, amp) { return [amp * Math.sin(n.w[0] * t + n.f[0]), amp * Math.sin(n.w[1] * t + n.f[1]), amp * Math.sin(n.w[2] * t + n.f[2])]; }
@@ -411,6 +421,166 @@
       CAD.act = nAct;
     }
 
+    // ── capítulo IV: cambio de escala y explosión ──
+    var GX = 1130, SUELO = 650;   // punto cero y horizonte (en el SVG)
+    function cumbre(tf) { return SUELO - 62 - 300 * (1 - Math.exp(-tf / 5.5)); }        // altura del centro del toro
+    function radioToro(tf) { return 16 + 96 * (1 - Math.exp(-tf / 4.6)); }
+    function tuboToro(tf) { return 20 + 40 * (1 - Math.exp(-tf / 4)); }
+    function choque(tf) { return 150 * Math.pow(Math.max(tf, 0) + .02, .4); }           // Taylor: R ∝ t^(2/5)
+    function bolaFuego(tf) { return 96 * Math.pow(Math.min(1, Math.max(tf, 0) / 1.3), .4); }
+    var BOCANADA = (function () {   // seis tonos, del blanco incandescente al humo: cúmulos con luz arriba y sombra abajo
+      var tonos = [[255, 246, 222], [250, 214, 140], [236, 150, 70], [176, 88, 46], [104, 60, 44], [62, 52, 56]];
+      return tonos.map(function (c, k) {
+        var S = 96, cv = document.createElement('canvas'); cv.width = cv.height = S; var x = cv.getContext('2d'), r7 = semilla(40 + k);
+        var cla = c.map(function (v) { return Math.min(255, Math.round(v * 1.18 + 14)); }), osc = c.map(function (v) { return Math.round(v * .62); });
+        for (var j = 0; j < 5; j++) {
+          var cx = S / 2 + (r7() - .5) * S * .26, cy = S / 2 + (r7() - .5) * S * .22, rr = S * (.2 + r7() * .1);
+          var g = x.createRadialGradient(cx - rr * .35, cy - rr * .4, rr * .1, cx, cy, rr);
+          g.addColorStop(0, 'rgba(' + cla + ',.95)'); g.addColorStop(.55, 'rgba(' + c + ',.92)'); g.addColorStop(.88, 'rgba(' + osc + ',.85)'); g.addColorStop(1, 'rgba(' + osc + ',0)');
+          x.fillStyle = g; x.beginPath(); x.arc(cx, cy, rr, 0, 2 * Math.PI); x.fill();
+          if (k > 2) { x.strokeStyle = 'rgba(20,16,18,.18)'; x.lineWidth = .8; x.beginPath(); x.arc(cx, cy, rr * .94, Math.PI * .15, Math.PI * .95); x.stroke(); }
+        }
+        return cv;
+      });
+    })();
+    var HUMO = (function () {
+      var r8 = semilla(211), cap = [], tallo = [], falda = [], est = [], cerro = [];
+      for (var i = 0; i < 420; i++) cap.push({ th: r8() * 2 * Math.PI, ph: r8() * 2 * Math.PI, rr: .35 + r8() * .75, s: .55 + r8() * .7, w: .7 + r8() * .6 });
+      for (i = 0; i < 150; i++) tallo.push({ h: r8(), th: r8() * 2 * Math.PI, rr: r8(), s: .5 + r8() * .6, v: .7 + r8() * .6 });
+      for (i = 0; i < 130; i++) falda.push({ th: r8() * 2 * Math.PI, k: .55 + r8() * .55, s: .5 + r8() * .8, h: r8() });
+      for (i = 0; i < 150; i++) est.push({ x: r8(), y: r8(), r: .4 + r8() * .8, a: .25 + r8() * .6, f: r8() * 6.28, w: .6 + r8() * 2 });
+      var y = 0; for (i = 0; i <= 120; i++) { y += (r8() - .5) * 3.2; y *= .93; cerro.push(y - 4 - 6 * Math.sin(i / 120 * Math.PI * 3 + 1) * (i % 40 < 20 ? 1 : .6)); }
+      return { cap: cap, tallo: tallo, falda: falda, est: est, cerro: cerro };
+    })();
+    // la noche: la tinta nace en el punto de luz y, al final, se retira hacia él como un iris que se cierra
+    function iris(t) { var pr = suave((t - T_P4 - .4) / 3.2), q = suave((t - FIN + .3) / 3.6); return (60 + pr * 2000) * Math.pow(1 - q, 1.6); }
+    function noche(t) { return t < T_P4 + .4 ? 0 : cl((iris(t) - 450) / 300, 0, 1); }
+    function cielo(t, vb, fundido) {
+      if (t < T_P4 + .4 || iris(t) < 1) return;
+      var nn = suave((t - T_P4 - .4) / 2.4) * (1 - suave((t - FIN + .6) / 1.4)) * fundido;
+      // la tinta se extiende desde el punto de luz (como una aguada) y al final se retira de forma pareja
+      var tf = t - T_FL, Ro = Math.max(1, iris(t)), cx = CAM.x, cy = CAM.y, fin2 = t > FIN - .3 ? Math.pow(Math.min(1, Ro / 1300), .8) : 1;
+      var tierra = 1 - suave((t - FIN + .6) / 1.4);   // suelo y estrellas se apagan mientras aún es de noche
+      var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Ro);
+      g.addColorStop(0, 'rgba(30,27,40,' + fin2 + ')'); g.addColorStop(Math.max(.01, 1 - 420 / Ro) * .5, 'rgba(18,18,28,' + fin2 + ')');
+      g.addColorStop(Math.max(.02, 1 - 420 / Ro), 'rgba(12,12,19,' + fin2 + ')'); g.addColorStop(1, 'rgba(12,12,19,0)');
+      ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.fillRect(vb.x, vb.y, vb.width, vb.height);
+      // estrellas finas
+      var X0 = vb.x, Wv = vb.width;
+      HUMO.est.forEach(function (e) {
+        var x = X0 + e.x * Wv, y = vb.y + e.y * (SUELO - 40 - vb.y);
+        ctx.globalAlpha = nn * e.a * (.65 + .35 * Math.sin(t * e.w + e.f)) * (tf > 0 ? cl(1 - .8 * Math.exp(-tf / 3), 0, 1) : 1);
+        ctx.fillStyle = '#F4EEE3'; ctx.fillRect(x, y, e.r, e.r);
+      });
+      if (tf > -.2) {   // horizonte y suelo
+        var al = nn * suave((tf + .2) / 1.2);
+        ctx.globalAlpha = al; ctx.fillStyle = '#08080D'; ctx.beginPath(); ctx.moveTo(vb.x, vb.y + vb.height);
+        HUMO.cerro.forEach(function (h, i) { ctx.lineTo(vb.x + i / 120 * vb.width, SUELO + h); }); ctx.lineTo(vb.x + vb.width, vb.y + vb.height); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = 'rgba(214,180,138,.32)'; ctx.lineWidth = .7; ctx.beginPath();
+        HUMO.cerro.forEach(function (h, i) { var x = vb.x + i / 120 * vb.width; if (i) ctx.lineTo(x, SUELO + h); else ctx.moveTo(x, SUELO + h); }); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    function bocanada(x, y, r, temp, al) {
+      var k = Math.max(0, Math.min(5, temp)), k0 = Math.floor(k), f2 = k - k0;
+      ctx.globalAlpha = al * (1 - f2); ctx.drawImage(BOCANADA[k0], x - r, y - r, 2 * r, 2 * r);
+      if (f2 > .05 && k0 < 5) { ctx.globalAlpha = al * f2; ctx.drawImage(BOCANADA[k0 + 1], x - r, y - r, 2 * r, 2 * r); }
+    }
+    function explosion(t, vb, fundido) {
+      fundido *= 1 - suave((t - FIN + 2.7) / 2.8);   // la nube se disuelve en la noche antes de que vuelva el papel
+      var m = suave((t - T_P4) / (T_FL - T_P4)), tf = t - T_FL;
+      // el punto de luz: toda la cadena, vista desde lejos
+      if (tf < .6) {
+        var R = 18 + 50 * m, al = fundido * Math.min(1, .3 + m) * (tf > 0 ? 1 - tf / .6 : 1);
+        ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = al; ctx.drawImage(LUZ, CAM.x - R, CAM.y - R, 2 * R, 2 * R);
+        ctx.globalAlpha = al * .8; ctx.drawImage(LUZ, CAM.x - R * .35, CAM.y - R * .35, R * .7, R * .7);
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      if (tf < 0) { ctx.globalAlpha = 1; return; }
+      var Fb = fundido, Rt = radioToro(tf), rt = tuboToro(tf), Yc = cumbre(tf), cal = Math.exp(-tf / 6);   // cal: 1 recién nacida → 0 fría
+      // luz del suelo
+      var gl = ctx.createRadialGradient(GX, 0, 0, GX, 0, 420);
+      gl.addColorStop(0, 'rgba(240,150,70,' + (.45 * Fb * (.25 + .75 * cal)) + ')'); gl.addColorStop(1, 'rgba(240,150,70,0)');
+      ctx.globalAlpha = 1; ctx.fillStyle = gl; ctx.save(); ctx.translate(0, SUELO); ctx.scale(1, .22); ctx.fillRect(GX - 420, -420, 840, 840); ctx.restore();
+      // onda de choque: cúpula en el aire y anillo en el suelo
+      var Rs = choque(tf), as = Fb * Math.max(0, 1 - tf / 6.5);
+      if (as > 0) {
+        ctx.lineWidth = 1.1; ctx.strokeStyle = 'rgba(244,232,210,' + (.5 * as) + ')';
+        ctx.beginPath(); ctx.ellipse(GX, SUELO, Rs, Rs * .92, 0, Math.PI, 2 * Math.PI); ctx.stroke();
+        ctx.strokeStyle = 'rgba(250,214,150,' + (.75 * as) + ')'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.ellipse(GX, SUELO + 2, Rs, Rs * .12, 0, 0, 2 * Math.PI); ctx.stroke();
+      }
+      // falda de polvo que corre por el suelo
+      var rf = 30 + 220 * (1 - Math.exp(-tf / 2.6));
+      HUMO.falda.forEach(function (p) {
+        var r = rf * p.k, x = GX + Math.cos(p.th) * r, y = SUELO + Math.sin(p.th) * r * .12 - 4 - p.h * 10 * Math.min(1, tf / 3);
+        bocanada(x, y, (7 + 15 * p.s) * (.5 + .5 * Math.min(1, tf / 3)), 3.6 + 1.3 * (1 - cal), Fb * .42 * suave(tf / .8) * (1 - .4 * suave((tf - 14) / 6)));
+      });
+      // toro: atrás, tallo, bola de fuego, adelante
+      var giro = -.55 * (1 - Math.exp(-tf / 9)) * 9;   // rotación poloidal acumulada (sube por dentro, baja por fuera)
+      var lista = HUMO.cap.map(function (p) {
+        var ph = p.ph + giro * p.w, rr = rt * p.rr, X = (Rt + rr * Math.cos(ph)), Y = rr * Math.sin(ph), x = X * Math.cos(p.th), z = X * Math.sin(p.th);
+        return { x: GX + x, y: Yc - Y * 1.05 + z * .2, z: z, r: (rt * .42 + 8) * p.s, temp: 1.6 + 2.8 * (1 - cal) + (Y / rt) * .9 - (Y < 0 ? 1.2 * (.4 + .6 * cal) : 0) };
+      });
+      lista.sort(function (a, b) { return a.z - b.z; });
+      var apar = suave((tf - .5) / 2.2);
+      function dibujaCap(delante) { lista.forEach(function (q) { if ((q.z >= 0) === delante) bocanada(q.x, q.y, q.r, q.temp, Fb * apar * .92); }); }
+      dibujaCap(false);
+      var base = SUELO - 4, alto = Math.max(0, base - (Yc + rt * .5)), rS = 8 + 20 * (1 - Math.exp(-tf / 5));
+      if (tf > 1.4) HUMO.tallo.forEach(function (p) {
+        var h = (p.h + tf * .05 * p.v) % 1, y = base - h * alto, x = GX + Math.cos(p.th) * rS * p.rr * (1 + .4 * (1 - h));
+        bocanada(x, y, (6 + 11 * p.s) * (.7 + .5 * (1 - h)), 3.4 + 1.2 * (1 - cal) - h * 1.6 * (.3 + .7 * cal), Fb * .8 * suave((tf - 1.4) / 2.5) * suave(h * 6));
+      });
+      // bola de fuego: incandescente al principio, se funde en el toro
+      var Rf = bolaFuego(tf), af = Fb * (1 - suave((tf - 1.2) / 3.2));
+      if (af > 0) {
+        var yb = SUELO - 62 - (SUELO - 62 - Yc) * .9, gb = ctx.createRadialGradient(GX, yb, 0, GX, yb, Rf * 1.6);
+        gb.addColorStop(0, 'rgba(255,252,240,' + af + ')'); gb.addColorStop(.35, 'rgba(255,230,160,' + af + ')'); gb.addColorStop(.62, 'rgba(244,160,70,' + (af * .85) + ')');
+        gb.addColorStop(.8, 'rgba(200,90,40,' + (af * .35) + ')'); gb.addColorStop(1, 'rgba(200,90,40,0)');
+        ctx.globalAlpha = 1; ctx.fillStyle = gb; ctx.fillRect(GX - Rf * 1.7, yb - Rf * 1.7, Rf * 3.4, Rf * 3.4);
+      }
+      dibujaCap(true);
+      // brillo de la parte baja del toro (aún caliente)
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = Fb * apar * .35 * (.3 + .7 * cal); ctx.drawImage(LUZ, GX - Rt * 1.4, Yc - rt * .2 - Rt * .5, Rt * 2.8, Rt);
+      ctx.globalCompositeOperation = 'source-over';
+      // el destello: todo se ilumina un instante y se apaga
+      var fl = tf < .06 ? tf / .06 : Math.exp(-(tf - .06) / .7);
+      if (fl > .01) {
+        var yb0 = SUELO - 62, Rb = 260 + 1400 * (1 - Math.exp(-tf / .5)), gf = ctx.createRadialGradient(GX, yb0, 0, GX, yb0, Rb);
+        gf.addColorStop(0, 'rgba(255,252,244,' + fl + ')'); gf.addColorStop(.18, 'rgba(255,236,190,' + (.9 * fl) + ')'); gf.addColorStop(.5, 'rgba(244,170,90,' + (.35 * fl) + ')'); gf.addColorStop(1, 'rgba(200,100,50,0)');
+        ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Fb; ctx.fillStyle = gf; ctx.fillRect(vb.x, vb.y, vb.width, vb.height);
+        // un trazo de luz a lo largo del horizonte
+        var gh = ctx.createLinearGradient(vb.x, 0, vb.x + vb.width, 0), hx = (GX - vb.x) / vb.width;
+        gh.addColorStop(0, 'rgba(255,220,160,0)'); gh.addColorStop(cl(hx, .05, .95), 'rgba(255,244,220,' + (.8 * fl) + ')'); gh.addColorStop(1, 'rgba(255,220,160,0)');
+        ctx.fillStyle = gh; ctx.fillRect(vb.x, yb0 - 2.5 - 6 * fl, vb.width, 5 + 12 * fl);
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      ctx.globalAlpha = 1;
+    }
+    // escalera de órdenes de magnitud (SVG): de 10⁻¹⁴ m a 10³ m
+    var ESC = [[-14, 'núcleo'], [-10, 'átomo'], [-7, 'virus'], [-5, 'célula'], [-2, 'centímetro'], [0, 'persona'], [3, 'kilómetro']];
+    var gEsc = el('g', { 'class': 'fz-esc' }, capa), yEsc = function (e) { return 690 - (e + 14) / 17 * 520; };
+    el('line', { 'class': 'fz-esc-l', x1: 1390, y1: f(yEsc(-14)), x2: 1390, y2: f(yEsc(3)) }, gEsc);
+    ESC.forEach(function (q) {
+      var y = yEsc(q[0]), g2 = el('g', { 'class': 'fz-esc-p' }, gEsc);
+      el('line', { x1: 1384, y1: f(y), x2: 1396, y2: f(y) }, g2);
+      var t1 = el('text', { 'class': 'fz-esc-n', x: 1376, y: f(y + 4), 'text-anchor': 'end' }, g2);
+      t1.textContent = '10' + String(q[0]).replace('-', '⁻').replace(/\d/g, function (d) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]; }) + ' m';
+      var t2 = el('text', { 'class': 'fz-esc-t', x: 1376, y: f(y + 17), 'text-anchor': 'end' }, g2); t2.textContent = q[1];
+      q.g = g2; q.y = y;
+    });
+    var marca = el('circle', { 'class': 'fz-esc-m', cx: 1390, r: 3.4 }, gEsc), escOn = false;
+    function exponente(t) { var x = suave((t - T_P4 - .3) / (T_FL - T_P4 + .2)); return -14 + 17 * x; }
+    function escalera(t) {
+      var on = t > T_P4 + .2 && t < T_FL + 2.6;
+      if (on !== escOn) { escOn = on; gEsc.classList.toggle('ver', on); }
+      if (!on) return;
+      var e = exponente(t); marca.setAttribute('cy', f(yEsc(e)));
+      ESC.forEach(function (q) { var a = e >= q[0] - .3; if (a !== q.a) { q.a = a; q.g.classList.toggle('on', a); } });
+    }
+    var nocheOn = false;
+
     function dibuja(t) {
       var w = fig.clientWidth, h = fig.clientHeight, d = Math.min(2, window.devicePixelRatio || 1);
       if (!w || !h) return;
@@ -419,10 +589,12 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
       CAM.s = escala(t);
+      var mv = suave((t - T_P4) / (T_FL - T_P4)); CAM.x = 1010 + (GX - 1010) * mv; CAM.y = 440 + (SUELO - 70 - 440) * mv;
       var fundido = t < .4 ? t / .4 : t > FIN ? 1 - suave((t - FIN) / (DUR - FIN - .3)) : 1;
       ctx.globalAlpha = fundido;
       var ex = excit(t), a = estira(t), C = aPantalla([0, 0, 0]), Rp = RU * CAM.s, tau = t - T_SC;
       posiciones(t);
+      if (t > T_P4) cielo(t, vb, fundido);
 
       // sombra (se desvanece cuando los fragmentos se separan) y calor del núcleo excitado
       var som = t < T_SC ? 1 : 1 - suave(tau / 1.5);
@@ -463,7 +635,8 @@
         ctx.strokeStyle = gt2; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(P0[0], P0[1]); ctx.lineTo(P[0], P[1]); ctx.stroke();
         brillo(P[0], P[1], rN * CAM.s * .5, rN * CAM.s * 2.8 + 4, '226,170,90', .5 * s);
       });
-      if (t > T_P3 - 3) cadena(t, vb, fundido);
+      if (t > T_P3 - 3 && t < T_FL + .4) cadena(t, vb, fundido);
+      if (t > T_P4) explosion(t, vb, fundido);
       // nucleones, de atrás hacia adelante
       var ord = nuc.slice().sort(function (p, q) { return p.z - q.z; });
       for (var j = 0; j < ord.length; j++) {
@@ -475,7 +648,7 @@
       }
       ctx.globalAlpha = fundido;
       // rayos γ: paquetes de onda dorados que salen a la velocidad de la luz
-      if (tau > 0) fotones.forEach(function (g) {
+      if (tau > 0 && tau < 5) fotones.forEach(function (g) {
         if (tau < g.t) return;
         var c0 = aPantalla(centroFr(fr[g.fr], g.t)), dd = (tau - g.t) * C_LUZ * CAM.s, ux = g.d[0], uy = g.d[1];
         if (dd > 1400) return;
@@ -517,6 +690,14 @@
         nP.ubica(pL[0] + rL * .2, pL[1] + rL * .95);
       }
       nE.ubica(C[0], C[1] + 4);
+      escalera(t);
+      var tf = t - T_FL;
+      if (tf > 0) {
+        nB.ubica(GX - 30, cumbre(tf) + 40);
+        nT.ubica(GX + choque(tf) * .7, SUELO - choque(tf) * .7 * .12 - 2);
+        nH.ubica(GX - radioToro(tf) * .8, cumbre(tf) - 6);
+        nO.ubica(GX + 26, SUELO - 30);
+      }
       if (t > T_P3) {
         var e0 = CAD.ev[0], P3 = aPantalla(e0.p); nK.ubica(P3[0], P3[1]);
         var e1 = CAD.ev[Math.min(CAD.ev.length - 1, 40)], P4 = aPantalla(e1.p); nX.ubica(P4[0], P4[1]);
@@ -535,6 +716,12 @@
       else if (t < T_SC) {
         var sH = 0, sL = 0; fr.H.m.forEach(function (n) { sH += n.x * EJE[0] + n.y * EJE[1]; }); fr.L.m.forEach(function (n) { sL += n.x * EJE[0] + n.y * EJE[1]; });
         salida('U-236* · se forma el cuello', 'distancia entre centros ≈ ' + coma(sL / fr.L.m.length - sH / fr.H.m.length, 1) + ' fm');
+      } else if (t >= T_FL) {
+        var tf = t - T_FL;
+        salida(tf < 9 ? 'onda de choque · R ∝ t^(2/5)' : 'nube: anillo de vórtice que sube', tf < 9 ? 'R(2t)/R(t) = 2^(2/5) ≈ 1,32' : 'de 10 fm a la escala del paisaje');
+      } else if (t >= T_P4 + .3) {
+        var ee = exponente(t);
+        salida('alejándose · ' + coma(ee + 14, 0) + ' órdenes de magnitud', 'tamaño de la vista ≈ 10^' + coma(ee, 0) + ' m');
       } else if (t >= T_P3 + .6) {
         var nf = fisiones(t);
         salida('generación ' + generacion(t) + ' · k ≈ 1,8', 'fisiones: ' + nf + ' · energía ≈ ' + eV(nf * 200e6));
@@ -554,7 +741,7 @@
       });
     }
     function ecuacion(t) {
-      var e = t < T_SC ? 'n + <sup>235</sup>U → <sup>236</sup>U<sup>*</sup>' : t < T_P3 + .6 ? 'n + <sup>235</sup>U → <sup>141</sup>Ba + <sup>92</sup>Kr + 3n' : 'N<sub>g</sub> ≈ k<sup>g</sup>, &nbsp;k > 1';
+      var e = t < T_SC ? 'n + <sup>235</sup>U → <sup>236</sup>U<sup>*</sup>' : t < T_P3 + .6 ? 'n + <sup>235</sup>U → <sup>141</sup>Ba + <sup>92</sup>Kr + 3n' : t < T_P4 + .3 ? 'N<sub>g</sub> ≈ k<sup>g</sup>, &nbsp;k > 1' : t < T_FL + 2 ? 'E = Δm c<sup>2</sup>' : 'R(t) ≈ (E t<sup>2</sup>/ρ)<sup>1/5</sup>';
       if (ec && e !== ecAct) { ecAct = e; ec.innerHTML = e; }
     }
 
@@ -565,6 +752,7 @@
         if (!quieto && !fijo) { T += dt; if (T >= DUR) reinicia(); }
         AGENDA.forEach(function (a) { a[0].pon(T >= a[1] && T < a[2]); });
         dibuja(T); lecturas(T); capitulos(T); ecuacion(T);
+        var nO2 = noche(T) > .5; if (nO2 !== nocheOn) { nocheOn = nO2; if (raiz) raiz.classList.toggle('fz-noche', nO2); }
       }
     };
   };

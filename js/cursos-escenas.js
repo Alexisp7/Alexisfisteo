@@ -844,7 +844,7 @@
 
   // ═════════ II · Mecánica cuántica: Stern–Gerlach ═════════
   function escenaSternGerlach(svg, salida) {
-    var s = 4.7, P = camara(920, 476, s, 38), g = el('g', {}, svg), ZB = 16, orden = 0;
+    var s = 4.7, P = camara(920, 516, s, 38), g = el('g', {}, svg), ZB = 16, orden = 0;
     // cada pieza entra desde abajo (+) o desde arriba (−) cada vez que se muestra la escena
     function pieza(dy) { return el('g', { 'class': 'pieza', style: '--dy:' + dy + 'px;--d:' + (120 + orden++ * 45) + 'ms' }, g); }
     function arrollamiento(q, x0, x1, y, z0, z1, n) { for (var k = 1; k < n; k++) { var z = z0 + (z1 - z0) * k / n; linea(q, P(x0, y, z), P(x1, y, z), 'espira'); } }
@@ -1226,7 +1226,7 @@
     }
     var nota = fabricaNotas(svg, g, P);
     nota([b0], [-62, 22, 0], 'Banco y vacío', ['Todo va sobre un solo eje. El aparato real', 'trabajaba en vacío: los átomos debían volar', 'sin chocar con el aire.']);
-    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.'], 88, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
+    nota([h0], [-71, 0, 32.4], 'Horno de plata', ['La plata tiene un solo electrón externo:', 'el momento magnético del átomo es el de ese', 'electrón. Por eso fue la elección ideal.'], 122, null, { alto: 96, ancho: 330, dx: 110, dibujo: atomoPlata });
     nota([rendijas[0], rendijas[1]], [-35.1, -13, 28], 'Colimadores', ['El haz debe ser fino: si fuera ancho,', 'las dos manchas se solaparían y la', 'separación no se vería.'], null, null, { alto: 104, ancho: 330, dibujo: colimMini });
     nota([m0, m1], [10, -23, 46], 'Electroimán', ['La corriente imanta el hierro; el yugo', 'lleva el campo hasta el entrehierro. Uniforme', 'solo haría girar al átomo: el filo lo desvía.'], 96, null, { alto: 108, ancho: 300, dx: 12, dibujo: imanMini });
     nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 88, [mc, mcF], { alto: 104, ancho: 320, dibujo: polosMini });

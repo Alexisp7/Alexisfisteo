@@ -661,7 +661,7 @@
           p.cae.setAttribute('cx', f(C[0] + Math.cos(p.a + .01) * rc)); p.cae.setAttribute('cy', f(C[1] + Math.sin(p.a + .01) * rc)); p.cae.setAttribute('opacity', f(Math.max(0, luz * .6)));
           if (u >= 1) { hawk.removeChild(p.sale); hawk.removeChild(p.cae); pares.splice(i, 1); }
         }
-        salida('rₛ = 2GM/c²', 'sombra b = √27 GM/c² ≈ 2,6 rₛ · ISCO 3 rₛ');
+        salida('', '');
       },
       notas: function () {
         // ficha de lectura: una sola ficha HTML en la columna oscura, debajo del menú (nunca tapa el dibujo ni la navegación).
@@ -732,6 +732,27 @@
           activa = k;
           if (k) NOTAS[k].on();
           else { dimMeta[0] = dimMeta[1] = 1; hkMeta = 0; sec.classList.remove('bn-leyendo'); svg.classList.remove('nota-on'); }
+        }
+        // la ecuación de campo: al pasar por ella todo se apaga y aparece escrita como matrices (sus 10 ecuaciones independientes)
+        var ec = sec.querySelector('.mc-ec[data-ec="0"]');
+        if (ec) {
+          var ex = document.createElement('div'); ex.className = 'bn-ecx'; ex.setAttribute('aria-hidden', 'true');
+          var mat = function (L) {
+            var h = '<span class="bn-mat">';
+            for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) h += '<i' + (j < i ? ' class="rep"' : '') + '>' + L + '<sub>' + i + j + '</sub></i>';
+            return h + '</span>';
+          };
+          ex.innerHTML = '<p class="bn-ecx-k">Ecuaciones de campo de Einstein</p>' +
+            '<p class="bn-ecx-def">G<sub>μν</sub> = R<sub>μν</sub> − ½ R g<sub>μν</sub></p>' +
+            '<div class="bn-ecx-fila">' + mat('G') + '<span class="bn-ecx-op">=</span><span class="bn-ecx-op bn-ecx-k8"><span>8πG</span><span>c⁴</span></span>' + mat('T') + '</div>' +
+            '<p class="bn-ecx-n">Curvatura a la izquierda, materia y energía a la derecha. Las dos matrices son simétricas (G<sub>μν</sub> = G<sub>νμ</sub>): de 16 componentes, 10 son independientes, así que son 10 ecuaciones acopladas. μ, ν = 0 es el tiempo; 1, 2, 3, el espacio.</p>';
+          ficha.appendChild(ex);
+          ec.addEventListener('pointerenter', function () {
+            cambia(null); dimMeta[0] = .1; dimMeta[1] = .14; sec.classList.add('bn-leyendo', 'bn-ec');
+            var re = ec.getBoundingClientRect(), rm = sec.getBoundingClientRect();
+            ex.style.right = (rm.right - re.right - 8) + 'px'; ex.style.bottom = (rm.bottom - re.top + 6) + 'px';
+          });
+          ec.addEventListener('pointerleave', function () { dimMeta[0] = dimMeta[1] = 1; sec.classList.remove('bn-leyendo', 'bn-ec'); });
         }
         zTodo.classList.add('con-nota');
         zTodo.addEventListener('pointermove', function (e) {

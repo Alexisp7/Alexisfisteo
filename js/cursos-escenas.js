@@ -418,6 +418,9 @@
     // borde interno del disco) y disco. Las de la sombra van encima del disco que la cruza por delante.
     // ── zonas exactas: el puntero se clasifica trazando su mismo rayo (igual que el shader), así cada zona es lo que se ve
     var zTodo = zona(anillo(0, 23 * SC)); fig.bnZona = function (x, y) { return clasifica(x, y); };
+    // ergosfera esquemática de un agujero con giro a = 0,9 M: llega a r = 2M en el ecuador y toca el horizonte (r₊ ≈ 1,44 M) en los polos;
+    // se dibuja agrandada por la lente en la misma proporción que el horizonte, cuya imagen es la sombra
+    var EA = BC * 2 / (1 + Math.sqrt(1 - .81)), EB = Math.hypot(BC * Math.sin(INCL), EA * Math.cos(INCL));
     function clasifica(x, y) {
       var dx = (x - C[0]) / SC, dy = (y - C[1]) / SC, cr = Math.cos(ROLL), sr = Math.sin(ROLL);
       var bx = cr * dx + sr * dy, by = -(-sr * dx + cr * dy), bb = Math.hypot(bx, by);
@@ -436,11 +439,11 @@
         if (p[1] * pn[1] < 0) { var k = p[1] / (p[1] - pn[1]), rq = Math.hypot(p[0] + (pn[0] - p[0]) * k, p[2] + (pn[2] - p[2]) * k); if (rq < 22.5) { cruce = rq; break; } }
         p = pn; v = [vm[0] + An[0] * dt * .5, vm[1] + An[1] * dt * .5, vm[2] + An[2] * dt * .5];
       }
+      if (bb > BC * 1.08 && (bx / EA) * (bx / EA) + (by / EB) * (by / EB) < 1) return 'ergo';   // la ergosfera envuelve al horizonte: manda sobre el disco
       if (cruce >= 6.3 && cruce < 20) return 'disco';   // la primera vez que el rayo atraviesa el plano cae sobre el disco visible
       if (bb < BC * .14) return 'sing';
       if (bb < BC - .12) return 'hor';
       if (bb < BC * 1.08) return 'hawk';
-      if (bb < BC * 1.55) return 'caida';
       return null;
     }
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
@@ -589,6 +592,31 @@
         });
       },
       // 5 · gas en órbita de Kepler (Ω ∝ r^−3/2) que se acerca despacio y, pasada la ISCO (3 rₛ), cae en picada
+      // 4 · ergosfera: el giro arrastra el espacio; dentro todo gira con el agujero, fuera aún se puede estar quieto
+      ergo: function (q, x0, y0) {
+        var cx = x0 + 56, cy = y0 + 48, m = medallon(q, cx, cy, R0), Rh = 11, Re = 22, k2 = .34;
+        el('rect', { 'class': 'med-aguada', x: f(cx - R0), y: f(cy - R0), width: f(2 * R0), height: f(2 * R0) }, m);
+        var atras = el('g', {}, m);
+        el('ellipse', { 'class': 'med-isco', cx: f(cx), cy: f(cy), rx: f(Re), ry: f(Rh * 1.02) }, m);
+        el('circle', { 'class': 'med-dentro', cx: f(cx), cy: f(cy), r: f(Rh) }, m);
+        el('path', { 'class': 'med-tr', d: 'M' + f(cx - Re) + ' ' + f(cy) + ' A' + f(Re) + ' ' + f(Re * k2) + ' 0 0 0 ' + f(cx + Re) + ' ' + f(cy) }, m);
+        el('line', { 'class': 'med-eje', x1: f(cx), y1: f(cy - Rh - 9), x2: f(cx), y2: f(cy - Rh - 1) }, m);
+        el('path', { 'class': 'med-tr', d: 'M' + f(cx - 5) + ' ' + f(cy - Rh - 6) + ' A5 1.8 0 1 0 ' + f(cx + 5) + ' ' + f(cy - Rh - 6) }, m);
+        etiqueta(m, cx + Re - 10, cy + Rh + 9, 'ergosfera', 'med-k-claro');
+        var delante = el('g', {}, m), pts = [];
+        for (var i = 0; i < 14; i++) { var dentro = i < 9; pts.push({ r: dentro ? Rh + 2 + Math.random() * (Re - Rh - 3) : Re + 5 + Math.random() * 12, a: Math.random() * 6.283, dentro: dentro, c: el('circle', { 'class': 'med-gas', r: dentro ? 1.3 : 1.1, fill: dentro ? temp(.25) : '#2E2A33' }, delante) }); }
+        pie(q, x0 + 116, y0 + 24, ['Dentro de la ergosfera nada', 'puede quedarse quieto: el', 'giro arrastra el espacio y', 'todo gira con el agujero.']);
+        var tPrev = null;
+        anima(q, function (t) {
+          var dt = tPrev == null ? 0 : Math.min(.05, t - tPrev); tPrev = t;
+          pts.forEach(function (p) {
+            p.a += (p.dentro ? 2.6 * Math.pow(Rh / p.r, 2) : .05 * Math.sin(t * .7 + p.r)) * dt;
+            var x = cx + p.r * Math.cos(p.a), y = cy + p.r * k2 * Math.sin(p.a), oculto = Math.sin(p.a) < 0 && Math.abs(x - cx) < Rh;
+            p.c.setAttribute('cx', f(x)); p.c.setAttribute('cy', f(y)); p.c.setAttribute('opacity', oculto ? 0 : 1);
+            (Math.sin(p.a) < 0 ? atras : delante).appendChild(p.c);
+          });
+        });
+      },
       disco: function (q, x0, y0) {
         var cx = x0 + 56, cy = y0 + 46, m = medallon(q, cx, cy, R0), s = 2.1, k2 = .42;
         el('rect', { 'class': 'med-aguada', x: f(cx - R0), y: f(cy - R0), width: f(2 * R0), height: f(2 * R0) }, m);
@@ -722,39 +750,38 @@
           dato: 'r = 0',
           que: 'El centro. La relatividad general predice que ahí la curvatura del espacio-tiempo se vuelve infinita: es la señal de que la teoría deja de valer, y se espera que una teoría cuántica de la gravedad la describa.',
           dibujo: 'un punto. Nadie puede verla: queda siempre dentro del horizonte.' });
-        nota(null, { k: 'hor', ancla: polar(-2.2, RS), rotulo: [xI, C[1] - 64], titulo: 'Horizonte de eventos', med: 'hor', dim: [.18, .35],
+        function curva(fn, a0, a1) { var d = ''; for (var k = 0; k <= 64; k++) { var t = a0 + (a1 - a0) * k / 64, q = fn(t); d += (k ? 'L' : 'M') + f(q[0]) + ' ' + f(q[1]); } return d; }
+        nota(null, { k: 'hor', ancla: polar(-2.2, RSH * .7), rotulo: [xI, C[1] - 64], titulo: 'Horizonte de eventos', med: 'hor', dim: [.18, .35],
           dato: 'rₛ = 2GM/c²',
-          que: 'La frontera sin retorno: lo que la cruza, ni siquiera la luz, vuelve a salir. No es una superficie material, solo un radio. Para el Sol, rₛ ≈ 3 km.',
-          dibujo: 'la esfera punteada es rₛ a escala, con su ecuador en el plano del disco. Los rayos que caen se frenan y se apagan al acercarse: vistos desde lejos, nunca llegan a cruzarla. La sombra negra es unas 2,6 veces mayor (√27 GM/c²) porque la gravedad curva la luz que pasa cerca.',
+          que: 'La frontera sin retorno: lo que la cruza, ni siquiera la luz, vuelve a salir. Todo rayo que llega a la zona negra termina en el horizonte; por eso el negro es la imagen del horizonte. Para el Sol, rₛ ≈ 3 km.',
+          dibujo: 'la esfera punteada es el horizonte tal como se ve. La gravedad curva la luz y lo agranda: mide rₛ, pero su imagen mide ≈ 2,6 rₛ (√27 GM/c²). Los rayos que caen se frenan y se apagan al llegar: vistos desde lejos, nunca lo cruzan.',
           extra: function (n) {
-            // la esfera rₛ en perspectiva: contorno, ecuador en el plano del disco y un meridiano; la mitad de atrás más tenue
-            function curva(fn, a0, a1) { var d = ''; for (var k = 0; k <= 48; k++) { var t = a0 + (a1 - a0) * k / 48, q = fn(t); d += (k ? 'L' : 'M') + f(q[0]) + ' ' + f(q[1]); } return d; }
-            var ecu = function (t) { return aPantalla(2 * Math.cos(t), 0, 2 * Math.sin(t)); };
-            var FI = 1.05, mer = function (t) { return aPantalla(2 * Math.sin(t) * Math.cos(FI), 2 * Math.cos(t), 2 * Math.sin(t) * Math.sin(FI)); };
+            // la esfera en perspectiva sobre el borde de la zona negra: contorno, ecuador en el plano del disco y un meridiano
+            var ecu = function (t) { return aPantalla(BC * Math.cos(t), 0, BC * Math.sin(t)); };
+            var FI = 1.05, mer = function (t) { return aPantalla(BC * Math.sin(t) * Math.cos(FI), BC * Math.cos(t), BC * Math.sin(t) * Math.sin(FI)); };
             var gR = el('g', { 'class': 'bn-rayos' }, n);
             el('path', { 'class': 'bn-rs-atras', d: curva(ecu, 0, Math.PI) }, n);          // z > 0: detrás
             el('path', { 'class': 'bn-rs-atras', d: curva(mer, 0, Math.PI) }, n);
-            el('circle', { 'class': 'bn-rs', cx: f(C[0]), cy: f(C[1]), r: f(RS), pathLength: 60 }, n);
-            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(ecu, Math.PI, 2 * Math.PI), pathLength: 30 }, n);   // z < 0: delante
-            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(mer, Math.PI, 2 * Math.PI), pathLength: 30 }, n);
-            var t = el('text', { 'class': 'nota-rot bn-rs-k', x: f(C[0] + RS * .74 + 4), y: f(C[1] + RS * .74 + 9) }, n); t.textContent = 'rₛ';
-            // rayos de luz que caen: vistos desde lejos se frenan y se apagan al llegar a rₛ (v ∝ 1 − rₛ/r)
+            el('circle', { 'class': 'bn-rs', cx: f(C[0]), cy: f(C[1]), r: f(RSH), pathLength: 90 }, n);
+            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(ecu, Math.PI, 2 * Math.PI), pathLength: 45 }, n);   // z < 0: delante
+            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(mer, Math.PI, 2 * Math.PI), pathLength: 45 }, n);
+            // rayos de luz que caen hacia el borde negro: se frenan y se apagan al llegar (v ∝ 1 − R/r)
             var rayos = [];
-            for (var k = 0; k < 16; k++) rayos.push({ l: el('line', { 'class': 'bn-rayo' }, gR), r: 0, a: 0, vivo: false, w: Math.random() * 2 });
-            var antes = 0;
+            for (var k = 0; k < 18; k++) rayos.push({ l: el('line', { 'class': 'bn-rayo' }, gR), r: 0, a: 0, vivo: false, w: Math.random() * 2 });
+            var antes = 0, r0 = RSH * 1.75;
             (function cae(ts) {
               requestAnimationFrame(cae);
               if (!n.classList.contains('ver')) { antes = 0; return; }
               var dt = antes ? Math.min(.05, (ts - antes) / 1000) : 0; antes = ts;
               rayos.forEach(function (o) {
-                if (!o.vivo) { o.w -= dt; if (o.w > 0) return; o.vivo = true; o.a = Math.random() * Math.PI * 2; o.r = RSH * (.82 + Math.random() * .12); o.L = 7 + Math.random() * 9; }
-                o.r -= dt * 150 * (1 - RS / o.r);
-                var fr = Math.max(0, (o.r - RS) / (RSH * .85 - RS)), luz = Math.min(1, fr * 1.6) * Math.min(1, (RSH * .9 - o.r) / 8 + .2), L = o.L * (.25 + .75 * fr);
+                if (!o.vivo) { o.w -= dt; if (o.w > 0) return; o.vivo = true; o.a = Math.random() * Math.PI * 2; o.r = r0 * (.88 + Math.random() * .12); o.L = 9 + Math.random() * 10; }
+                o.r -= dt * 170 * (1 - RSH / o.r);
+                var fr = Math.max(0, (o.r - RSH) / (r0 - RSH)), luz = Math.min(1, fr * 2.2) * Math.min(1, (r0 - o.r) / 14 + .1), L = o.L * (.2 + .8 * fr);
                 var c = Math.cos(o.a), s2 = Math.sin(o.a);
                 o.l.setAttribute('x1', f(C[0] + c * o.r)); o.l.setAttribute('y1', f(C[1] + s2 * o.r));
                 o.l.setAttribute('x2', f(C[0] + c * (o.r + L))); o.l.setAttribute('y2', f(C[1] + s2 * (o.r + L)));
                 o.l.setAttribute('opacity', f(Math.max(0, luz)));
-                if (fr < .03) { o.vivo = false; o.w = Math.random() * .6; o.l.setAttribute('opacity', 0); }
+                if (fr < .02) { o.vivo = false; o.w = Math.random() * .6; o.l.setAttribute('opacity', 0); }
               });
             })(0);
           } });
@@ -762,24 +789,27 @@
           dato: 'T = ħc³ / 8πGMk_B',
           que: 'Hawking (1974): por efectos cuánticos junto al horizonte, el agujero emite como un cuerpo negro y pierde masa muy despacio. Para una masa solar T ≈ 6 × 10⁻⁸ K; nunca se ha medido.',
           dibujo: 'el filo rojo y las chispas son simbólicos: esa radiación sería invisible.' });
-        nota(null, { k: 'caida', ancla: buscar('caida', -2.0, RSH * 1.0, RSH * 1.7), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.3, .4],
-          dato: 'rₛ < r < 3 rₛ',
-          que: 'Entre el borde interno del disco (la órbita estable más interna, ISCO, en 3 rₛ) y el horizonte ya no hay órbitas estables: el gas se precipita en espiral. En la literatura se llama plunging region. Dentro está la esfera de fotones, en 1,5 rₛ, donde la luz puede orbitar.',
-          dibujo: 'la franja resaltada entre la sombra y el disco, deformada por la lente. Su borde interior es el anillo de fotones: la luz que rozó la esfera de fotones (1,5 rₛ) antes de escapar.',
+        nota(null, { k: 'ergo', ancla: buscar('ergo', Math.PI - .25, RSH * 1.0, RSH * 1.7), rotulo: [xI - 40, C[1] - RSH * 1.2], titulo: 'Ergosfera', med: 'ergo', dim: [.3, .4],
+          dato: 'r₊ < r < 2GM/c² (en el ecuador)',
+          que: 'Solo existe si el agujero gira (solución de Kerr, 1963), y se espera que los agujeros reales giren. Es una región achatada que envuelve al horizonte: ahí el giro arrastra al espacio-tiempo y nada puede quedarse quieto. Todavía se puede salir de ella, e incluso extraer energía del giro (Penrose, 1969).',
+          dibujo: 'es un esquema. Este dibujo es de un agujero sin giro (Schwarzschild), que no tendría ergosfera; la superficie punteada muestra dónde estaría con giro a = 0,9, agrandada por la lente igual que el horizonte.',
           extra: function (n) {
-            // se pinta la franja misma: su forma real (deformada por la lente y cortada por el disco que pasa delante) sale de clasifica()
+            // la franja que ocupa (sacada de clasifica(): la cortan el disco que pasa delante y la sombra)
             var M2 = 240, tramos = [], cur = null;
             for (var k = 0; k <= M2; k++) {
               var ang = -Math.PI + 2 * Math.PI * k / M2, ri = -1, ro = -1;
-              for (var rr = RSH * .98; rr <= RSH * 1.7; rr += .75) { var q = polar(ang, rr); if (clasifica(q[0], q[1]) === 'caida') { if (ri < 0) ri = rr; ro = rr; } else if (ri >= 0) break; }
-              if (ri > 0 && ro - ri > 5) { if (!cur) { cur = []; tramos.push(cur); } cur.push([ang, ri, ro]); } else cur = null;
+              for (var rr = RSH * .98; rr <= RSH * 1.7; rr += .75) { var q = polar(ang, rr); if (clasifica(q[0], q[1]) === 'ergo') { if (ri < 0) ri = rr; ro = rr; } else if (ri >= 0) break; }
+              if (ri > 0 && ro - ri > 3) { if (!cur) { cur = []; tramos.push(cur); } cur.push([ang, ri, ro]); } else cur = null;
             }
-            if (tramos.length > 1 && tramos[0][0][0] === -Math.PI && cur === tramos[tramos.length - 1]) { var u = tramos.pop(); tramos[0] = u.concat(tramos[0]); }   // une el corte en ±π
-            tramos.filter(function (T) { return T.length > 8; }).forEach(function (T) {
+            if (tramos.length > 1 && tramos[0][0][0] === -Math.PI && cur === tramos[tramos.length - 1]) { var u = tramos.pop(); tramos[0] = u.concat(tramos[0]); }
+            tramos.filter(function (T) { return T.length > 6; }).forEach(function (T) {
               var fuera = T.map(function (e) { return polar(e[0], e[2]); }), dentro = T.map(function (e) { return polar(e[0], e[1]); }).reverse();
               el('path', { 'class': 'bn-franja', d: poligono(fuera.concat(dentro)) }, n);
-              el('path', { 'class': 'bn-rs bn-rs-ecu', d: 'M' + fuera.map(function (q) { return f(q[0]) + ' ' + f(q[1]); }).join(' L'), pathLength: 40 }, n);
             });
+            // la superficie achatada: su contorno y la mitad delantera del ecuador (nada más dentro de la zona negra)
+            var ecu = function (t) { return aPantalla(EA * Math.cos(t), 0, EA * Math.sin(t)); };
+            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(ecu, Math.PI, 2 * Math.PI), pathLength: 45 }, n);
+            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(function (t) { return enPantalla(EA * Math.cos(t), EB * Math.sin(t)); }, 0, 2 * Math.PI), pathLength: 90 }, n);
           } });
         nota(null, { k: 'disco', ancla: buscar('disco', Math.atan2(-.8, 2.6), RSH * 2.2, RSH * 3.2), rotulo: [C[0] + RSH * 2.55, C[1] - RSH * .33], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
           dato: 'r ≥ 3 rₛ (ISCO)',

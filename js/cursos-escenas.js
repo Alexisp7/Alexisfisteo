@@ -1067,6 +1067,19 @@
     poly(pa, [P(80, -18, 35), P(80, -12, 35), P(80, 6, 3), P(80, 0, 3)], 'reflejo');
     poly(pa, [P(80, -9, 35), P(80, -7, 35), P(80, 11, 3), P(80, 9, 3)], 'reflejo');
     var impactos = el('g', {}, pa);
+    // impactos en dos caminos (uno por mancha) en vez de un círculo por átomo: cada punto es un trazo nulo con
+    // punta redonda. Se reescriben a lo sumo ~12 veces por segundo: mucho menos DOM y repintado
+    var impA = el('path', { 'class': 'impactos imp-arriba' }, impactos), impB = el('path', { 'class': 'impactos imp-abajo' }, impactos);
+    var ptsA = [], ptsB = [], impSucio = false, impT = 0, MAXIMP = 1100;
+    function impacto(arriba, x, y) {
+      var L = arriba ? ptsA : ptsB; L.push('M' + f(x) + ' ' + f(y) + 'h0');
+      if (ptsA.length + ptsB.length > MAXIMP) (ptsA.length > ptsB.length ? ptsA : ptsB).shift();
+      impSucio = true;
+    }
+    function pintaImpactos(dt) {
+      impT += dt; if (!impSucio || impT < .08) return; impT = 0; impSucio = false;
+      impA.setAttribute('d', ptsA.join('')); impB.setAttribute('d', ptsB.join(''));
+    }
     ruta(pa, [P(80, -9, ZB), P(80, 9, ZB)], 'clasico');
     var rc = P(80, 14.5, ZB + 1.2), tc = el('text', { 'class': 'grabado', x: 0, y: 0, transform: enPlano(P, 'x', rc) }, pa); tc.textContent = 'sin campo';
     caja(pa, P, 79, 20, 2.5, 2, 2, 34, 'lo');
@@ -1291,8 +1304,7 @@
           }
           if (a.x >= 80) {
             var z = zEn(a, 80), q = P(80, a.sy * (80 - X0H), z);
-            if (z > 4 && z < 34) el('circle', { 'class': 'impacto ' + (a.sgn > 0 ? 'imp-arriba' : 'imp-abajo'), cx: f(q[0]), cy: f(q[1]), r: 1.15 }, impactos);
-            if (impactos.childNodes.length > 950) impactos.removeChild(impactos.firstChild);
+            if (z > 4 && z < 34) impacto(a.sgn > 0, q[0], q[1]);
             if (a.sgn > 0) arriba++; else abajo++;
             a.el.parentNode.removeChild(a.el); enVuelo.splice(i, 1); continue;
           }
@@ -1312,6 +1324,7 @@
           }
           a.el.setAttribute('transform', 'translate(' + f(q2[0] + jx) + ' ' + f(q2[1] + jy) + ')');
         }
+        pintaImpactos(dt);
         salida('', '');
       }
     };

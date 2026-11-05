@@ -165,7 +165,7 @@
   var GLSL_AGUJERO = [
     '#extension GL_OES_standard_derivatives : enable',
     'precision highp float;',
-    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix, uArm; uniform vec2 uDim;',
+    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix, uArm, uTD, uHk; uniform vec2 uDim;',
     'float hash(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
     'float ruido(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);',
     '  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
@@ -180,7 +180,7 @@
     'vec4 disco(vec3 p, vec3 v, float hay) {',
     '  float r = max(length(p.xz), 2.5), ph = atan(p.z, p.x), b = sqrt(1.0 / max(r - 2.0, .05)); vec3 t = normalize(vec3(-p.z, 0.0, p.x) + 1e-5); vec3 vd = normalize(v + 1e-5);',
     '  float g = sqrt(max(1.0 - 3.0 / r, 0.0)) / (1.0 - b * dot(t, -vd)), D = clamp(pow(g, 2.0), .82, 1.18);',
-    '  float u = (r - 6.0) / 13.5, om = 1.7 * pow(6.0 / r, 1.5), fase = ph - om * uT;',
+    '  float u = (r - 6.0) / 13.5, om = 1.7 * pow(6.0 / r, 1.5), fase = ph - om * uTD;',
     '  vec2 cs = vec2(cos(fase), sin(fase)); float fr = fwidth(r) + 1e-4;',
     // trazos de lápiz: ruido estirado a lo largo de la órbita, fino en el radio; cada octava se apaga si es más fina que el píxel
     // trazos de lápiz como rayas suaves (coseno) a lo largo de la órbita: dos familias, cada una se apaga antes de ser más fina
@@ -283,14 +283,14 @@
     // sombra negra limpia; su borde (b = √27 M) se suaviza un píxel para que no se vea escalonado
     '  float ab = fwidth(bb) + 1e-4, sA = cae ? 1.0 : 1.0 - smoothstep(5.196 - ab, 5.196 + ab, bb);',
     '  vec4 tinta = sA < .999 ? aguada(vec2(bx, by), dg, px) : vec4(0.0); tinta.a *= uDim.y;',
-    '  vec4 fondo = mix(tinta, vec4(.012, .014, .02, smoothstep(.05, .55, uArm)), sA);',
+    '  vec4 fondo = mix(tinta, vec4(.012, .014, .02, smoothstep(.05, .55, uArm) * (1.0 - .7 * uHk)), sA);',
     // radiación de Hawking: filo rojo finísimo justo fuera de la sombra, que chisporrotea; va en la capa del fondo,
     // así queda delante de la sombra y detrás de las dos imágenes del disco, sin recortes
     '  float ang = atan(by, bx), chis = ruido(vec3(ang * 38.0, uT * 26.0, 1.0)) * .7 + ruido(vec3(ang * 90.0, uT * 41.0, 4.0)) * .3;',
-    '  float ancho = ab * (.9 + 1.6 * chis * chis), dr = bb - 5.196 - ab * .6;',
-    '  float filoH = (1.0 - smoothstep(ancho * .55, ancho * .55 + ab, abs(dr))) * smoothstep(.55, 1.3, uArm) * uDim.y;',
-    '  float halo = exp(-max(dr, 0.0) / (ab * 3.0)) * step(0.0, dr) * .35 * chis;',
-    '  vec3 rojo = mix(vec3(.62, .07, .05), vec3(.95, .25, .17), chis);',
+    '  float ancho = ab * (.9 + 1.6 * chis * chis) * (1.0 + .9 * uHk), dr = bb - 5.196 - ab * .6;',
+    '  float filoH = (1.0 - smoothstep(ancho * .55, ancho * .55 + ab, abs(dr))) * smoothstep(.55, 1.3, uArm) * max(uDim.y, uHk);',
+    '  float halo = exp(-max(dr, 0.0) / (ab * (3.0 + 3.0 * uHk))) * step(0.0, dr) * (.35 + .45 * uHk) * chis * max(uDim.y, uHk);',
+    '  vec3 rojo = mix(mix(vec3(.62, .07, .05), vec3(.95, .25, .17), chis), mix(vec3(.9, .02, .02), vec3(1.0, .16, .08), chis), uHk);',
     '  float mH = max(filoH, halo); fondo = vec4(mix(fondo.rgb, rojo, mH), max(fondo.a, mH));',
     '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0); c1.a *= uDim.x; c2.a *= uDim.x;',   // foco de las notas: lo demás se vuelve transparente
     // composición «sobre» con alfa directo: el papel de la página se ve donde no hay tinta
@@ -320,11 +320,16 @@
       var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); gl.useProgram(pr);
       var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
       var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
-      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
       listo = gl.getProgramParameter(pr, gl.LINK_STATUS);
     }
     if (!listo) fig.classList.add('bn-sin-gl');
-    var tiempo = 0, dim = [1, 1], dimMeta = [1, 1];
+    var tiempo = 0, dim = [1, 1], dimMeta = [1, 1], hk = 0, hkMeta = 0;
+    // el disco no gira sin fin (las órbitas de distinto radio se enrollarían en espirales cada vez más finas y aparecería moiré):
+    // va 4 s en un sentido y 4 s de vuelta a la misma velocidad, con el giro suavizado solo en el cambio de sentido
+    var VAI = (function () { var n = 800, o = new Float32Array(n + 1), acc = 0; o[0] = 0;
+      for (var k = 1; k <= n; k++) { var th = 2 * Math.PI * (k - .5) / n; acc += Math.max(-1, Math.min(1, 6 * Math.sin(th))) * 8 / n; o[k] = acc; } return o; })();
+    function tDisco(t) { var u = ((t % 8) + 8) % 8 / 8 * 800, k = Math.floor(u), w = u - k; return VAI[k] + (VAI[Math.min(k + 1, 800)] - VAI[k]) * w; }
     function pintar() {
       if (!listo) return;
       var r = lienzo.getBoundingClientRect(); if (!r.width) return;
@@ -335,6 +340,7 @@
       gl.uniform2f(U.uRes, W, H); gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C[0], C[1]);
       gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL); gl.uniform1f(U.uPix, vb.width / W / SC); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
       dim[0] += (dimMeta[0] - dim[0]) * .14; dim[1] += (dimMeta[1] - dim[1]) * .14; gl.uniform2f(U.uDim, dim[0], dim[1]);
+      hk += (hkMeta - hk) * .14; gl.uniform1f(U.uHk, hk); gl.uniform1f(U.uTD, tDisco(tiempo));
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
@@ -407,12 +413,35 @@
     }
     // cinco zonas: centro, horizonte (interior de la sombra), borde (filo rojo de Hawking), región de caída (entre la sombra y el
     // borde interno del disco) y disco. Las de la sombra van encima del disco que la cruza por delante.
-    var zLente = zona((function () { var o = []; for (var k = 0; k <= 20; k++) { var t = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t) * 9.5, Math.sin(t) * 9.5)); } for (k = 20; k >= 0; k--) { var t3 = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t3) * 6.2, Math.sin(t3) * 6.2)); } return poligono(o); })());
-    var zDisco = zona(bandaDisco(6.5, 22, 0, Math.PI * 2));
-    var zCaida = zona(anillo(RSH * 1.06, RSH * 1.4)), zHawk = zona(anillo(RSH * .9, RSH * 1.06)), zHor = zona(anillo(RSH * .12, RSH * .9)), zSing = zona(anillo(0, RSH * .12));
+    // ── zonas exactas: el puntero se clasifica trazando su mismo rayo (igual que el shader), así cada zona es lo que se ve
+    var zTodo = zona(anillo(0, 23 * SC)); fig.bnZona = function (x, y) { return clasifica(x, y); };
+    function clasifica(x, y) {
+      var dx = (x - C[0]) / SC, dy = (y - C[1]) / SC, cr = Math.cos(ROLL), sr = Math.sin(ROLL);
+      var bx = cr * dx + sr * dy, by = -(-sr * dx + cr * dy), bb = Math.hypot(bx, by);
+      if (bb > 23) return null;
+      var ci = Math.cos(INCL), si = Math.sin(INCL);
+      var p = [-bx, ci * 40 + si * by, -si * 40 + ci * by], v = [0, -ci, si];
+      var cx = p[1] * v[2] - p[2] * v[1], cy = p[2] * v[0] - p[0] * v[2], cz = p[0] * v[1] - p[1] * v[0], h2 = cx * cx + cy * cy + cz * cz;
+      function ac(q) { var r = Math.hypot(q[0], q[1], q[2]), k = -3 * h2 / Math.pow(r, 5); return [q[0] * k, q[1] * k, q[2] * k]; }
+      var cruce = 0;
+      for (var i = 0; i < 400; i++) {
+        var r = Math.hypot(p[0], p[1], p[2]);
+        if (r < 2.02) break;
+        if (r > 48 && p[0] * v[0] + p[1] * v[1] + p[2] * v[2] > 0) break;
+        var dt = Math.min(1.1, Math.max(.025, .07 * r - .08)), A = ac(p);
+        var vm = [v[0] + A[0] * dt * .5, v[1] + A[1] * dt * .5, v[2] + A[2] * dt * .5], pn = [p[0] + vm[0] * dt, p[1] + vm[1] * dt, p[2] + vm[2] * dt], An = ac(pn);
+        if (p[1] * pn[1] < 0) { var k = p[1] / (p[1] - pn[1]), rq = Math.hypot(p[0] + (pn[0] - p[0]) * k, p[2] + (pn[2] - p[2]) * k); if (rq < 22.5) { cruce = rq; break; } }
+        p = pn; v = [vm[0] + An[0] * dt * .5, vm[1] + An[1] * dt * .5, vm[2] + An[2] * dt * .5];
+      }
+      if (cruce >= 6.3 && cruce < 20) return 'disco';   // la primera vez que el rayo atraviesa el plano cae sobre el disco visible
+      if (bb < BC * .14) return 'sing';
+      if (bb < BC - .12) return 'hor';
+      if (bb < BC * 1.08) return 'hawk';
+      if (bb < BC * 1.55) return 'caida';
+      return null;
+    }
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var pares = [], acum = 0;
-    function mezclaRB(u) { var k = Math.min(1, Math.max(0, (u - .02) / .18)); return 'rgb(' + Math.round(225 + 30 * k) + ',' + Math.round(50 + 205 * k) + ',' + Math.round(40 + 215 * k) + ')'; }
     function par() {
       // chispas diminutas: nacen en el filo, apenas se alejan unos píxeles y se apagan; su pareja cae hacia dentro
       var a = Math.random() * Math.PI * 2, sale = el('circle', { 'class': 'bn-hq', r: f(.55 + Math.random() * .5) }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: .5 }, hawk);
@@ -599,7 +628,7 @@
           var p = pares[i]; p.t += dt; p.a += p.da * dt;
           var u = p.t / p.vida, sal = 1 - (1 - u) * (1 - u), r = p.r0 + p.d * sal, rc = p.r0 - 1 - p.d * .35 * u * u;
           var luz = u < .12 ? u / .12 : (1 - u) * (1 - u) / .77;
-          p.sale.setAttribute('cx', f(C[0] + Math.cos(p.a) * r)); p.sale.setAttribute('cy', f(C[1] + Math.sin(p.a) * r)); p.sale.setAttribute('opacity', f(Math.max(0, luz))); p.sale.style.fill = mezclaRB(u);
+          p.sale.setAttribute('cx', f(C[0] + Math.cos(p.a) * r)); p.sale.setAttribute('cy', f(C[1] + Math.sin(p.a) * r)); p.sale.setAttribute('opacity', f(Math.max(0, luz))); 
           p.cae.setAttribute('cx', f(C[0] + Math.cos(p.a + .01) * rc)); p.cae.setAttribute('cy', f(C[1] + Math.sin(p.a + .01) * rc)); p.cae.setAttribute('opacity', f(Math.max(0, luz * .6)));
           if (u >= 1) { hawk.removeChild(p.sale); hawk.removeChild(p.cae); pares.splice(i, 1); }
         }
@@ -650,27 +679,47 @@
             x = Math.max(16, Math.min(x, rm.width - w - 16)); y = Math.min(y, rm.height - h - 16);
             c.style.left = x + 'px'; c.style.top = y + 'px';
           }
-          var foco = piezas.concat(o.foco || []);
-          piezas.forEach(function (q) {
-            q.classList.add('con-nota');
-            q.addEventListener('pointerenter', function () {
+          var foco = o.foco || [];
+          NOTAS[o.k] = {
+            on: function () {
               alinea(); n.classList.add('ver'); bajoRotulo(); c.classList.add('ver'); sec.classList.add('bn-leyendo');
-              dimMeta[0] = o.dim[0]; dimMeta[1] = o.dim[1];
+              dimMeta[0] = o.dim[0]; dimMeta[1] = o.dim[1]; hkMeta = o.k === 'hawk' ? 1 : 0;
               foco.forEach(function (e) { e.classList.add('foco'); }); svg.classList.add('nota-on');
-            });
-            q.addEventListener('pointerleave', function () {
-              dimMeta[0] = dimMeta[1] = 1; n.classList.remove('ver'); c.classList.remove('ver'); sec.classList.remove('bn-leyendo');
-              foco.forEach(function (e) { e.classList.remove('foco'); }); svg.classList.remove('nota-on');
-            });
-          });
+            },
+            off: function () {
+              n.classList.remove('ver'); c.classList.remove('ver');
+              foco.forEach(function (e) { e.classList.remove('foco'); });
+            }
+          };
+        }
+        var NOTAS = {}, activa = null, pend = null;
+        function cambia(k) {
+          if (k === activa) return;
+          if (activa) NOTAS[activa].off();
+          activa = k;
+          if (k) NOTAS[k].on();
+          else { dimMeta[0] = dimMeta[1] = 1; hkMeta = 0; sec.classList.remove('bn-leyendo'); svg.classList.remove('nota-on'); }
+        }
+        zTodo.classList.add('con-nota');
+        zTodo.addEventListener('pointermove', function (e) {
+          var m = svg.getScreenCTM(); if (!m) return; var pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; pt = pt.matrixTransform(m.inverse());
+          if (pend == null) requestAnimationFrame(function () { cambia(clasifica(pend.x, pend.y)); pend = null; });
+          pend = pt;
+        });
+        zTodo.addEventListener('pointerleave', function () { pend = null; cambia(null); });
+        // un punto que de verdad cae en la zona: se recorre el radio en esa dirección y se toma el centro del tramo
+        function buscar(k, ang, r0, r1) {
+          var ini = -1, fin = -1;
+          for (var r = r0; r <= r1; r += 1.5) { var q = polar(ang, r), z = clasifica(q[0], q[1]); if (z === k) { if (ini < 0) ini = r; fin = r; } else if (ini >= 0) break; }
+          return polar(ang, ini < 0 ? r0 : (ini + fin) / 2);
         }
         function polar(ang, r) { return [C[0] + Math.cos(ang) * r, C[1] + Math.sin(ang) * r]; }
-        var RS = 2 * SC, xI = C[0] - RSH - 62, xD = C[0] + RSH + 62;   // rₛ a escala (sin lente) y columnas de rótulos
-        nota([zSing], { ancla: [C[0], C[1]], rotulo: [xI, C[1] + 4], titulo: 'Singularidad', med: 'sing', dim: [.18, .35],
+        var RS = 2 * SC, RF = 3 * SC, xI = C[0] - RSH - 62, xD = C[0] + RSH + 62;   // rₛ a escala (sin lente) y columnas de rótulos
+        nota(null, { k: 'sing', ancla: [C[0], C[1]], rotulo: [xI, C[1] + 4], titulo: 'Singularidad', med: 'sing', dim: [.18, .35],
           dato: 'r = 0',
           que: 'El centro. La relatividad general predice que ahí la curvatura del espacio-tiempo se vuelve infinita: es la señal de que la teoría deja de valer, y se espera que una teoría cuántica de la gravedad la describa.',
           dibujo: 'un punto. Nadie puede verla: queda siempre dentro del horizonte.' });
-        nota([zHor], { ancla: polar(-2.2, RS), rotulo: [xI, C[1] - 64], titulo: 'Horizonte de eventos', med: 'hor', dim: [.18, .35],
+        nota(null, { k: 'hor', ancla: polar(-2.2, RS), rotulo: [xI, C[1] - 64], titulo: 'Horizonte de eventos', med: 'hor', dim: [.18, .35],
           dato: 'rₛ = 2GM/c²',
           que: 'La frontera sin retorno: lo que la cruza, ni siquiera la luz, vuelve a salir. No es una superficie material, solo un radio. Para el Sol, rₛ ≈ 3 km.',
           dibujo: 'la línea punteada es rₛ a escala. La sombra negra es unas 2,6 veces mayor (√27 GM/c²) porque la gravedad curva la luz que pasa cerca.',
@@ -678,15 +727,19 @@
             el('circle', { 'class': 'bn-rs', cx: f(C[0]), cy: f(C[1]), r: f(RS), pathLength: 60 }, n);
             var t = el('text', { 'class': 'nota-rot bn-rs-k', x: f(C[0] + RS * .74 + 4), y: f(C[1] + RS * .74 + 9) }, n); t.textContent = 'rₛ';
           } });
-        nota([zHawk], { ancla: polar(-.55, RSH * 1.0), rotulo: [xD, C[1] - RSH * .78], titulo: 'Borde · radiación de Hawking', med: 'hawk', dim: [.18, .35], foco: [capaHawk],
+        nota(null, { k: 'hawk', ancla: buscar('hawk', -.55, RSH * .85, RSH * 1.2), rotulo: [xD, C[1] - RSH * .78], titulo: 'Borde · radiación de Hawking', med: 'hawk', dim: [.18, .35], foco: [capaHawk],
           dato: 'T = ħc³ / 8πGMk_B',
           que: 'Hawking (1974): por efectos cuánticos junto al horizonte, el agujero emite como un cuerpo negro y pierde masa muy despacio. Para una masa solar T ≈ 6 × 10⁻⁸ K; nunca se ha medido.',
           dibujo: 'el filo rojo y las chispas son simbólicos: esa radiación sería invisible.' });
-        nota([zCaida], { ancla: polar(-2.0, RSH * 1.22), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.45, .45],
+        nota(null, { k: 'caida', ancla: buscar('caida', -2.0, RSH * 1.0, RSH * 1.7), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.45, .45],
           dato: 'rₛ < r < 3 rₛ',
           que: 'Entre el borde interno del disco (la órbita estable más interna, ISCO, en 3 rₛ) y el horizonte ya no hay órbitas estables: el gas se precipita en espiral. En la literatura se llama plunging region. Dentro está la esfera de fotones, en 1,5 rₛ, donde la luz puede orbitar.',
-          dibujo: 'el anillo fino entre la sombra y el disco, por donde pasa la luz que rozó la esfera de fotones.' });
-        nota([zDisco, zLente], { ancla: [C[0] + RSH * 2.6, C[1] - RSH * .8], rotulo: [C[0] + RSH * 2.55, C[1] - RSH * .33], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
+          dibujo: 'la franja entre la sombra y el disco. La línea punteada es la esfera de fotones a escala; vista a través de la lente se agranda justo hasta el borde de la sombra.',
+          extra: function (n) {
+            el('circle', { 'class': 'bn-rs', cx: f(C[0]), cy: f(C[1]), r: f(RF), pathLength: 60 }, n);
+            var t = el('text', { 'class': 'nota-rot bn-rs-k', x: f(C[0] - RF * .74 - 4), y: f(C[1] + RF * .74 + 10), 'text-anchor': 'end' }, n); t.textContent = '1,5 rₛ';
+          } });
+        nota(null, { k: 'disco', ancla: buscar('disco', Math.atan2(-.8, 2.6), RSH * 2.2, RSH * 3.2), rotulo: [C[0] + RSH * 2.55, C[1] - RSH * .33], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
           dato: 'r ≥ 3 rₛ (ISCO)',
           que: 'Gas que gira y cae poco a poco; la fricción lo calienta hasta brillar. Por dentro gira más rápido y está más caliente.',
           dibujo: 'el lado que se acerca a nosotros brilla más (Doppler relativista), y el disco de atrás asoma arriba y abajo de la sombra por la lente gravitacional.' });

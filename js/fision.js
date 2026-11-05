@@ -3,7 +3,7 @@
 //      (E* ≈ 6,5 MeV > barrera ≈ 6,2 MeV, valores de Krane) y oscila como una gota líquida.
 //  II  Fisión: n + ²³⁵U → ¹⁴¹Ba + ⁹²Kr + 3n (Q ≈ 173 MeV con las masas atómicas);
 //      los neutrones se evaporan de los fragmentos ya acelerados: ¹⁴²Ba* + ⁹⁴Kr* → ¹⁴¹Ba + ⁹²Kr + 3n..
-//  III Reacción en cadena con alejamiento progresivo de la cámara.
+//  III Reacción en cadena (ν = 2 o 3, k ≈ 1,8) con alejamiento progresivo de la cámara; espacio comprimido.
 //  IV  Cambio de escala hasta la explosión.
 // Todo se pinta en un lienzo 2D (sin filtros por cuadro); el SVG encima solo lleva las notas.
 (function () {
@@ -59,7 +59,7 @@
     var T_CAP = 9.2, ROT = .16, TILT = .38;
     // capítulo II
     var T_P2 = 17, T_SC = 21;
-    var FIN = 30, DUR = 31.6;
+    var T_P3 = 27.8, FIN = 43.4, DUR = 45;
     function angulo(t) { return t < T_CAP ? ROT * t : ROT * T_CAP + ROT * 1.6 * (1 - Math.exp(-(t - T_CAP) / 1.6)); }
     function gira(q, a) {
       var c = Math.cos(a), s = Math.sin(a), x = q[0] * c + q[2] * s, z = -q[0] * s + q[2] * c, y = q[1];
@@ -154,8 +154,62 @@
     function velFr(F, tau) { var u = uDe(tau), v = K_C * R0 * Math.sqrt(Math.max(0, 1 - 1 / u)) * (F.lado < 0 ? AL : AH) / (AH + AL); return enEje(F.lado * v, 0, 0); }
     function formaFr(tau) { return 1 + .18 * Math.exp(-tau / .9) * Math.cos(2 * Math.PI * tau / 1.15); }   // nacen alargados y vibran
 
-    // cámara: se aleja al separarse los fragmentos (escala logarítmica)
-    function escala(t) { var e = suave((t - T_SC - .2) / 7.5); return 19 * Math.pow(4.4 / 19, e); }
+    function posLibre(n, tau) {   // neutrón evaporado: sigue recto con la velocidad del fragmento más la suya
+      var F = fr[n.fr], te = n.emite.t, c0 = centroFr(F, te), v = velFr(F, te), dt = tau - te, a0 = formaFr(te), l0 = enEje(n.loc[0] * a0, n.loc[1] / Math.sqrt(a0), n.loc[2] / Math.sqrt(a0));
+      return [c0[0] + l0[0] + (v[0] + V_N * n.emite.d[0]) * dt, c0[1] + l0[1] + (v[1] + V_N * n.emite.d[1]) * dt, c0[2] + l0[2] + (v[2] + V_N * n.emite.d[2]) * dt];
+    }
+
+    // cámara: escala (px/fm) interpolada en logaritmo entre cuadros clave, con tangentes suaves
+    var CLAVE = [[0, 19], [T_SC, 19], [T_SC + 1.5, 17], [T_SC + 5, 6.5], [T_P3 + .4, 2.3], [T_P3 + 3, 1.25], [T_P3 + 8, .85], [T_P3 + 12, .66], [T_P3 + 15.6, .55], [T_P3 + 30, .3]]
+      .map(function (k) { return [k[0], Math.log(k[1])]; });
+    function escala(t) {
+      var K = CLAVE, i = 0; if (t <= K[0][0]) return Math.exp(K[0][1]);
+      while (i < K.length - 2 && t > K[i + 1][0]) i++;
+      var a = K[i], b = K[i + 1], h = b[0] - a[0], x = cl((t - a[0]) / h, 0, 1);
+      var m = function (j) { var p = K[Math.max(0, j - 1)], q = K[Math.min(K.length - 1, j + 1)]; var d = (q[1] - p[1]) / (q[0] - p[0]); return (j === 0 || j === 1) ? 0 : d; };
+      var m0 = m(i) * h, m1 = m(i + 1) * h, x2 = x * x, x3 = x2 * x;
+      return Math.exp((2 * x3 - 3 * x2 + 1) * a[1] + (x3 - 2 * x2 + x) * m0 + (-2 * x3 + 3 * x2) * b[1] + (x3 - x2) * m1);
+    }
+
+    // ── capítulo III: reacción en cadena ──
+    // Cada fisión libera 2 o 3 neutrones (media 2,4); cada uno vuela una distancia exponencial y, con
+    // probabilidad PF, causa otra fisión; si no, escapa o se absorbe sin fisión. k = 2,4 · PF ≈ 1,8.
+    // Las distancias están comprimidas (en un sólido serían centímetros): se dice en una nota.
+    var CAD = { ev: [], ne: [], campo: [] }, PF = .75, V3 = 26, LAM = 24, MAXEV = 3400, T_FIN3 = T_P3 + 15.2;
+    (function () {
+      var r4 = semilla(131), cola = [];
+      function dir() { var u = r4() * 2 - 1, a = r4() * 2 * Math.PI, w = Math.sqrt(1 - u * u); return [w * Math.cos(a), w * Math.sin(a), u]; }
+      function mete(e) { var i = cola.length; while (i > 0 && cola[i - 1].t > e.t) i--; cola.splice(i, 0, e); }
+      [.6, 1.1, 1.7].forEach(function (dt, i) {   // los tres neutrones del capítulo II encuentran su núcleo
+        var n = libres[i], th = T_P3 + dt; n.golpe = th; mete({ t: th, p: posLibre(n, th - T_SC), g: 1 });
+      });
+      while (cola.length && CAD.ev.length < MAXEV) {
+        var e = cola.shift(); CAD.ev.push(e);
+        var a = r4() * 2 * Math.PI; e.fd = [Math.cos(a), Math.sin(a)];   // eje de los fragmentos
+        var nu = r4() < .4 ? 3 : 2;
+        for (var k = 0; k < nu; k++) {
+          var d = dir(), L = 6 - LAM * Math.log(1 - r4() * .999), t0 = e.t + .15, dest = r4(), fate = dest < PF ? 'f' : dest < PF + .14 ? 'e' : 'a';
+          if (fate === 'e') L = L * 2.5 + 60;
+          var p1 = [e.p[0] + d[0] * L, e.p[1] + d[1] * L, e.p[2] + d[2] * L], t1 = t0 + L / V3;
+          CAD.ne.push({ t0: t0, t1: t1, p0: e.p, p1: p1, fate: fate });
+          if (fate === 'f' && t1 < T_FIN3) mete({ t: t1, p: p1, g: e.g + 1 });
+          if (fate === 'a') CAD.campo.push({ p: p1, t: 1e9, abs: t1 });
+        }
+      }
+      CAD.ev.forEach(function (e) { CAD.campo.push({ p: e.p, t: e.t }); });
+      // núcleos que no participan: dan textura al material y aparecen al alejarse
+      var r5 = semilla(17);
+      for (var i = 0; i < 1500; i++) {
+        var rr = 40 + r5() * 640, aa = r5() * 2 * Math.PI, zz = (r5() * 2 - 1) * 200;
+        CAD.campo.push({ p: [Math.cos(aa) * rr, Math.sin(aa) * rr * .8, zz], t: 1e9, bg: true });
+      }
+      CAD.gen = 0; CAD.ev.forEach(function (e) { CAD.gen = Math.max(CAD.gen, e.g); });
+      CAD.campo.forEach(function (c) { var z = Math.abs(c.p[2]); c.b = c.bg ? (z < 120 ? 1 : 2) : (z < 150 ? 0 : 1); });
+      CAD.ne.forEach(function (n) { n.L = Math.hypot(n.p1[0] - n.p0[0], n.p1[1] - n.p0[1]) || 1; });
+      CAD.abs = CAD.ne.filter(function (n) { return n.fate === 'a'; });
+    })();
+    function generacion(t) { var g = 0; for (var i = 0; i < CAD.ev.length && CAD.ev[i].t <= t; i++) g = Math.max(g, CAD.ev[i].g); return g; }
+    function fisiones(t) { var lo = 0, hi = CAD.ev.length; while (lo < hi) { var m = (lo + hi) >> 1; if (CAD.ev[m].t <= t) lo = m + 1; else hi = m; } return lo; }
 
     // ── notas: punto, guía que se dibuja, regla, rótulo, título y texto ──
     var notas = [];
@@ -207,10 +261,16 @@
       d: ['Los fragmentos nacen excitados y', 'evaporan neutrones casi al instante:', '¹⁴²Ba → ¹⁴¹Ba + n, ⁹⁴Kr → ⁹²Kr + 2n.', 'En promedio salen ν ≈ 2,4 por fisión;', 'después, rayos γ (≈ 8 fotones, 7 MeV).'] });
     var nE = en(ABA, { k: 'Balance de masa', tit: 'Δm c² ≈ 173 MeV',
       d: ['¹⁴¹Ba + ⁹²Kr + 3n pesan 0,186 u menos', 'que n + ²³⁵U. Con los decaimientos β', 'que siguen, cada fisión libera ≈ 200 MeV', 'y unos 6 antineutrinos: los que miden', 'los detectores junto a los reactores.'] });
-    var AGENDA = [[nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, 18, 22], [nF, 21.8, 27], [nP, 23, 29.2], [nE, 26, FIN]];
+    var nK = en(DER, { k: 'Reacción en cadena', tit: 'Factor de multiplicación k',
+      d: ['Cada fisión libera 2 o 3 neutrones; unos', 'escapan, otros se absorben sin fisionar.', 'k es cuántos causan, en promedio, una', 'nueva fisión. Si k > 1 la población crece', 'como N ≈ kᵍ por generación g.'] });
+    var nX = en(ARR, { k: 'Fuera de escala', tit: 'El espacio está comprimido',
+      d: ['En un sólido los núcleos distan ~10⁻¹⁰ m', 'y un neutrón recorre del orden de', 'centímetros entre choques: unas 10¹²', 'veces el tamaño del núcleo. Aquí las', 'distancias se acortan para poder verlo.'] });
+    var nW = en(ABA, { k: 'Energía', tit: '≈ 200 MeV por fisión',
+      d: ['Son 3,2 × 10⁻¹¹ J: muy poco. Un', 'kilotón de TNT (4,184 × 10¹² J) equivale', 'a ≈ 1,3 × 10²³ fisiones, 23 órdenes de', 'magnitud más que este destello.'] });
+    var AGENDA = [[nK, T_P3 + 1.6, T_P3 + 8], [nX, T_P3 + 4.6, T_P3 + 11], [nW, T_P3 + 8.6, FIN], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, 18, 22], [nF, 21.8, 27], [nP, 23, 28.6], [nE, 25.4, T_P3 + 1.4]];
 
     // ── capítulos ──
-    var CAPS = [['I', 'Captura', 0], ['II', 'Fisión', T_P2], ['III', 'Cadena', null], ['IV', 'Escala', null]];
+    var CAPS = [['I', 'Captura', 0], ['II', 'Fisión', T_P2], ['III', 'Cadena', T_P3], ['IV', 'Escala', null]];
     var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Capítulos de la animación');
     CAPS.forEach(function (c) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fz-cap' + (c[2] == null ? ' fz-pronto' : '');
@@ -224,7 +284,8 @@
     function salta(t) { T = t; notas.forEach(function (n) { n.pon(false); }); }
     function reinicia() { salta(0); }
     var fijo = false;
-    fig.fzSalta = salta; fig.fzFija = function (t) { salta(t); fijo = true; };   // para capturas
+    fig.fzInfo = function () { return { ev: CAD.ev.length, ne: CAD.ne.length, gen: CAD.gen, tUlt: CAD.ev[CAD.ev.length - 1].t, campo: CAD.campo.length }; };
+    fig.fzSalta = salta; fig.fzFija = function (t) { salta(t); fijo = true; }; fig.fzSuelta = function () { fijo = false; };   // para capturas
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.fzOn) reinicia(); fig.fzOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
 
     function aPantalla(q) { return [CAM.x + q[0] * CAM.s, CAM.y + q[1] * CAM.s]; }
@@ -267,13 +328,87 @@
         F.c = c;
         F.m.forEach(function (n) {
           var j = jit(n, t, ampF), loc = enEje(n.loc[0] * a, n.loc[1] * ia, n.loc[2] * ia);
-          if (n.emite && tau > n.emite.t) {   // neutrón evaporado: sigue recto con la velocidad del fragmento más la suya
-            var te = n.emite.t, c0 = centroFr(F, te), v = velFr(F, te), dt = tau - te, a0 = formaFr(te), l0 = enEje(n.loc[0] * a0, n.loc[1] / Math.sqrt(a0), n.loc[2] / Math.sqrt(a0));
-            n.x = c0[0] + l0[0] + (v[0] + V_N * n.emite.d[0]) * dt; n.y = c0[1] + l0[1] + (v[1] + V_N * n.emite.d[1]) * dt; n.z = c0[2] + l0[2] + (v[2] + V_N * n.emite.d[2]) * dt;
-          } else { n.x = c[0] + loc[0] + j[0]; n.y = c[1] + loc[1] + j[1]; n.z = c[2] + loc[2] + j[2]; }
           n.vis = 1;
+          if (n.emite && tau > n.emite.t) { var pl = posLibre(n, tau); n.x = pl[0]; n.y = pl[1]; n.z = pl[2]; if (t > n.golpe) n.vis = 0; }
+          else { n.x = c[0] + loc[0] + j[0]; n.y = c[1] + loc[1] + j[1]; n.z = c[2] + loc[2] + j[2]; n.vis = 1 - suave((t - T_P3 - 1) / 2.5); }
         });
       });
+    }
+
+    // sprites del capítulo III: núcleo pequeño (bolitas) y destello cálido
+    var LUZ = (function () {
+      var S = 128, c = document.createElement('canvas'); c.width = c.height = S; var x = c.getContext('2d'), g = x.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+      g.addColorStop(0, 'rgba(255,244,214,1)'); g.addColorStop(.12, 'rgba(252,214,140,.95)'); g.addColorStop(.35, 'rgba(236,150,60,.45)'); g.addColorStop(.7, 'rgba(214,110,40,.12)'); g.addColorStop(1, 'rgba(214,110,40,0)');
+      x.fillStyle = g; x.fillRect(0, 0, S, S); return c;
+    })();
+    function cadena(t, vb, fundido) {
+      // todo se agrupa en pocos trazos (un camino por tono) para que miles de puntos cuesten poco
+      var s = CAM.s, x0 = vb.x - 20, x1 = vb.x + vb.width + 20, y0 = vb.y - 20, y1 = vb.y + vb.height + 20, i, k, P;
+      var aparece = suave((t - (T_P3 - 3)) / 3);
+      function dentro(P, m) { return P[0] > x0 - m && P[0] < x1 + m && P[1] > y0 - m && P[1] < y1 + m; }
+      // material: núcleos de uranio en espera, como un punteado fino de tinta (a esta escala son puntos)
+      var rd = cl(RU * s * .25, .7, 1.8), tonos = [.42, .3, .17];
+      ctx.fillStyle = '#5A2A20';
+      for (k = 0; k < 3; k++) {
+        ctx.globalAlpha = fundido * aparece * tonos[k]; ctx.beginPath();
+        for (i = 0; i < CAD.campo.length; i++) {
+          var c = CAD.campo[i]; if (c.b !== k || t >= c.t) continue;
+          P = aPantalla(c.p); if (!dentro(P, 0)) continue;
+          ctx.moveTo(P[0] + rd, P[1]); ctx.arc(P[0], P[1], rd, 0, 2 * Math.PI);
+        }
+        ctx.fill();
+      }
+      // neutrones en vuelo: estela corta y punto crema con borde de tinta
+      ctx.globalAlpha = fundido; ctx.lineWidth = .8; ctx.strokeStyle = 'rgba(30,26,22,.38)'; ctx.beginPath();
+      var puntos = [];
+      for (i = 0; i < CAD.ne.length; i++) {
+        var n = CAD.ne[i]; if (t < n.t0 || t > n.t1) continue;
+        var u = (t - n.t0) / (n.t1 - n.t0), px = n.p0[0] + (n.p1[0] - n.p0[0]) * u, py = n.p0[1] + (n.p1[1] - n.p0[1]) * u;
+        P = aPantalla([px, py]); if (!dentro(P, 0)) continue;
+        var ub = Math.max(0, u - 9 / n.L), Q = aPantalla([n.p0[0] + (n.p1[0] - n.p0[0]) * ub, n.p0[1] + (n.p1[1] - n.p0[1]) * ub]);
+        ctx.moveTo(Q[0], Q[1]); ctx.lineTo(P[0], P[1]); puntos.push(P);
+      }
+      ctx.stroke();
+      var rp = Math.max(1.1, rN * s * .9);
+      ctx.beginPath(); for (i = 0; i < puntos.length; i++) { ctx.moveTo(puntos[i][0] + rp, puntos[i][1]); ctx.arc(puntos[i][0], puntos[i][1], rp, 0, 2 * Math.PI); }
+      ctx.fillStyle = '#F3EBDC'; ctx.fill(); ctx.lineWidth = .6; ctx.strokeStyle = 'rgba(30,26,22,.6)'; ctx.stroke();
+      // absorciones sin fisión: un anillo gris breve
+      ctx.strokeStyle = 'rgba(110,100,90,.45)'; ctx.lineWidth = .7; ctx.beginPath();
+      for (i = 0; i < CAD.abs.length; i++) {
+        var a = CAD.abs[i]; if (t < a.t1 || t > a.t1 + .6) continue;
+        P = aPantalla(a.p1); if (!dentro(P, 0)) continue;
+        var ra = rd + 2 + (t - a.t1) / .6 * 8; ctx.moveTo(P[0] + ra, P[1]); ctx.arc(P[0], P[1], ra, 0, 2 * Math.PI);
+      }
+      ctx.stroke();
+      // fisiones recientes (las más nuevas primero): destello cálido y dos fragmentos que se separan
+      var fin = fisiones(t), ini = fisiones(t - 1.6), dib = 0, sx = 0, sy = 0, cuenta = 0, frag = [[], [], [], []];
+      for (i = fin - 1; i >= ini; i--) {
+        var e = CAD.ev[i], de = t - e.t;
+        P = aPantalla(e.p); if (!dentro(P, 60)) continue;
+        if (cuenta < 400) { sx += P[0]; sy += P[1]; cuenta++; }
+        if (de < .9 && dib < 160) { dib++; var rl = (RU * 2.2 * s + 10) * (.6 + de * .9), al2 = (1 - de / .9); ctx.globalAlpha = fundido * al2 * al2 * .9; ctx.drawImage(LUZ, P[0] - rl, P[1] - rl, 2 * rl, 2 * rl); }
+        frag[Math.min(3, Math.floor(de / .4))].push(P, e.fd, de);
+      }
+      var rf = Math.max(.8, RU * .4 * s);
+      ctx.fillStyle = '#7A2E22';
+      frag.forEach(function (L, b) {
+        ctx.globalAlpha = fundido * .5 * (1 - (b + .5) / 4); ctx.beginPath();
+        for (var j = 0; j < L.length; j += 3) {
+          var Q = L[j], d = L[j + 1], dfr = (2 + L[j + 2] * 30) * s;
+          ctx.moveTo(Q[0] + d[0] * dfr * .8 + rf, Q[1] + d[1] * dfr * .8); ctx.arc(Q[0] + d[0] * dfr * .8, Q[1] + d[1] * dfr * .8, rf, 0, 2 * Math.PI);
+          ctx.moveTo(Q[0] - d[0] * dfr * 1.2 + rf, Q[1] - d[1] * dfr * 1.2); ctx.arc(Q[0] - d[0] * dfr * 1.2, Q[1] - d[1] * dfr * 1.2, rf * .85, 0, 2 * Math.PI);
+        }
+        ctx.fill();
+      });
+      // brillo de conjunto: crece con el número de fisiones recientes
+      var nAct = fin - ini;
+      if (nAct > 4 && cuenta) {
+        var I = Math.min(1, Math.log(nAct) / Math.log(900)), cx = sx / cuenta, cy = sy / cuenta, R = 60 + 260 * I;
+        ctx.globalAlpha = fundido * .55 * I; ctx.drawImage(LUZ, cx - R, cy - R, 2 * R, 2 * R);
+        CAD.cx = cx; CAD.cy = cy;
+      }
+      ctx.globalAlpha = fundido;
+      CAD.act = nAct;
     }
 
     function dibuja(t) {
@@ -321,19 +456,20 @@
       }
       // neutrones evaporados: halo dorado y estela recta desde donde salieron
       if (tau > 0) libres.forEach(function (n) {
-        if (tau < n.emite.t) return;
+        if (tau < n.emite.t || t > n.golpe) return;
         var P = aPantalla([n.x, n.y]), F = fr[n.fr], te = n.emite.t, c0 = centroFr(F, te), P0 = aPantalla(c0), s = cl((tau - te) / .4, 0, 1);
         var lx = P[0] - P0[0], ly = P[1] - P0[1], ll = Math.hypot(lx, ly) || 1, lc = Math.min(ll, 230); P0 = [P[0] - lx / ll * lc, P[1] - ly / ll * lc];
         var gt2 = ctx.createLinearGradient(P0[0], P0[1], P[0], P[1]); gt2.addColorStop(0, 'rgba(30,26,22,0)'); gt2.addColorStop(1, 'rgba(30,26,22,.42)');
         ctx.strokeStyle = gt2; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(P0[0], P0[1]); ctx.lineTo(P[0], P[1]); ctx.stroke();
         brillo(P[0], P[1], rN * CAM.s * .5, rN * CAM.s * 2.8 + 4, '226,170,90', .5 * s);
       });
+      if (t > T_P3 - 3) cadena(t, vb, fundido);
       // nucleones, de atrás hacia adelante
       var ord = nuc.slice().sort(function (p, q) { return p.z - q.z; });
       for (var j = 0; j < ord.length; j++) {
         var m = ord[j]; if (!m.vis) continue;
         var pz = 1 + m.z * .012, r = rN * CAM.s * pz, P = aPantalla([m.x, m.y]);
-        if (P[0] < vb.x - r || P[0] > vb.x + vb.width + r || P[1] < vb.y - r || P[1] > vb.y + vb.height + r) continue;
+        if (m.vis <= 0 || P[0] < vb.x - r || P[0] > vb.x + vb.width + r || P[1] < vb.y - r || P[1] > vb.y + vb.height + r) continue;
         ctx.globalAlpha = fundido * m.vis * (.78 + .22 * cl(.5 + m.z / (2 * RU), 0, 1));
         ctx.drawImage(m.p ? SPR.p : SPR.n, P[0] - r, P[1] - r, 2 * r, 2 * r);
       }
@@ -381,8 +517,15 @@
         nP.ubica(pL[0] + rL * .2, pL[1] + rL * .95);
       }
       nE.ubica(C[0], C[1] + 4);
+      if (t > T_P3) {
+        var e0 = CAD.ev[0], P3 = aPantalla(e0.p); nK.ubica(P3[0], P3[1]);
+        var e1 = CAD.ev[Math.min(CAD.ev.length - 1, 40)], P4 = aPantalla(e1.p); nX.ubica(P4[0], P4[1]);
+        var e2 = CAD.ev[Math.min(CAD.ev.length - 1, fisiones(T_P3 + 8.6) - 1)], P5 = aPantalla(e2.p); nW.ubica(P5[0], P5[1]);
+      }
     }
 
+    function eV(x) { var u = ['eV', 'keV', 'MeV', 'GeV', 'TeV', 'PeV', 'EeV'], k = 0; while (x >= 1000 && k < u.length - 1) { x /= 1000; k++; } return coma(x, x < 10 ? 1 : 0) + ' ' + u[k]; }
+    function cientifica(x) { var e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e); return coma(m, 1) + ' × 10' + String(e).replace('-', '⁻').replace(/\d/g, function (d) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]; }); }
     function coma(x, d) { return x.toFixed(d).replace('.', ',').replace('-', '−'); }
     function lecturas(t) {
       var tau = t - T_SC;
@@ -392,6 +535,9 @@
       else if (t < T_SC) {
         var sH = 0, sL = 0; fr.H.m.forEach(function (n) { sH += n.x * EJE[0] + n.y * EJE[1]; }); fr.L.m.forEach(function (n) { sL += n.x * EJE[0] + n.y * EJE[1]; });
         salida('U-236* · se forma el cuello', 'distancia entre centros ≈ ' + coma(sL / fr.L.m.length - sH / fr.H.m.length, 1) + ' fm');
+      } else if (t >= T_P3 + .6) {
+        var nf = fisiones(t);
+        salida('generación ' + generacion(t) + ' · k ≈ 1,8', 'fisiones: ' + nf + ' · energía ≈ ' + eV(nf * 200e6));
       } else {
         var u = uDe(tau), q = Math.sqrt(Math.max(0, 1 - 1 / u)), nl = libres.filter(function (n) { return tau > n.emite.t; }).length, ng = fotones.filter(function (g) { return tau > g.t; }).length;
         salida('E cinética ≈ ' + coma(EK * (1 - 1 / u), 0) + ' MeV · d ≈ ' + coma(R0 * u, 0) + ' fm',
@@ -408,7 +554,7 @@
       });
     }
     function ecuacion(t) {
-      var e = t < T_SC ? 'n + <sup>235</sup>U → <sup>236</sup>U<sup>*</sup>' : 'n + <sup>235</sup>U → <sup>141</sup>Ba + <sup>92</sup>Kr + 3n';
+      var e = t < T_SC ? 'n + <sup>235</sup>U → <sup>236</sup>U<sup>*</sup>' : t < T_P3 + .6 ? 'n + <sup>235</sup>U → <sup>141</sup>Ba + <sup>92</sup>Kr + 3n' : 'N<sub>g</sub> ≈ k<sup>g</sup>, &nbsp;k > 1';
       if (ec && e !== ecAct) { ecAct = e; ec.innerHTML = e; }
     }
 

@@ -181,18 +181,18 @@
     'vec4 patron(float r, vec2 cs, float fr, float fa) {',
     '  float s1 = ruido(vec3(cs * 2.2, r * 3.0));',
         // donde la órbita se ve de canto (puntas del disco) un píxel abarca mucho ángulo: ahí la ondulación de las rayas se apaga y quedan anillos lisos
-    '  float lisa = 1.0 - smoothstep(.015, .06, fa);',
+    '  float lisa = 1.0;',
     '  float f1 = r / .11 + (ruido(vec3(cs * 1.4, r * .8 + 2.0)) - .5) * 1.6 * lisa, f2 = r / .05 + (ruido(vec3(cs * 2.6 + 5.0, r * 1.7)) - .5) * 3.0 * lisa;',
-    '  float w2 = 1.0 - smoothstep(.22, .42, fr / .11), w3 = (1.0 - smoothstep(.22, .42, fr / .05)) * (.35 + .65 * lisa);',
+    '  float w2 = 1.0 - smoothstep(.22, .42, fr / .11), w3 = 1.0 - smoothstep(.22, .42, fr / .05);',
     '  float tr = (s1 - .5) * .7 + cos(6.2832 * f1) * .38 * w2 + cos(6.2832 * f2) * .3 * w3;',
     '  float n = ruido(vec3(cs * 1.6, r * 1.3 + 5.0)), flec = ruido(vec3(cs * 3.0, 2.0)) - .5, h1, h2;',
     // cada corte vive en un anillo; su borde radial se suaviza un píxel (antes era un escalón y salían cuadritos) y el corte
     // desaparece del todo antes de que su anillo mida menos de ~5 px o de que el corte, a lo largo de la órbita, quepa en pocos píxeles
     // (en las puntas del disco la órbita se ve de canto y los cortes se volvían puntos oscuros)
     '  { float y = r * 5.0, kb = floor(y), N = 2.0 + 4.0 * hash(vec3(kb, 3.0, 1.0)), e = min(fract(y), 1.0 - fract(y)) * .2;',
-    '    h1 = smoothstep(.69, .75, ruido(vec3(cs * N + hash(vec3(kb, 8.0, 2.0)) * 40.0, kb * 1.7))) * smoothstep(.0, fr * 1.2, e) * smoothstep(5.0, 9.0, .2 / fr) * (1.0 - smoothstep(.02, .05, N * fa)); }',
+    '    h1 = smoothstep(.69, .75, ruido(vec3(cs * N + hash(vec3(kb, 8.0, 2.0)) * 40.0, kb * 1.7))) * smoothstep(.0, fr * .5, e) * smoothstep(3.0, 6.0, .2 / fr) * (1.0 - smoothstep(.08, .2, N * fa)); }',
     '  { float y = r * 9.0 + .5, kb = floor(y), N = 4.0 + 7.0 * hash(vec3(kb, 5.0, 4.0)), e = min(fract(y), 1.0 - fract(y)) * .111;',
-    '    h2 = smoothstep(.73, .79, ruido(vec3(cs * N + hash(vec3(kb, 1.0, 6.0)) * 40.0, kb * 2.3 + 7.0))) * smoothstep(.0, fr * 1.2, e) * smoothstep(5.0, 9.0, .111 / fr) * (1.0 - smoothstep(.02, .05, N * fa)); }',
+    '    h2 = smoothstep(.73, .79, ruido(vec3(cs * N + hash(vec3(kb, 1.0, 6.0)) * 40.0, kb * 2.3 + 7.0))) * smoothstep(.0, fr * .5, e) * smoothstep(3.0, 6.0, .111 / fr) * (1.0 - smoothstep(.08, .2, N * fa)); }',
     '  return vec4(tr, n, flec, max(h1, h2 * .9)); }',
     'vec4 disco(vec3 p, vec3 v, float hay) {',
     '  float r = max(length(p.xz), 2.5), ph = atan(p.z, p.x), b = sqrt(1.0 / max(r - 2.0, .05)); vec3 t = normalize(vec3(-p.z, 0.0, p.x) + 1e-5); vec3 vd = normalize(v + 1e-5);',
@@ -201,8 +201,9 @@
     // bucle perfecto de 40 s: cada anillo da un número entero de vueltas por ciclo (más adentro, más vueltas, como Kepler),
     // así el último cuadro es idéntico al primero y los trazos nunca se enrollan; entre dos anillos vecinos se funde en una franja fina
     '  float x = 10.8 * pow(6.0 / r, 1.5), nA = floor(x), fx = x - nA, wB = smoothstep(.44, .56, fx), ang = 6.2832 * uTD / 40.0;',
-    '  vec4 P = patron(r, vec2(cos(ph - nA * ang), sin(ph - nA * ang)), fr, fa);',
-    '  if (wB > 0.0) P = mix(P, patron(r, vec2(cos(ph - (nA + 1.0) * ang), sin(ph - (nA + 1.0) * ang)), fr, fa), wB);',
+    '  float q0 = ph - 1.7 * pow(6.0 / r, 1.5) * 30.0;',   // desfase fijo entre órbitas: trazos finos y nítidos que no crecen con el tiempo
+    '  vec4 P = patron(r, vec2(cos(q0 - nA * ang), sin(q0 - nA * ang)), fr, fa);',
+    '  if (wB > 0.0) P = mix(P, patron(r, vec2(cos(q0 - (nA + 1.0) * ang), sin(q0 - (nA + 1.0) * ang)), fr, fa), wB);',
     '  float tr = P.x, n = P.y, flec = P.z, hueco = P.w;',
     '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
     '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',

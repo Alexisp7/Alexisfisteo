@@ -1246,7 +1246,7 @@
     // efusión real: cada átomo sale de la boca de la boquilla (x = −57) en su propia dirección recta.
     // Las dos rendijas (|z − ZB| < 0,7 en x = −46 y x = −36) frenan a los que vienen inclinados;
     // solo pasan los casi paralelos al eje. En y la ranura es larga: el haz sale como un abanico plano.
-    var K = 11, X0H = -57, enVuelo = [], arriba = 0, abajo = 0, acum = 0, acumB = 0, PLACAS = [-46, -36];
+    var K = 13, X0H = -57, enVuelo = [], arriba = 0, abajo = 0, acum = 0, acumB = 0, PLACAS = [-46, -36];
     function atomoNuevo() {
       var a = el('g', { 'class': 'atomo' }, vuelo[0]);
       el('circle', { 'class': 'atomo-b', r: 2.1 }, a);
@@ -1255,7 +1255,8 @@
       return { el: a, fl: fl, fl2: fl2, x: X0H, tramo: 0, def: false, alto: 999 };
     }
     function lanzar() {
-      var w2 = -Math.log(Math.random() * Math.random() + 1e-9), sy = (Math.random() * 2 - 1) * .1, ym = sy * (10 - X0H);
+      var w2; do w2 = -Math.log(Math.random() * Math.random() + 1e-9); while (w2 > 2.4);   // sin la cola de los más rápidos, que casi no se desvían: así se ve el hueco entre las dos manchas
+      var sy = (Math.random() * 2 - 1) * .1, ym = sy * (10 - X0H);
       var a = atomoNuevo();
       a.sgn = Math.random() < .5 ? 1 : -1; a.sy = sy; a.sz = (Math.random() * 2 - 1) * .012; a.v = Math.sqrt(w2);
       a.dz = a.sgn * K * (1 - (ym / 9.5) * (ym / 9.5)) / Math.max(w2, .7);
@@ -1311,8 +1312,7 @@
           }
           a.el.setAttribute('transform', 'translate(' + f(q2[0] + jx) + ' ' + f(q2[1] + jy) + ')');
         }
-        var n = arriba + abajo;
-        salida('N↑ = ' + arriba + '   N↓ = ' + abajo, n ? 'P(↑) = ' + (arriba / n).toFixed(2).replace('.', ',') + ' · dos manchas, no una banda' : 'esperando átomos…');
+        salida('', '');
       }
     };
   }
@@ -1396,6 +1396,34 @@
   var activo = 0;
   function salida(i) { return function (a, b) { if (i === activo) { lect1.textContent = a; lect2.textContent = b; } }; }
   var mods = [escenaRelatividad, escenaSternGerlach, escenaProblemas].map(function (fn, i) { var sv = escenas[i].querySelector('svg'), m = fn(sv, salida(i)); if (m.notas) m.notas(); return m; });
+  // Stern–Gerlach: al pasar por Fz la escena se apaga y aparece el cálculo completo, de Schrödinger a las dos manchas
+  (function () {
+    var ec = raiz.querySelector('.mc-ec[data-ec="1"]'); if (!ec) return;
+    var fr = function (a, b) { return '<span class="sg-fr"><span>' + a + '</span><span>' + b + '</span></span>'; };
+    var m2 = function (a, b, c, d) { return '<span class="sg-m"><i>' + a + '</i><i>' + b + '</i><i>' + c + '</i><i>' + d + '</i></span>'; };
+    var v2 = function (a, b) { return '<span class="sg-m sg-v"><i>' + a + '</i><i>' + b + '</i></span>'; };
+    var paso = function (n, t, cuerpo) { return '<section class="sg-paso"><p class="sg-n"><b>' + n + '</b>' + t + '</p>' + cuerpo + '</section>'; };
+    var eq = function (x) { return '<p class="sg-eq">' + x + '</p>'; };
+    var tx = function (x) { return '<p class="sg-tx">' + x + '</p>'; };
+    var px = document.createElement('div'); px.className = 'sgx'; px.setAttribute('aria-hidden', 'true');
+    px.innerHTML = '<header class="sg-cab"><p class="bn-ecx-k">Del espín a las dos manchas</p><p class="sg-tit">Schrödinger con un campo no uniforme</p></header><div class="sg-rejilla">' +
+      paso('1', 'Ecuación de Schrödinger', eq('iħ ' + fr('∂', '∂t') + ' Ψ = Ĥ Ψ') + eq('Ψ(<b>r</b>, t) = ' + v2('ψ<sub>↑</sub>', 'ψ<sub>↓</sub>')) +
+        tx('El átomo de plata tiene espín ½: su función de onda es un espinor de dos componentes, una por cada proyección de S<sub>z</sub>.')) +
+      paso('2', 'Hamiltoniano de interacción', eq('Ĥ = ' + fr('p̂²', '2m') + ' − <b>μ̂</b>·<b>B</b>') + eq('<b>μ̂</b> = −g<sub>s</sub>μ<sub>B</sub> ' + fr('<b>Ŝ</b>', 'ħ') + ' ≈ −μ<sub>B</sub> <b>σ̂</b>') +
+        tx('El momento magnético es el del único electrón externo (g<sub>s</sub> ≈ 2). μ<sub>B</sub> = eħ/2m<sub>e</sub> es el magnetón de Bohr.')) +
+      paso('3', 'Campo del entrehierro', eq('<b>B</b> ≈ (B<sub>0</sub> + b z) <b>ẑ</b>,&nbsp; b = ' + fr('∂B<sub>z</sub>', '∂z')) + eq('Ĥ = ' + fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ' + m2('1', '0', '0', '−1')) +
+        tx('Las componentes transversales que exige ∇·<b>B</b> = 0 se promedian a cero: el espín precesa muy rápido alrededor de B<sub>0</sub>.')) +
+      paso('4', 'Se desacopla en dos ecuaciones', eq('iħ ∂<sub>t</sub>ψ<sub>↑</sub> = [ ' + fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ] ψ<sub>↑</sub>') + eq('iħ ∂<sub>t</sub>ψ<sub>↓</sub> = [ ' + fr('p̂²', '2m') + ' − μ<sub>B</sub>(B<sub>0</sub> + b z) ] ψ<sub>↓</sub>') +
+        tx('Ĥ es diagonal en la base de σ̂<sub>z</sub>: cada componente siente su propio potencial lineal, V<sub>±</sub> = ±μ<sub>B</sub>(B<sub>0</sub> + b z).')) +
+      paso('5', 'Estados propios y fuerza', eq('|↑⟩ = ' + v2('1', '0') + ',&nbsp; |↓⟩ = ' + v2('0', '1') + ',&nbsp; E<sub>±</sub> = ±μ<sub>B</sub>B<sub>0</sub>') + eq(fr('d⟨p<sub>z</sub>⟩', 'dt') + ' = −' + fr('∂V<sub>±</sub>', '∂z') + ' = ∓ μ<sub>B</sub> b') +
+        tx('Por Ehrenfest, el centro de cada paquete se acelera como una partícula clásica, pero con solo dos fuerzas posibles, iguales y opuestas.')) +
+      paso('6', 'Solución: el haz se parte', eq('Ψ(0) = φ(<b>r</b>) ( α|↑⟩ + β|↓⟩ )') + eq('⟶ Ψ(t) = α φ<sub>↑</sub>(<b>r</b>, t)|↑⟩ + β φ<sub>↓</sub>(<b>r</b>, t)|↓⟩') + eq('⟨z⟩<sub>±</sub>(t) = z<sub>0</sub> ∓ ' + fr('μ<sub>B</sub> b', '2m') + ' t²,&nbsp; Δz = ' + fr('μ<sub>B</sub> b L²', 'm v²')) +
+        tx('Dentro del imán (largo L, tiempo L/v) los dos paquetes se alejan Δz. Con valores del orden de 1922 (b ≈ 10 T/cm, L ≈ 3,5 cm, v ≈ 500 m/s), Δz ≈ 0,25 mm. Cada átomo cae en una sola mancha, con probabilidad |α|² o |β|².')) +
+      '</div>';
+    raiz.appendChild(px);
+    ec.addEventListener('pointerenter', function () { raiz.classList.add('sg-ec'); });
+    ec.addEventListener('pointerleave', function () { raiz.classList.remove('sg-ec'); });
+  })();
   // guía: una barra de luz que se desliza hasta el título activo
   var guia = raiz.querySelector('.mc-guia');
   function guiar() {

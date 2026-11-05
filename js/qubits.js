@@ -89,9 +89,9 @@
     // ola de medición ligada al scroll (data-ola): al bajar, un frente sale del
     // medidor y mide las esferas a su paso; al subir se deshace. Avanza suave,
     // siguiendo al scroll con retraso, para que se vea lenta pero fluida
-    var ola = canvas.hasAttribute('data-ola') && !still, olaMeta = 0, olaP = 0, BANDA = 140;
+    var ola = canvas.hasAttribute('data-ola') && !still, olaMeta = 0, olaP = 0, BANDA = 140, altoSec = 1;
     function olaObjetivo() {
-      var recorrido = Math.max(1, section.offsetHeight * 0.75);
+      var recorrido = Math.max(1, altoSec * 0.75);
       return Math.max(0, Math.min(1, window.scrollY / recorrido));
     }
     // extremos de la zona libre a la altura y
@@ -113,7 +113,7 @@
       canvas.style.height = h + 'px';
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      qubits = []; current = [];
+      qubits = []; current = []; sprites = {}; escala = dpr; altoSec = section.offsetHeight; olaO = null;
       var boxes = blockers();
       var lineEl = lineSel && section.querySelector(lineSel);
       lineY = lineEl ? Math.round(lineEl.getBoundingClientRect().top - section.getBoundingClientRect().top) + 0.5 : null;
@@ -137,6 +137,41 @@
           });
         }
       }
+      pintarBase(dpr);
+    }
+
+    // El cuerpo de cada esfera (contorno y ecuador) no cambia nunca: solo se
+    // mueve la flecha. Por eso las esferas en reposo se dibujan una sola vez
+    // en una capa aparte, y cada cuadro solo copia esa capa y traza las
+    // flechas. Las esferas encendidas, medidas o tocadas por la ola usan una
+    // plantilla ya dibujada de su color (un sello por estilo).
+    var base = document.createElement('canvas'), bctx = base.getContext('2d');
+    var sprites = {}, escala = 1, S = R + 2;
+    function cuerpo(c, x, y) {
+      c.beginPath();
+      c.moveTo(x + R, y); c.arc(x, y, R, 0, TAU);
+      c.moveTo(x + R, y); c.ellipse(x, y, R, R * 0.3, 0, 0, Math.PI);
+      c.stroke();
+      c.setLineDash([1.4, 1.6]); c.beginPath();
+      c.moveTo(x - R, y); c.ellipse(x, y, R, R * 0.3, 0, Math.PI, TAU);
+      c.stroke(); c.setLineDash([]);
+    }
+    function pintarBase(dpr) {
+      base.width = canvas.width; base.height = canvas.height;
+      bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      bctx.strokeStyle = 'rgba(' + GOLD + ',0.60)'; bctx.lineWidth = 0.85;
+      for (var i = 0; i < qubits.length; i++) cuerpo(bctx, qubits[i].x, qubits[i].y);
+    }
+    function sello(clave, color, lw) {
+      var sp = sprites[clave];
+      if (sp) return sp;
+      sp = sprites[clave] = document.createElement('canvas');
+      sp.width = sp.height = Math.ceil(2 * S * escala);
+      var c = sp.getContext('2d');
+      c.setTransform(escala, 0, 0, escala, 0, 0);
+      c.strokeStyle = color; c.lineWidth = lw;
+      cuerpo(c, S, S);
+      return sp;
     }
 
     function nearest(px, py, count) {
@@ -407,18 +442,18 @@
       q.theta = q.theta0; q.phi = q.phi0;
     }
 
+    var olaO = null, REPOSO = GOLD + '|0.60|0.85', C5 = Math.cos(0.5), S5 = Math.sin(0.5);
     function draw(dt) {
-      ctx.clearRect(0, 0, w, h);
-      var span = lineY !== null && spanAt(lineY);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(base, 0, 0);
+      ctx.setTransform(escala, 0, 0, escala, 0, 0);
+      var span = lineY !== null && spanAt(lineY), half = 0;
       if (span) {
-        ctx.strokeStyle = LINE; ctx.lineWidth = 1;
-        var half = Math.min(105, (span[1] - span[0]) / 2 - 16);
+        half = Math.min(105, (span[1] - span[0]) / 2 - 16);
         lineHalf = half;
         if (!drag) meterOff += ((anclado ? half - 15 : 0) - meterOff) * (still ? 1 : Math.min(1, dt / 220));
         meterOff = Math.max(-(half - 15), Math.min(half - 15, meterOff));
-        ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
-        var sup = drawTally(half, dt, performance.now());
-        drawMeter(performance.now(), sup);
       }
       var now = performance.now();
       var oX = w / 2 + meterOff, oY = lineY !== null ? lineY : h / 2, oD = 0;
@@ -426,9 +461,13 @@
         olaP += (olaMeta - olaP) * Math.min(1, dt / 520);   // sigue al scroll con inercia
         if (Math.abs(olaMeta - olaP) < 0.0005) olaP = olaMeta;
         // el frente parte desde la esfera más cercana al medidor y termina en la más lejana
-        var dMin = Infinity, dMax = 0;
-        for (var j = 0; j < qubits.length; j++) { var dj = Math.hypot(qubits[j].x - oX, qubits[j].y - oY); if (dj < dMin) dMin = dj; if (dj > dMax) dMax = dj; }
-        oD = olaP > 0 ? dMin + olaP * (dMax - dMin + BANDA) : 0;
+        // (las distancias se recalculan solo si el medidor se movió)
+        if (!olaO || Math.abs(olaO.x - oX) > 0.5) {
+          var dMin = Infinity, dMax = 0;
+          for (var j = 0; j < qubits.length; j++) { var dj = Math.hypot(qubits[j].x - oX, qubits[j].y - oY); qubits[j].dO = dj; if (dj < dMin) dMin = dj; if (dj > dMax) dMax = dj; }
+          olaO = { x: oX, min: dMin, max: dMax };
+        }
+        oD = olaP > 0 ? olaO.min + olaP * (olaO.max - olaO.min + BANDA) : 0;
       }
       var grupos = {}, orden = [], rotulos = [];
       for (var i = 0; i < qubits.length; i++) {
@@ -449,7 +488,7 @@
         var alfa = on ? 1 : 0.6, th = q.theta, ph = q.phi, e = 0;
         if (ola && oD > 0 && !on) {
           // frente de la ola: 0 antes de llegar, 1 ya medida; suavizado en la banda
-          var dq = Math.hypot(q.x - oX, q.y - oY);
+          var dq = q.dO;
           e = Math.max(0, Math.min(1, (oD - dq) / BANDA)); e = e * e * (3 - 2 * e);
           if (e > 0) {
             if (!q.res) { var p0 = Math.cos(q.theta0 / 2); q.res = rnd(q.x * 7.1 + q.y * 3.3) < p0 * p0 ? '0' : '1'; }
@@ -459,39 +498,49 @@
         }
         // se agrupa por estilo: todas las esferas iguales se trazan en un solo camino (mucho más liviano)
         if (e > 0) { var eq = Math.round(e * 10) / 10; col = mezcla(GOLD, q.res === '0' ? BLUE : RED, eq); alfa = 0.6 + 0.4 * eq; }
-        var lw = on ? 1 : (e > 0 ? 1 : 0.85), clave = col + '|' + alfa.toFixed(2) + '|' + lw, gr = grupos[clave];
-        if (!gr) { gr = grupos[clave] = { c: 'rgba(' + col + ',' + alfa.toFixed(2) + ')', lw: lw, l: [] }; orden.push(gr); }
+        var lw = on ? 1 : (e > 0 ? 1 : 0.85), clave = (on || e > 0) ? col + '|' + alfa.toFixed(2) + '|' + lw : REPOSO, gr = grupos[clave];
+        if (!gr) { gr = grupos[clave] = { k: clave, c: 'rgba(' + col + ',' + alfa.toFixed(2) + ')', lw: lw, l: [] }; orden.push(gr); }
         var st = Math.sin(th);
         gr.l.push(q, q.x + st * Math.cos(ph) * R, q.y + (-Math.cos(th) * 0.95 + st * Math.sin(ph) * 0.3) * R);
         if (q.frozen) rotulos.push(q, 0);
         else if (e > 0.75) rotulos.push(q, (e - 0.75) / 0.25);
       }
       for (var g = 0; g < orden.length; g++) {
-        var G = orden[g], L = G.l, k, q2, ex, ey, an;
-        ctx.strokeStyle = ctx.fillStyle = G.c; ctx.lineWidth = G.lw;
-        // contorno, ecuador delantero y flecha
-        ctx.beginPath();
-        for (k = 0; k < L.length; k += 3) {
-          q2 = L[k];
-          ctx.moveTo(q2.x + R, q2.y); ctx.arc(q2.x, q2.y, R, 0, TAU);
-          ctx.moveTo(q2.x + R, q2.y); ctx.ellipse(q2.x, q2.y, R, R * 0.3, 0, 0, Math.PI);
-          ctx.moveTo(q2.x, q2.y); ctx.lineTo(L[k + 1], L[k + 2]);
+        var G = orden[g], L = G.l, k, q2, ex, ey, an, ux, uy, dx, dy, dd;
+        // las esferas que no están en reposo tapan su cuerpo de la capa base
+        // con el sello de su color
+        if (G.k !== REPOSO) {
+          var sp = sello(G.k, G.c, G.lw);
+          for (k = 0; k < L.length; k += 3) {
+            q2 = L[k];
+            ctx.clearRect(q2.x - S, q2.y - S, 2 * S, 2 * S);
+            ctx.drawImage(sp, q2.x - S, q2.y - S, 2 * S, 2 * S);
+          }
         }
+        ctx.strokeStyle = ctx.fillStyle = G.c; ctx.lineWidth = G.lw;
+        // flechas
+        ctx.beginPath();
+        for (k = 0; k < L.length; k += 3) { q2 = L[k]; ctx.moveTo(q2.x, q2.y); ctx.lineTo(L[k + 1], L[k + 2]); }
         ctx.stroke();
-        // ecuador trasero punteado
-        ctx.setLineDash([1.4, 1.6]); ctx.beginPath();
-        for (k = 0; k < L.length; k += 3) { q2 = L[k]; ctx.moveTo(q2.x - R, q2.y); ctx.ellipse(q2.x, q2.y, R, R * 0.3, 0, Math.PI, TAU); }
-        ctx.stroke(); ctx.setLineDash([]);
-        // puntas de flecha
+        // puntas de flecha: triángulos sin closePath (fill cierra cada uno
+        // solo) y sin trigonometría, girando el vector de la flecha 0,5 rad
         ctx.beginPath();
         for (k = 0; k < L.length; k += 3) {
-          q2 = L[k]; ex = L[k + 1]; ey = L[k + 2]; an = Math.atan2(ey - q2.y, ex - q2.x);
+          q2 = L[k]; ex = L[k + 1]; ey = L[k + 2];
+          dx = ex - q2.x; dy = ey - q2.y; dd = Math.sqrt(dx * dx + dy * dy);
+          if (dd < 0.01) continue;
+          ux = dx / dd * 2.6; uy = dy / dd * 2.6;
           ctx.moveTo(ex, ey);
-          ctx.lineTo(ex - 2.6 * Math.cos(an - 0.5), ey - 2.6 * Math.sin(an - 0.5));
-          ctx.lineTo(ex - 2.6 * Math.cos(an + 0.5), ey - 2.6 * Math.sin(an + 0.5));
-          ctx.closePath();
+          ctx.lineTo(ex - (ux * C5 + uy * S5), ey - (uy * C5 - ux * S5));
+          ctx.lineTo(ex - (ux * C5 - uy * S5), ey - (uy * C5 + ux * S5));
         }
         ctx.fill();
+      }
+      if (span) {
+        ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(w / 2 - half, lineY); ctx.lineTo(w / 2 + half, lineY); ctx.stroke();
+        var sup = drawTally(half, dt, now);
+        drawMeter(now, sup);
       }
       for (var r2 = 0; r2 < rotulos.length; r2 += 2) { if (rotulos[r2].frozen) label(rotulos[r2]); else ketOla(rotulos[r2], rotulos[r2 + 1]); }
     }
@@ -549,10 +598,17 @@
       if (!raf) raf = requestAnimationFrame(loop);
     }
 
+    // la posición de la sección se lee una vez por cuadro como mucho, no en
+    // cada movimiento del mouse (leerla fuerza al navegador a recalcular)
+    var rectSec = null;
+    function invalidar() { rectSec = null; }
+    window.addEventListener('scroll', invalidar, { passive: true });
     function point(e) {
-      var r = section.getBoundingClientRect();
+      var r = rectSec || (rectSec = section.getBoundingClientRect());
       return [e.clientX - r.left, e.clientY - r.top];
     }
+    var cursor = '';
+    function ponerCursor(c) { if (c !== cursor) { cursor = c; section.style.cursor = c; } }
 
     layout(); draw(16);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { layout(); draw(16); });
@@ -571,7 +627,7 @@
     section.addEventListener('mousemove', function (e) {
       if (drag) return;
       var p = point(e);
-      section.style.cursor = onMeter(p[0], p[1]) ? (collapsed ? 'pointer' : 'grab') : '';
+      ponerCursor(onMeter(p[0], p[1]) ? (collapsed ? 'pointer' : 'grab') : '');
       activate(p[0], p[1]);
     });
     section.addEventListener('mousedown', function (e) {
@@ -582,7 +638,7 @@
       e.preventDefault();
       drag = { x: p[0], off: meterOff };
       arrastrado = false;
-      section.style.cursor = 'grabbing';
+      ponerCursor('grabbing');
       start();
     });
     window.addEventListener('mousemove', function (e) {
@@ -596,7 +652,7 @@
       if (!drag) return;
       drag = null;
       anclado = meterOff >= lineHalf - 15 - 12;
-      section.style.cursor = '';
+      ponerCursor('');
       start();
     });
     section.addEventListener('click', function (e) {
@@ -617,7 +673,7 @@
         pending = 0;
         if (section.clientWidth === lastW && section.clientHeight === lastH) return;
         lastW = section.clientWidth; lastH = section.clientHeight;
-        layout(); draw(16);
+        rectSec = null; layout(); draw(16);
       });
     });
   }

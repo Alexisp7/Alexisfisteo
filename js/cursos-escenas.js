@@ -764,6 +764,9 @@
             el('path', { 'class': 'bn-rs-atras', d: curva(ecu, 0, Math.PI) }, n);          // z > 0: detrás
             el('path', { 'class': 'bn-rs-atras', d: curva(mer, 0, Math.PI) }, n);
             el('circle', { 'class': 'bn-rs', cx: f(C[0]), cy: f(C[1]), r: f(RSH), pathLength: 90 }, n);
+            // pista de que hay algo más adentro: un blanco que late en el centro (la singularidad)
+            el('circle', { 'class': 'bn-pulso-halo', cx: f(C[0]), cy: f(C[1]), r: 10 }, n);
+            el('circle', { 'class': 'bn-pulso', cx: f(C[0]), cy: f(C[1]), r: 3.4 }, n);
             el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(ecu, Math.PI, 2 * Math.PI), pathLength: 45 }, n);   // z < 0: delante
             el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(mer, Math.PI, 2 * Math.PI), pathLength: 45 }, n);
             // rayos de luz que caen hacia el borde negro: se frenan y se apagan al llegar (v ∝ 1 − R/r)

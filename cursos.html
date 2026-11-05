@@ -1662,6 +1662,12 @@
     .mc svg .nota.ver path.bn-rs-ecu { animation:bn-rs-corre 2.4s linear infinite; }
     .mc svg .nota-marca path.bn-franja { fill:rgba(255,236,206,.3); stroke:none; }
     .mc svg .nota-marca path.bn-franja + path.bn-rs-ecu { stroke-width:1.2; stroke-dasharray:.5 .4; }
+    .mc svg .nota-marca circle.bn-pulso { fill:#FFFFFF; filter:drop-shadow(0 0 4px #FFFFFF) drop-shadow(0 0 12px rgba(255,255,255,.75)); transform-box:fill-box; transform-origin:center; }
+    .mc svg .nota-marca circle.bn-pulso-halo { fill:none; stroke:#FFFFFF; stroke-width:1.2; opacity:0; transform-box:fill-box; transform-origin:center; }
+    .mc svg .nota.ver circle.bn-pulso { animation:bn-late 1.6s ease-in-out infinite; }
+    .mc svg .nota.ver circle.bn-pulso-halo { animation:bn-onda 1.6s ease-out infinite; }
+    @keyframes bn-late { 0%,100% { transform:scale(.7); opacity:.55; } 45% { transform:scale(1.25); opacity:1; } }
+    @keyframes bn-onda { 0% { transform:scale(.3); opacity:.7; } 100% { transform:scale(2.4); opacity:0; } }
     .mc svg .bn-rayo { stroke:#FFFFFF; stroke-width:1.1; stroke-linecap:round; filter:drop-shadow(0 0 1.5px rgba(255,255,255,.7)); }
     @keyframes bn-rs-corre { to { stroke-dashoffset:-6; } }
     @keyframes bn-rs-late { 0%,100% { transform:scale(1) rotate(0deg); } 50% { transform:scale(1.012) rotate(4deg); } }

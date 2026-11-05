@@ -1177,6 +1177,7 @@
       }
       // caso límite: un átomo dirigido al costado de la ranura, donde ∂B/∂z ≈ 0
       var XL = .96 * R, trL = tray(XL, D * g(XL) + .3);
+      el('path', { 'class': 'lb-recto-h', d: trL }, q);
       el('path', { 'class': 'lb-recto', d: trL }, q);
       // cara de entrada del imán: corte x–z con los polos y las líneas de campo
       var top = [], bot = [];
@@ -1190,9 +1191,10 @@
           var xt = sg * c[0], xb = sg * c[1], zt = zTop(xt), zb = zBot(xb), zm = (zt + zb) / 2;
           var a0 = P(xt, DI, zt), cq = P(xt + (xb - xt) * .1, DI, zm + 2), b0 = P(xb, DI, zb);
           var dd = 'M' + f(a0[0]) + ' ' + f(a0[1]) + ' Q' + f(cq[0]) + ' ' + f(cq[1]) + ' ' + f(b0[0]) + ' ' + f(b0[1]);
-          el('path', { 'class': 'linea-b-halo lb-campo-h', d: dd }, campo);
-          el('path', { 'class': 'linea-b lb-campo', d: dd }, campo);
-          el('path', { 'class': 'lb-flujo', d: dd }, campo);
+          var lc = el('g', { style: 'opacity:' + f(1 - .7 * Math.pow(Math.abs(xb) / 28.5, 1.3)) }, campo);   // más lejos del filo, más tenue: el campo es más débil
+          el('path', { 'class': 'linea-b-halo lb-campo-h', d: dd }, lc);
+          el('path', { 'class': 'linea-b lb-campo', d: dd }, lc);
+          el('path', { 'class': 'lb-flujo', d: dd }, lc);
         });
       });
       var eB = P(-W - 2, DI, 16), tB = el('text', { 'class': 'cm-et lb-et-b', x: f(eB[0]), y: f(eB[1]), 'text-anchor': 'end' }, q); tB.textContent = 'B';
@@ -1211,7 +1213,9 @@
       var eR = P(-R - 4, DS, 6.5), tR = el('text', { 'class': 'cm-et', x: f(eR[0]), y: f(eR[1]) }, q); tR.textContent = 'ranura';
       // el átomo del caso límite: va encima de todo y deja su marca en la punta de la mancha
       var aL = el('g', { 'class': 'lb-limite' }, q);
-      el('circle', { r: 2.1 }, aL);
+      el('circle', { 'class': 'lb-lim-halo', r: 5.5 }, aL);
+      el('circle', { 'class': 'lb-lim-aro', r: 3.3 }, aL);
+      el('circle', { 'class': 'lb-lim-at', r: 2.1 }, aL);
       el('animateMotion', { path: trL, dur: '2.6s', repeatCount: 'indefinite' }, aL);
       var pL = P(XL, DP, D * g(XL) + .3);
       el('circle', { 'class': 'lb-anillo', cx: f(pL[0]), cy: f(pL[1]), r: 3.2 }, q);

@@ -1902,10 +1902,14 @@
     .mc svg .nota .lb-et-b { fill:#2B8DB8; }
     .mc svg .nota .lb-base { fill:none; stroke:rgba(30,26,22,.3); stroke-width:.6; }
     .mc svg .nota .lb-gradc { fill:none; stroke:#2FA6D6; stroke-width:1.1; stroke-linejoin:round; }
-    .mc svg .nota .lb-recto { fill:none; stroke:#A87B2C; stroke-width:.9; stroke-dasharray:2 2; }
-    .mc svg .nota .lb-limite circle { fill:var(--rojo); stroke:#C9963A; stroke-width:1.1; }
-    .mc svg .nota .lb-mk-l { fill:#C9963A; }
-    .mc svg .nota .lb-anillo { fill:none; stroke:#A87B2C; stroke-width:.9; transform-box:fill-box; transform-origin:center; animation:lb-anillo 2.6s ease-out infinite; }
+    .mc svg .nota .lb-recto { fill:none; stroke:#F2B533; stroke-width:1.3; stroke-linecap:round; }
+    .mc svg .nota .lb-recto-h { fill:none; stroke:#FFD36A; stroke-width:4.2; stroke-linecap:round; opacity:.35; }
+    .mc svg .nota .lb-lim-halo { fill:#FFD36A; opacity:.45; animation:lb-lim 1.3s ease-in-out infinite alternate; }
+    .mc svg .nota .lb-lim-aro { fill:#FFE7A3; stroke:#F2B533; stroke-width:1; }
+    .mc svg .nota .lb-lim-at { fill:var(--rojo); }
+    @keyframes lb-lim { from { opacity:.25; } to { opacity:.6; } }
+    .mc svg .nota .lb-mk-l { fill:#F2B533; stroke:#FFE7A3; stroke-width:.6; }
+    .mc svg .nota .lb-anillo { fill:none; stroke:#F2B533; stroke-width:1.2; transform-box:fill-box; transform-origin:center; animation:lb-anillo 2.6s ease-out infinite; }
     @keyframes lb-anillo { 0%,80% { opacity:0; transform:scale(.4); } 88% { opacity:1; transform:scale(1); } 100% { opacity:0; transform:scale(1.6); } }
     .mc svg .nota .lb-et-l { fill:#8A6424; }
     .mc svg .nota .lb-zona-a { fill:none; stroke:rgba(47,166,214,.45); stroke-width:.7; }

@@ -431,6 +431,7 @@
       return dentro;
     }
     function pie(q, x, y, lineas) {
+      q.pie = lineas.join(' ');
       var t = el('text', { 'class': 'med-c', x: f(x), y: f(y) }, q);
       lineas.forEach(function (l, k) { var s = el('tspan', { x: f(x), dy: k ? 13 : 0 }, t); s.textContent = l; });
     }
@@ -604,48 +605,56 @@
         salida('rₛ = 2GM/c²', 'sombra b = √27 GM/c² ≈ 2,6 rₛ · ISCO 3 rₛ');
       },
       notas: function () {
-        // las notas no tapan el dibujo: se abren en un panel fijo en el papel libre junto al menú, arriba,
-        // y una guía en tinta va desde la zona señalada hasta el borde del panel
-        // van en un SVG propio por encima del velo oscuro de la izquierda, alineado con el de la escena al abrirse
+        // ficha de lectura: una sola ficha HTML en la columna oscura, debajo del menú (nunca tapa el dibujo ni la navegación).
+        // En el dibujo solo queda un aro en la zona señalada y un rótulo corto a su lado: sin guías que crucen la escena.
         var sec = fig.closest('.mc') || fig.parentNode, sobre = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        sobre.setAttribute('class', 'bn-notas'); sobre.setAttribute('aria-hidden', 'true'); sobre.setAttribute('preserveAspectRatio', svg.getAttribute('preserveAspectRatio') || 'none'); sec.appendChild(sobre);
+        sobre.setAttribute('class', 'bn-notas'); sobre.setAttribute('aria-hidden', 'true'); sec.appendChild(sobre);
         function alinea() {
           var v = svg.getAttribute('viewBox'); if (v) sobre.setAttribute('viewBox', v);
           var rs = svg.getBoundingClientRect(), rm = sec.getBoundingClientRect();
           sobre.style.left = (rs.left - rm.left) + 'px'; sobre.style.top = (rs.top - rm.top) + 'px'; sobre.style.width = rs.width + 'px'; sobre.style.height = rs.height + 'px';
         }
         var capaN = el('g', { 'class': 'notas' }, sobre);
+        var ficha = document.createElement('aside'); ficha.className = 'bn-ficha'; ficha.setAttribute('aria-live', 'polite'); sec.appendChild(ficha);
+        var pista = document.createElement('p'); pista.className = 'bn-pista'; pista.textContent = 'Pasa el cursor por el agujero negro: cinco partes'; sec.appendChild(pista);
+        var lista = sec.querySelector('.mc-lista');
+        function ubica() {
+          if (!lista) return; var rl = lista.getBoundingClientRect(), rm = sec.getBoundingClientRect();
+          var x = rl.left - rm.left + 22, y = rl.bottom - rm.top + 34;
+          [ficha, pista].forEach(function (e) { e.style.left = x + 'px'; e.style.top = y + 'px'; });
+        }
+        ubica(); window.addEventListener('resize', ubica); setTimeout(ubica, 400);
+        var nN = 0;
         function nota(piezas, ancla, titulo, lineas, cima, foco, op) {
-          var ANCHO = 300, extra = op.alto || 0, n = el('g', { 'class': 'nota nota-fuerte' }, capaN), a = ancla;
-          var guia = el('path', { pathLength: 1 }, n);
-          el('circle', { cx: f(a[0]), cy: f(a[1]), r: 2.2 }, n);
+          var a = ancla, izq = a[0] < C[0], n = el('g', { 'class': 'nota nota-marca' }, capaN);
+          el('circle', { cx: f(a[0]), cy: f(a[1]), r: 2.4 }, n);
           el('circle', { 'class': 'anillo-nota', cx: f(a[0]), cy: f(a[1]), r: 5 }, n);
-          var punta = el('path', { 'class': 'nota-punta' }, n), caja = el('g', {}, n);
-          var fondo = el('rect', { 'class': 'nota-fondo', x: 0, y: -11, width: ANCHO, height: 27 + lineas.length * 17 + extra, rx: 2 }, caja);
-          op.dibujo(el('g', { 'class': 'nota-dib' }, caja), 0, 10);
-          var t = el('text', { 'class': 'nota-t', x: 10, y: 3 }, caja); t.textContent = titulo;
-          var d = el('text', { 'class': 'nota-d', x: 10, y: f(24 + extra) }, caja);
-          lineas.forEach(function (l, k) { var sp = el('tspan', { x: 10, dy: k ? 17 : 0 }, d); sp.textContent = l.trim(); });
-          linea(caja, [10, 8.5], [ANCHO - 10, 8.5], 'nota-regla');
-          var pars = parrafos(lineas), listo = false, alto = 27 + lineas.length * 17 + extra;
-          function coloca() {
-            var vb = svg.viewBox.baseVal, m = svg.getScreenCTM(), x0 = vb.x + 18;
-            if (m) { var der = 0; document.querySelectorAll('.mc-item').forEach(function (it) { der = Math.max(der, it.getBoundingClientRect().right); }); if (der) x0 = Math.max(x0, (der - m.e) / m.a + 26); }
-            // panel arriba a la izquierda, en el hueco de papel sobre la mancha; la guía sube desde la zona y entra por la derecha
-            var top = vb.y + 74, xr = x0 + ANCHO;
-            var yy = Math.max(top + 14, Math.min(a[1], top + alto - 24));
-            caja.setAttribute('transform', 'translate(' + f(x0) + ' ' + f(top) + ')');
-            guia.setAttribute('d', 'M' + f(a[0]) + ' ' + f(a[1] - 4) + ' V' + f(yy) + ' H' + f(xr + 1));
-            punta.setAttribute('d', 'M' + f(xr + 8) + ' ' + f(yy - 3.5) + ' L' + f(xr + 1) + ' ' + f(yy) + ' L' + f(xr + 8) + ' ' + f(yy + 3.5) + 'Z');
-          }
+          var dx = izq ? -14 : 14, tx = a[0] + dx * 2.2;
+          el('path', { d: 'M' + f(a[0] + dx * .45) + ' ' + f(a[1]) + ' H' + f(a[0] + dx * 1.8), pathLength: 1 }, n);
+          var rot = el('text', { 'class': 'nota-rot', x: f(tx), y: f(a[1] + 3.5), 'text-anchor': izq ? 'end' : 'start' }, n); rot.textContent = titulo;
+          // ficha
+          var c = document.createElement('div'); c.className = 'bn-nota nota'; c.id = 'bn-nota-' + (nN++);
+          var med = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); med.setAttribute('viewBox', '6 -2 100 100'); med.setAttribute('class', 'bn-med'); med.setAttribute('aria-hidden', 'true');
+          var gq = el('g', {}, med); op.dibujo(gq, 0, 0);
+          var cuerpo = document.createElement('div'); cuerpo.className = 'bn-nota-txt';
+          var h = document.createElement('h3'); h.textContent = titulo;
+          var pAnim = document.createElement('p'); pAnim.className = 'bn-nota-anim'; pAnim.textContent = gq.pie || '';
+          var pTxt = document.createElement('p'); pTxt.textContent = lineas.map(function (l) { return l.trim(); }).join(' ');
+          cuerpo.appendChild(h); cuerpo.appendChild(pTxt);
+          var fila = document.createElement('div'); fila.className = 'bn-nota-fila'; fila.appendChild(med); fila.appendChild(pAnim);
+          c.appendChild(cuerpo); c.appendChild(fila); ficha.appendChild(c);
           foco = piezas.concat(foco || []);
           piezas.forEach(function (q) {
             q.classList.add('con-nota');
             q.addEventListener('pointerenter', function () {
-              if (!listo) { listo = true; var nl = maquetar(d, pars, 10, ANCHO - 20, 17); alto = 27 + nl * 17 + extra; fondo.setAttribute('height', f(alto)); }
-              alinea(); coloca(); n.classList.add('ver'); if (op.dim) { dimMeta[0] = op.dim[0]; dimMeta[1] = op.dim[1]; } foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on');
+              alinea(); ubica(); n.classList.add('ver'); c.classList.add('ver'); sec.classList.add('bn-leyendo');
+              if (op.dim) { dimMeta[0] = op.dim[0]; dimMeta[1] = op.dim[1]; }
+              foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on');
             });
-            q.addEventListener('pointerleave', function () { dimMeta[0] = dimMeta[1] = 1; n.classList.remove('ver'); foco.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on'); });
+            q.addEventListener('pointerleave', function () {
+              dimMeta[0] = dimMeta[1] = 1; n.classList.remove('ver'); c.classList.remove('ver'); sec.classList.remove('bn-leyendo');
+              foco.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on');
+            });
           });
         }
         var p3 = enPantalla(Math.cos(2.4) * 1.45, Math.sin(2.4) * 1.45), p4 = enPantalla(Math.cos(2.2) * BC * 1.05, Math.sin(2.2) * BC * 1.05);

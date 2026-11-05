@@ -201,8 +201,9 @@
     // bucle perfecto de 40 s: cada anillo da un número entero de vueltas por ciclo (más adentro, más vueltas, como Kepler),
     // así el último cuadro es idéntico al primero y los trazos nunca se enrollan; entre dos anillos vecinos se funde en una franja fina
     '  float x = 10.8 * pow(6.0 / r, 1.5), nA = floor(x), fx = x - nA, wB = smoothstep(.44, .56, fx), ang = 6.2832 * uTD / 40.0;',
-    '  vec4 P = patron(r, vec2(cos(ph - nA * ang), sin(ph - nA * ang)), fr, fa);',
-    '  if (wB > 0.0) P = mix(P, patron(r, vec2(cos(ph - (nA + 1.0) * ang), sin(ph - (nA + 1.0) * ang)), fr, fa), wB);',
+    '  float q0 = ph - 1.7 * pow(6.0 / r, 1.5) * 9.0;',   // un poco de desfase fijo entre órbitas: trazo más nítido, sin crecer con el tiempo
+    '  vec4 P = patron(r, vec2(cos(q0 - nA * ang), sin(q0 - nA * ang)), fr, fa);',
+    '  if (wB > 0.0) P = mix(P, patron(r, vec2(cos(q0 - (nA + 1.0) * ang), sin(q0 - (nA + 1.0) * ang)), fr, fa), wB);',
     '  float tr = P.x, n = P.y, flec = P.z, hueco = P.w;',
     '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
     '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',
@@ -340,7 +341,7 @@
       var vb = svg.viewBox.baseVal;
       gl.viewport(0, 0, W, H);
       gl.uniform2f(U.uRes, W, H); gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C[0], C[1]);
-      gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL); gl.uniform1f(U.uPix, vb.width / W / SC); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
+      gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL + (Math.sin(tiempo * .9) * .6 + Math.sin(tiempo * .37 + 1.3) * .4) * Math.PI / 180); /* tambaleo: menos de 1° */ gl.uniform1f(U.uPix, vb.width / W / SC); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
       dim[0] += (dimMeta[0] - dim[0]) * .14; dim[1] += (dimMeta[1] - dim[1]) * .14; gl.uniform2f(U.uDim, dim[0], dim[1]);
       hk += (hkMeta - hk) * .14; gl.uniform1f(U.uHk, hk); gl.uniform1f(U.uTD, tDisco(tiempo));
       gl.drawArrays(gl.TRIANGLES, 0, 3);

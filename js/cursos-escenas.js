@@ -405,10 +405,11 @@
       for (k = 24; k >= 0; k--) { var t2 = (a0 + (a1 - a0) * k / 24); o.push(aPantalla(r0 * Math.cos(t2), 0, r0 * Math.sin(t2))); }
       return poligono(o);
     }
-    var zSing = zona(anillo(0, RSH * .12)), zHor = zona(anillo(RSH * .12, RSH * .385)), zEsf = zona(anillo(RSH * .385, RSH * .577)), zSombra = zona(anillo(RSH * .577, RSH * .9)), zHawk = zona(anillo(RSH * .9, RSH * 1.0)), zFot = zona(anillo(RSH * 1.0, RSH * 1.13));
-    var zDisco = zona(bandaDisco(9, 22, Math.PI * 1.4, Math.PI * 1.92)), zDoppler = zona(bandaDisco(7, 22, Math.PI * .85, Math.PI * 1.35));
-    [zSing, zHor, zEsf, zSombra, zHawk, zFot].forEach(function (z) { g.appendChild(z); });   // los anillos de la sombra mandan sobre el disco que la cruza
+    // cinco zonas: centro, horizonte (interior de la sombra), borde (filo rojo de Hawking), región de caída (entre la sombra y el
+    // borde interno del disco) y disco. Las de la sombra van encima del disco que la cruza por delante.
     var zLente = zona((function () { var o = []; for (var k = 0; k <= 20; k++) { var t = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t) * 9.5, Math.sin(t) * 9.5)); } for (k = 20; k >= 0; k--) { var t3 = Math.PI * (.15 + .7 * k / 20); o.push(enPantalla(Math.cos(t3) * 6.2, Math.sin(t3) * 6.2)); } return poligono(o); })());
+    var zDisco = zona(bandaDisco(6.5, 22, 0, Math.PI * 2));
+    var zCaida = zona(anillo(RSH * 1.06, RSH * 1.4)), zHawk = zona(anillo(RSH * .9, RSH * 1.06)), zHor = zona(anillo(RSH * .12, RSH * .9)), zSing = zona(anillo(0, RSH * .12));
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
     var pares = [], acum = 0;
     function mezclaRB(u) { var k = Math.min(1, Math.max(0, (u - .02) / .18)); return 'rgb(' + Math.round(225 + 30 * k) + ',' + Math.round(50 + 205 * k) + ',' + Math.round(40 + 215 * k) + ')'; }
@@ -621,51 +622,74 @@
         function ubica() {
           if (!lista) return; var rl = lista.getBoundingClientRect(), rm = sec.getBoundingClientRect();
           var x = rl.left - rm.left + 22, y = rl.bottom - rm.top + 34;
-          [ficha, pista].forEach(function (e) { e.style.left = x + 'px'; e.style.top = y + 'px'; });
+          pista.style.left = x + 'px'; pista.style.top = y + 'px';
         }
         ubica(); window.addEventListener('resize', ubica); setTimeout(ubica, 400);
         var nN = 0;
-        function nota(piezas, ancla, titulo, lineas, cima, foco, op) {
-          var a = ancla, izq = a[0] < C[0], n = el('g', { 'class': 'nota nota-marca' }, capaN);
+        // cada zona: punto en la zona, raya hasta el rótulo y, justo debajo del rótulo, su ficha
+        function nota(piezas, o) {
+          var a = o.ancla, et = o.rotulo, izq = o.lado ? o.lado === 'izq' : et[0] < a[0], n = el('g', { 'class': 'nota nota-marca' }, capaN);
           el('circle', { cx: f(a[0]), cy: f(a[1]), r: 2.4 }, n);
           el('circle', { 'class': 'anillo-nota', cx: f(a[0]), cy: f(a[1]), r: 5 }, n);
-          var dx = izq ? -14 : 14, tx = a[0] + dx * 2.2;
-          el('path', { d: 'M' + f(a[0] + dx * .45) + ' ' + f(a[1]) + ' H' + f(a[0] + dx * 1.8), pathLength: 1 }, n);
-          var rot = el('text', { 'class': 'nota-rot', x: f(tx), y: f(a[1] + 3.5), 'text-anchor': izq ? 'end' : 'start' }, n); rot.textContent = titulo;
-          // ficha
+          var ux = et[0] - a[0], uy = et[1] - a[1], L = Math.hypot(ux, uy); ux /= L; uy /= L;
+          el('path', { d: 'M' + f(a[0] + ux * 5) + ' ' + f(a[1] + uy * 5) + ' L' + f(et[0] - ux * 6) + ' ' + f(et[1] - uy * 6), pathLength: 1 }, n);
+          var rot = el('text', { 'class': 'nota-rot', x: f(et[0]), y: f(et[1] + 3.5), 'text-anchor': izq ? 'end' : 'start' }, n); rot.textContent = o.titulo;
+          if (o.extra) o.extra(n);
           var c = document.createElement('div'); c.className = 'bn-nota nota'; c.id = 'bn-nota-' + (nN++);
+          var dato = document.createElement('p'); dato.className = 'bn-nota-dato'; dato.textContent = o.dato;
+          var que = document.createElement('p'); que.className = 'bn-nota-que'; que.textContent = o.que;
+          var dib = document.createElement('p'); dib.className = 'bn-nota-dib'; var dk = document.createElement('span'); dk.textContent = 'En el dibujo'; dib.appendChild(dk); dib.appendChild(document.createTextNode(o.dibujo));
           var med = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); med.setAttribute('viewBox', '6 -2 100 100'); med.setAttribute('class', 'bn-med'); med.setAttribute('aria-hidden', 'true');
-          var gq = el('g', {}, med); op.dibujo(gq, 0, 0);
-          var cuerpo = document.createElement('div'); cuerpo.className = 'bn-nota-txt';
-          var h = document.createElement('h3'); h.textContent = titulo;
+          var gq = el('g', {}, med); MED[o.med](gq, 0, 0);
           var pAnim = document.createElement('p'); pAnim.className = 'bn-nota-anim'; pAnim.textContent = gq.pie || '';
-          var pTxt = document.createElement('p'); pTxt.textContent = lineas.map(function (l) { return l.trim(); }).join(' ');
-          cuerpo.appendChild(h); cuerpo.appendChild(pTxt);
           var fila = document.createElement('div'); fila.className = 'bn-nota-fila'; fila.appendChild(med); fila.appendChild(pAnim);
-          c.appendChild(cuerpo); c.appendChild(fila); ficha.appendChild(c);
-          foco = piezas.concat(foco || []);
+          [dato, que, dib, fila].forEach(function (e) { c.appendChild(e); }); ficha.appendChild(c);
+          function bajoRotulo() {   // la ficha cuelga del rótulo: alineada a su borde y pegada debajo, sin salirse de la sección
+            var rr = rot.getBoundingClientRect(), rm = sec.getBoundingClientRect(), w = c.offsetWidth, h = c.offsetHeight;
+            var x = izq ? rr.right - rm.left - w + 4 : rr.left - rm.left - 4, y = rr.bottom - rm.top + 12;
+            x = Math.max(16, Math.min(x, rm.width - w - 16)); y = Math.min(y, rm.height - h - 16);
+            c.style.left = x + 'px'; c.style.top = y + 'px';
+          }
+          var foco = piezas.concat(o.foco || []);
           piezas.forEach(function (q) {
             q.classList.add('con-nota');
             q.addEventListener('pointerenter', function () {
-              alinea(); ubica(); n.classList.add('ver'); c.classList.add('ver'); sec.classList.add('bn-leyendo');
-              if (op.dim) { dimMeta[0] = op.dim[0]; dimMeta[1] = op.dim[1]; }
-              foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on');
+              alinea(); n.classList.add('ver'); bajoRotulo(); c.classList.add('ver'); sec.classList.add('bn-leyendo');
+              dimMeta[0] = o.dim[0]; dimMeta[1] = o.dim[1];
+              foco.forEach(function (e) { e.classList.add('foco'); }); svg.classList.add('nota-on');
             });
             q.addEventListener('pointerleave', function () {
               dimMeta[0] = dimMeta[1] = 1; n.classList.remove('ver'); c.classList.remove('ver'); sec.classList.remove('bn-leyendo');
-              foco.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on');
+              foco.forEach(function (e) { e.classList.remove('foco'); }); svg.classList.remove('nota-on');
             });
           });
         }
-        var p3 = enPantalla(Math.cos(2.4) * 1.45, Math.sin(2.4) * 1.45), p4 = enPantalla(Math.cos(2.2) * BC * 1.05, Math.sin(2.2) * BC * 1.05);
-        var p2 = enPantalla(Math.cos(-.5) * BC * .95, Math.sin(-.5) * BC * .95), p5 = aPantalla(12, 0, -7);
-        var DIM = { sing: [.18, .35], hawk: [.18, .35], hor: [.18, .35], fot: [.5, .45], disco: [1, .3] };
-        var M = function (k) { return { alto: 104, dibujo: MED[k], dim: DIM[k] }; };
-        nota([zSing], [C[0], C[1]], 'Singularidad', ['En r = 0 la curvatura se vuelve infinita', 'según la relatividad general: ahí la teoría', 'deja de valer. Se espera que una teoría', 'cuántica de la gravedad la describa.'], 100, null, Object.assign(M('sing'), { izq: true, dx: -40 }));
-        nota([zHawk], p2, 'Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 560, [capaHawk], Object.assign(M('hawk'), { izq: false }));
-        nota([zHor, zSombra], p3, 'Horizonte de eventos', ['Radio de Schwarzschild rₛ = 2GM/c². Lo', 'que lo cruza, ni la luz, ya no sale.', 'Para el Sol, rₛ ≈ 3 km.', 'La sombra mide ≈ 2,6 rₛ: la gravedad', 'curva la luz que pasa cerca.'], 565, null, Object.assign(M('hor'), { izq: true, dx: -30 }));
-        nota([zEsf, zFot, zLente], p4, 'Esfera de fotones', ['A r = 1,5 rₛ la luz puede orbitar,', 'en equilibrio inestable.', 'La que escapa forma el anillo fino junto', 'a la sombra (EHT, M87*, 2019). La lente', 'muestra el disco de atrás arriba y abajo.'], 100, null, Object.assign(M('fot'), { izq: false }));
-        nota([zDisco, zDoppler], p5, 'Disco de acreción', ['Gas que cae en espiral y se calienta.', 'Empieza en la órbita estable más interna,', 'r = 3 rₛ (ISCO). El lado que se acerca a', 'nosotros brilla más por efecto Doppler.'], 575, null, Object.assign(M('disco'), { izq: false }));
+        function polar(ang, r) { return [C[0] + Math.cos(ang) * r, C[1] + Math.sin(ang) * r]; }
+        var RS = 2 * SC, xI = C[0] - RSH - 62, xD = C[0] + RSH + 62;   // rₛ a escala (sin lente) y columnas de rótulos
+        nota([zSing], { ancla: [C[0], C[1]], rotulo: [xI, C[1] + 4], titulo: 'Singularidad', med: 'sing', dim: [.18, .35],
+          dato: 'r = 0',
+          que: 'El centro. La relatividad general predice que ahí la curvatura del espacio-tiempo se vuelve infinita: es la señal de que la teoría deja de valer, y se espera que una teoría cuántica de la gravedad la describa.',
+          dibujo: 'un punto. Nadie puede verla: queda siempre dentro del horizonte.' });
+        nota([zHor], { ancla: polar(-2.2, RS), rotulo: [xI, C[1] - 64], titulo: 'Horizonte de eventos', med: 'hor', dim: [.18, .35],
+          dato: 'rₛ = 2GM/c²',
+          que: 'La frontera sin retorno: lo que la cruza, ni siquiera la luz, vuelve a salir. No es una superficie material, solo un radio. Para el Sol, rₛ ≈ 3 km.',
+          dibujo: 'la línea punteada es rₛ a escala. La sombra negra es unas 2,6 veces mayor (√27 GM/c²) porque la gravedad curva la luz que pasa cerca.',
+          extra: function (n) {
+            el('circle', { 'class': 'bn-rs', cx: f(C[0]), cy: f(C[1]), r: f(RS), pathLength: 60 }, n);
+            var t = el('text', { 'class': 'nota-rot bn-rs-k', x: f(C[0] + RS * .74 + 4), y: f(C[1] + RS * .74 + 9) }, n); t.textContent = 'rₛ';
+          } });
+        nota([zHawk], { ancla: polar(-.55, RSH * 1.0), rotulo: [xD, C[1] - RSH * .78], titulo: 'Borde · radiación de Hawking', med: 'hawk', dim: [.18, .35], foco: [capaHawk],
+          dato: 'T = ħc³ / 8πGMk_B',
+          que: 'Hawking (1974): por efectos cuánticos junto al horizonte, el agujero emite como un cuerpo negro y pierde masa muy despacio. Para una masa solar T ≈ 6 × 10⁻⁸ K; nunca se ha medido.',
+          dibujo: 'el filo rojo y las chispas son simbólicos: esa radiación sería invisible.' });
+        nota([zCaida], { ancla: polar(-2.0, RSH * 1.22), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.45, .45],
+          dato: 'rₛ < r < 3 rₛ',
+          que: 'Entre el borde interno del disco (la órbita estable más interna, ISCO, en 3 rₛ) y el horizonte ya no hay órbitas estables: el gas se precipita en espiral. En la literatura se llama plunging region. Dentro está la esfera de fotones, en 1,5 rₛ, donde la luz puede orbitar.',
+          dibujo: 'el anillo fino entre la sombra y el disco, por donde pasa la luz que rozó la esfera de fotones.' });
+        nota([zDisco, zLente], { ancla: [C[0] + RSH * 2.6, C[1] - RSH * .8], rotulo: [C[0] + RSH * 2.55, C[1] - RSH * .33], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
+          dato: 'r ≥ 3 rₛ (ISCO)',
+          que: 'Gas que gira y cae poco a poco; la fricción lo calienta hasta brillar. Por dentro gira más rápido y está más caliente.',
+          dibujo: 'el lado que se acerca a nosotros brilla más (Doppler relativista), y el disco de atrás asoma arriba y abajo de la sombra por la lente gravitacional.' });
       }
     };
   }

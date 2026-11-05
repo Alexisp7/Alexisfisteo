@@ -1132,6 +1132,38 @@
     }
     // contraejemplo de los colimadores: el mismo imán con un haz fino y con uno ancho.
     // Cada átomo se desvía lo mismo (±D); con haz ancho las dos franjas se pisan.
+    // por qué los labios se cierran: Δz(y) = ±K(y)/v² y K(y) ∝ ∂B/∂z cae hacia los extremos; ahí la separación
+    // es menor que el ancho de cada mancha y ↑ y ↓ se solapan. Un cursor recorre la ranura y muestra las dos ramas
+    function labiosMini(q, x0, y0) {
+      var xc = x0 + 96, Y = 78, cy = y0 + 52, D = 24, h = 3.2, N = 40, i, u, up = [], dn = [], bA = [], bB = [], cur = [];
+      function De(u) { return D * (1 - u * u); }
+      el('rect', { 'class': 'lb-placa', x: f(xc - Y - 8), y: f(cy - 46), width: f(2 * Y + 16), height: 92, rx: 2 }, q);
+      el('line', { 'class': 'lb-cero', x1: f(xc - Y - 8), y1: f(cy), x2: f(xc + Y + 8), y2: f(cy) }, q);
+      for (i = 0; i <= N; i++) {
+        u = i / N * 2 - 1; var x = xc + u * Y, d = De(u);
+        bA.push([x, cy - (1.3 * d + h)]); bB.push([x, cy - (.6 * d - h)]);
+        up.push([x, cy - .9 * d]); dn.push([x, cy + .9 * d]);
+        cur.push([x0 + 214 + (u + 1) / 2 * 104, y0 + 92 - 52 * (1 - u * u)]);
+      }
+      function pts(L) { return L.map(function (p, k) { return (k ? 'L' : 'M') + f(p[0]) + ' ' + f(p[1]); }).join(' '); }
+      var bandaA = pts(bA) + ' ' + pts(bB.slice().reverse()).replace('M', 'L') + 'Z';
+      var bandaB = bandaA.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, function (m, X, Yy) { return X + ' ' + f(2 * cy - +Yy); });
+      el('path', { 'class': 'lb-a', d: bandaA }, q); el('path', { 'class': 'lb-b', d: bandaB }, q);
+      // extremos: donde la separación ya no supera el ancho, las manchas se tocan
+      [-1, 1].forEach(function (sg) { el('ellipse', { 'class': 'lb-cierre', cx: f(xc + sg * Y * .9), cy: f(cy), rx: 9, ry: 7 }, q); });
+      var e1 = el('text', { 'class': 'cm-et', x: f(xc - Y - 8), y: f(cy + 56) }, q); e1.textContent = 'pantalla: Δz(y) = ±K(y)/v²';
+      // gráfico de ∂B/∂z a lo largo de la ranura
+      el('line', { 'class': 'lb-eje', x1: f(x0 + 212), y1: f(y0 + 93), x2: f(x0 + 322), y2: f(y0 + 93) }, q);
+      el('path', { 'class': 'lb-grad', d: pts(cur) }, q);
+      var e2 = el('text', { 'class': 'cm-et', x: f(x0 + 212), y: f(y0 + 108) }, q); e2.textContent = '∂B/∂z a lo largo de y';
+      // cursor que recorre la ranura: dos átomos (↑ y ↓) y el punto del gráfico se mueven juntos
+      var ida = { dur: '5s', repeatCount: 'indefinite', keyPoints: '0;1;0', keyTimes: '0;.5;1', calcMode: 'linear' };
+      function mueve(nodo, camino) { var a = el('animateMotion', { path: camino }, nodo); for (var kk in ida) a.setAttribute(kk, ida[kk]); }
+      var lin = el('line', { 'class': 'lb-cursor', x1: 0, y1: f(cy - 46), x2: 0, y2: f(cy + 46) }, q);
+      mueve(lin, pts(up.map(function (p) { return [p[0], 0]; })));
+      var pa = el('circle', { 'class': 'cm-at-a', r: 2.4 }, q), pb = el('circle', { 'class': 'cm-at-b', r: 2.4 }, q), pg = el('circle', { 'class': 'lb-pg', r: 2.2 }, q);
+      mueve(pa, pts(up)); mueve(pb, pts(dn)); mueve(pg, pts(cur));
+    }
     function colimMini(q, x0, y0) {
       [[0, 1.6, 'haz fino'], [160, 15, 'haz ancho']].forEach(function (cfg, kp) {
         var ox = x0 + 10 + cfg[0], cy = y0 + 46, A = cfg[1], D = 15, sem = 11 + kp * 7;
@@ -1259,21 +1291,19 @@
     nota([m2, m3], [32, 5, 22.5], 'Polos asimétricos', ['El filo concentra el campo: ∂B/∂z grande.', 'La fuerza Fz = μz ∂B/∂z depende de μz,', 'así que el imán "mide" el espín.'], 88, [mc, mcF], { alto: 104, ancho: 320, dibujo: polosMini });
     nota([p0], [54, 18, .5], 'Fráncfort, 1922', ['Stern y Gerlach buscaban la cuantización', 'espacial de Bohr–Sommerfeld. El espín', '(1925) explicó por qué eran justo dos.']);
     nota([pa], [79, -21, 37], 'Placa colectora', ['La línea punteada marca dónde llega el haz', 'sin campo. Con campo, la física clásica', 'esperaba una mancha continua (μz de cualquier', 'valor). Se vieron dos: μz está cuantizado.'], 300);
-    nota([pz], [80, 0, 27], '¿Por qué no solo dos líneas?', [
-      'Cada átomo cae arriba o abajo; lo que cambia es cuánto:',
-      '· Δz ∝ 1/v²: los lentos se abren más, los rápidos menos.',
-      '· ∂B/∂z es máximo bajo el filo y cae hacia los lados:',
-      '  de ahí la forma de labios, que se cierra en los bordes.',
-      '· La rendija tiene altura: el haz ya llega con ancho.',
-      'Los puntos cerca del centro son átomos rápidos o de',
-      'los bordes, no espines "intermedios".'], 150, [pa]);
+    nota([pz], [80, 0, 27], '¿Por qué se cierra en los bordes?', [
+      'Cada átomo cae arriba o abajo: el espín solo tiene dos valores.',
+      'Lo que cambia es cuánto: Δz ∝ (∂B/∂z)/v². Hacia los extremos',
+      'de la ranura el gradiente cae, Δz se achica y las dos manchas,',
+      'que tienen ancho (haz y velocidades), se tocan. No es un tercer',
+      'valor: son ↑ y ↓ casi sin separar.'], 112, [pa], { alto: 124, ancho: 340, dibujo: labiosMini });
 
     // física: f(v) ∝ v³ e^{−v²/v₀²} → w = v²/v₀² ~ Gamma(2,1); Δz = ±K(y)/w
     // espín: antes del imán, superposición (la flecha "titila"); al entrar al gradiente queda ↑ o ↓
     // efusión real: cada átomo sale de la boca de la boquilla (x = −57) en su propia dirección recta.
     // Las dos rendijas (|z − ZB| < 0,7 en x = −46 y x = −36) frenan a los que vienen inclinados;
     // solo pasan los casi paralelos al eje. En y la ranura es larga: el haz sale como un abanico plano.
-    var K = 13, X0H = -57, enVuelo = [], arriba = 0, abajo = 0, acum = 0, acumB = 0, PLACAS = [-46, -36];
+    var K = 11.5, X0H = -57, enVuelo = [], arriba = 0, abajo = 0, acum = 0, acumB = 0, PLACAS = [-46, -36];
     function atomoNuevo() {
       var a = el('g', { 'class': 'atomo' }, vuelo[0]);
       el('circle', { 'class': 'atomo-b', r: 2.1 }, a);
@@ -1429,21 +1459,33 @@
     var fr = function (a, b) { return '<span class="sg-fr"><span>' + a + '</span><span>' + b + '</span></span>'; };
     var m2 = function (a, b, c, d) { return '<span class="sg-m"><i>' + a + '</i><i>' + b + '</i><i>' + c + '</i><i>' + d + '</i></span>'; };
     var v2 = function (a, b) { return '<span class="sg-m sg-v"><i>' + a + '</i><i>' + b + '</i></span>'; };
-    var paso = function (n, t, cuerpo, dib) { return '<section class="sg-paso" style="--i:' + n + '"><p class="sg-n"><b>' + n + '</b>' + t + '</p><div class="sg-cuerpo"><div>' + cuerpo + '</div>' + (dib || '') + '</div></section>'; };
-    var eq = function (x) { return '<p class="sg-eq">' + x + '</p>'; };
-    // dibujitos animados: banda continua frente a dos manchas, y el paquete que se parte en dos
+    // cadena de ecuaciones alineadas en el signo; entre cada una, la razón del paso; a la derecha, notas y dibujos
+    var fila = 0;
+    var ecu = function (izq, rel, der, nota) { fila++; return '<span class="sg-l" style="--i:' + fila + '">' + izq + '</span><span class="sg-r" style="--i:' + fila + '">' + rel + '</span><span class="sg-d" style="--i:' + fila + '">' + der + '</span><span class="sg-nota" style="--i:' + fila + '">' + (nota || '') + '</span>'; };
+    var por = function (t) { return '<span class="sg-por" style="--i:' + (fila + .5) + '">' + t + '</span>'; };
     var banda = '<svg class="sg-dib" viewBox="0 0 44 44"><rect class="sg-placa" x="8" y="1" width="28" height="42" rx="1.5"/><rect class="sg-banda" x="14" y="6" width="16" height="32" rx="4"/></svg>';
     var dos = '<svg class="sg-dib" viewBox="0 0 44 44"><rect class="sg-placa" x="8" y="1" width="28" height="42" rx="1.5"/><ellipse class="sg-up" cx="22" cy="11" rx="8" ry="4.2"/><ellipse class="sg-dn" cx="22" cy="33" rx="8" ry="4.2"/></svg>';
     var g = function (c) { var d = ''; for (var x = -14; x <= 14; x += 1) d += (x === -14 ? 'M' : 'L') + f(35 + x) + ' ' + f(22 - 13 * Math.exp(-x * x / 18)); return '<path class="' + c + '" d="' + d + '"/>'; };
     var paquete = '<svg class="sg-dib sg-paq" viewBox="0 0 70 44"><line class="sg-eje" x1="4" y1="22.5" x2="66" y2="22.5"/><g class="sg-pa">' + g('sg-up-l') + '</g><g class="sg-pb">' + g('sg-dn-l') + '</g></svg>';
+    var k = function (t) { return '<span class="sg-k">' + t + '</span>'; };
     var px = document.createElement('div'); px.className = 'sgx'; px.setAttribute('aria-hidden', 'true');
-    px.innerHTML = '<header class="sg-cab"><p class="bn-ecx-k">Del imán a las dos manchas</p></header>' +
-      paso(1, 'Schrödinger', eq('iħ ∂<sub>t</sub>ψ = [ ' + fr('p̂²', '2m') + ' − <b>μ</b>·<b>B</b> ] ψ')) +
-      paso(2, 'Campo no uniforme', eq('<b>B</b> ≈ (B<sub>0</sub> + b z) <b>ẑ</b> &nbsp;⟹&nbsp; F<sub>z</sub> = μ<sub>z</sub> ' + fr('∂B<sub>z</sub>', '∂z'))) +
-      paso(3, '¿Cuántas manchas?', eq('<span class="sg-k">clásico</span> μ<sub>z</sub> ∈ [−|μ|, |μ|] &nbsp;⟹&nbsp; banda') + eq('<span class="sg-k">cuántico</span> μ<sub>z</sub> = −g μ<sub>B</sub> m, &nbsp;m = −j, …, j &nbsp;⟹&nbsp; 2j + 1') + eq('<span class="sg-k">se ven</span> 2 &nbsp;⟹&nbsp; j = ½'), '<div class="sg-par">' + banda + dos + '</div>') +
-      paso(4, 'Espín ½: el estado es un espinor', eq('ψ ⟶ Ψ = ' + v2('ψ<sub>↑</sub>', 'ψ<sub>↓</sub>') + ', &nbsp;<b>μ</b> = −μ<sub>B</sub><b>σ</b>') + eq('Ĥ = ' + fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ' + m2('1', '0', '0', '−1'))) +
-      paso(5, 'Estados propios', eq('|↑⟩ = ' + v2('1', '0') + ', &nbsp;|↓⟩ = ' + v2('0', '1') + ', &nbsp;E<sub>±</sub> = ±μ<sub>B</sub>B<sub>0</sub>') + eq(fr('d⟨p<sub>z</sub>⟩', 'dt') + ' = ∓ μ<sub>B</sub> b')) +
-      paso(6, 'El haz se parte', eq('α|↑⟩ + β|↓⟩ &nbsp;⟶&nbsp; α φ<sub>↑</sub>|↑⟩ + β φ<sub>↓</sub>|↓⟩') + eq('Δz = ' + fr('μ<sub>B</sub> b L²', 'm v²') + ' ≈ 0,25 mm, &nbsp;P = |α|², |β|²') + '<p class="sg-pie">b ≈ 10 T/cm · L ≈ 3,5 cm · v ≈ 500 m/s, del orden de 1922</p>', paquete);
+    px.innerHTML = '<header class="sg-cab"><p class="bn-ecx-k">Del imán a las dos manchas</p></header><div class="sg-cadena">' +
+      ecu('iħ ∂<sub>t</sub>ψ', '=', '[ ' + fr('p̂²', '2m') + ' − <b>μ</b>·<b>B</b> ] ψ', k('Schrödinger') + 'átomo neutro: solo la energía del dipolo') +
+      por('campo del imán: <b>B</b> ≈ (B<sub>0</sub> + b z) <b>ẑ</b>, &nbsp;b = ∂B<sub>z</sub>/∂z') +
+      ecu('V', '=', '−μ<sub>z</sub>(B<sub>0</sub> + b z)', k('nota') + 'las componentes transversales se promedian: el momento precesa alrededor de B<sub>0</sub>') +
+      por('F = −∂V/∂z') +
+      ecu('F<sub>z</sub>', '=', 'μ<sub>z</sub> b', '<span class="sg-con">' + banda + '<span>' + k('clásico') + 'μ<sub>z</sub> continuo ⟹ una banda</span></span>') +
+      por('en cuántica <b>μ</b> ∝ momento angular') +
+      ecu('μ<sub>z</sub>', '=', '−g μ<sub>B</sub> m, &nbsp;m = −j, …, j', '<span class="sg-con">' + dos + '<span>' + k('se ven 2') + '2j + 1 = 2 ⟹ j = ½</span></span>') +
+      por('j = ½: Ψ = (ψ<sub>↑</sub>, ψ<sub>↓</sub>), &nbsp;<b>μ</b> = −μ<sub>B</sub><b>σ</b>') +
+      ecu('Ĥ', '=', fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ' + m2('1', '0', '0', '−1'), k('espinor') + 'Ĥ diagonal: dos ecuaciones independientes') +
+      por('cada componente siente su potencial') +
+      ecu('V<sub>±</sub>', '=', '±μ<sub>B</sub>(B<sub>0</sub> + b z)', k('estados') + '|↑⟩, |↓⟩ con E<sub>±</sub> = ±μ<sub>B</sub>B<sub>0</sub>') +
+      por('Ehrenfest: d⟨p⟩/dt = −⟨∇V⟩') +
+      ecu(fr('d⟨p<sub>z</sub>⟩', 'dt'), '=', '−' + fr('∂V<sub>±</sub>', '∂z') + ' = ∓ μ<sub>B</sub> b', k('fuerza') + 'solo dos valores, iguales y opuestos') +
+      por('se integra dos veces, t = L/v') +
+      ecu('Δz', '=', fr('μ<sub>B</sub> b L²', 'm v²') + ' ≈ 0,25 mm', '<span class="sg-con">' + paquete + '<span>' + k('1922') + 'b ≈ 10 T/cm, L ≈ 3,5 cm, v ≈ 500 m/s · P = |α|², |β|²</span></span>') +
+      '</div>';
     raiz.appendChild(px);
     ec.addEventListener('pointerenter', function () { raiz.classList.add('sg-ec'); });
     ec.addEventListener('pointerleave', function () { raiz.classList.remove('sg-ec'); });

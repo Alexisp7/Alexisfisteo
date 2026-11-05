@@ -693,19 +693,23 @@
           el('path', { d: 'M' + f(a[0] + ux * 5) + ' ' + f(a[1] + uy * 5) + ' L' + f(et[0] - ux * 6) + ' ' + f(et[1] - uy * 6), pathLength: 1 }, n);
           var rot = el('text', { 'class': 'nota-rot', x: f(et[0]), y: f(et[1] + 3.5), 'text-anchor': izq ? 'end' : 'start' }, n); rot.textContent = o.titulo;
           if (o.extra) o.extra(n);
-          var c = document.createElement('div'); c.className = 'bn-nota nota'; c.id = 'bn-nota-' + (nN++);
-          var dato = document.createElement('p'); dato.className = 'bn-nota-dato'; dato.textContent = o.dato;
-          var que = document.createElement('p'); que.className = 'bn-nota-que'; que.textContent = o.que;
-          var dib = document.createElement('p'); dib.className = 'bn-nota-dib'; var dk = document.createElement('span'); dk.textContent = 'En el dibujo'; dib.appendChild(dk); dib.appendChild(document.createTextNode(o.dibujo));
-          var med = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); med.setAttribute('viewBox', '6 -2 100 100'); med.setAttribute('class', 'bn-med'); med.setAttribute('aria-hidden', 'true');
+          // ficha sin caja: el título grande es el rótulo de la zona (la raya llega a él); debajo, la animación protagonista
+          // y al lado solo el dato y una frase
+          rot.style.visibility = 'hidden';
+          var c = document.createElement('div'); c.className = 'bn-nota nota' + (izq ? ' bn-izq' : ''); c.id = 'bn-nota-' + (nN++);
+          var h = document.createElement('h3'); h.className = 'bn-nota-tit'; h.textContent = o.titulo;
+          var med = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); med.setAttribute('viewBox', '12 2 88 88'); med.setAttribute('class', 'bn-med'); med.setAttribute('aria-hidden', 'true');
           var gq = el('g', {}, med); MED[o.med](gq, 0, 0);
-          var pAnim = document.createElement('p'); pAnim.className = 'bn-nota-anim'; pAnim.textContent = gq.pie || '';
-          var fila = document.createElement('div'); fila.className = 'bn-nota-fila'; fila.appendChild(med); fila.appendChild(pAnim);
-          [dato, que, dib, fila].forEach(function (e) { c.appendChild(e); }); ficha.appendChild(c);
-          function bajoRotulo() {   // la ficha cuelga del rótulo: alineada a su borde y pegada debajo, sin salirse de la sección
-            var rr = rot.getBoundingClientRect(), rm = sec.getBoundingClientRect(), w = c.offsetWidth, h = c.offsetHeight;
-            var x = izq ? rr.right - rm.left - w + 4 : rr.left - rm.left - 4, y = rr.bottom - rm.top + 12;
-            x = Math.max(16, Math.min(x, rm.width - w - 16)); y = Math.min(y, rm.height - h - 16);
+          var txt = document.createElement('div'); txt.className = 'bn-nota-txt';
+          var dato = document.createElement('p'); dato.className = 'bn-nota-dato'; dato.textContent = o.dato;
+          var que = document.createElement('p'); que.className = 'bn-nota-que'; que.textContent = o.breve;
+          txt.appendChild(dato); txt.appendChild(que);
+          var fila = document.createElement('div'); fila.className = 'bn-nota-fila'; fila.appendChild(med); fila.appendChild(txt);
+          c.appendChild(h); c.appendChild(fila); ficha.appendChild(c);
+          function bajoRotulo() {   // el título queda donde termina la raya; todo dentro de la sección
+            var rr = rot.getBoundingClientRect(), rm = sec.getBoundingClientRect(), w = c.offsetWidth, hh = c.offsetHeight, pad = 22;
+            var x = izq ? rr.right - rm.left - w + pad : rr.left - rm.left - pad, y = rr.top + rr.height / 2 - rm.top - h.offsetHeight / 2 - pad;
+            x = Math.max(8, Math.min(x, rm.width - w - 8)); y = Math.max(60, Math.min(y, rm.height - hh - 8));
             c.style.left = x + 'px'; c.style.top = y + 'px';
           }
           var foco = o.foco || [];
@@ -744,12 +748,12 @@
         }
         function polar(ang, r) { return [C[0] + Math.cos(ang) * r, C[1] + Math.sin(ang) * r]; }
         var RS = 2 * SC, RF = 3 * SC, xI = C[0] - RSH - 62, xD = C[0] + RSH + 62;   // rₛ a escala (sin lente) y columnas de rótulos
-        nota(null, { k: 'sing', ancla: [C[0], C[1]], rotulo: [xI, C[1] + 4], titulo: 'Singularidad', med: 'sing', dim: [.18, .35],
+        nota(null, { k: 'sing', breve: 'Donde la relatividad general predice curvatura infinita. Ahí la teoría deja de valer.',  ancla: [C[0], C[1]], rotulo: [xI, C[1] + 4], titulo: 'Singularidad', med: 'sing', dim: [.18, .35],
           dato: 'r = 0',
           que: 'El centro. La relatividad general predice que ahí la curvatura del espacio-tiempo se vuelve infinita: es la señal de que la teoría deja de valer, y se espera que una teoría cuántica de la gravedad la describa.',
           dibujo: 'un punto. Nadie puede verla: queda siempre dentro del horizonte.' });
         function curva(fn, a0, a1) { var d = ''; for (var k = 0; k <= 64; k++) { var t = a0 + (a1 - a0) * k / 64, q = fn(t); d += (k ? 'L' : 'M') + f(q[0]) + ' ' + f(q[1]); } return d; }
-        nota(null, { k: 'hor', ancla: polar(-2.2, RSH * .7), rotulo: [xI, C[1] - 64], titulo: 'Horizonte de eventos', med: 'hor', dim: [.18, .35],
+        nota(null, { k: 'hor', breve: 'Lo que lo cruza no vuelve a salir, ni la luz. La sombra negra es su imagen, agrandada unas 2,6 veces por la lente.',  ancla: polar(-2.2, RSH * .7), rotulo: [xI, C[1] - 64], titulo: 'Horizonte de eventos', med: 'hor', dim: [.18, .35],
           dato: 'rₛ = 2GM/c²',
           que: 'La frontera sin retorno: lo que la cruza, ni siquiera la luz, vuelve a salir. Todo rayo que llega a la zona negra termina en el horizonte; por eso el negro es la imagen del horizonte. Para el Sol, rₛ ≈ 3 km.',
           dibujo: 'la esfera punteada es el horizonte tal como se ve. La gravedad curva la luz y lo agranda: mide rₛ, pero su imagen mide ≈ 2,6 rₛ (√27 GM/c²). Los rayos que caen se frenan y se apagan al llegar: vistos desde lejos, nunca lo cruzan.',
@@ -786,12 +790,12 @@
               });
             })(0);
           } });
-        nota(null, { k: 'hawk', ancla: buscar('hawk', -.55, RSH * .85, RSH * 1.2), rotulo: [xD, C[1] - RSH * .78], titulo: 'Borde · radiación de Hawking', med: 'hawk', dim: [.18, .35], foco: [capaHawk],
+        nota(null, { k: 'hawk', breve: 'Por efectos cuánticos el agujero emite como un cuerpo negro y se evapora muy despacio. Nunca se ha detectado.',  ancla: buscar('hawk', -.55, RSH * .85, RSH * 1.2), rotulo: [xD, C[1] - RSH * .78], titulo: 'Radiación de Hawking', med: 'hawk', dim: [.18, .35], foco: [capaHawk],
           dato: 'T = ħc³ / 8πGMk_B',
           que: 'Hawking (1974): por efectos cuánticos junto al horizonte, el agujero emite como un cuerpo negro y pierde masa muy despacio. Para una masa solar T ≈ 6 × 10⁻⁸ K; nunca se ha medido.',
           dibujo: 'el filo rojo y las chispas son simbólicos: esa radiación sería invisible.' });
-        nota(null, { k: 'caida', ancla: buscar('caida', -2.0, RSH * 1.0, RSH * 1.7), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.3, .4],
-          dato: 'rₛ < r < 3 rₛ',
+        nota(null, { k: 'caida', breve: 'Bajo la última órbita estable el gas ya no puede seguir girando y se precipita al horizonte.',  ancla: buscar('caida', -2.0, RSH * 1.0, RSH * 1.7), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.3, .4],
+          dato: 'rₛ < r < 3 rₛ  (ISCO)',
           que: 'Entre el borde interno del disco (la órbita estable más interna, ISCO, en 3 rₛ) y el horizonte ya no hay órbitas estables: el gas se precipita en espiral. En la literatura se llama plunging region. Dentro está la esfera de fotones, en 1,5 rₛ, donde la luz puede orbitar.',
           dibujo: 'la franja resaltada entre la sombra y el disco, deformada por la lente. Su borde interior es el anillo de fotones: la luz que rozó la esfera de fotones (1,5 rₛ) antes de escapar.',
           extra: function (n) {
@@ -809,8 +813,8 @@
               el('path', { 'class': 'bn-rs bn-rs-ecu', d: 'M' + fuera.map(function (q) { return f(q[0]) + ' ' + f(q[1]); }).join(' L'), pathLength: 40 }, n);
             });
           } });
-        nota(null, { k: 'disco', ancla: buscar('disco', Math.atan2(-.8, 2.6), RSH * 2.2, RSH * 3.2), rotulo: [C[0] + RSH * 2.55, C[1] - RSH * .33], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
-          dato: 'r ≥ 3 rₛ (ISCO)',
+        nota(null, { k: 'disco', breve: 'Gas que orbita, pierde momento angular por viscosidad y entra en espiral. Se calienta y brilla; el lado que se acerca, más (Doppler).',  ancla: buscar('disco', .62, RSH * 1.15, RSH * 2.4), rotulo: [C[0] + RSH * 1.45, C[1] + RSH * 1.95], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
+          dato: 'Ω² = GM/r³',
           que: 'Gas que gira y cae poco a poco; la fricción lo calienta hasta brillar. Por dentro gira más rápido y está más caliente.',
           dibujo: 'el lado que se acerca a nosotros brilla más (Doppler relativista), y el disco de atrás asoma arriba y abajo de la sombra por la lente gravitacional.' });
       }

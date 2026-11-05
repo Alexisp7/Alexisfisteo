@@ -1135,50 +1135,94 @@
     // por qué los labios se cierran: Δz(y) = ±K(y)/v² y K(y) ∝ ∂B/∂z cae hacia los extremos; ahí la separación
     // es menor que el ancho de cada mancha y ↑ y ↓ se solapan. Un cursor recorre la ranura y muestra las dos ramas
     function labiosMini(q, x0, y0) {
-      // 1) perspectiva: la ranura del colimador es larga en x; el filo del imán corre a lo largo del haz (y).
-      //    En la pantalla (plano x–z) cada átomo cae a ±Δz que depende de su x: grande bajo el filo, chico en los extremos.
-      var ox = x0 + 44, oy = y0 + 38, Y1 = 118, XA = 34, XB = 80, R = 32, D = 11;
-      function P(x, y, z) { return [ox + y * .95 - x * .62, oy + y * .2 + x * .42 - z]; }
-      function poli(L, c, st) { return el('path', { 'class': c, d: L.map(function (p, k) { var s = P(p[0], p[1], p[2]); return (k ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1]); }).join(' ') + 'Z', style: st || '' }, q); }
-      function zDe(y, d) {
-        if (y <= XA) return 0;
-        if (y <= XB) { var u = (y - XA) / (XB - XA); return d * .4 * u * u; }
-        return d * .4 + d * .8 * (y - XB) / (XB - XA);
+      // 1) perspectiva oblicua: x a lo ancho, z hacia arriba, el haz avanza en y hacia el fondo (arriba a la derecha).
+      //    Los planos x–z (corte del imán y pantalla) se ven de frente, sin deformar.
+      //    En el corte, las líneas de campo se juntan bajo el filo (∂B/∂z grande) y a los costados quedan
+      //    paralelas: ahí hay campo, pero ∂B/∂z ≈ 0. Un átomo que entra por el costado sigue recto.
+      var ox = x0 + 40, oy = y0 + 88, CA = .906, SA = .423, R = 24, W = 30, D = 13;
+      var DI = 30, DM = 70, DP = 118;                        // profundidad: entrada y salida del imán, pantalla
+      function P(x, d, z) { return [ox + x + d * CA, oy - z - d * SA]; }
+      function ruta(L, d) { return L.map(function (p, k) { var s = P(p[0], d == null ? p[1] : d, d == null ? p[2] : p[1]); return (k ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1]); }).join(' '); }
+      function poli(L, c, d) { return el('path', { 'class': c, d: ruta(L, d) + 'Z' }, q); }
+      function g(x) { var u = x / R; return Math.max(0, 1 - u * u) * Math.exp(-1.2 * u * u) / 1; }   // ∂B/∂z relativo a lo largo de la ranura
+      // superficies de los polos en el corte: filo arriba (punta en z = 6), canal abajo
+      function zTop(x) { var a = Math.abs(x); return a < 13 ? 6 + .5 * a : 12.5; }
+      function zBot(x) { var a = Math.abs(x); return a < 8 ? -8 - 3 * (1 - a * a / 64) : -8; }
+      // pantalla (lo más lejano): labios ↑ y ↓ que se tocan en los extremos
+      poli([[-W, -22], [W, -22], [W, 22], [-W, 22]], 'lb-plano', DP);
+      var N = 32, i, bA = [], cA = [], bB = [], cB = [];
+      for (i = 0; i <= N; i++) { var xu = (i / N * 2 - 1) * R, dz = D * g(xu); bA.push([xu, dz + 2]); cA.push([xu, Math.max(dz - 2, -.6)]); bB.push([xu, -dz - 2]); cB.push([xu, Math.min(-dz + 2, .6)]); }
+      poli(bA.concat(cA.reverse()), 'lb-a', DP); poli(bB.concat(cB.reverse()), 'lb-b', DP);
+      var ep = P(0, DP, 25), tp = el('text', { 'class': 'cm-et lb-et-p', x: f(ep[0]), y: f(ep[1]), 'text-anchor': 'middle' }, q); tp.textContent = 'pantalla x–z';
+      // aristas del imán al fondo (solo contorno)
+      var cara = [[-W, 22], [W, 22], [W, -22], [-W, -22]];
+      el('path', { 'class': 'lb-arista', d: ruta(cara, DM) + 'Z' }, q);
+      cara.forEach(function (c) { el('path', { 'class': 'lb-arista', d: ruta([c], DI) + ' ' + ruta([c], DM).replace('M', 'L') }, q); });
+      // trayectorias: recta hasta el imán, parábola dentro, recta después
+      function tray(x, dzF) {
+        var A = dzF / ((DM - DI) * ((DM - DI) / 2 + DP - DM)), o = [];
+        for (var d = 0; d <= DP; d += 4) {
+          var z = d <= DI ? 0 : d <= DM ? A * (d - DI) * (d - DI) / 2 : A * (DM - DI) * ((DM - DI) / 2 + d - DM);
+          o.push([x, d, z]);
+        }
+        return ruta(o);
       }
-      var esc = .4 + .8 * (Y1 - XB) / (XB - XA);
-      // pantalla x–z
-      poli([[-R - 8, Y1, -24], [R + 8, Y1, -24], [R + 8, Y1, 24], [-R - 8, Y1, 24]], 'lb-plano');
-      var ez = P(0, Y1, 28), tp = el('text', { 'class': 'cm-et lb-et-p', x: f(ez[0]), y: f(ez[1] - 2), 'text-anchor': 'middle' }, q); tp.textContent = 'plano x–z';
-      var N = 30, i, bA = [], bB = [], cA = [], cB = [];
-      for (i = 0; i <= N; i++) { var u = i / N * 2 - 1, d = D * (1 - u * u) + 1.2; bA.push([u * R, Y1, d + 2.2]); cA.push([u * R, Y1, d - 2.2]); bB.push([u * R, Y1, -d - 2.2]); cB.push([u * R, Y1, -d + 2.2]); }
-      poli(bA.concat(cA.reverse()), 'lb-a'); poli(bB.concat(cB.reverse()), 'lb-b');
-      // polo inferior (ranura) y colimador
-      poli([[-18, XA, -9], [18, XA, -9], [18, XB, -9], [-18, XB, -9]], 'lb-polo-b');
-      poli([[-R - 8, 0, -16], [R + 8, 0, -16], [R + 8, 0, 16], [-R - 8, 0, 16]], 'lb-colim');
-      poli([[-R, 0, -1.4], [R, 0, -1.4], [R, 0, 1.4], [-R, 0, 1.4]], 'lb-cinta');
-      // átomos: x al azar dentro de la ranura, espín ↑ o ↓ al 50 %
-      var sem = 7; function rnd() { sem = (sem * 16807) % 2147483647; return sem / 2147483647; }
-      for (i = 0; i < 14; i++) {
-        var xa = (rnd() * 2 - 1) * R, s = i % 2 ? -1 : 1, dd = s * D * (1 - (xa / R) * (xa / R)) / esc + s * 1.2 / esc, o = '';
-        for (var y = 0; y <= Y1; y += 6) { var pp = P(xa, y, zDe(y, dd)); o += (y ? 'L' : 'M') + f(pp[0]) + ' ' + f(pp[1]); }
-        var at = el('circle', { 'class': s > 0 ? 'cm-at-a' : 'cm-at-b', r: 1.7 }, q);
-        el('animateMotion', { path: o, dur: '2.4s', begin: f(-i * 2.4 / 14) + 's', repeatCount: 'indefinite' }, at);
+      var sem = 5; function rnd() { sem = (sem * 16807) % 2147483647; return sem / 2147483647; }
+      var vuelan = el('g', {}, q);
+      for (i = 0; i < 12; i++) {
+        var xa = (rnd() * 1.7 - .85) * R, s = i % 2 ? -1 : 1, dzf = s * (D * g(xa) * (.85 + .3 * rnd()) + .4);
+        var tr = tray(xa, dzf);
+        var at = el('circle', { 'class': s > 0 ? 'cm-at-a' : 'cm-at-b', r: 1.6 }, vuelan);
+        el('animateMotion', { path: tr, dur: '2.6s', begin: f(-i * 2.6 / 12) + 's', repeatCount: 'indefinite' }, at);
       }
-      // filo: cuña a lo largo de y, por encima del haz
-      poli([[0, XA, 5], [-10, XA, 16], [-10, XB, 16], [0, XB, 5]], 'lb-filo-a');
-      poli([[0, XA, 5], [10, XA, 16], [10, XB, 16], [0, XB, 5]], 'lb-filo-b');
-      poli([[-10, XA, 16], [10, XA, 16], [0, XA, 5]], 'lb-filo-c');
-      var fz = P(0, (XA + XB) / 2, 18), tf = el('text', { 'class': 'cm-et', x: f(fz[0]), y: f(fz[1] - 3), 'text-anchor': 'middle' }, q); tf.textContent = 'filo';
-      // ejes (en pantalla, abajo a la izquierda)
-      var o0 = [x0 + 22, y0 + 92];
-      [[-.62, .42, 'x'], [.95, .2, 'y'], [0, -1, 'z']].forEach(function (a) {
-        var e = [o0[0] + a[0] * 13, o0[1] + a[1] * 13];
-        el('line', { 'class': 'lb-eje', x1: f(o0[0]), y1: f(o0[1]), x2: f(e[0]), y2: f(e[1]) }, q);
-        var t = el('text', { 'class': 'cm-et', x: f(e[0] + (a[2] === 'x' ? -7 : a[2] === 'y' ? 2 : -2.5)), y: f(e[1] + (a[2] === 'z' ? -2 : 4)) }, q); t.textContent = a[2];
+      // caso límite: un átomo dirigido al costado de la ranura, donde ∂B/∂z ≈ 0
+      var XL = .96 * R, trL = tray(XL, D * g(XL) + .3);
+      el('path', { 'class': 'lb-recto', d: trL }, q);
+      // cara de entrada del imán: corte x–z con los polos y las líneas de campo
+      var top = [], bot = [];
+      for (i = 0; i <= 24; i++) { var xx = (i / 24 * 2 - 1) * W; top.push([xx, zTop(xx)]); bot.push([xx, zBot(xx)]); }
+      poli([[-W, 22]].concat(top, [[W, 22]]), 'lb-polo-n', DI);
+      poli([[-W, -22]].concat(bot, [[W, -22]]), 'lb-polo-s', DI);
+      var campo = el('g', { 'class': 'lb-campo-g' }, q);
+      [[0, 0], [3, 7], [7.5, 14], [14, 20.5], [21.5, 25.5], [28, 28.5]].forEach(function (c) {
+        [-1, 1].forEach(function (sg) {
+          if (!c[0] && sg < 0) return;
+          var xt = sg * c[0], xb = sg * c[1], zt = zTop(xt), zb = zBot(xb), zm = (zt + zb) / 2;
+          var a0 = P(xt, DI, zt), cq = P(xt + (xb - xt) * .1, DI, zm + 2), b0 = P(xb, DI, zb);
+          var dd = 'M' + f(a0[0]) + ' ' + f(a0[1]) + ' Q' + f(cq[0]) + ' ' + f(cq[1]) + ' ' + f(b0[0]) + ' ' + f(b0[1]);
+          el('path', { 'class': 'linea-b-halo lb-campo-h', d: dd }, campo);
+          el('path', { 'class': 'linea-b lb-campo', d: dd }, campo);
+          el('path', { 'class': 'lb-flujo', d: dd }, campo);
+        });
       });
-      var t1 = el('text', { 'class': 'cm-et', x: f(x0 + 8), y: f(y0 + 112) }, q); t1.textContent = 'x: largo de la ranura';
+      var eB = P(-W - 2, DI, 16), tB = el('text', { 'class': 'cm-et lb-et-b', x: f(eB[0]), y: f(eB[1]), 'text-anchor': 'end' }, q); tB.textContent = 'B';
+      var eF = P(0, DI, 23), tF = el('text', { 'class': 'cm-et', x: f(eF[0]), y: f(eF[1] - 1.5), 'text-anchor': 'middle' }, q); tF.textContent = 'filo';
+      // perfil de ∂B/∂z bajo el corte: alto en el centro, casi nulo en los costados
+      var gp = [];
+      for (i = 0; i <= 30; i++) { var xg = (i / 30 * 2 - 1) * R; gp.push([xg, -33 + 9 * g(xg)]); }
+      el('path', { 'class': 'lb-base', d: ruta([[-R, -33], [R, -33]], DI) }, q);
+      el('path', { 'class': 'lb-gradc', d: ruta(gp, DI) }, q);
+      var eg = P(R + 3, DI, -33), tg = el('text', { 'class': 'cm-et lb-et-b', x: f(eg[0]), y: f(eg[1] + 2.5) }, q); tg.textContent = '∂B/∂z';
+      var mL = P(XL, DI, -33); el('circle', { 'class': 'lb-mk-l', cx: f(mL[0]), cy: f(mL[1]), r: 1.6 }, q);
+      // ranura del colimador (lo más cercano): larga en x, fina en z
+      poli([[-R, -.9], [R, -.9], [R, .9], [-R, .9]], 'lb-cinta', 0);
+      // el átomo del caso límite: va encima de todo y deja su marca en la punta de la mancha
+      var aL = el('g', { 'class': 'lb-limite' }, q);
+      el('circle', { r: 2.1 }, aL);
+      el('animateMotion', { path: trL, dur: '2.6s', repeatCount: 'indefinite' }, aL);
+      var pL = P(XL, DP, D * g(XL) + .3);
+      el('circle', { 'class': 'lb-anillo', cx: f(pL[0]), cy: f(pL[1]), r: 3.2 }, q);
+      var eL = P(W + 3, DP, D * g(XL) + .3), tL = el('text', { 'class': 'cm-et lb-et-l', x: f(eL[0]), y: f(eL[1] + 2.5) }, q); tL.textContent = 'recto';
+      // ejes
+      var o0 = [x0 + 6, y0 + 118];
+      [[1, 0, 'x'], [CA, -SA, 'y'], [0, -1, 'z']].forEach(function (a) {
+        var e = [o0[0] + a[0] * 11, o0[1] + a[1] * 11];
+        el('line', { 'class': 'lb-eje', x1: f(o0[0]), y1: f(o0[1]), x2: f(e[0]), y2: f(e[1]) }, q);
+        var t = el('text', { 'class': 'cm-et', x: f(e[0] + (a[2] === 'z' ? -2.5 : 2)), y: f(e[1] + (a[2] === 'z' ? -2 : a[2] === 'x' ? 2.5 : 0)) }, q); t.textContent = a[2];
+      });
+      var t1 = el('text', { 'class': 'cm-et', x: f(x0 + 28), y: f(y0 + 128) }, q); t1.textContent = 'al costado ∂B/∂z ≈ 0';
       // 2) eje z según la velocidad (vista de lado): Δz ∝ 1/v²; el lento tarda más y se abre más
-      var sx = x0 + 196, ex = x0 + 300, cy = y0 + 50, MA = sx + 26, MB = sx + 70;
+      var sx = x0 + 196, ex = x0 + 300, cy = y0 + 62, MA = sx + 26, MB = sx + 70;
       el('rect', { 'class': 'lb-zona', x: f(MA), y: f(cy - 36), width: f(MB - MA), height: 72, rx: 2 }, q);
       el('line', { 'class': 'lb-cero', x1: f(sx), y1: f(cy), x2: f(ex), y2: f(cy) }, q);
       el('line', { 'class': 'cm-pantalla', x1: f(ex), y1: f(cy - 40), x2: f(ex), y2: f(cy + 40) }, q);
@@ -1197,7 +1241,7 @@
         });
         if (v[1]) { var tv = el('text', { 'class': 'cm-et', x: f(ex + 5), y: f(cy - 15 / (v[0] * v[0]) + 3) }, q); tv.textContent = v[1]; }
       });
-      var t2 = el('text', { 'class': 'cm-et', x: f(sx), y: f(y0 + 112) }, q); t2.textContent = 'z: Δz ∝ 1/v²';
+      var t2 = el('text', { 'class': 'cm-et', x: f(sx), y: f(y0 + 128) }, q); t2.textContent = 'z: Δz ∝ 1/v²';
     }
     function colimMini(q, x0, y0) {
       [[0, 1.6, 'haz fino'], [160, 15, 'haz ancho']].forEach(function (cfg, kp) {
@@ -1327,9 +1371,11 @@
     nota([p0], [54, 18, .5], 'Fráncfort, 1922', ['Stern y Gerlach buscaban la cuantización', 'espacial de Bohr–Sommerfeld. El espín', '(1925) explicó por qué eran justo dos.']);
     nota([pa], [79, -21, 37], 'Placa colectora', ['La línea punteada marca dónde llega el haz', 'sin campo. Con campo, la física clásica', 'esperaba una mancha continua (μz de cualquier', 'valor). Se vieron dos: μz está cuantizado.'], 300);
     nota([pz], [80, 0, 27], '¿Por qué se cierra en los bordes?', [
-      'La mancha se abre en x por el largo de la ranura y en z por las',
-      'velocidades. Lejos del filo ∂B/∂z cae (el campo no): los extremos',
-      'casi no se desvían y ↑ y ↓ se tocan.'], 112, [pa], { alto: 124, ancho: 340, dibujo: labiosMini });
+      'Bajo el filo las líneas de campo se juntan: ∂B/∂z es grande. A los',
+      'costados de la ranura quedan casi paralelas: el campo sigue ahí,',
+      'pero ∂B/∂z ≈ 0. Un átomo que pasa por ese costado casi no siente',
+      'fuerza y sigue recto: ↑ y ↓ llegan juntos y la mancha se cierra.',
+      'En z, la apertura depende de la velocidad: Δz ∝ 1/v².'], 112, [pa], { alto: 140, ancho: 340, dibujo: labiosMini });
 
     // física: f(v) ∝ v³ e^{−v²/v₀²} → w = v²/v₀² ~ Gamma(2,1); Δz = ±K(y)/w
     // espín: antes del imán, superposición (la flecha "titila"); al entrar al gradiente queda ↑ o ↓

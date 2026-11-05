@@ -1892,6 +1892,22 @@
     .mc svg .nota .lb-filo-c { fill:rgba(205,175,125,.85); stroke:rgba(30,26,22,.45); stroke-width:.6; }
     .mc svg .nota .lb-cinta { fill:rgba(30,26,22,.55); }
     .mc svg .nota .lb-mk { fill:#7A5CC8; } .mc svg .nota .lb-mk-e { fill:none; stroke:#7A5CC8; stroke-width:1; }
+    .mc svg .nota .lb-arista { fill:none; stroke:rgba(30,26,22,.28); stroke-width:.6; }
+    .mc svg .nota .lb-polo-n, .mc svg .nota .lb-polo-s { fill:rgba(201,162,122,.42); stroke:rgba(30,26,22,.5); stroke-width:.7; stroke-linejoin:round; }
+    .mc svg .nota .lb-polo-s { fill:rgba(170,135,85,.38); }
+    .mc svg .nota .lb-campo-h { stroke-width:2.6; opacity:.16; }
+    .mc svg .nota .lb-campo { stroke-width:.8; }
+    .mc svg .nota .lb-flujo { fill:none; stroke:#E4F7FF; stroke-width:.6; stroke-linecap:round; stroke-dasharray:1 7; opacity:.8; animation:lb-flujo 1.6s linear infinite; }
+    @keyframes lb-flujo { to { stroke-dashoffset:-8; } }
+    .mc svg .nota .lb-et-b { fill:#2B8DB8; }
+    .mc svg .nota .lb-base { fill:none; stroke:rgba(30,26,22,.3); stroke-width:.6; }
+    .mc svg .nota .lb-gradc { fill:none; stroke:#2FA6D6; stroke-width:1.1; stroke-linejoin:round; }
+    .mc svg .nota .lb-recto { fill:none; stroke:#A87B2C; stroke-width:.9; stroke-dasharray:2 2; }
+    .mc svg .nota .lb-limite circle { fill:var(--rojo); stroke:#C9963A; stroke-width:1.1; }
+    .mc svg .nota .lb-mk-l { fill:#C9963A; }
+    .mc svg .nota .lb-anillo { fill:none; stroke:#A87B2C; stroke-width:.9; transform-box:fill-box; transform-origin:center; animation:lb-anillo 2.6s ease-out infinite; }
+    @keyframes lb-anillo { 0%,80% { opacity:0; transform:scale(.4); } 88% { opacity:1; transform:scale(1); } 100% { opacity:0; transform:scale(1.6); } }
+    .mc svg .nota .lb-et-l { fill:#8A6424; }
     .mc svg .nota .lb-zona { fill:rgba(47,166,214,.12); stroke:rgba(47,166,214,.45); stroke-width:.7; }
     .mc svg .nota .cm-tray { fill:none; stroke-width:.6; opacity:.35; }
     .mc svg .nota .cm-ta { stroke:var(--rojo); } .mc svg .nota .cm-tb { stroke:var(--azul); }

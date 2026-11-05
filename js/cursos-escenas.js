@@ -350,14 +350,14 @@
     var bordeH = el('path', { 'class': 'bn-hawking-borde' }, capaHawk), bordeH2 = el('path', { 'class': 'bn-hawking-borde bn-hawking-borde2' }, capaHawk);
     var NB = 220, jit = new Float32Array(NB), jit2 = new Float32Array(NB);
     function tiembla() {
-      var d = '', d2 = '', R = RSH * .985, t = performance.now() / 1000;
+      var d = '', d2 = '', R = RSH * 1.012, t = performance.now() / 1000;
       for (var i = 0; i < NB; i++) {
         jit[i] = jit[i] * .55 + (Math.random() - .5) * .9; if (Math.random() < .004) jit[i] += 2.4 + Math.random() * 2;
         jit2[i] = jit2[i] * .7 + (Math.random() - .5) * 1.2;
       }
       for (i = 0; i <= NB; i++) {
         var k = i % NB, a = k / NB * Math.PI * 2, w = .5 * Math.sin(a * 13 + t * 9) + .35 * Math.sin(a * 29 - t * 14);
-        var r1 = R + jit[k] + w, r2 = R + 1.2 + jit2[k] * 1.4 + w * .6;
+        var r1 = R + Math.max(jit[k] + w, -.4), r2 = R + 1.6 + Math.max(jit2[k] * 1.4 + w * .6, -.6);
         d += (i ? 'L' : 'M') + f(C[0] + Math.cos(a) * r1) + ' ' + f(C[1] + Math.sin(a) * r1);
         d2 += (i ? 'L' : 'M') + f(C[0] + Math.cos(a) * r2) + ' ' + f(C[1] + Math.sin(a) * r2);
       }
@@ -381,7 +381,7 @@
     function par() {
       // chispas diminutas: nacen en el filo, apenas se alejan unos píxeles y se apagan; su pareja cae hacia dentro
       var a = Math.random() * Math.PI * 2, sale = el('circle', { 'class': 'bn-hq', r: f(.55 + Math.random() * .5) }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: .5 }, hawk);
-      pares.push({ a: a, r0: RSH * .985, d: 3 + Math.random() * 9, vida: .35 + Math.random() * .55, t: 0, sale: sale, cae: cae, da: gauss() * .05 });
+      pares.push({ a: a, r0: RSH * 1.012, d: 3 + Math.random() * 9, vida: .35 + Math.random() * .55, t: 0, sale: sale, cae: cae, da: gauss() * .05 });
     }
     // ── medallones de las notas: una lámina circular a lápiz y aguada con una animación de cada parte.
     // Cada animación sale de la física que cita la nota (geodésicas nulas, luz radial en coordenadas
@@ -562,7 +562,7 @@
         tiembla();
         for (var i = pares.length - 1; i >= 0; i--) {
           var p = pares[i]; p.t += dt; p.a += p.da * dt;
-          var u = p.t / p.vida, sal = 1 - (1 - u) * (1 - u), r = p.r0 + p.d * sal, rc = p.r0 - p.d * .5 * u * u;
+          var u = p.t / p.vida, sal = 1 - (1 - u) * (1 - u), r = p.r0 + p.d * sal, rc = p.r0 - 1 - p.d * .35 * u * u;
           var luz = u < .12 ? u / .12 : (1 - u) * (1 - u) / .77;
           p.sale.setAttribute('cx', f(C[0] + Math.cos(p.a) * r)); p.sale.setAttribute('cy', f(C[1] + Math.sin(p.a) * r)); p.sale.setAttribute('opacity', f(Math.max(0, luz)));
           p.cae.setAttribute('cx', f(C[0] + Math.cos(p.a + .01) * rc)); p.cae.setAttribute('cy', f(C[1] + Math.sin(p.a + .01) * rc)); p.cae.setAttribute('opacity', f(Math.max(0, luz * .6)));

@@ -86,8 +86,8 @@
 
     var lineSel = canvas.getAttribute('data-linea'), lineY = null;
     var PAPEL = canvas.getAttribute('data-papel') || '255,255,255';
-    // ola de medición ligada al scroll (data-ola): al bajar, un frente sale del
-    // medidor y mide las esferas a su paso; al subir se deshace. Avanza suave,
+    // ola de medición ligada al scroll (data-ola): al bajar, un frente sale de
+    // todo el borde interior de cada costado y mide las esferas a su paso; al subir se deshace. Avanza suave,
     // siguiendo al scroll con retraso, para que se vea lenta pero fluida
     var ola = canvas.hasAttribute('data-ola') && !still, olaMeta = 0, olaP = 0, BANDA = 140, altoSec = 1;
     function olaObjetivo() {
@@ -460,12 +460,20 @@
       if (ola) {
         olaP += (olaMeta - olaP) * Math.min(1, dt / 520);   // sigue al scroll con inercia
         if (Math.abs(olaMeta - olaP) < 0.0005) olaP = olaMeta;
-        // el frente parte desde la esfera más cercana al medidor y termina en la más lejana
-        // (las distancias se recalculan solo si el medidor se movió)
-        if (!olaO || Math.abs(olaO.x - oX) > 0.5) {
-          var dMin = Infinity, dMax = 0;
-          for (var j = 0; j < qubits.length; j++) { var dj = Math.hypot(qubits[j].x - oX, qubits[j].y - oY); qubits[j].dO = dj; if (dj < dMin) dMin = dj; if (dj > dMax) dMax = dj; }
-          olaO = { x: oX, min: dMin, max: dMax };
+        // el frente sale de todo el borde interior de cada costado, de arriba a
+        // abajo, y avanza hacia afuera: cada esfera se mide según su distancia
+        // horizontal al borde de la zona libre en su misma fila. Va desde la
+        // esfera más cercana al borde hasta la más lejana (se calcula una vez)
+        if (!olaO) {
+          var dMin = Infinity, dMax = 0, filas = {};
+          for (var j = 0; j < qubits.length; j++) {
+            var qj = qubits[j], sp2 = filas[qj.y];
+            if (sp2 === undefined) sp2 = filas[qj.y] = spanAt(qj.y);
+            var dj = sp2 ? (qj.x < w / 2 ? sp2[0] - qj.x : qj.x - sp2[1]) : Math.abs(qj.x - w / 2);
+            dj = Math.max(0, dj); qj.dO = dj;
+            if (dj < dMin) dMin = dj; if (dj > dMax) dMax = dj;
+          }
+          olaO = { min: dMin, max: dMax };
         }
         oD = olaP > 0 ? olaO.min + olaP * (olaO.max - olaO.min + BANDA) : 0;
       }

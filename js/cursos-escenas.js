@@ -722,10 +722,38 @@
         nota(null, { k: 'hor', ancla: polar(-2.2, RS), rotulo: [xI, C[1] - 64], titulo: 'Horizonte de eventos', med: 'hor', dim: [.18, .35],
           dato: 'rₛ = 2GM/c²',
           que: 'La frontera sin retorno: lo que la cruza, ni siquiera la luz, vuelve a salir. No es una superficie material, solo un radio. Para el Sol, rₛ ≈ 3 km.',
-          dibujo: 'la línea punteada es rₛ a escala. La sombra negra es unas 2,6 veces mayor (√27 GM/c²) porque la gravedad curva la luz que pasa cerca.',
+          dibujo: 'la esfera punteada es rₛ a escala, con su ecuador en el plano del disco. Los rayos que caen se frenan y se apagan al acercarse: vistos desde lejos, nunca llegan a cruzarla. La sombra negra es unas 2,6 veces mayor (√27 GM/c²) porque la gravedad curva la luz que pasa cerca.',
           extra: function (n) {
+            // la esfera rₛ en perspectiva: contorno, ecuador en el plano del disco y un meridiano; la mitad de atrás más tenue
+            function curva(fn, a0, a1) { var d = ''; for (var k = 0; k <= 48; k++) { var t = a0 + (a1 - a0) * k / 48, q = fn(t); d += (k ? 'L' : 'M') + f(q[0]) + ' ' + f(q[1]); } return d; }
+            var ecu = function (t) { return aPantalla(2 * Math.cos(t), 0, 2 * Math.sin(t)); };
+            var FI = 1.05, mer = function (t) { return aPantalla(2 * Math.sin(t) * Math.cos(FI), 2 * Math.cos(t), 2 * Math.sin(t) * Math.sin(FI)); };
+            var gR = el('g', { 'class': 'bn-rayos' }, n);
+            el('path', { 'class': 'bn-rs-atras', d: curva(ecu, 0, Math.PI) }, n);          // z > 0: detrás
+            el('path', { 'class': 'bn-rs-atras', d: curva(mer, 0, Math.PI) }, n);
             el('circle', { 'class': 'bn-rs', cx: f(C[0]), cy: f(C[1]), r: f(RS), pathLength: 60 }, n);
+            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(ecu, Math.PI, 2 * Math.PI), pathLength: 30 }, n);   // z < 0: delante
+            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(mer, Math.PI, 2 * Math.PI), pathLength: 30 }, n);
             var t = el('text', { 'class': 'nota-rot bn-rs-k', x: f(C[0] + RS * .74 + 4), y: f(C[1] + RS * .74 + 9) }, n); t.textContent = 'rₛ';
+            // rayos de luz que caen: vistos desde lejos se frenan y se apagan al llegar a rₛ (v ∝ 1 − rₛ/r)
+            var rayos = [];
+            for (var k = 0; k < 16; k++) rayos.push({ l: el('line', { 'class': 'bn-rayo' }, gR), r: 0, a: 0, vivo: false, w: Math.random() * 2 });
+            var antes = 0;
+            (function cae(ts) {
+              requestAnimationFrame(cae);
+              if (!n.classList.contains('ver')) { antes = 0; return; }
+              var dt = antes ? Math.min(.05, (ts - antes) / 1000) : 0; antes = ts;
+              rayos.forEach(function (o) {
+                if (!o.vivo) { o.w -= dt; if (o.w > 0) return; o.vivo = true; o.a = Math.random() * Math.PI * 2; o.r = RSH * (.82 + Math.random() * .12); o.L = 7 + Math.random() * 9; }
+                o.r -= dt * 150 * (1 - RS / o.r);
+                var fr = Math.max(0, (o.r - RS) / (RSH * .85 - RS)), luz = Math.min(1, fr * 1.6) * Math.min(1, (RSH * .9 - o.r) / 8 + .2), L = o.L * (.25 + .75 * fr);
+                var c = Math.cos(o.a), s2 = Math.sin(o.a);
+                o.l.setAttribute('x1', f(C[0] + c * o.r)); o.l.setAttribute('y1', f(C[1] + s2 * o.r));
+                o.l.setAttribute('x2', f(C[0] + c * (o.r + L))); o.l.setAttribute('y2', f(C[1] + s2 * (o.r + L)));
+                o.l.setAttribute('opacity', f(Math.max(0, luz)));
+                if (fr < .03) { o.vivo = false; o.w = Math.random() * .6; o.l.setAttribute('opacity', 0); }
+              });
+            })(0);
           } });
         nota(null, { k: 'hawk', ancla: buscar('hawk', -.55, RSH * .85, RSH * 1.2), rotulo: [xD, C[1] - RSH * .78], titulo: 'Borde · radiación de Hawking', med: 'hawk', dim: [.18, .35], foco: [capaHawk],
           dato: 'T = ħc³ / 8πGMk_B',

@@ -1657,8 +1657,12 @@
     .mc svg .nota-marca circle.bn-rs { fill:none; stroke:#F4EEE3; stroke-width:1; stroke-dasharray:1.6 1.4; opacity:.85; transform-box:fill-box; transform-origin:center; }
     .mc svg .nota.ver circle.bn-rs { animation:bn-rs-corre 2.4s linear infinite, bn-rs-late 3.2s ease-in-out infinite; }
     .mc svg .nota-marca text.bn-rs-k { font-size:10px; letter-spacing:0; text-transform:none; }
+    .mc svg .nota-marca path.bn-rs-atras { fill:none; stroke:#F4EEE3; stroke-width:.6; stroke-dasharray:1.5 3; opacity:.28; }
+    .mc svg .nota-marca path.bn-rs-ecu { fill:none; stroke-width:.9; stroke-dasharray:.8 .7; stroke-dashoffset:0; transition:none; animation:none; transform:none; }
+    .mc svg .nota.ver path.bn-rs-ecu { animation:bn-rs-corre 2.4s linear infinite; }
+    .mc svg .bn-rayo { stroke:#FFFFFF; stroke-width:1.1; stroke-linecap:round; filter:drop-shadow(0 0 1.5px rgba(255,255,255,.7)); }
     @keyframes bn-rs-corre { to { stroke-dashoffset:-6; } }
-    @keyframes bn-rs-late { 0%,100% { transform:scale(1) rotate(0deg); } 50% { transform:scale(1.035) rotate(4deg); } }
+    @keyframes bn-rs-late { 0%,100% { transform:scale(1) rotate(0deg); } 50% { transform:scale(1.012) rotate(4deg); } }
     @media (prefers-reduced-motion: reduce) { .mc svg .nota.ver circle.bn-rs { animation:none; } }
     /* marca sobre el dibujo: aro, raya corta y rótulo, sin guías largas */
     .mc svg .nota-marca > circle:first-of-type { fill:#F4EEE3; }

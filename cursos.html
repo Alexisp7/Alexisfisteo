@@ -1660,6 +1660,8 @@
     .mc svg .nota-marca path.bn-rs-atras { fill:none; stroke:#F4EEE3; stroke-width:.6; stroke-dasharray:1.5 3; opacity:.28; }
     .mc svg .nota-marca path.bn-rs-ecu { fill:none; stroke-width:.9; stroke-dasharray:.8 .7; stroke-dashoffset:0; transition:none; animation:none; transform:none; }
     .mc svg .nota.ver path.bn-rs-ecu { animation:bn-rs-corre 2.4s linear infinite; }
+    .mc svg .nota-marca path.bn-franja { fill:rgba(255,236,206,.3); stroke:none; }
+    .mc svg .nota-marca path.bn-franja + path.bn-rs-ecu { stroke-width:1.2; stroke-dasharray:.5 .4; }
     .mc svg .bn-rayo { stroke:#FFFFFF; stroke-width:1.1; stroke-linecap:round; filter:drop-shadow(0 0 1.5px rgba(255,255,255,.7)); }
     @keyframes bn-rs-corre { to { stroke-dashoffset:-6; } }
     @keyframes bn-rs-late { 0%,100% { transform:scale(1) rotate(0deg); } 50% { transform:scale(1.012) rotate(4deg); } }

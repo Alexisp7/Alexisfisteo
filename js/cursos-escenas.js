@@ -757,13 +757,24 @@
           dato: 'T = ħc³ / 8πGMk_B',
           que: 'Hawking (1974): por efectos cuánticos junto al horizonte, el agujero emite como un cuerpo negro y pierde masa muy despacio. Para una masa solar T ≈ 6 × 10⁻⁸ K; nunca se ha medido.',
           dibujo: 'el filo rojo y las chispas son simbólicos: esa radiación sería invisible.' });
-        nota(null, { k: 'caida', ancla: buscar('caida', -2.0, RSH * 1.0, RSH * 1.7), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.45, .45],
+        nota(null, { k: 'caida', ancla: buscar('caida', -2.0, RSH * 1.0, RSH * 1.7), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.3, .4],
           dato: 'rₛ < r < 3 rₛ',
           que: 'Entre el borde interno del disco (la órbita estable más interna, ISCO, en 3 rₛ) y el horizonte ya no hay órbitas estables: el gas se precipita en espiral. En la literatura se llama plunging region. Dentro está la esfera de fotones, en 1,5 rₛ, donde la luz puede orbitar.',
-          dibujo: 'la franja entre la sombra y el disco. La línea punteada es la esfera de fotones a escala; vista a través de la lente se agranda justo hasta el borde de la sombra.',
+          dibujo: 'la franja resaltada entre la sombra y el disco, deformada por la lente. Su borde interior es el anillo de fotones: la luz que rozó la esfera de fotones (1,5 rₛ) antes de escapar.',
           extra: function (n) {
-            el('circle', { 'class': 'bn-rs', cx: f(C[0]), cy: f(C[1]), r: f(RF), pathLength: 60 }, n);
-            var t = el('text', { 'class': 'nota-rot bn-rs-k', x: f(C[0] - RF * .74 - 4), y: f(C[1] + RF * .74 + 10), 'text-anchor': 'end' }, n); t.textContent = '1,5 rₛ';
+            // se pinta la franja misma: su forma real (deformada por la lente y cortada por el disco que pasa delante) sale de clasifica()
+            var M2 = 240, tramos = [], cur = null;
+            for (var k = 0; k <= M2; k++) {
+              var ang = -Math.PI + 2 * Math.PI * k / M2, ri = -1, ro = -1;
+              for (var rr = RSH * .98; rr <= RSH * 1.7; rr += .75) { var q = polar(ang, rr); if (clasifica(q[0], q[1]) === 'caida') { if (ri < 0) ri = rr; ro = rr; } else if (ri >= 0) break; }
+              if (ri > 0 && ro - ri > 5) { if (!cur) { cur = []; tramos.push(cur); } cur.push([ang, ri, ro]); } else cur = null;
+            }
+            if (tramos.length > 1 && tramos[0][0][0] === -Math.PI && cur === tramos[tramos.length - 1]) { var u = tramos.pop(); tramos[0] = u.concat(tramos[0]); }   // une el corte en ±π
+            tramos.filter(function (T) { return T.length > 8; }).forEach(function (T) {
+              var fuera = T.map(function (e) { return polar(e[0], e[2]); }), dentro = T.map(function (e) { return polar(e[0], e[1]); }).reverse();
+              el('path', { 'class': 'bn-franja', d: poligono(fuera.concat(dentro)) }, n);
+              el('path', { 'class': 'bn-rs bn-rs-ecu', d: 'M' + fuera.map(function (q) { return f(q[0]) + ' ' + f(q[1]); }).join(' L'), pathLength: 40 }, n);
+            });
           } });
         nota(null, { k: 'disco', ancla: buscar('disco', Math.atan2(-.8, 2.6), RSH * 2.2, RSH * 3.2), rotulo: [C[0] + RSH * 2.55, C[1] - RSH * .33], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
           dato: 'r ≥ 3 rₛ (ISCO)',

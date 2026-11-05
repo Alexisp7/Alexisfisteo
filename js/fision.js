@@ -627,7 +627,18 @@
     // sacudida: cuando la onda llega al observador todo tiembla, fuerte y breve, y queda un retumbo
     var escenas = fig.parentNode, menu = raiz && raiz.querySelector('.mc-menu'), sacOn = false;
     var reducido = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // destello: un instante en que toda la pantalla, menú incluido, se pone en blanco
+    var blanco = document.createElement('div'), blancoA = -1;
+    blanco.className = 'fz-blanco'; blanco.setAttribute('aria-hidden', 'true'); document.body.appendChild(blanco);
+    function destello(t) {
+      var u = t - T_FL, a = 0;
+      if (u > -.02 && u < .9) a = u < .05 ? cl((u + .02) / .07, 0, 1) : u < .14 ? 1 : 1 - suave((u - .14) / .7);
+      if (reducido) a *= .45;
+      a = Math.round(a * 100) / 100; if (a === blancoA) return; blancoA = a;
+      blanco.style.opacity = a; blanco.style.visibility = a > 0 ? 'visible' : 'hidden';
+    }
     function sacudida(t) {
+      destello(t);
       var u = t - T_FL - T_ONDA, A = 0;
       if (!reducido && u > 0 && u < 6) A = (1 - Math.exp(-u / .04)) * (11 * Math.exp(-u / .7) + 2.2 * Math.exp(-u / 2.6)) * (1 - suave((u - 4.5) / 1.5));
       if (A < .05) { if (sacOn) { sacOn = false; escenas.style.transform = ''; if (menu) menu.style.transform = ''; } return; }

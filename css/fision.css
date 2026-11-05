@@ -63,3 +63,4 @@
 .mc[data-activo="2"] .mc-lectura::before { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, rgba(244,238,227,0), rgba(244,238,227,.88) 28%); transition:opacity .9s ease; }
 .mc.fz-noche .mc-lectura::before { opacity:0; }
 @media (max-width:600px) { .mc svg .fz-nota { display:none; } }
+.fz-blanco { position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:0; visibility:hidden; background:radial-gradient(circle at 61% 66%, #FFFFFF 0%, #FFFDF7 45%, #FFF8EA 100%); }

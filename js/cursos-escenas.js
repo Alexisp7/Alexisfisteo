@@ -1495,17 +1495,28 @@
       ecu('F<sub>z</sub>', '=', 'μ<sub>z</sub> b', '<span class="sg-con">' + banda + '<span>' + k('clásico') + 'μ<sub>z</sub> continuo ⟹ una banda</span></span>') +
       por('en cuántica <b>μ</b> ∝ momento angular') +
       ecu('μ<sub>z</sub>', '=', '−g μ<sub>B</sub> m, &nbsp;m = −j, …, j', '<span class="sg-con">' + dos + '<span>' + k('se ven 2') + '2j + 1 = 2 ⟹ j = ½</span></span>') +
-      por('j = ½: Ψ = (ψ<sub>↑</sub>, ψ<sub>↓</sub>), &nbsp;<b>μ</b> = −μ<sub>B</sub><b>σ</b>') +
-      ecu('Ĥ', '=', fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ' + m2('1', '0', '0', '−1'), k('espinor') + 'Ĥ diagonal: dos ecuaciones independientes') +
-      por('cada componente siente su potencial') +
-      ecu('V<sub>±</sub>', '=', '±μ<sub>B</sub>(B<sub>0</sub> + b z)', k('estados') + '|↑⟩, |↓⟩ con E<sub>±</sub> = ±μ<sub>B</sub>B<sub>0</sub>') +
-      por('Ehrenfest: d⟨p⟩/dt = −⟨∇V⟩') +
-      ecu(fr('d⟨p<sub>z</sub>⟩', 'dt'), '=', '−' + fr('∂V<sub>±</sub>', '∂z') + ' = ∓ μ<sub>B</sub> b', k('fuerza') + 'solo dos valores, iguales y opuestos') +
-      por('se integra dos veces, t = L/v') +
-      ecu('Δz', '=', fr('μ<sub>B</sub> b L²', 'm v²') + ' ≈ 0,25 mm', '<span class="sg-con">' + paquete + '<span>' + k('1922') + 'b ≈ 10 T/cm, L ≈ 3,5 cm, v ≈ 500 m/s · P = |α|², |β|²</span></span>') +
-      '</div>';
+      por('j = ½: espacio ℂ² con base de S<sub>z</sub>, &nbsp;<b>μ</b> = −μ<sub>B</sub><b>σ</b>') +
+      ecu('Ĥ', '=', fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ' + m2('1', '0', '0', '−1'), k('SU(2)') + 'un giro actúa como U = e<sup>−iθ <b>n</b>·<b>σ</b>/2</sup>; con <b>B</b> ∥ ẑ, Ĥ es diagonal') +
+      por('Ĥ diagonal: el sistema se desacopla') +
+      ecu('iħ ∂<sub>t</sub>ψ<sub>±</sub>', '=', '[ ' + fr('p̂²', '2m') + ' ± μ<sub>B</sub>(B<sub>0</sub> + b z) ] ψ<sub>±</sub>', k('autoestados') + '|↑⟩, |↓⟩ con E<sub>±</sub> = ±μ<sub>B</sub>B<sub>0</sub>: cada uno evoluciona solo, con fase e<sup>−iE<sub>±</sub>t/ħ</sup>') +
+      por('Ehrenfest: d⟨p⟩/dt = −⟨∇V<sub>±</sub>⟩') +
+      ecu(fr('d⟨p<sub>z</sub>⟩', 'dt'), '=', '∓ μ<sub>B</sub> b', k('fuerza') + 'solo dos valores, iguales y opuestos') +
+      por('se integra en t = L/v: cada paquete se corre z<sub>±</sub> = ∓Δz/2') +
+      '<span class="sg-l sg-fin" style="--i:' + (++fila) + '">Ψ(t)</span><span class="sg-r sg-fin" style="--i:' + fila + '">=</span><span class="sg-d sg-fin" style="--i:' + fila + '">α e<sup>−iE<sub>+</sub>t/ħ</sup> φ(z − z<sub>+</sub>) |↑⟩ + β e<sup>−iE<sub>−</sub>t/ħ</sup> φ(z − z<sub>−</sub>) |↓⟩</span>' +
+      '<span class="sg-nota" style="--i:' + fila + '"><span class="sg-con">' + paquete + '<span>' + k('estado final') + 'Δz = μ<sub>B</sub> b L²/(m v²) ≈ 0,25 mm · P = |α|², |β|²</span></span></span>' +
+      '</div>' +
+      '<p class="sg-pie" style="--i:' + (fila + 1) + '"><span class="sg-k">Por qué un espinor</span>Los dos autoestados de S<sub>z</sub> son la base de un espacio vectorial complejo, ℂ². Al girar el laboratorio no se transforman como flechas sino con matrices de SU(2): un giro de 2π los multiplica por −1. Con <b>B</b> a lo largo de z, el hamiltoniano es diagonal en esa base, el sistema de ecuaciones diferenciales se separa en dos y sus soluciones son justo |↑⟩ y |↓⟩. El imán no crea el espín: separa en el espacio sus dos autoestados.</p>';
     raiz.appendChild(px);
-    ec.addEventListener('pointerenter', function () { raiz.classList.add('sg-ec'); });
+    function encaja() {                        // en pantallas bajas el panel se escala para no chocar con la ecuación de abajo
+      px.style.transform = ''; px.style.width = ''; px.style.right = '';
+      var r = px.getBoundingClientRect(), lim = raiz.getBoundingClientRect().bottom - 120 - r.top, e = 1;
+      for (var it = 0; it < 3; it++) {           // al escalar, se ensancha para que el texto ocupe el mismo ancho visible
+        e = Math.min(1, e * lim / (px.scrollHeight * e)); if (e >= 1) break;
+        px.style.right = 'auto'; px.style.width = (r.width / e).toFixed(0) + 'px';
+      }
+      if (e < 1) px.style.transform = 'scale(' + e.toFixed(3) + ')';
+    }
+    ec.addEventListener('pointerenter', function () { encaja(); raiz.classList.add('sg-ec'); });
     ec.addEventListener('pointerleave', function () { raiz.classList.remove('sg-ec'); });
   })();
   // guía: una barra de luz que se desliza hasta el título activo

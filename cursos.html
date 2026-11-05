@@ -1586,9 +1586,9 @@
     .mc .bn-lienzo { position:absolute; inset:0; width:100%; height:100%; display:block; }
     .mc-escena[data-i="0"] svg { position:relative; }
     .mc-escena.bn-sin-gl .bn-lienzo { background:radial-gradient(circle at 70% 49%, #000 0 118px, rgba(255,226,160,.95) 121px, rgba(236,160,60,.5) 128px, rgba(120,60,20,.12) 170px, #070406 260px); }
-    .mc svg .bn-hawking-borde { fill:none; stroke:#D2342A; stroke-width:.7; stroke-linejoin:round; filter:drop-shadow(0 0 1.2px rgba(200,40,30,1)) drop-shadow(0 0 4px rgba(170,25,15,.6)); }
-    .mc svg .bn-hawking-borde2 { stroke:#8E1A14; stroke-width:.4; filter:none; }
-    .mc svg .bn-hq { fill:#FFFFFF; filter:drop-shadow(0 0 1.5px rgba(255,255,255,.9)); } .mc svg .bn-hq-cae { fill:#FFFFFF; filter:none; }
+    .mc svg .bn-hawking-borde { fill:none; stroke:#D2342A; stroke-width:1.3; stroke-linejoin:round; filter:drop-shadow(0 0 1.2px rgba(200,40,30,1)) drop-shadow(0 0 4px rgba(170,25,15,.6)); }
+    .mc svg .bn-hawking-borde2 { stroke:#8E1A14; stroke-width:.6; filter:none; }
+    .mc svg .bn-hq { fill:#FFFFFF; filter:drop-shadow(0 0 1.2px rgba(255,200,190,.8)); } .mc svg .bn-hq-cae { fill:#FFFFFF; filter:none; }
     .mc svg .bn-zona { pointer-events:all; }
     .mc-escena .bn-fondo { position:absolute; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
     /* notas del agujero negro: guía en tinta con punta y medallón animado */
@@ -1627,10 +1627,12 @@
     .mc .bn-traza ellipse, .mc .bn-traza circle, .mc .bn-traza path { fill:none; stroke:#2E2A33; stroke-width:.6; opacity:.4; }
     .mc .bn-traza * { stroke-dasharray:1; stroke-dashoffset:0; transition:stroke-dashoffset 1.3s cubic-bezier(.6,0,.2,1) var(--d,0ms); }
     .mc-escena:not(.on) .bn-traza * { stroke-dashoffset:1; transition:none; }
-    .mc-escena[data-i="0"] svg .bn-hawk { transition:opacity .9s ease 2.2s; }
+    .mc-escena[data-i="0"] svg .bn-hawk { transition:opacity .6s ease .9s; }
     .mc-escena[data-i="0"]:not(.on) svg .bn-hawk { opacity:0; transition:none; }
     .mc .bn-traza .bn-traza-fina { stroke-width:.4; opacity:.2; } .mc .bn-traza .bn-cruz { stroke-width:.7; opacity:.5; }
-    .mc svg.nota-on .bn-zona.foco { fill:rgba(143,221,227,.07); }
+    .mc svg.nota-on .bn-zona.foco { fill:none; }
+    .mc svg.bn-notas { position:absolute; z-index:3; pointer-events:none; overflow:visible; }
+    .mc svg.bn-notas .nota-fondo { fill:#F7F2E8; stroke:rgba(46,42,51,.35); filter:drop-shadow(0 6px 18px rgba(20,14,10,.18)); }
     /* notas sobre fondo oscuro */
     .mc-escenas { z-index:1; } .mc-velo { z-index:1; }
     .mc svg .halo-cerca { fill:rgba(30,26,22,.13); filter:blur(3px); stroke:none; }

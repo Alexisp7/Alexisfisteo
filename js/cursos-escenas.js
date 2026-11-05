@@ -193,7 +193,15 @@
     '  float flec = ruido(vec3(cs * 3.0, 2.0)) - .5;',
     '  float afuera = 1.0 - smoothstep(15.0 + 2.5 * flec, 21.5 + 1.0 * flec, r);',
     '  float fundido = smoothstep(.8, 2.4, uArm);',
-    '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * clamp(.75 + tr * .9 + .6 * (1.0 - smoothstep(8.0, 16.0, r)), 0.0, 1.0);',
+    // cortes irregulares en cada trazo: huecos que viajan con su órbita (más rápido adentro), distintos en cada raya
+    '  float h1 = 0.0, h2 = 0.0;',
+    '  { float kb = floor(r * 5.0), L = fase * (2.0 + 4.0 * hash(vec3(kb, 3.0, 1.0))) + hash(vec3(kb, 8.0, 2.0)) * 40.0;',
+    '    h1 = smoothstep(.69, .75, ruido(vec3(L, kb * 1.7, 3.0))); }',
+    '  { float kb = floor(r * 9.0 + .5), L = fase * (4.0 + 7.0 * hash(vec3(kb, 5.0, 4.0))) + hash(vec3(kb, 1.0, 6.0)) * 40.0;',
+    '    h2 = smoothstep(.73, .79, ruido(vec3(L, kb * 2.3, 7.0))) * w2; }',
+    '  float hueco = max(h1, h2 * .9);',
+    '  col *= 1.0 - .25 * hueco;',
+    '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * clamp(.75 + tr * .9 + .6 * (1.0 - smoothstep(8.0, 16.0, r)), 0.0, 1.0) * (1.0 - .75 * hueco);',
     '  return vec4(col * D, clamp(a, 0.0, 1.0)); }',
     // fondo: espacio azul muy oscuro con nubes violáceas dibujadas a curvas de nivel y muchas estrellas.
     // Se consulta en la dirección final del rayo, así que la lente lo deforma alrededor de la sombra.
@@ -345,7 +353,13 @@
       el('path', { d: 'M' + f(C[0] + q[0] * KT - 7) + ' ' + f(C[1] + q[1] * KT) + 'h14M' + f(C[0] + q[0] * KT) + ' ' + f(C[1] + q[1] * KT - 7) + 'v14', transform: giro, 'class': 'bn-cruz' }, traza);
     });
     [].forEach.call(traza.querySelectorAll('*'), function (e, i) { e.setAttribute('pathLength', 1); e.style.setProperty('--d', (2300 + i * 70) + 'ms'); });
-    var capaHawk = el('g', { 'class': 'bn-hawk' }, g);
+    // la mitad cercana del disco pasa por delante de la sombra: ahí el contorno de Hawking queda debajo (máscara)
+    var mk = el('mask', { id: 'bn-tapa', maskUnits: 'userSpaceOnUse', x: -2000, y: -2000, width: 6000, height: 6000 }, el('defs', {}, svg));
+    el('rect', { x: -2000, y: -2000, width: 6000, height: 6000, fill: '#fff' }, mk);
+    (function () { var o = [], k, t; for (k = 0; k <= 60; k++) { t = Math.PI * (1 + k / 60); o.push(aPantalla(22.5 * Math.cos(t), 0, 22.5 * Math.sin(t))); }
+      for (k = 60; k >= 0; k--) { t = Math.PI * (1 + k / 60); o.push(aPantalla(5.9 * Math.cos(t), 0, 5.9 * Math.sin(t))); }
+      el('path', { d: 'M' + o.map(function (p) { return f(p[0]) + ' ' + f(p[1]); }).join(' L') + 'Z', fill: '#000', filter: 'blur(.6px)' }, mk); })();
+    var capaHawk = el('g', { 'class': 'bn-hawk', mask: 'url(#bn-tapa)' }, g);
     // borde de Hawking: un trazo violeta finísimo que tiembla rápido alrededor de la sombra (el filo del horizonte aparente)
     var bordeH = el('path', { 'class': 'bn-hawking-borde' }, capaHawk), bordeH2 = el('path', { 'class': 'bn-hawking-borde bn-hawking-borde2' }, capaHawk);
     var NB = 220, jit = new Float32Array(NB), jit2 = new Float32Array(NB);

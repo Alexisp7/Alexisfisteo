@@ -25,13 +25,14 @@
       --bg-off: #F7F6F3;
       --bg-dark: #111111;
       --white: #FFFFFF;
+      --papel: #F6F2EA;   /* fondo: blanco cálido, menos brillante */
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--white);
+      background: var(--papel);
       color: var(--dark);
       font-size: 15px;
       line-height: 1.65;
@@ -108,7 +109,7 @@
        HEADER
     ──────────────────────────────── */
     .header {
-      background: var(--white);
+      background: var(--papel);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -1294,7 +1295,11 @@
       }
     }
     /* Inicio de la portada con el teselado de qubits de fondo */
-    .hero-qubits { position: relative; overflow: hidden; background: var(--white); }
+    .hero-qubits { position: relative; overflow: hidden; background: var(--papel); }
+    @media (min-width: 901px) {   /* la portada ocupa toda la pantalla y se engancha suave, como Proyectos */
+      .hero-qubits { min-height: calc(100vh - var(--alto-menu, 64px)); display: flex; flex-direction: column; justify-content: center; scroll-snap-align: start; scroll-margin-top: var(--alto-menu, 64px); }
+      .hero-qubits > .hero { width: 100%; box-sizing: border-box; }
+    }
     .hero-qubits > .hero { position: relative; z-index: 1; }
     .qubits-fondo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
     .hero-qubits .hero-stats { border-top: none; }
@@ -1351,7 +1356,7 @@
        HERO
   ═══════════════════════════════════ -->
   <div class="hero-qubits">
-    <canvas class="qubits-fondo" data-linea=".hero-stats" data-libre="310 0, 310 0.85, 250 1" aria-hidden="true"></canvas>
+    <canvas class="qubits-fondo" data-ola data-papel="246,242,234" data-linea=".hero-stats" data-libre="310 0, 310 0.85, 250 1" aria-hidden="true"></canvas>
   <section class="hero">
     <div class="hero-text">
       <h1 class="hero-name">Alexis R.<br/><em>Salvatierra</em></h1>
@@ -1538,7 +1543,11 @@
       update();
     })();
   </script>
-  <script src="js/qubits.js?v=20261021s"></script>
+  <script>
+    // alto real del menú, para que la portada llene justo la pantalla
+    (function () { var h = document.querySelector('.header'); function f() { if (h) document.documentElement.style.setProperty('--alto-menu', h.offsetHeight + 'px'); } f(); addEventListener('resize', f); })();
+  </script>
+  <script src="js/qubits.js?v=20261105a"></script>
   <script>
     // Toda la tarjeta del proyecto lleva a su página, no solo el botón.
     document.querySelectorAll('.project-card[data-href]').forEach(function (card) {

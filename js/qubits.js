@@ -85,6 +85,15 @@
     }
 
     var lineSel = canvas.getAttribute('data-linea'), lineY = null;
+    var PAPEL = canvas.getAttribute('data-papel') || '255,255,255';
+    // ola de medición ligada al scroll (data-ola): al bajar, un frente sale del
+    // medidor y mide las esferas a su paso; al subir se deshace. Avanza suave,
+    // siguiendo al scroll con retraso, para que se vea lenta pero fluida
+    var ola = canvas.hasAttribute('data-ola') && !still, olaMeta = 0, olaP = 0, BANDA = 140;
+    function olaObjetivo() {
+      var recorrido = Math.max(1, section.offsetHeight * 0.75);
+      return Math.max(0, Math.min(1, window.scrollY / recorrido));
+    }
     // extremos de la zona libre a la altura y
     function spanAt(y) {
       if (profile.length < 2) return null;
@@ -234,7 +243,7 @@
         ctx.strokeStyle = 'rgba(' + RED + ',0.75)'; ctx.strokeRect(x - 1.5 + dx, y, mw, mh);
         ctx.strokeStyle = 'rgba(' + BLUE + ',0.75)'; ctx.strokeRect(x + 1.5 - dx, y, mw, mh);
       }
-      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3B2F28'; ctx.lineWidth = 1.2;
+      ctx.fillStyle = 'rgb(' + PAPEL + ')'; ctx.strokeStyle = '#3B2F28'; ctx.lineWidth = 1.2;
       ctx.fillRect(x, y, mw, mh); ctx.strokeRect(x, y, mw, mh);
       var cx = w / 2 + meterOff, cy = y + mh - 4;
       if (anclado) {
@@ -412,6 +421,15 @@
         drawMeter(performance.now(), sup);
       }
       var now = performance.now();
+      var oX = w / 2 + meterOff, oY = lineY !== null ? lineY : h / 2, oD = 0;
+      if (ola) {
+        olaP += (olaMeta - olaP) * Math.min(1, dt / 520);   // sigue al scroll con inercia
+        if (Math.abs(olaMeta - olaP) < 0.0005) olaP = olaMeta;
+        // el frente parte desde la esfera más cercana al medidor y termina en la más lejana
+        var dMin = Infinity, dMax = 0;
+        for (var j = 0; j < qubits.length; j++) { var dj = Math.hypot(qubits[j].x - oX, qubits[j].y - oY); if (dj < dMin) dMin = dj; if (dj > dMax) dMax = dj; }
+        oD = olaP > 0 ? dMin + olaP * (dMax - dMin + BANDA) : 0;
+      }
       for (var i = 0; i < qubits.length; i++) {
         var q = qubits[i];
         if (q.collapseAt && now >= q.collapseAt) { measure(q); q.masivo = true; }
@@ -427,8 +445,21 @@
 
         var on = q.hot || q.frozen;
         var col = q.frozen === 'H' ? MUSTARD : q.frozen === '1' ? RED : q.frozen === '0' ? BLUE : GOLD;
-        ctx.strokeStyle = ctx.fillStyle = 'rgba(' + col + ',' + (on ? 1 : 0.35) + ')';
-        ctx.lineWidth = on ? 1 : 0.7;
+        var alfa = on ? 1 : 0.6, th = q.theta, ph = q.phi, e = 0;
+        if (ola && oD > 0 && !on) {
+          // frente de la ola: 0 antes de llegar, 1 ya medida; suavizado en la banda
+          var dq = Math.hypot(q.x - oX, q.y - oY);
+          e = Math.max(0, Math.min(1, (oD - dq) / BANDA)); e = e * e * (3 - 2 * e);
+          if (e > 0) {
+            if (!q.res) { var p0 = Math.cos(q.theta0 / 2); q.res = rnd(q.x * 7.1 + q.y * 3.3) < p0 * p0 ? '0' : '1'; }
+            var meta = q.res === '0' ? 0 : Math.PI, base = col;
+            th = q.theta + (meta - q.theta) * e; ph = q.phi * (1 - e);
+            col = mezcla(GOLD, q.res === '0' ? BLUE : RED, e);
+            alfa = 0.6 + 0.4 * e;
+          }
+        }
+        ctx.strokeStyle = ctx.fillStyle = 'rgba(' + col + ',' + alfa + ')';
+        ctx.lineWidth = on ? 1 : 0.85 + 0.15 * e;
 
         // contorno
         ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, TAU); ctx.stroke();
@@ -439,9 +470,9 @@
         ctx.setLineDash([]);
 
         // flecha de estado
-        var st = Math.sin(q.theta);
-        var ex = q.x + st * Math.cos(q.phi) * R;
-        var ey = q.y + (-Math.cos(q.theta) * 0.95 + st * Math.sin(q.phi) * 0.3) * R;
+        var st = Math.sin(th);
+        var ex = q.x + st * Math.cos(ph) * R;
+        var ey = q.y + (-Math.cos(th) * 0.95 + st * Math.sin(ph) * 0.3) * R;
         ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(ex, ey); ctx.stroke();
         var a = Math.atan2(ey - q.y, ex - q.x);
         ctx.beginPath();
@@ -450,6 +481,7 @@
         ctx.lineTo(ex - 2.6 * Math.cos(a + 0.5), ey - 2.6 * Math.sin(a + 0.5));
         ctx.closePath(); ctx.fill();
         if (q.frozen) label(q);
+        else if (e > 0.75) ketOla(q, (e - 0.75) / 0.25);
       }
     }
 
@@ -458,7 +490,7 @@
       ctx.save();
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       if (q.frozen === 'H') {
-        ctx.fillStyle = '#fff'; ctx.strokeStyle = 'rgb(' + MUSTARD + ')'; ctx.lineWidth = 1;
+        ctx.fillStyle = 'rgb(' + PAPEL + ')'; ctx.strokeStyle = 'rgb(' + MUSTARD + ')'; ctx.lineWidth = 1;
         ctx.fillRect(q.x + 2, q.y - 12, 10, 10); ctx.strokeRect(q.x + 2, q.y - 12, 10, 10);
         ctx.fillStyle = 'rgb(' + MUSTARD + ')';
         ctx.font = '700 8px "Space Mono", monospace';
@@ -468,7 +500,7 @@
         // en el colapso masivo el ket va más pequeño para no amontonarse
         var fs = q.masivo ? 10 : 13, off = q.masivo ? 9 : 11;
         ctx.font = 'italic 600 ' + fs + 'px "Cormorant Garamond", serif';
-        ctx.lineWidth = q.masivo ? 2.5 : 3.5; ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+        ctx.lineWidth = q.masivo ? 2.5 : 3.5; ctx.strokeStyle = 'rgba(' + PAPEL + ',0.92)';
         ctx.strokeText(text, q.x + off, q.y - off);
         ctx.fillStyle = '#6B6B6B';
         ctx.fillText(text, q.x + off, q.y - off);
@@ -476,11 +508,26 @@
       ctx.restore();
     }
 
+    function mezcla(a, b, k) {
+      var x = a.split(','), y = b.split(',');
+      return x.map(function (v, i) { return Math.round(+v + (+y[i] - v) * k); }).join(',');
+    }
+    // ket pequeño que aparece cuando la ola ya midió la esfera
+    function ketOla(q, k) {
+      ctx.save(); ctx.globalAlpha = k;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = 'italic 600 10px "Cormorant Garamond", serif';
+      ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(' + PAPEL + ',0.92)';
+      var text = '|' + q.res + '⟩';
+      ctx.strokeText(text, q.x + 9, q.y - 9); ctx.fillStyle = '#6B6B6B'; ctx.fillText(text, q.x + 9, q.y - 9);
+      ctx.restore();
+    }
+
     function loop(t) {
       var dt = last ? Math.min(t - last, 50) : 16;
       last = t;
       draw(dt);
-      var pendientes = drag || (!anclado && Math.abs(meterOff) > 0.3) || qubits.some(function (q) { return q.collapseAt || q.resetAt || q.hAt; });
+      var pendientes = (ola && Math.abs(olaMeta - olaP) > 0) || drag || (!anclado && Math.abs(meterOff) > 0.3) || qubits.some(function (q) { return q.collapseAt || q.resetAt || q.hAt; });
       if (visible && (!still || current.length || pendientes)) raf = requestAnimationFrame(loop);
       else { raf = 0; last = 0; }
     }
@@ -503,6 +550,10 @@
       }).observe(section);
     } else { visible = true; start(); }
 
+    if (ola) {
+      olaMeta = olaP = olaObjetivo();
+      window.addEventListener('scroll', function () { olaMeta = olaObjetivo(); start(); }, { passive: true });
+    }
     section.addEventListener('mouseleave', release);
     section.addEventListener('mousemove', function (e) {
       if (drag) return;

@@ -427,23 +427,76 @@
     function radioToro(tf) { return 18 + 136 * (1 - Math.exp(-tf / 4.6)); }
     function tuboToro(tf) { return 22 + 60 * (1 - Math.exp(-tf / 4)); }
     function choque(tf) { return 150 * Math.pow(Math.max(tf, 0) + .02, .4); }           // Taylor: R ∝ t^(2/5)
-    function bolaFuego(tf) { return 96 * Math.pow(Math.min(1, Math.max(tf, 0) / 1.3), .4); }
-    var BOCANADA = (function () {   // seis tonos, del blanco incandescente al humo: cúmulos con luz arriba y sombra abajo
-      var base = [[255, 246, 222], [250, 214, 140], [236, 150, 70], [176, 88, 46], [104, 60, 44], [62, 52, 56]], tonos = [];
-      for (var i = 0; i <= 15; i++) { var u = i / 3, a0 = Math.min(4, Math.floor(u)), w = u - a0; tonos.push(base[a0].map(function (v, j) { return Math.round(v + (base[a0 + 1][j] - v) * w); })); }
-      return tonos.map(function (c, k) {
-        var S = 96, cv = document.createElement('canvas'); cv.width = cv.height = S; var x = cv.getContext('2d'), r7 = semilla(40 + k);
-        var cla = c.map(function (v) { return Math.min(255, Math.round(v * 1.18 + 14)); }), osc = c.map(function (v) { return Math.round(v * .62); });
-        for (var j = 0; j < 5; j++) {
-          var cx = S / 2 + (r7() - .5) * S * .26, cy = S / 2 + (r7() - .5) * S * .22, rr = S * (.2 + r7() * .1);
-          var g = x.createRadialGradient(cx - rr * .35, cy - rr * .4, rr * .1, cx, cy, rr);
-          g.addColorStop(0, 'rgba(' + cla + ',.95)'); g.addColorStop(.55, 'rgba(' + c + ',.92)'); g.addColorStop(.88, 'rgba(' + osc + ',.85)'); g.addColorStop(1, 'rgba(' + osc + ',0)');
-          x.fillStyle = g; x.beginPath(); x.arc(cx, cy, rr, 0, 2 * Math.PI); x.fill();
-          if (k > 7) { x.strokeStyle = 'rgba(20,16,18,.18)'; x.lineWidth = .8; x.beginPath(); x.arc(cx, cy, rr * .94, Math.PI * .15, Math.PI * .95); x.stroke(); }
+    function bolaFuego(tf) { var x = Math.max(tf, 0); return 128 * Math.pow(Math.min(1, x / 1.6), .4) * (1 + .12 * suave((x - 1.6) / 2)); }   // crece rápido y luego se hincha despacio
+    // ruido de valor suave y fBm, para texturas de humo y fuego (se calculan una vez al cargar)
+    function ruido(sem) {
+      var r = semilla(sem), P = new Float32Array(256 * 256); for (var i = 0; i < P.length; i++) P[i] = r();
+      function v(ix, iy) { return P[(ix & 255) + ((iy & 255) << 8)]; }
+      function n(x, y) { var ix = Math.floor(x), iy = Math.floor(y), fx = x - ix, fy = y - iy; fx = fx * fx * (3 - 2 * fx); fy = fy * fy * (3 - 2 * fy);
+        var a = v(ix, iy), b = v(ix + 1, iy), c = v(ix, iy + 1), d = v(ix + 1, iy + 1); return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy; }
+      return function (x, y, oct) { var s = 0, a = .5, f = 1, w = 0; for (var o = 0; o < oct; o++) { s += a * n(x * f, y * f); w += a; a *= .5; f *= 2.03; } return s / w; };
+    }
+    function liso(a, b, x) { x = cl((x - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
+    // volutas: densidad = cono + turbulencia; luz desde arriba por la densidad acumulada encima (autosombra)
+    var N_FORMAS = 8, BOCANADA = null, FUEGO = null;
+    function hazBocanadas() {
+      var S = 112, H = S / 2, formas = [], k, i, x, y;
+      for (k = 0; k < N_FORMAS; k++) {
+        var fb = ruido(300 + k * 7), D = new Float32Array(S * S), A = new Float32Array(S * S), L = new Float32Array(S * S), M = new Float32Array(S * S), ox = k * 3.7, oy = k * 1.9;
+        for (y = 0; y < S; y++) for (x = 0; x < S; x++) {
+          var u = (x - H) / H, w = (y - H) / H, r = Math.sqrt(u * u + w * w * 1.08);
+          var t = fb(u * 2.1 + ox, w * 2.1 + oy, 5), t2 = fb(u * 6 + oy, w * 6 + ox, 3);
+          var d = (1 - r) * 1.35 + (t - .5) * 1.25 + (t2 - .5) * .3;
+          D[y * S + x] = Math.max(0, d); A[y * S + x] = liso(.08, .4, d) * liso(1, .82, r); M[y * S + x] = t2;
         }
-        return cv;
+        for (y = 0; y < S; y++) for (x = 0; x < S; x++) {
+          var oc = 0; for (i = 1; i <= 7; i++) { var yy = y - i * 3, xx = x - i; if (yy >= 0 && xx >= 0) oc += D[yy * S + xx]; }
+          L[y * S + x] = cl(1.05 - oc * .2, 0, 1);
+        }
+        formas.push({ A: A, L: L, M: M });
+      }
+      var base = [[255, 246, 222], [250, 214, 140], [236, 150, 70], [176, 88, 46], [104, 60, 44], [62, 52, 56]], tonos = [];
+      for (i = 0; i <= 15; i++) { var uu = i / 3, a0 = Math.min(4, Math.floor(uu)), ww = uu - a0; tonos.push(base[a0].map(function (v, j) { return v + (base[a0 + 1][j] - v) * ww; })); }
+      return tonos.map(function (c, ti) {
+        var emite = cl(1 - ti / 9, 0, 1);   // lo incandescente brilla por sí mismo: menos sombra
+        return formas.map(function (F) {
+          var cv = document.createElement('canvas'); cv.width = cv.height = S; var g = cv.getContext('2d'), im = g.createImageData(S, S), px = im.data;
+          for (var j = 0; j < S * S; j++) {
+            var l = F.L[j], sh = emite * .55 + (1 - emite * .55) * l, det = .86 + .28 * F.M[j], m = (.42 + .78 * sh) * det;
+            px[4 * j] = Math.min(255, c[0] * m + 18 * l * (1 - emite)); px[4 * j + 1] = Math.min(255, c[1] * m + 14 * l * (1 - emite)); px[4 * j + 2] = Math.min(255, c[2] * m + 12 * l * (1 - emite)); px[4 * j + 3] = 255 * F.A[j] * .96;
+          }
+          g.putImageData(im, 0, 0); return cv;
+        });
       });
-    })();
+    }
+    // bola de fuego: esfera turbulenta en tres etapas (blanca → amarilla intensa → naranja con costra) y cuatro cuadros de hervor
+    function hazFuego() {
+      var S = 240, H = S / 2, etapas = [
+        [[255, 226, 150], [255, 248, 214], [255, 255, 246]],
+        [[214, 104, 26], [255, 196, 58], [255, 240, 160]],
+        [[70, 30, 20], [206, 96, 34], [255, 186, 86]]];
+      return [0, 1, 2, 3].map(function (q) {
+        var fb = ruido(900 + q * 13), HT = new Float32Array(S * S), A = new Float32Array(S * S);
+        for (var y = 0; y < S; y++) for (var x = 0; x < S; x++) {
+          var u = (x - H) / H, w = (y - H) / H, r = Math.sqrt(u * u + w * w), t = fb(u * 3.2 + q * .9, w * 3.2 - q * .6, 5), t3 = fb(u * 9 + 5, w * 9 - q, 3);
+          var z = Math.sqrt(Math.max(0, 1 - r * r));
+          var rg = 1 - Math.abs(2 * fb(u * 5.5 - q, w * 5.5 + 2 * q, 4) - 1);   // venas oscuras (ruido de crestas)
+          HT[y * S + x] = cl(.22 + .55 * z + (t - .5) * 1.6 + (t3 - .5) * .55 - Math.pow(1 - rg, 6) * .45, 0, 1);
+          A[y * S + x] = liso(1.02, .9, r + (t - .5) * .14);
+        }
+        return etapas.map(function (P) {
+          var cv = document.createElement('canvas'); cv.width = cv.height = S; var g = cv.getContext('2d'), im = g.createImageData(S, S), px = im.data;
+          for (var j = 0; j < S * S; j++) {
+            var h = HT[j], a = h < .5 ? P[0] : P[1], b = h < .5 ? P[1] : P[2], f2 = h < .5 ? h / .5 : (h - .5) / .5;
+            px[4 * j] = a[0] + (b[0] - a[0]) * f2; px[4 * j + 1] = a[1] + (b[1] - a[1]) * f2; px[4 * j + 2] = a[2] + (b[2] - a[2]) * f2; px[4 * j + 3] = 255 * A[j];
+          }
+          g.putImageData(im, 0, 0); return cv;
+        });
+      });
+    }
+    // las texturas cuestan unos cientos de ms: se preparan cuando el navegador está libre, antes de la parte IV
+    function preparaTexturas() { if (!BOCANADA) { BOCANADA = hazBocanadas(); FUEGO = hazFuego(); } }
+    setTimeout(function () { (window.requestIdleCallback || function (f) { f(); })(preparaTexturas, { timeout: 8000 }); }, 2500);
     var HUMO = (function () {
       var r8 = semilla(211), cap = [], tallo = [], falda = [], est = [], cerro = [];
       var muro = [], gran = [], chis = [], collar = [];
@@ -456,6 +509,7 @@
       for (i = 0; i < 130; i++) falda.push({ th: r8() * 2 * Math.PI, k: .55 + r8() * .55, s: .5 + r8() * .8, h: r8() });
       for (i = 0; i < 150; i++) est.push({ x: r8(), y: r8(), r: .4 + r8() * .8, a: .25 + r8() * .6, f: r8() * 6.28, w: .6 + r8() * 2 });
       var y = 0; for (i = 0; i <= 120; i++) { y += (r8() - .5) * 3.2; y *= .93; cerro.push(y - 4 - 6 * Math.sin(i / 120 * Math.PI * 3 + 1) * (i % 40 < 20 ? 1 : .6)); }
+      [cap, tallo, falda, muro, collar].forEach(function (L) { L.forEach(function (p) { p.f = Math.floor(r8() * N_FORMAS); }); });
       return { cap: cap, tallo: tallo, falda: falda, est: est, cerro: cerro, muro: muro, gran: gran, chis: chis, collar: collar };
     })();
     // la noche: la tinta nace en el punto de luz y, al final, se retira hacia él como un iris que se cierra
@@ -487,11 +541,12 @@
       }
       ctx.globalAlpha = 1;
     }
-    function bocanada(x, y, r, temp, al) {
-      if (al <= .004) return;
-      ctx.globalAlpha = al; ctx.drawImage(BOCANADA[Math.round(Math.max(0, Math.min(5, temp)) * 3)], x - r, y - r, 2 * r, 2 * r);
+    function bocanada(x, y, r, temp, al, f) {
+      if (al <= .004) return; r *= 1.3;   // las volutas tienen bordes deshilachados: se dibujan algo más grandes
+      ctx.globalAlpha = Math.min(1, al); ctx.drawImage(BOCANADA[Math.round(Math.max(0, Math.min(5, temp)) * 3)][f || 0], x - r, y - r, 2 * r, 2 * r);
     }
     function explosion(t, vb, fundido) {
+      preparaTexturas();
       fundido *= 1 - suave((t - FIN + 2.7) / 2.8);   // la nube se disuelve en la noche antes de que vuelva el papel
       var m = suave((t - T_P4) / (T_FL - T_P4)), tf = t - T_FL;
       // el punto de luz: toda la cadena, vista desde lejos
@@ -503,7 +558,7 @@
       }
       if (tf < 0) { ctx.globalAlpha = 1; return; }
       var Fb = fundido, Rt = radioToro(tf), rt = tuboToro(tf), Yc = cumbre(tf), cal = Math.exp(-tf / 6);   // cal: 1 recién nacida → 0 fría
-      var Rs = choque(tf), Rf = bolaFuego(tf), af = Fb * (1 - suave((tf - 1.2) / 3.2)), yb = SUELO - 62 - (SUELO - 62 - Yc) * .9;
+      var Rs = choque(tf), Rf = bolaFuego(tf), af = Fb * (1 - suave((tf - 3) / 3.4)), yb = Math.min(SUELO - Rf * .62, SUELO - 62) - (SUELO - 62 - Yc) * .9 * suave((tf - .8) / 3);
       // luz del suelo
       var gl = ctx.createRadialGradient(GX, 0, 0, GX, 0, 520);
       gl.addColorStop(0, 'rgba(240,150,70,' + (.5 * Fb * (.25 + .75 * cal)) + ')'); gl.addColorStop(1, 'rgba(240,150,70,0)');
@@ -540,8 +595,8 @@
       function muro(delante) {
         HUMO.muro.forEach(function (p) {
           var sn = Math.sin(p.th); if ((sn >= 0) !== delante) return;
-          var r = rM * p.k, x = GX + Math.cos(p.th) * r, y = SUELO + sn * r * .12 - 3 - p.h * (8 + 70 * sube) * (1.1 - p.k * .3);
-          bocanada(x, y, (9 + 21 * p.s) * (.55 + 1.1 * sube), 3.5 + 1.4 * (1 - cal) + p.v * .3, aM * (.6 + .4 * p.v));
+          var r = rM * p.k, x = GX + Math.cos(p.th) * r, y = SUELO + sn * r * .12 - 3 - p.h * (8 + 52 * sube) * (1.1 - p.k * .3);
+          bocanada(x, y, (9 + 21 * p.s) * (.55 + 1.1 * sube), 3.5 + 1.4 * (1 - cal) + p.v * .3, aM * (.6 + .4 * p.v), p.f);
         });
       }
       // bruma de polvo baja: el suelo queda cubierto después del paso del frente
@@ -558,7 +613,7 @@
       var rf = 30 + 260 * (1 - Math.exp(-tf / 2.6));
       HUMO.falda.forEach(function (p) {
         var r = rf * p.k, x = GX + Math.cos(p.th) * r, y = SUELO + Math.sin(p.th) * r * .12 - 4 - p.h * 14 * Math.min(1, tf / 3);
-        bocanada(x, y, (8 + 17 * p.s) * (.5 + .5 * Math.min(1, tf / 3)), 3.6 + 1.3 * (1 - cal), Fb * .5 * suave(tf / .8) * (1 - .4 * suave((tf - 14) / 6)));
+        bocanada(x, y, (8 + 17 * p.s) * (.5 + .5 * Math.min(1, tf / 3)), 3.6 + 1.3 * (1 - cal), Fb * .5 * suave(tf / .8) * (1 - .4 * suave((tf - 14) / 6)), p.f);
       });
       // toro: atrás, tallo, bola de fuego, adelante
       var giro = -.55 * (1 - Math.exp(-tf / 9)) * 9;   // rotación poloidal acumulada (sube por dentro, baja por fuera)
@@ -566,37 +621,41 @@
       var lista = HUMO.cap.map(function (p) {
         var ph = p.ph + giro * p.w, rr = rt * p.rr, X = (Rt + rr * Math.cos(ph)), Y = rr * Math.sin(ph), x = X * Math.cos(p.th), z = X * Math.sin(p.th);
         var lat = Y / rt, bul = 1 + .12 * Math.sin(hierve * p.w + p.ph * 3);   // los cúmulos laten: la superficie hierve
-        return { x: GX + x, y: Yc - Y * 1.05 + z * .2, z: z, r: (rt * .4 + 8) * p.s * bul, temp: 1.4 + 2.9 * (1 - cal) + lat * .9 - (Y < 0 ? 1.3 * (.4 + .6 * cal) : 0) + (p.rr > .95 ? .35 : 0) };
+        return { x: GX + x, y: Yc - Y * 1.05 + z * .2, z: z, r: (rt * .4 + 8) * p.s * bul, f: p.f, temp: 1.4 + 2.9 * (1 - cal) + lat * .9 - (Y < 0 ? 1.3 * (.4 + .6 * cal) : 0) + (p.rr > .95 ? .35 : 0) };
       });
       lista.sort(function (a, b) { return a.z - b.z; });
-      var apar = suave((tf - .5) / 2.2);
-      function dibujaCap(delante) { lista.forEach(function (q) { if ((q.z >= 0) === delante) bocanada(q.x, q.y, q.r, q.temp, Fb * apar * .93); }); }
+      var apar = suave((tf - 1.6) / 2.6);
+      function dibujaCap(delante) { lista.forEach(function (q) { if ((q.z >= 0) === delante) bocanada(q.x, q.y, q.r, q.temp, Fb * apar * .93, q.f); }); }
       dibujaCap(false);
       var base = SUELO - 4, alto = Math.max(0, base - (Yc + rt * .5)), rS = 12 + 34 * (1 - Math.exp(-tf / 5));
       if (tf > 1.2) HUMO.tallo.forEach(function (p) {
         var h = (p.h + tf * .05 * p.v) % 1, y = base - h * alto, x = GX + Math.cos(p.th) * rS * p.rr * (1 + .5 * (1 - h)) * (1 + .35 * suave((h - .8) / .2));
-        bocanada(x, y, (7 + 13 * p.s) * (.75 + .5 * (1 - h)), 3.4 + 1.2 * (1 - cal) - h * 1.6 * (.3 + .7 * cal), Fb * .82 * suave((tf - 1.2) / 2.5) * suave(h * 6));
+        bocanada(x, y, (7 + 13 * p.s) * (.75 + .5 * (1 - h)), 3.4 + 1.2 * (1 - cal) - h * 1.6 * (.3 + .7 * cal), Fb * .82 * suave((tf - 1.2) / 2.5) * suave(h * 6), p.f);
       });
       // collar de condensación alrededor del tallo (aire húmedo que sube y se enfría)
       var ca = Fb * suave((tf - 5) / 2) * (1 - suave((tf - 14) / 4));
       if (ca > .01) {
         var yC = base - alto * .55, rC = rS * 2.4 + 20;
-        HUMO.collar.forEach(function (p) { var x = GX + Math.cos(p.th) * rC * p.k, y = yC + Math.sin(p.th) * rC * p.k * .14; bocanada(x, y + (p.k - 1) * 14, (10 + 13 * p.s), .3, ca * .14); });
+        HUMO.collar.forEach(function (p) { var x = GX + Math.cos(p.th) * rC * p.k, y = yC + Math.sin(p.th) * rC * p.k * .14; bocanada(x, y + (p.k - 1) * 14, (10 + 13 * p.s), .3, ca * .11, p.f); });
       }
-      // bola de fuego: incandescente, moteada por la turbulencia, se funde en el toro
+      // bola de fuego: esfera que hierve, blanca un instante, luego amarilla intensa y al final naranja con costra
       if (af > 0) {
-        var gb = ctx.createRadialGradient(GX, yb, 0, GX, yb, Rf * 1.6);
-        gb.addColorStop(0, 'rgba(255,252,240,' + af + ')'); gb.addColorStop(.35, 'rgba(255,230,160,' + af + ')'); gb.addColorStop(.62, 'rgba(244,160,70,' + (af * .85) + ')');
-        gb.addColorStop(.8, 'rgba(200,90,40,' + (af * .35) + ')'); gb.addColorStop(1, 'rgba(200,90,40,0)');
-        ctx.globalAlpha = 1; ctx.fillStyle = gb; ctx.fillRect(GX - Rf * 1.7, yb - Rf * 1.7, Rf * 3.4, Rf * 3.4);
-        HUMO.gran.forEach(function (g) {
-          var a = g.a + tf * g.w, r = Rf * g.r, x = GX + Math.cos(a) * r, y = yb + Math.sin(a) * r * .95;
-          bocanada(x, y, Rf * (.14 + .14 * g.s), .15 + 2.6 * (1 - af / Fb) + g.r * 1.1, af * .5);
+        var et = tf < .5 ? tf / .5 : tf < 2.8 ? 1 + .25 * (tf - .5) / 2.3 : 1.25 + .75 * suave((tf - 2.8) / 2.6), e0 = Math.min(1, Math.floor(et)), fe = et - e0;
+        var hv = tf * 2.2, q0 = Math.floor(hv) % 4, fq = hv - Math.floor(hv), q1 = (q0 + 1) % 4, Rd = Rf * 1.04;
+        ctx.save(); ctx.beginPath(); ctx.rect(vb.x, vb.y, vb.width, SUELO + 3 - vb.y); ctx.clip();
+        ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = af * (.5 + .4 * (1 - fe * (e0 ? 1 : 0))); ctx.drawImage(LUZ, GX - Rf * 2.6, yb - Rf * 2.6, Rf * 5.2, Rf * 5.2);
+        ctx.globalCompositeOperation = 'source-over';
+        [[q0, 1 - fq], [q1, fq]].forEach(function (Q) {
+          if (Q[1] < .02) return;
+          ctx.globalAlpha = af * (Q[0] === q0 ? 1 : Q[1]); ctx.drawImage(FUEGO[Q[0]][e0], GX - Rd, yb - Rd, 2 * Rd, 2 * Rd);
+          if (fe > .02 && e0 < 2) { ctx.globalAlpha = af * fe * (Q[0] === q0 ? 1 : Q[1]); ctx.drawImage(FUEGO[Q[0]][e0 + 1], GX - Rd, yb - Rd, 2 * Rd, 2 * Rd); }
         });
-        if (tf < 1.4) {   // borde nítido del primer instante
-          ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1; ctx.lineWidth = 1.4; ctx.strokeStyle = 'rgba(255,248,230,' + (.7 * af * (1 - tf / 1.4)) + ')';
-          ctx.beginPath(); ctx.arc(GX, yb, Rf * 1.02, 0, 2 * Math.PI); ctx.stroke(); ctx.globalCompositeOperation = 'source-over';
-        }
+        // halo amarillo que respira alrededor
+        ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = af * .35 * (1 - .5 * fe);
+        var gy = ctx.createRadialGradient(GX, yb, Rf * .8, GX, yb, Rf * 1.7); gy.addColorStop(0, 'rgba(255,214,90,.9)'); gy.addColorStop(1, 'rgba(255,170,40,0)');
+        ctx.fillStyle = gy; ctx.fillRect(GX - Rf * 1.7, yb - Rf * 1.7, Rf * 3.4, Rf * 3.4);
+        if (tf < 1.4) { ctx.globalAlpha = 1; ctx.lineWidth = 1.4; ctx.strokeStyle = 'rgba(255,248,230,' + (.6 * af * (1 - tf / 1.4)) + ')'; ctx.beginPath(); ctx.arc(GX, yb, Rf * 1.0, 0, 2 * Math.PI); ctx.stroke(); }
+        ctx.restore();
       }
       dibujaCap(true);
       muro(true);

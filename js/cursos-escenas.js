@@ -1292,7 +1292,7 @@
           if (a.x >= 80) {
             var z = zEn(a, 80), q = P(80, a.sy * (80 - X0H), z);
             if (z > 4 && z < 34) el('circle', { 'class': 'impacto ' + (a.sgn > 0 ? 'imp-arriba' : 'imp-abajo'), cx: f(q[0]), cy: f(q[1]), r: 1.15 }, impactos);
-            if (impactos.childNodes.length > 1400) impactos.removeChild(impactos.firstChild);
+            if (impactos.childNodes.length > 950) impactos.removeChild(impactos.firstChild);
             if (a.sgn > 0) arriba++; else abajo++;
             a.el.parentNode.removeChild(a.el); enVuelo.splice(i, 1); continue;
           }

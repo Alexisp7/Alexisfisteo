@@ -17,10 +17,21 @@
   var guardado = null;
   try { guardado = sessionStorage.getItem('fx-hoja'); sessionStorage.removeItem('fx-hoja'); } catch (e) {}
   if (guardado && !quieto) {
-    // llega desde otra página: la hoja ya cubre la pantalla y se retira hacia la izquierda
-    var h0 = hoja(guardado, 'fx-quieta');
+    // llega desde otra página: la hoja cubre la pantalla como pantalla de carga mientras se cargan
+    // imágenes, fuentes y escenas; cuando la página ya pintó sus primeros cuadros, se retira a la izquierda
+    var h0 = hoja(guardado, 'fx-quieta fx-cargando'), t0 = performance.now(), fuera = false;
     d.documentElement.classList.remove('fx-llega');
-    setTimeout(function () { h0.className = 'fx-hoja fx-sale'; setTimeout(function () { h0.remove(); }, 560); }, 140);
+    var retirar = function () {
+      if (fuera) return; fuera = true;
+      var espera = Math.max(0, 180 - (performance.now() - t0));
+      setTimeout(function () { requestAnimationFrame(function () { requestAnimationFrame(function () {
+        h0.className = 'fx-hoja fx-sale'; setTimeout(function () { h0.remove(); }, 560);
+      }); }); }, espera);
+    };
+    var cargada = new Promise(function (ok) { if (d.readyState === 'complete') ok(); else addEventListener('load', ok, { once: true }); });
+    var fuentes = d.fonts && d.fonts.ready ? d.fonts.ready : Promise.resolve();
+    Promise.all([cargada, fuentes]).then(retirar);
+    setTimeout(retirar, 2600);   // nunca más de 2,6 s
   } else d.documentElement.classList.remove('fx-llega');
   var yendo = false;
   function ir(href) {
@@ -30,9 +41,25 @@
     var t = nombreDe(u), h = hoja(t);
     try { sessionStorage.setItem('fx-hoja', t); } catch (e) {}
     requestAnimationFrame(function () { requestAnimationFrame(function () { h.classList.add('fx-entra'); }); });
-    setTimeout(function () { location.href = u.href; }, 400);
+    precargar(u.href);
+    setTimeout(function () { location.href = u.href; }, 300);
   }
   window.fxIr = ir;
+  // precarga: al acercar el cursor (o tocar) un enlace interno, el navegador ya va pidiendo esa página
+  var precargadas = {};
+  function precargar(href) {
+    if (precargadas[href]) return; precargadas[href] = 1;
+    var l = d.createElement('link'); l.rel = 'prefetch'; l.href = href; d.head.appendChild(l);
+  }
+  function interno(a) {
+    if (!a || a.target === '_blank') return null;
+    var h = a.getAttribute('href'); if (!h || h.charAt(0) === '#' || /^(mailto|tel|javascript):/i.test(h) || /\.pdf($|\?|#)/i.test(h)) return null;
+    var u = new URL(a.href, location.href);
+    return u.host === location.host && u.pathname !== location.pathname ? u.href.split('#')[0] : null;
+  }
+  ['pointerover', 'touchstart', 'focusin'].forEach(function (tipo) {
+    d.addEventListener(tipo, function (ev) { var u = interno(ev.target.closest && ev.target.closest('a[href]')); if (u) precargar(u); }, { passive: true });
+  });
   d.addEventListener('click', function (ev) {
     var a = ev.target.closest && ev.target.closest('a[href]');
     if (!a || ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;

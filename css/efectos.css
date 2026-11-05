@@ -21,6 +21,10 @@ html.fx-llega body::after { content:''; position:fixed; inset:0; z-index:9998; b
 .fx-hoja.fx-entra .fx-hoja-r, .fx-hoja.fx-quieta .fx-hoja-r { transform:scaleX(1); }
 .fx-hoja.fx-quieta { transform:none; transition:none; }
 .fx-hoja.fx-quieta .fx-hoja-c, .fx-hoja.fx-quieta .fx-hoja-r { transition:none; }
+/* mientras carga: una luz recorre la regla bajo el título, como barra de progreso */
+.fx-hoja.fx-cargando .fx-hoja-r { position:relative; overflow:hidden; background:rgba(27,42,74,.25); }
+.fx-hoja.fx-cargando .fx-hoja-r::after { content:''; position:absolute; top:0; left:0; width:40%; height:1px; background:linear-gradient(90deg, transparent, #1B2A4A, transparent); animation:fxCarga 1s cubic-bezier(.45,0,.55,1) infinite; will-change:transform; }
+@keyframes fxCarga { from { transform:translateX(-100%); } to { transform:translateX(250%); } }
 .fx-hoja.fx-sale { transform:translateX(-102%); box-shadow:30px 0 60px -20px rgba(20,25,40,.35); transition:transform .5s cubic-bezier(.7,0,.3,1); }
 .fx-hoja.fx-sale .fx-hoja-c { opacity:0; transition:opacity .2s ease; }
 
@@ -30,11 +34,12 @@ html.fx-llega body::after { content:''; position:fixed; inset:0; z-index:9998; b
 
 /* aparición por warp: el bloque se materializa desde una franja central con un destello */
 .fx-warp { opacity:0; }
-.fx-warp.fx-dentro { animation:fxWarp 1.05s var(--fx-ease) var(--fx-d,0s) both; }
+.fx-warp.fx-dentro { animation:fxWarp .7s var(--fx-ease) var(--fx-d,0s) both; }
+/* solo opacidad, recorte y desplazamiento: sin filtros (blur y brillo repintaban todo el bloque en cada cuadro) */
 @keyframes fxWarp {
-  0%   { opacity:0; clip-path:inset(48% 0 48% 0); filter:brightness(2.4) saturate(.3) blur(2px); }
-  45%  { opacity:1; clip-path:inset(0 0 0 0); filter:brightness(1.5) saturate(.7) blur(0); }
-  100% { opacity:1; clip-path:inset(-20% -20% -20% -20%); filter:none; }
+  0%   { opacity:0; clip-path:inset(46% 0 46% 0); transform:translateY(6px); }
+  55%  { opacity:1; clip-path:inset(0 0 0 0); transform:none; }
+  100% { opacity:1; clip-path:inset(-20% -20% -20% -20%); transform:none; }
 }
 
 /* brillo dorado que recorre las palabras en cursiva de los títulos */
@@ -58,8 +63,8 @@ html.fx-llega body::after { content:''; position:fixed; inset:0; z-index:9998; b
 
 /* línea viva sobre el pie de página */
 .fx-pie { position:relative; height:1px; overflow:hidden; background:rgba(200,169,110,.18); }
-.fx-pie::after { content:''; position:absolute; top:0; left:-30%; width:30%; height:1px; background:linear-gradient(90deg,transparent,var(--fx-oro-claro),transparent); animation:fxPie 5.5s ease-in-out infinite; }
-@keyframes fxPie { to { left:100%; } }
+.fx-pie::after { content:''; position:absolute; top:0; left:0; width:30%; height:1px; background:linear-gradient(90deg,transparent,var(--fx-oro-claro),transparent); transform:translateX(-100%); animation:fxPie 5.5s ease-in-out infinite; will-change:transform; }
+@keyframes fxPie { to { transform:translateX(340%); } }
 
 @media (prefers-reduced-motion: reduce) {
   .fx-hoja { display:none; } html.fx-llega body::after { display:none; }

@@ -115,8 +115,8 @@
       z-index: 100;
     }
     @media (min-width:901px) {   /* centrada arriba sobre el degradado: el color del texto sigue al velo (claro a la izquierda, tinta a la derecha) */
-      /* cápsula de vidrio ahumado: el mismo dorado se lee igual sobre el velo vino y sobre el papel */
-      .header nav.main-nav { width:max-content; margin:0 auto; padding:5px 8px; border-radius:999px; background:rgba(30,19,21,.74); -webkit-backdrop-filter:blur(14px) saturate(1.15); backdrop-filter:blur(14px) saturate(1.15);
+      /* cápsula ahumada: el mismo dorado se lee igual sobre el velo vino y sobre el papel */
+      .header nav.main-nav { width:max-content; margin:0 auto; padding:5px 8px; border-radius:999px; background:rgba(30,19,21,.84);   /* sin backdrop-filter: sobre el WebGL obligaba a desenfocar en cada cuadro */
         border:1px solid rgba(194,154,98,.2); box-shadow:inset 0 1px 0 rgba(255,240,220,.06), 0 10px 30px -14px rgba(12,6,10,.55); }
       .header nav.main-nav a { color:#C29A62; text-shadow:none; transition:color .25s ease; }
       .header nav.main-nav a::before { top:auto; bottom:3px; left:20px; right:20px; height:1px; background:#B39BF0; box-shadow:0 0 8px rgba(168,139,235,.75); transform-origin:center; }
@@ -1918,12 +1918,6 @@
     </div>
   </header>
 
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <filter id="hervir" x="-5%" y="-5%" width="110%" height="110%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="1" seed="1" result="r"><animate attributeName="seed" values="1;2;3;4;5" dur=".75s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="r" scale="1.6"/>
-    </filter>
-  </svg>
   <section class="mc" data-cursos-menu aria-label="Cursos">
     <div class="mc-escenas" aria-hidden="true">
       <figure class="mc-escena on" data-i="0"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"></svg></figure>

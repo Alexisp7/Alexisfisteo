@@ -430,6 +430,7 @@
         for (var j = 0; j < qubits.length; j++) { var dj = Math.hypot(qubits[j].x - oX, qubits[j].y - oY); if (dj < dMin) dMin = dj; if (dj > dMax) dMax = dj; }
         oD = olaP > 0 ? dMin + olaP * (dMax - dMin + BANDA) : 0;
       }
+      var grupos = {}, orden = [], rotulos = [];
       for (var i = 0; i < qubits.length; i++) {
         var q = qubits[i];
         if (q.collapseAt && now >= q.collapseAt) { measure(q); q.masivo = true; }
@@ -452,37 +453,47 @@
           e = Math.max(0, Math.min(1, (oD - dq) / BANDA)); e = e * e * (3 - 2 * e);
           if (e > 0) {
             if (!q.res) { var p0 = Math.cos(q.theta0 / 2); q.res = rnd(q.x * 7.1 + q.y * 3.3) < p0 * p0 ? '0' : '1'; }
-            var meta = q.res === '0' ? 0 : Math.PI, base = col;
+            var meta = q.res === '0' ? 0 : Math.PI;
             th = q.theta + (meta - q.theta) * e; ph = q.phi * (1 - e);
-            col = mezcla(GOLD, q.res === '0' ? BLUE : RED, e);
-            alfa = 0.6 + 0.4 * e;
           }
         }
-        ctx.strokeStyle = ctx.fillStyle = 'rgba(' + col + ',' + alfa + ')';
-        ctx.lineWidth = on ? 1 : 0.85 + 0.15 * e;
-
-        // contorno
-        ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, TAU); ctx.stroke();
-        // ecuador: mitad delantera continua, mitad trasera punteada
-        ctx.beginPath(); ctx.ellipse(q.x, q.y, R, R * 0.3, 0, 0, Math.PI); ctx.stroke();
-        ctx.setLineDash([1.4, 1.6]);
-        ctx.beginPath(); ctx.ellipse(q.x, q.y, R, R * 0.3, 0, Math.PI, TAU); ctx.stroke();
-        ctx.setLineDash([]);
-
-        // flecha de estado
+        // se agrupa por estilo: todas las esferas iguales se trazan en un solo camino (mucho más liviano)
+        if (e > 0) { var eq = Math.round(e * 10) / 10; col = mezcla(GOLD, q.res === '0' ? BLUE : RED, eq); alfa = 0.6 + 0.4 * eq; }
+        var lw = on ? 1 : (e > 0 ? 1 : 0.85), clave = col + '|' + alfa.toFixed(2) + '|' + lw, gr = grupos[clave];
+        if (!gr) { gr = grupos[clave] = { c: 'rgba(' + col + ',' + alfa.toFixed(2) + ')', lw: lw, l: [] }; orden.push(gr); }
         var st = Math.sin(th);
-        var ex = q.x + st * Math.cos(ph) * R;
-        var ey = q.y + (-Math.cos(th) * 0.95 + st * Math.sin(ph) * 0.3) * R;
-        ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(ex, ey); ctx.stroke();
-        var a = Math.atan2(ey - q.y, ex - q.x);
-        ctx.beginPath();
-        ctx.moveTo(ex, ey);
-        ctx.lineTo(ex - 2.6 * Math.cos(a - 0.5), ey - 2.6 * Math.sin(a - 0.5));
-        ctx.lineTo(ex - 2.6 * Math.cos(a + 0.5), ey - 2.6 * Math.sin(a + 0.5));
-        ctx.closePath(); ctx.fill();
-        if (q.frozen) label(q);
-        else if (e > 0.75) ketOla(q, (e - 0.75) / 0.25);
+        gr.l.push(q, q.x + st * Math.cos(ph) * R, q.y + (-Math.cos(th) * 0.95 + st * Math.sin(ph) * 0.3) * R);
+        if (q.frozen) rotulos.push(q, 0);
+        else if (e > 0.75) rotulos.push(q, (e - 0.75) / 0.25);
       }
+      for (var g = 0; g < orden.length; g++) {
+        var G = orden[g], L = G.l, k, q2, ex, ey, an;
+        ctx.strokeStyle = ctx.fillStyle = G.c; ctx.lineWidth = G.lw;
+        // contorno, ecuador delantero y flecha
+        ctx.beginPath();
+        for (k = 0; k < L.length; k += 3) {
+          q2 = L[k];
+          ctx.moveTo(q2.x + R, q2.y); ctx.arc(q2.x, q2.y, R, 0, TAU);
+          ctx.moveTo(q2.x + R, q2.y); ctx.ellipse(q2.x, q2.y, R, R * 0.3, 0, 0, Math.PI);
+          ctx.moveTo(q2.x, q2.y); ctx.lineTo(L[k + 1], L[k + 2]);
+        }
+        ctx.stroke();
+        // ecuador trasero punteado
+        ctx.setLineDash([1.4, 1.6]); ctx.beginPath();
+        for (k = 0; k < L.length; k += 3) { q2 = L[k]; ctx.moveTo(q2.x - R, q2.y); ctx.ellipse(q2.x, q2.y, R, R * 0.3, 0, Math.PI, TAU); }
+        ctx.stroke(); ctx.setLineDash([]);
+        // puntas de flecha
+        ctx.beginPath();
+        for (k = 0; k < L.length; k += 3) {
+          q2 = L[k]; ex = L[k + 1]; ey = L[k + 2]; an = Math.atan2(ey - q2.y, ex - q2.x);
+          ctx.moveTo(ex, ey);
+          ctx.lineTo(ex - 2.6 * Math.cos(an - 0.5), ey - 2.6 * Math.sin(an - 0.5));
+          ctx.lineTo(ex - 2.6 * Math.cos(an + 0.5), ey - 2.6 * Math.sin(an + 0.5));
+          ctx.closePath();
+        }
+        ctx.fill();
+      }
+      for (var r2 = 0; r2 < rotulos.length; r2 += 2) { if (rotulos[r2].frozen) label(rotulos[r2]); else ketOla(rotulos[r2], rotulos[r2 + 1]); }
     }
 
     // ket |0⟩ o |1⟩ en gris, o la compuerta H, encima de la esfera medida
@@ -525,9 +536,11 @@
 
     function loop(t) {
       var dt = last ? Math.min(t - last, 50) : 16;
+      var pendientes = (ola && Math.abs(olaMeta - olaP) > 0) || drag || (!anclado && Math.abs(meterOff) > 0.3) || qubits.some(function (q) { return q.collapseAt || q.resetAt || q.hAt; });
+      // en reposo solo deriva despacio: basta con ~24 cuadros por segundo
+      if (!pendientes && !current.length && last && t - last < 40) { raf = visible ? requestAnimationFrame(loop) : 0; return; }
       last = t;
       draw(dt);
-      var pendientes = (ola && Math.abs(olaMeta - olaP) > 0) || drag || (!anclado && Math.abs(meterOff) > 0.3) || qubits.some(function (q) { return q.collapseAt || q.resetAt || q.hAt; });
       if (visible && (!still || current.length || pendientes)) raf = requestAnimationFrame(loop);
       else { raf = 0; last = 0; }
     }

@@ -419,9 +419,6 @@
     // borde interno del disco) y disco. Las de la sombra van encima del disco que la cruza por delante.
     // ── zonas exactas: el puntero se clasifica trazando su mismo rayo (igual que el shader), así cada zona es lo que se ve
     var zTodo = zona(anillo(0, 23 * SC)); fig.bnZona = function (x, y) { return clasifica(x, y); };
-    // ergosfera esquemática de un agujero con giro a = 0,9 M: llega a r = 2M en el ecuador y toca el horizonte (r₊ ≈ 1,44 M) en los polos;
-    // se dibuja agrandada por la lente en la misma proporción que el horizonte, cuya imagen es la sombra
-    var EA = BC * 2 / (1 + Math.sqrt(1 - .81)), EB = Math.hypot(BC * Math.sin(INCL), EA * Math.cos(INCL));
     function clasifica(x, y) {
       var dx = (x - C[0]) / SC, dy = (y - C[1]) / SC, cr = Math.cos(ROLL), sr = Math.sin(ROLL);
       var bx = cr * dx + sr * dy, by = -(-sr * dx + cr * dy), bb = Math.hypot(bx, by);
@@ -440,11 +437,11 @@
         if (p[1] * pn[1] < 0) { var k = p[1] / (p[1] - pn[1]), rq = Math.hypot(p[0] + (pn[0] - p[0]) * k, p[2] + (pn[2] - p[2]) * k); if (rq < 22.5) { cruce = rq; break; } }
         p = pn; v = [vm[0] + An[0] * dt * .5, vm[1] + An[1] * dt * .5, vm[2] + An[2] * dt * .5];
       }
-      if (bb > BC * 1.08 && (bx / EA) * (bx / EA) + (by / EB) * (by / EB) < 1) return 'ergo';   // la ergosfera envuelve al horizonte: manda sobre el disco
       if (cruce >= 6.3 && cruce < 20) return 'disco';   // la primera vez que el rayo atraviesa el plano cae sobre el disco visible
       if (bb < BC * .14) return 'sing';
       if (bb < BC - .12) return 'hor';
       if (bb < BC * 1.08) return 'hawk';
+      if (bb < BC * 1.55) return 'caida';
       return null;
     }
     function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random()); }
@@ -793,27 +790,24 @@
           dato: 'T = ħc³ / 8πGMk_B',
           que: 'Hawking (1974): por efectos cuánticos junto al horizonte, el agujero emite como un cuerpo negro y pierde masa muy despacio. Para una masa solar T ≈ 6 × 10⁻⁸ K; nunca se ha medido.',
           dibujo: 'el filo rojo y las chispas son simbólicos: esa radiación sería invisible.' });
-        nota(null, { k: 'ergo', ancla: buscar('ergo', Math.PI - .25, RSH * 1.0, RSH * 1.7), rotulo: [xI - 40, C[1] - RSH * 1.2], titulo: 'Ergosfera', med: 'ergo', dim: [.3, .4],
-          dato: 'r₊ < r < 2GM/c² (en el ecuador)',
-          que: 'Solo existe si el agujero gira (solución de Kerr, 1963), y se espera que los agujeros reales giren. Es una región achatada que envuelve al horizonte: ahí el giro arrastra al espacio-tiempo y nada puede quedarse quieto. Todavía se puede salir de ella, e incluso extraer energía del giro (Penrose, 1969).',
-          dibujo: 'es un esquema. Este dibujo es de un agujero sin giro (Schwarzschild), que no tendría ergosfera; la superficie punteada muestra dónde estaría con giro a = 0,9, agrandada por la lente igual que el horizonte.',
+        nota(null, { k: 'caida', ancla: buscar('caida', -2.0, RSH * 1.0, RSH * 1.7), rotulo: [xI, C[1] - RSH * 1.42], titulo: 'Región de caída', med: 'fot', dim: [.3, .4],
+          dato: 'rₛ < r < 3 rₛ',
+          que: 'Entre el borde interno del disco (la órbita estable más interna, ISCO, en 3 rₛ) y el horizonte ya no hay órbitas estables: el gas se precipita en espiral. En la literatura se llama plunging region. Dentro está la esfera de fotones, en 1,5 rₛ, donde la luz puede orbitar.',
+          dibujo: 'la franja resaltada entre la sombra y el disco, deformada por la lente. Su borde interior es el anillo de fotones: la luz que rozó la esfera de fotones (1,5 rₛ) antes de escapar.',
           extra: function (n) {
-            // la franja que ocupa (sacada de clasifica(): la cortan el disco que pasa delante y la sombra)
+            // se pinta la franja misma: su forma real (deformada por la lente y cortada por el disco que pasa delante) sale de clasifica()
             var M2 = 240, tramos = [], cur = null;
             for (var k = 0; k <= M2; k++) {
               var ang = -Math.PI + 2 * Math.PI * k / M2, ri = -1, ro = -1;
-              for (var rr = RSH * .98; rr <= RSH * 1.7; rr += .75) { var q = polar(ang, rr); if (clasifica(q[0], q[1]) === 'ergo') { if (ri < 0) ri = rr; ro = rr; } else if (ri >= 0) break; }
-              if (ri > 0 && ro - ri > 3) { if (!cur) { cur = []; tramos.push(cur); } cur.push([ang, ri, ro]); } else cur = null;
+              for (var rr = RSH * .98; rr <= RSH * 1.7; rr += .75) { var q = polar(ang, rr); if (clasifica(q[0], q[1]) === 'caida') { if (ri < 0) ri = rr; ro = rr; } else if (ri >= 0) break; }
+              if (ri > 0 && ro - ri > 5) { if (!cur) { cur = []; tramos.push(cur); } cur.push([ang, ri, ro]); } else cur = null;
             }
-            if (tramos.length > 1 && tramos[0][0][0] === -Math.PI && cur === tramos[tramos.length - 1]) { var u = tramos.pop(); tramos[0] = u.concat(tramos[0]); }
-            tramos.filter(function (T) { return T.length > 6; }).forEach(function (T) {
+            if (tramos.length > 1 && tramos[0][0][0] === -Math.PI && cur === tramos[tramos.length - 1]) { var u = tramos.pop(); tramos[0] = u.concat(tramos[0]); }   // une el corte en ±π
+            tramos.filter(function (T) { return T.length > 8; }).forEach(function (T) {
               var fuera = T.map(function (e) { return polar(e[0], e[2]); }), dentro = T.map(function (e) { return polar(e[0], e[1]); }).reverse();
               el('path', { 'class': 'bn-franja', d: poligono(fuera.concat(dentro)) }, n);
+              el('path', { 'class': 'bn-rs bn-rs-ecu', d: 'M' + fuera.map(function (q) { return f(q[0]) + ' ' + f(q[1]); }).join(' L'), pathLength: 40 }, n);
             });
-            // la superficie achatada: su contorno y la mitad delantera del ecuador (nada más dentro de la zona negra)
-            var ecu = function (t) { return aPantalla(EA * Math.cos(t), 0, EA * Math.sin(t)); };
-            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(ecu, Math.PI, 2 * Math.PI), pathLength: 45 }, n);
-            el('path', { 'class': 'bn-rs bn-rs-ecu', d: curva(function (t) { return enPantalla(EA * Math.cos(t), EB * Math.sin(t)); }, 0, 2 * Math.PI), pathLength: 90 }, n);
           } });
         nota(null, { k: 'disco', ancla: buscar('disco', Math.atan2(-.8, 2.6), RSH * 2.2, RSH * 3.2), rotulo: [C[0] + RSH * 2.55, C[1] - RSH * .33], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
           dato: 'r ≥ 3 rₛ (ISCO)',

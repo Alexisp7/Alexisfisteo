@@ -1139,8 +1139,8 @@
       //    Los planos x–z (corte del imán y pantalla) se ven de frente, sin deformar.
       //    En el corte, las líneas de campo se juntan bajo el filo (∂B/∂z grande) y a los costados quedan
       //    paralelas: ahí hay campo, pero ∂B/∂z ≈ 0. Un átomo que entra por el costado sigue recto.
-      var ox = x0 + 40, oy = y0 + 88, CA = .906, SA = .423, R = 24, W = 30, D = 13;
-      var DI = 30, DM = 70, DP = 118;                        // profundidad: entrada y salida del imán, pantalla
+      var ox = x0 + 58, oy = y0 + 84, CA = .906, SA = .423, R = 24, W = 30, D = 13;
+      var DS = -26, DI = 30, DM = 70, DP = 118;              // profundidad: ranura, entrada y salida del imán, pantalla
       function P(x, d, z) { return [ox + x + d * CA, oy - z - d * SA]; }
       function ruta(L, d) { return L.map(function (p, k) { var s = P(p[0], d == null ? p[1] : d, d == null ? p[2] : p[1]); return (k ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1]); }).join(' '); }
       function poli(L, c, d) { return el('path', { 'class': c, d: ruta(L, d) + 'Z' }, q); }
@@ -1161,7 +1161,7 @@
       // trayectorias: recta hasta el imán, parábola dentro, recta después
       function tray(x, dzF) {
         var A = dzF / ((DM - DI) * ((DM - DI) / 2 + DP - DM)), o = [];
-        for (var d = 0; d <= DP; d += 4) {
+        for (var d = DS; d <= DP; d += 4) {
           var z = d <= DI ? 0 : d <= DM ? A * (d - DI) * (d - DI) / 2 : A * (DM - DI) * ((DM - DI) / 2 + d - DM);
           o.push([x, d, z]);
         }
@@ -1205,7 +1205,10 @@
       var eg = P(R + 3, DI, -33), tg = el('text', { 'class': 'cm-et lb-et-b', x: f(eg[0]), y: f(eg[1] + 2.5) }, q); tg.textContent = '∂B/∂z';
       var mL = P(XL, DI, -33); el('circle', { 'class': 'lb-mk-l', cx: f(mL[0]), cy: f(mL[1]), r: 1.6 }, q);
       // ranura del colimador (lo más cercano): larga en x, fina en z
-      poli([[-R, -.9], [R, -.9], [R, .9], [-R, .9]], 'lb-cinta', 0);
+      poli([[-R - 4, -4], [R + 4, -4], [R + 4, 4], [-R - 4, 4]], 'lb-colim', DS);
+      poli([[-R, -.9], [R, -.9], [R, .9], [-R, .9]], 'lb-cinta', DS);
+      var pS = P(XL, DS, 0); el('circle', { 'class': 'lb-mk-l', cx: f(pS[0]), cy: f(pS[1]), r: 1.5 }, q);
+      var eR = P(-R - 4, DS, 6.5), tR = el('text', { 'class': 'cm-et', x: f(eR[0]), y: f(eR[1]) }, q); tR.textContent = 'ranura';
       // el átomo del caso límite: va encima de todo y deja su marca en la punta de la mancha
       var aL = el('g', { 'class': 'lb-limite' }, q);
       el('circle', { r: 2.1 }, aL);
@@ -1214,34 +1217,42 @@
       el('circle', { 'class': 'lb-anillo', cx: f(pL[0]), cy: f(pL[1]), r: 3.2 }, q);
       var eL = P(W + 3, DP, D * g(XL) + .3), tL = el('text', { 'class': 'cm-et lb-et-l', x: f(eL[0]), y: f(eL[1] + 2.5) }, q); tL.textContent = 'recto';
       // ejes
-      var o0 = [x0 + 6, y0 + 118];
+      var o0 = [x0 + 6, y0 + 124];
       [[1, 0, 'x'], [CA, -SA, 'y'], [0, -1, 'z']].forEach(function (a) {
         var e = [o0[0] + a[0] * 11, o0[1] + a[1] * 11];
         el('line', { 'class': 'lb-eje', x1: f(o0[0]), y1: f(o0[1]), x2: f(e[0]), y2: f(e[1]) }, q);
         var t = el('text', { 'class': 'cm-et', x: f(e[0] + (a[2] === 'z' ? -2.5 : 2)), y: f(e[1] + (a[2] === 'z' ? -2 : a[2] === 'x' ? 2.5 : 0)) }, q); t.textContent = a[2];
       });
-      var t1 = el('text', { 'class': 'cm-et', x: f(x0 + 28), y: f(y0 + 128) }, q); t1.textContent = 'al costado ∂B/∂z ≈ 0';
-      // 2) eje z según la velocidad (vista de lado): Δz ∝ 1/v²; el lento tarda más y se abre más
-      var sx = x0 + 196, ex = x0 + 300, cy = y0 + 62, MA = sx + 26, MB = sx + 70;
-      el('rect', { 'class': 'lb-zona', x: f(MA), y: f(cy - 36), width: f(MB - MA), height: 72, rx: 2 }, q);
-      el('line', { 'class': 'lb-cero', x1: f(sx), y1: f(cy), x2: f(ex), y2: f(cy) }, q);
-      el('line', { 'class': 'cm-pantalla', x1: f(ex), y1: f(cy - 40), x2: f(ex), y2: f(cy + 40) }, q);
-      var e2 = (MB - MA), es2 = .4 + .8 * (ex - MB) / e2;
-      function zS(x, d) { if (x <= MA) return 0; if (x <= MB) { var u = (x - MA) / e2; return d * .4 * u * u; } return d * .4 + d * .8 * (x - MB) / e2; }
-      [[.72, 'lento'], [1, ''], [1.45, 'rápido']].forEach(function (v) {
-        var Dz = 15 / (v[0] * v[0]);
+      var t1 = el('text', { 'class': 'cm-et', x: f(x0 + 30), y: f(y0 + 132) }, q); t1.textContent = 'al costado ∂B/∂z ≈ 0';
+      // 2) la misma perspectiva, ahora con átomos que pasan bajo el filo (x = 0) a distintas velocidades:
+      //    Δz = ±K/v². El lento pasa más tiempo en el gradiente y se abre mucho más que el rápido.
+      var rx = x0 + 226, ry = y0 + 92, EI = 16, EM = 56, EP = 104;
+      function P2(x, d, z) { return [rx + x + d * CA, ry - z - d * SA]; }
+      function ruta2(L) { return L.map(function (p, k) { var s = P2(p[0], p[1], p[2]); return (k ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1]); }).join(' '); }
+      el('path', { 'class': 'lb-plano', d: ruta2([[-20, EP, -36], [20, EP, -36], [20, EP, 36], [-20, EP, 36]]) + 'Z' }, q);
+      var e3 = P2(0, EP, 39), t3 = el('text', { 'class': 'cm-et lb-et-p', x: f(e3[0]), y: f(e3[1]), 'text-anchor': 'middle' }, q); t3.textContent = 'pantalla';
+      el('path', { 'class': 'lb-cero', d: ruta2([[0, 0, 0], [0, EP, 0]]) }, q);
+      // zona del gradiente: caja celeste entre la entrada y la salida del imán
+      var Z = [[-14, -15], [14, -15], [14, 15], [-14, 15]];
+      el('path', { 'class': 'lb-zona', d: ruta2(Z.map(function (c) { return [c[0], EM, c[1]]; })) + 'Z' }, q);
+      Z.forEach(function (c) { el('path', { 'class': 'lb-zona-a', d: ruta2([[c[0], EI, c[1]], [c[0], EM, c[1]]]) }, q); });
+      var ez = P2(-16, EI, 10), tz = el('text', { 'class': 'cm-et lb-et-b', x: f(ez[0]), y: f(ez[1]), 'text-anchor': 'end' }, q); tz.textContent = '∂B/∂z';
+      var Kv = 11;
+      [[.62, 'lento'], [1, ''], [1.65, 'rápido']].forEach(function (v) {
+        var Dz = Kv / (v[0] * v[0]);
         [-1, 1].forEach(function (s) {
-          var o = 'M' + f(sx) + ' ' + f(cy);
-          for (var x = MA; x <= ex; x += 5) o += ' L' + f(x) + ' ' + f(cy - s * zS(x, Dz / es2));
-          o += ' L' + f(ex) + ' ' + f(cy - s * Dz);
-          el('path', { 'class': 'cm-tray ' + (s > 0 ? 'cm-ta' : 'cm-tb'), d: o, style: 'opacity:' + (.35 + .25 / v[0]) }, q);
-          el('circle', { 'class': s > 0 ? 'cm-imp-a' : 'cm-imp-b', cx: f(ex + 1.5), cy: f(cy - s * Dz), r: 1.6 }, q);
+          var A = s * Dz / ((EM - EI) * ((EM - EI) / 2 + EP - EM)), o = [];
+          for (var d = 0; d <= EP; d += 4) o.push([0, d, d <= EI ? 0 : d <= EM ? A * (d - EI) * (d - EI) / 2 : A * (EM - EI) * ((EM - EI) / 2 + d - EM)]);
+          var tr = ruta2(o), pi = P2(0, EP, s * Dz);
+          el('path', { 'class': 'cm-tray ' + (s > 0 ? 'cm-ta' : 'cm-tb'), d: tr, style: 'opacity:' + f(.3 + .3 / v[0]) }, q);
+          el('circle', { 'class': s > 0 ? 'cm-imp-a' : 'cm-imp-b', cx: f(pi[0]), cy: f(pi[1]), r: 1.7 }, q);
           var at = el('circle', { 'class': s > 0 ? 'cm-at-a' : 'cm-at-b', r: 1.9 }, q);
-          el('animateMotion', { path: o, dur: f(1.9 / v[0]) + 's', repeatCount: 'indefinite' }, at);
+          el('animateMotion', { path: tr, dur: f(2.2 / v[0]) + 's', repeatCount: 'indefinite' }, at);
         });
-        if (v[1]) { var tv = el('text', { 'class': 'cm-et', x: f(ex + 5), y: f(cy - 15 / (v[0] * v[0]) + 3) }, q); tv.textContent = v[1]; }
+        if (v[1]) { var pv = P2(23, EP, Dz), tv = el('text', { 'class': 'cm-et', x: f(pv[0]), y: f(pv[1] + 2.5) }, q); tv.textContent = v[1]; }
       });
-      var t2 = el('text', { 'class': 'cm-et', x: f(sx), y: f(y0 + 128) }, q); t2.textContent = 'z: Δz ∝ 1/v²';
+      el('path', { 'class': 'lb-zona-f', d: ruta2(Z.map(function (c) { return [c[0], EI, c[1]]; })) + 'Z' }, q);
+      var t2 = el('text', { 'class': 'cm-et', x: f(rx - 14), y: f(y0 + 132) }, q); t2.textContent = 'z: Δz ∝ 1/v²';
     }
     function colimMini(q, x0, y0) {
       [[0, 1.6, 'haz fino'], [160, 15, 'haz ancho']].forEach(function (cfg, kp) {
@@ -1375,7 +1386,7 @@
       'costados de la ranura quedan casi paralelas: el campo sigue ahí,',
       'pero ∂B/∂z ≈ 0. Un átomo que pasa por ese costado casi no siente',
       'fuerza y sigue recto: ↑ y ↓ llegan juntos y la mancha se cierra.',
-      'En z, la apertura depende de la velocidad: Δz ∝ 1/v².'], 112, [pa], { alto: 140, ancho: 340, dibujo: labiosMini });
+      'En z, la apertura depende de la velocidad: Δz ∝ 1/v².'], 112, [pa], { alto: 150, ancho: 400, dibujo: labiosMini });
 
     // física: f(v) ∝ v³ e^{−v²/v₀²} → w = v²/v₀² ~ Gamma(2,1); Δz = ±K(y)/w
     // espín: antes del imán, superposición (la flecha "titila"); al entrar al gradiente queda ↑ o ↓

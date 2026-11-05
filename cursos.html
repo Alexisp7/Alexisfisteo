@@ -1631,6 +1631,8 @@
     .mc-escena[data-i="0"]:not(.on) svg .bn-hawk { opacity:0; transition:none; }
     .mc .bn-traza .bn-traza-fina { stroke-width:.4; opacity:.2; } .mc .bn-traza .bn-cruz { stroke-width:.7; opacity:.5; }
     .mc svg.nota-on .bn-zona.foco { fill:none; }
+    .mc-escena[data-i="0"] svg.nota-on .bn-hawk:not(.foco) { opacity:.15; transition:opacity .3s ease; }
+    .mc-escena[data-i="0"] svg .bn-hawk.foco { transition:opacity .3s ease; }
     .mc svg.bn-notas { position:absolute; z-index:3; pointer-events:none; overflow:visible; }
     .mc svg.bn-notas .nota-fondo { fill:#F7F2E8; stroke:rgba(46,42,51,.35); filter:drop-shadow(0 6px 18px rgba(20,14,10,.18)); }
     /* notas sobre fondo oscuro */

@@ -165,7 +165,7 @@
   var GLSL_AGUJERO = [
     '#extension GL_OES_standard_derivatives : enable',
     'precision highp float;',
-    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix, uArm;',
+    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix, uArm; uniform vec2 uDim;',
     'float hash(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
     'float ruido(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);',
     '  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
@@ -184,8 +184,8 @@
     '  vec2 cs = vec2(cos(fase), sin(fase)); float fr = fwidth(r) + 1e-4;',
     // trazos de lápiz: ruido estirado a lo largo de la órbita, fino en el radio; cada octava se apaga si es más fina que el píxel
     '  float s1 = ruido(vec3(cs * 2.2, r * 9.0)), s2 = ruido(vec3(cs * 4.0 + 3.0, r * 24.0)), s3 = ruido(vec3(cs * 7.0 + 8.0, r * 60.0));',
-    '  float w2 = 1.0 - smoothstep(.02, .06, fr), w3 = 1.0 - smoothstep(.008, .022, fr);',
-    '  float tr = (s1 - .5) * .9 + (s2 - .5) * .8 * w2 + (s3 - .5) * .7 * w3;',
+    '  float w1 = 1.0 - smoothstep(.05, .11, fr), w2 = 1.0 - smoothstep(.012, .024, fr), w3 = 1.0 - smoothstep(.0045, .009, fr);',   // cada octava solo si su raya mide ≥ 3 px
+    '  float tr = (s1 - .5) * .9 * w1 + (s2 - .5) * .8 * w2 + (s3 - .5) * .7 * w3;',
     '  float n = ruido(vec3(cs * 1.6, r * 1.3 + 5.0));',
     '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
     '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',   // la raya oscura tira a siena, no a gris
@@ -197,9 +197,9 @@
     '  float h1 = 0.0, h2 = 0.0;',
     // el patrón se lee sobre el círculo (cos, sin de la fase): sin costura en φ = ±π; cada familia se apaga si su raya es más fina que ~2 px
     '  { float kb = floor(r * 5.0), N = 2.0 + 4.0 * hash(vec3(kb, 3.0, 1.0));',
-    '    h1 = smoothstep(.69, .75, ruido(vec3(cs * N + hash(vec3(kb, 8.0, 2.0)) * 40.0, kb * 1.7))) * smoothstep(1.5, 3.0, .2 / fr); }',
+    '    h1 = smoothstep(.69, .75, ruido(vec3(cs * N + hash(vec3(kb, 8.0, 2.0)) * 40.0, kb * 1.7))) * smoothstep(3.0, 6.0, .2 / fr); }',
     '  { float kb = floor(r * 9.0 + .5), N = 4.0 + 7.0 * hash(vec3(kb, 5.0, 4.0));',
-    '    h2 = smoothstep(.73, .79, ruido(vec3(cs * N + hash(vec3(kb, 1.0, 6.0)) * 40.0, kb * 2.3 + 7.0))) * smoothstep(1.5, 3.0, .111 / fr); }',
+    '    h2 = smoothstep(.73, .79, ruido(vec3(cs * N + hash(vec3(kb, 1.0, 6.0)) * 40.0, kb * 2.3 + 7.0))) * smoothstep(3.0, 6.0, .111 / fr); }',
     '  float hueco = max(h1, h2 * .9);',
     '  col *= 1.0 - .25 * hueco;',
     '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * clamp(.75 + tr * .9 + .6 * (1.0 - smoothstep(8.0, 16.0, r)), 0.0, 1.0) * (1.0 - .75 * hueco);',
@@ -279,9 +279,9 @@
     // dentro de la sombra, marcas a escala (sin lente): singularidad, horizonte rₛ = 2 y esfera de fotones 1,5 rₛ = 3
     // sombra negra limpia; su borde (b = √27 M) se suaviza un píxel para que no se vea escalonado
     '  float ab = fwidth(bb) + 1e-4, sA = cae ? 1.0 : 1.0 - smoothstep(5.196 - ab, 5.196 + ab, bb);',
-    '  vec4 tinta = sA < .999 ? aguada(vec2(bx, by), dg, px) : vec4(0.0);',
+    '  vec4 tinta = sA < .999 ? aguada(vec2(bx, by), dg, px) : vec4(0.0); tinta.a *= uDim.y;',
     '  vec4 fondo = mix(tinta, vec4(.012, .014, .02, smoothstep(.05, .55, uArm)), sA);',
-    '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0);',
+    '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0); c1.a *= uDim.x; c2.a *= uDim.x;',   // foco de las notas: lo demás se vuelve transparente
     // composición «sobre» con alfa directo: el papel de la página se ve donde no hay tinta
     '  float a2 = c2.a + fondo.a * (1.0 - c2.a); vec3 k2 = (c2.rgb * c2.a + fondo.rgb * fondo.a * (1.0 - c2.a)) / max(a2, 1e-4);',
     '  float a1 = c1.a + a2 * (1.0 - c1.a); vec3 k1 = (c1.rgb * c1.a + k2 * a2 * (1.0 - c1.a)) / max(a1, 1e-4);',
@@ -309,11 +309,11 @@
       var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); gl.useProgram(pr);
       var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
       var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
-      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
       listo = gl.getProgramParameter(pr, gl.LINK_STATUS);
     }
     if (!listo) fig.classList.add('bn-sin-gl');
-    var tiempo = 0;
+    var tiempo = 0, dim = [1, 1], dimMeta = [1, 1];
     function pintar() {
       if (!listo) return;
       var r = lienzo.getBoundingClientRect(); if (!r.width) return;
@@ -323,6 +323,7 @@
       gl.viewport(0, 0, W, H);
       gl.uniform2f(U.uRes, W, H); gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C[0], C[1]);
       gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL); gl.uniform1f(U.uPix, vb.width / W / SC); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
+      dim[0] += (dimMeta[0] - dim[0]) * .14; dim[1] += (dimMeta[1] - dim[1]) * .14; gl.uniform2f(U.uDim, dim[0], dim[1]);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
@@ -335,9 +336,9 @@
       // la resolución casi no baja: si la GPU va lenta se ajusta poco y se salta un cuadro
       if (++cuadro % salto) return;
       pintar();
-      // si va lento: primero 0,8 de la resolución en pantallas retina (sigue nítido), luego un cuadro de cada dos
+      // si va lento se pinta un cuadro de cada dos; la resolución no cambia nunca (si bajara, se pixelaría a mitad de la escena)
       if (previo) { var d = (t - previo) / salto; lentos = d > 30 ? lentos + 1 : Math.max(0, lentos - 1);
-        if (lentos > 25) { lentos = 0; if (calidad > .8 && (window.devicePixelRatio || 1) >= 1.5) calidad = .8; else if (salto < 2) salto = 2; } }
+        if (lentos > 25) { lentos = 0; if (salto < 2) salto = 2; } }
       previo = t;
     })(0);
     fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas
@@ -632,16 +633,17 @@
             q.classList.add('con-nota');
             q.addEventListener('pointerenter', function () {
               if (!listo) { listo = true; var nl = maquetar(d, pars, 10, ANCHO - 20, 17); alto = 27 + nl * 17 + extra; fondo.setAttribute('height', f(alto)); }
-              alinea(); coloca(); n.classList.add('ver'); foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on');
+              alinea(); coloca(); n.classList.add('ver'); if (op.dim) { dimMeta[0] = op.dim[0]; dimMeta[1] = op.dim[1]; } foco.forEach(function (o) { o.classList.add('foco'); }); svg.classList.add('nota-on');
             });
-            q.addEventListener('pointerleave', function () { n.classList.remove('ver'); foco.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on'); });
+            q.addEventListener('pointerleave', function () { dimMeta[0] = dimMeta[1] = 1; n.classList.remove('ver'); foco.forEach(function (o) { o.classList.remove('foco'); }); svg.classList.remove('nota-on'); });
           });
         }
         var p3 = enPantalla(Math.cos(2.4) * 1.45, Math.sin(2.4) * 1.45), p4 = enPantalla(Math.cos(2.2) * BC * 1.05, Math.sin(2.2) * BC * 1.05);
         var p2 = enPantalla(Math.cos(-.5) * BC * .95, Math.sin(-.5) * BC * .95), p5 = aPantalla(12, 0, -7);
-        var M = function (k) { return { alto: 104, dibujo: MED[k] }; };
+        var DIM = { sing: [.18, .35], hawk: [.18, .35], hor: [.18, .35], fot: [.5, .45], disco: [1, .3] };
+        var M = function (k) { return { alto: 104, dibujo: MED[k], dim: DIM[k] }; };
         nota([zSing], [C[0], C[1]], 'Singularidad', ['En r = 0 la curvatura se vuelve infinita', 'según la relatividad general: ahí la teoría', 'deja de valer. Se espera que una teoría', 'cuántica de la gravedad la describa.'], 100, null, Object.assign(M('sing'), { izq: true, dx: -40 }));
-        nota([zHawk], p2, 'Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 560, null, Object.assign(M('hawk'), { izq: false }));
+        nota([zHawk], p2, 'Radiación de Hawking', ['Hawking (1974): junto al horizonte, por', 'efectos cuánticos, el agujero emite como', 'cuerpo negro a T = ħc³/(8πGMk_B). Para', 'una masa solar, T ≈ 6 × 10⁻⁸ K.'], 560, [capaHawk], Object.assign(M('hawk'), { izq: false }));
         nota([zHor, zSombra], p3, 'Horizonte de eventos', ['Radio de Schwarzschild rₛ = 2GM/c². Lo', 'que lo cruza, ni la luz, ya no sale.', 'Para el Sol, rₛ ≈ 3 km.', 'La sombra mide ≈ 2,6 rₛ: la gravedad', 'curva la luz que pasa cerca.'], 565, null, Object.assign(M('hor'), { izq: true, dx: -30 }));
         nota([zEsf, zFot, zLente], p4, 'Esfera de fotones', ['A r = 1,5 rₛ la luz puede orbitar,', 'en equilibrio inestable.', 'La que escapa forma el anillo fino junto', 'a la sombra (EHT, M87*, 2019). La lente', 'muestra el disco de atrás arriba y abajo.'], 100, null, Object.assign(M('fot'), { izq: false }));
         nota([zDisco, zDoppler], p5, 'Disco de acreción', ['Gas que cae en espiral y se calienta.', 'Empieza en la órbita estable más interna,', 'r = 3 rₛ (ISCO). El lado que se acerca a', 'nosotros brilla más por efecto Doppler.'], 575, null, Object.assign(M('disco'), { izq: false }));

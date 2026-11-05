@@ -703,9 +703,9 @@
           var txt = document.createElement('div'); txt.className = 'bn-nota-txt';
           var dato = document.createElement('p'); dato.className = 'bn-nota-dato'; dato.textContent = o.dato;
           var que = document.createElement('p'); que.className = 'bn-nota-que'; que.textContent = o.breve;
-          txt.appendChild(dato); txt.appendChild(que);
+          txt.appendChild(h); txt.appendChild(dato); txt.appendChild(que);   // animación en su columna; título y texto al lado
           var fila = document.createElement('div'); fila.className = 'bn-nota-fila'; fila.appendChild(med); fila.appendChild(txt);
-          c.appendChild(h); c.appendChild(fila); ficha.appendChild(c);
+          c.appendChild(fila); ficha.appendChild(c);
           function bajoRotulo() {   // el título queda donde termina la raya; todo dentro de la sección
             var rr = rot.getBoundingClientRect(), rm = sec.getBoundingClientRect(), w = c.offsetWidth, hh = c.offsetHeight, pad = 22;
             var x = izq ? rr.right - rm.left - w + 4 : rr.left - rm.left - 4, y = rr.top + rr.height / 2 - rm.top - h.offsetTop - (h.offsetHeight - 11) / 2;   // la raya toca el borde de la tarjeta a la altura del título
@@ -811,7 +811,7 @@
               });
             })(0);
           } });
-        nota(null, { k: 'hawk', breve: 'Por efectos cuánticos el agujero emite como un cuerpo negro y se evapora muy despacio. Nunca se ha detectado.',  ancla: buscar('hawk', -.55, RSH * .85, RSH * 1.2), rotulo: [xD, C[1] - RSH * .78], titulo: 'Radiación de Hawking', med: 'hawk', dim: [.18, .35], foco: [capaHawk],
+        nota(null, { k: 'hawk', breve: 'Por efectos cuánticos el agujero emite como un cuerpo negro y se evapora muy despacio. Nunca se ha detectado.',  ancla: buscar('hawk', -.55, RSH * .85, RSH * 1.2), rotulo: [xD - 20, C[1] + RSH * 1.22], titulo: 'Radiación de Hawking', med: 'hawk', dim: [.18, .35], foco: [capaHawk],
           dato: 'T = ħc³ / 8πGMk_B',
           que: 'Hawking (1974): por efectos cuánticos junto al horizonte, el agujero emite como un cuerpo negro y pierde masa muy despacio. Para una masa solar T ≈ 6 × 10⁻⁸ K; nunca se ha medido.',
           dibujo: 'el filo rojo y las chispas son simbólicos: esa radiación sería invisible.' });
@@ -834,7 +834,7 @@
               el('path', { 'class': 'bn-rs bn-rs-ecu', d: 'M' + fuera.map(function (q) { return f(q[0]) + ' ' + f(q[1]); }).join(' L'), pathLength: 40 }, n);
             });
           } });
-        nota(null, { k: 'disco', breve: 'Gas que orbita, pierde momento angular por viscosidad y entra en espiral. Se calienta y brilla; el lado que se acerca, más (Doppler).',  ancla: buscar('disco', .62, RSH * 1.15, RSH * 2.4), rotulo: [C[0] + RSH * 1.45, C[1] + RSH * 1.95], lado: 'der', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
+        nota(null, { k: 'disco', breve: 'Gas que orbita, pierde momento angular por viscosidad y entra en espiral. Se calienta y brilla; el lado que se acerca, más (Doppler).',  ancla: buscar('disco', 2.3, RSH * 1.15, RSH * 2.4), rotulo: [C[0] - RSH * 1.55, C[1] + RSH * 1.9], lado: 'izq', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
           dato: 'Ω² = GM/r³',
           que: 'Gas que gira y cae poco a poco; la fricción lo calienta hasta brillar. Por dentro gira más rápido y está más caliente.',
           dibujo: 'el lado que se acerca a nosotros brilla más (Doppler relativista), y el disco de atrás asoma arriba y abajo de la sombra por la lente gravitacional.' });

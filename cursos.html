@@ -115,10 +115,13 @@
       z-index: 100;
     }
     @media (min-width:901px) {   /* centrada arriba sobre el degradado: el color del texto sigue al velo (claro a la izquierda, tinta a la derecha) */
-      .header nav.main-nav a { color:transparent; -webkit-background-clip:text; background-clip:text; background-image:linear-gradient(90deg, #DDB980 0, #C29A62 calc(50% - 60px), #8E6A34 calc(50% + 40px)); background-attachment:fixed; font-weight:700; text-shadow:none; filter:drop-shadow(0 0 .6px rgba(36,22,12,.55)); }   /* un solo dorado: más claro sobre el velo oscuro, más hondo sobre el papel */
-      .header nav.main-nav a::before { top:auto; bottom:2px; left:20px; right:20px; height:1.5px; background:#A88BEB; box-shadow:0 0 6px rgba(168,139,235,.45); }
-      .header nav.main-nav a:hover, .header nav.main-nav a.active { color:transparent; }
-      .header nav.main-nav a.active { font-weight:700; }
+      /* cápsula de vidrio ahumado: el mismo dorado se lee igual sobre el velo vino y sobre el papel */
+      .header nav.main-nav { width:max-content; margin:0 auto; padding:5px 8px; border-radius:999px; background:rgba(30,19,21,.74); -webkit-backdrop-filter:blur(14px) saturate(1.15); backdrop-filter:blur(14px) saturate(1.15);
+        border:1px solid rgba(194,154,98,.2); box-shadow:inset 0 1px 0 rgba(255,240,220,.06), 0 10px 30px -14px rgba(12,6,10,.55); }
+      .header nav.main-nav a { color:#C29A62; text-shadow:none; transition:color .25s ease; }
+      .header nav.main-nav a::before { top:auto; bottom:3px; left:20px; right:20px; height:1px; background:#B39BF0; box-shadow:0 0 8px rgba(168,139,235,.75); transform-origin:center; }
+      .header nav.main-nav a:hover, .header nav.main-nav a.active { color:#E0BE8C; }
+      .header nav.main-nav .nav-sep { opacity:.3; }
     }
 
     /* Franja griega superior */
@@ -1665,22 +1668,18 @@
     .mc.bn-leyendo .bn-pista { opacity:0; }
     .mc[data-activo="0"].bn-leyendo .mc-lectura { opacity:0; } .mc .mc-lectura { transition:opacity .3s ease; }
     /* ficha: tarjeta blanca de papel fino, tipografía limpia y detalles violeta de instrumento */
-    .mc .bn-nota { position:absolute; left:0; top:0; width:min(332px, calc(100vw - 16px)); box-sizing:border-box; padding:18px 20px; color:#1E1A16; isolation:isolate;
+    .mc .bn-nota { position:absolute; left:0; top:0; width:min(364px, calc(100vw - 16px)); box-sizing:border-box; padding:16px 18px 16px 14px; color:#1E1A16; isolation:isolate;
       background:#FDFCFA; border:1px solid rgba(30,26,22,.10); border-radius:4px; box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 18px 44px -12px rgba(10,8,16,.45), 0 2px 6px rgba(10,8,16,.12);
       opacity:0; visibility:hidden; transform:translateY(-4px); transition:opacity .2s ease, transform .3s cubic-bezier(.16,1,.3,1), visibility 0s linear .2s; }
-    /* esquinas de retícula violeta */
-    .mc .bn-nota::before, .mc .bn-nota::after { content:''; position:absolute; width:10px; height:10px; pointer-events:none; border:0 solid #8B6FD9; }
-    .mc .bn-nota::before { top:6px; left:6px; border-top-width:1px; border-left-width:1px; }
-    .mc .bn-nota::after { bottom:6px; right:6px; border-bottom-width:1px; border-right-width:1px; }
     .mc .bn-nota.ver { opacity:1; visibility:visible; transform:none; transition:opacity .22s ease .06s, transform .35s cubic-bezier(.16,1,.3,1) .06s, visibility 0s; }
-    .mc .bn-nota-tit { position:relative; margin:0 0 14px; padding-bottom:11px; font:italic 500 28px/1.05 'Cormorant Garamond',serif; letter-spacing:-.005em; color:#1E1A16; text-wrap:balance; }
+    .mc .bn-nota-tit { position:relative; margin:0 0 12px; padding-bottom:9px; font:italic 500 25px/1.05 'Cormorant Garamond',serif; letter-spacing:-.005em; color:#1E1A16; text-wrap:balance; }
     .mc .bn-nota-tit::after { content:''; position:absolute; left:0; bottom:0; width:100%; height:1px; background:linear-gradient(90deg, #8B6FD9, rgba(139,111,217,.25) 40%, rgba(30,26,22,.08)); }
     .mc .bn-nota-fila { display:flex; align-items:center; gap:14px; }
-    .mc .bn-med { flex:none; width:116px; height:116px; border-radius:2px; overflow:hidden; outline:1px solid rgba(30,26,22,.12); outline-offset:3px; }
-    .mc .bn-nota-txt { min-width:0; }
+    .mc .bn-med { flex:none; width:108px; height:108px; overflow:hidden; }
+    .mc .bn-nota-txt { min-width:0; align-self:stretch; padding-left:16px; border-left:1px solid rgba(30,26,22,.12); text-align:left; }
     .mc .bn-nota-dato { display:inline-block; margin:0 0 9px; padding:3px 7px; font:400 11px/1.3 'Space Mono',monospace; letter-spacing:.02em; color:#6A4FC4; background:rgba(139,111,217,.09); border-left:2px solid #8B6FD9; }
-    .mc .bn-nota-que { margin:0; font:300 13.5px/1.55 Inter,system-ui,sans-serif; color:#3A332D; text-wrap:pretty; }
-    .mc .bn-nota .med-borde { stroke:rgba(var(--mtx),.0); } .mc .bn-nota .med-borde2 { stroke:rgba(30,26,22,.25); opacity:1; }
+    .mc .bn-nota-que { margin:0; font:300 13px/1.55 Inter,system-ui,sans-serif; color:#3A332D; text-wrap:pretty; }
+    .mc .bn-nota .med-papel { fill:#FDFCFA; } .mc .bn-nota .med-aguada { fill:none; } .mc .bn-nota .med-borde, .mc .bn-nota .med-borde2 { stroke:none; }   /* animación suelta, sin marco */
     /* horizonte real: rₛ a escala, punteado que corre y respira */
     .mc svg .nota-marca circle.bn-rs { fill:none; stroke:#F4EEE3; stroke-width:1; stroke-dasharray:1.6 1.4; opacity:.85; transform-box:fill-box; transform-origin:center; }
     .mc svg .nota.ver circle.bn-rs { animation:bn-rs-corre 2.4s linear infinite, bn-rs-late 3.2s ease-in-out infinite; }

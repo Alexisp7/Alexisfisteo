@@ -457,11 +457,11 @@
     var medAnim = [], medN = 0, NS = 'http://www.w3.org/2000/svg';
     function medallon(q, cx, cy, R) {
       var id = 'bnm' + (medN++), defs = el('defs', {}, q), cp = el('clipPath', { id: id }, defs);
-      el('circle', { cx: f(cx), cy: f(cy), r: f(R) }, cp);
-      el('circle', { 'class': 'med-papel', cx: f(cx), cy: f(cy), r: f(R) }, q);
+      // lámina cuadrada (el agujero ya es redondo: las animaciones van en cuadros)
+      var cuad = function (r, cls, par) { return el('rect', { 'class': cls, x: f(cx - r), y: f(cy - r), width: f(2 * r), height: f(2 * r), rx: 3 }, par); };
+      cuad(R, '', cp); cuad(R, 'med-papel', q);
       var dentro = el('g', { 'clip-path': 'url(#' + id + ')' }, q);
-      el('circle', { 'class': 'med-borde', cx: f(cx), cy: f(cy), r: f(R) }, q);
-      el('circle', { 'class': 'med-borde2', cx: f(cx), cy: f(cy), r: f(R + 3) }, q);
+      cuad(R, 'med-borde', q);
       return dentro;
     }
     function pie(q, x, y, lineas) {
@@ -675,7 +675,7 @@
         }
         var capaN = el('g', { 'class': 'notas' }, sobre);
         var ficha = document.createElement('aside'); ficha.className = 'bn-ficha'; ficha.setAttribute('aria-live', 'polite'); sec.appendChild(ficha);
-        var pista = document.createElement('p'); pista.className = 'bn-pista'; pista.textContent = 'Pasa el cursor por el agujero negro: cinco partes'; sec.appendChild(pista);
+        var pista = document.createElement('p');   // sin pista visible (se pidió quitarla); se mantiene el nodo para ubica()
         var lista = sec.querySelector('.mc-lista');
         function ubica() {
           if (!lista) return; var rl = lista.getBoundingClientRect(), rm = sec.getBoundingClientRect();

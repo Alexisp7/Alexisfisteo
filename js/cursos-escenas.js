@@ -195,13 +195,16 @@
     '  float fundido = smoothstep(.8, 2.4, uArm);',
     // cortes irregulares en cada trazo: huecos que viajan con su órbita (más rápido adentro), distintos en cada raya
     '  float h1 = 0.0, h2 = 0.0;',
-    '  { float kb = floor(r * 5.0), L = fase * (2.0 + 4.0 * hash(vec3(kb, 3.0, 1.0))) + hash(vec3(kb, 8.0, 2.0)) * 40.0;',
-    '    h1 = smoothstep(.69, .75, ruido(vec3(L, kb * 1.7, 3.0))); }',
-    '  { float kb = floor(r * 9.0 + .5), L = fase * (4.0 + 7.0 * hash(vec3(kb, 5.0, 4.0))) + hash(vec3(kb, 1.0, 6.0)) * 40.0;',
-    '    h2 = smoothstep(.73, .79, ruido(vec3(L, kb * 2.3, 7.0))) * w2; }',
+    // el patrón se lee sobre el círculo (cos, sin de la fase): sin costura en φ = ±π; cada familia se apaga si su raya es más fina que ~2 px
+    '  { float kb = floor(r * 5.0), N = 2.0 + 4.0 * hash(vec3(kb, 3.0, 1.0));',
+    '    h1 = smoothstep(.69, .75, ruido(vec3(cs * N + hash(vec3(kb, 8.0, 2.0)) * 40.0, kb * 1.7))) * smoothstep(1.5, 3.0, .2 / fr); }',
+    '  { float kb = floor(r * 9.0 + .5), N = 4.0 + 7.0 * hash(vec3(kb, 5.0, 4.0));',
+    '    h2 = smoothstep(.73, .79, ruido(vec3(cs * N + hash(vec3(kb, 1.0, 6.0)) * 40.0, kb * 2.3 + 7.0))) * smoothstep(1.5, 3.0, .111 / fr); }',
     '  float hueco = max(h1, h2 * .9);',
     '  col *= 1.0 - .25 * hueco;',
     '  float a = hay * fundido * smoothstep(5.95, 5.95 + ar + .03, r) * afuera * clamp(.75 + tr * .9 + .6 * (1.0 - smoothstep(8.0, 16.0, r)), 0.0, 1.0) * (1.0 - .75 * hueco);',
+    // donde la lente comprime los trazos (las puntas en que se juntan las imágenes del disco) el borde interior se funde en vez de terminar en punta
+    '  a *= smoothstep(5.95, 7.2, r);',
     '  return vec4(col * D, clamp(a, 0.0, 1.0)); }',
     // fondo: espacio azul muy oscuro con nubes violáceas dibujadas a curvas de nivel y muchas estrellas.
     // Se consulta en la dirección final del rayo, así que la lente lo deforma alrededor de la sombra.
@@ -395,7 +398,7 @@
     function par() {
       // chispas diminutas: nacen en el filo, apenas se alejan unos píxeles y se apagan; su pareja cae hacia dentro
       var a = Math.random() * Math.PI * 2, sale = el('circle', { 'class': 'bn-hq', r: f(.55 + Math.random() * .5) }, hawk), cae = el('circle', { 'class': 'bn-hq bn-hq-cae', r: .5 }, hawk);
-      pares.push({ a: a, r0: RSH * 1.012, d: 3 + Math.random() * 9, vida: .35 + Math.random() * .55, t: 0, sale: sale, cae: cae, da: gauss() * .05 });
+      pares.push({ a: a, r0: RSH * 1.012, d: 4 + Math.random() * 11, vida: .75 + Math.random() * .55, t: 0, sale: sale, cae: cae, da: gauss() * .05 });
     }
     // ── medallones de las notas: una lámina circular a lápiz y aguada con una animación de cada parte.
     // Cada animación sale de la física que cita la nota (geodésicas nulas, luz radial en coordenadas

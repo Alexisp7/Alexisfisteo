@@ -1135,52 +1135,69 @@
     // por qué los labios se cierran: Δz(y) = ±K(y)/v² y K(y) ∝ ∂B/∂z cae hacia los extremos; ahí la separación
     // es menor que el ancho de cada mancha y ↑ y ↓ se solapan. Un cursor recorre la ranura y muestra las dos ramas
     function labiosMini(q, x0, y0) {
-      // izquierda: corte de frente (el haz viene hacia ti). B existe en toda la ranura,
-      // pero ∂B/∂z es grande solo bajo el filo. Derecha: dos carriles vistos de lado.
-      var cx = x0 + 54, tip = y0 + 38, k;
-      [[30, 14, .10], [20, 9, .16], [11, 5, .24]].forEach(function (e) {
-        el('ellipse', { 'class': 'lb-halo', cx: f(cx), cy: f(tip + 8), rx: e[0], ry: e[1], style: 'opacity:' + e[2] }, q);
+      // 1) perspectiva: la ranura del colimador es larga en x; el filo del imán corre a lo largo del haz (y).
+      //    En la pantalla (plano x–z) cada átomo cae a ±Δz que depende de su x: grande bajo el filo, chico en los extremos.
+      var ox = x0 + 44, oy = y0 + 38, Y1 = 118, XA = 34, XB = 80, R = 32, D = 11;
+      function P(x, y, z) { return [ox + y * .95 - x * .62, oy + y * .2 + x * .42 - z]; }
+      function poli(L, c, st) { return el('path', { 'class': c, d: L.map(function (p, k) { var s = P(p[0], p[1], p[2]); return (k ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1]); }).join(' ') + 'Z', style: st || '' }, q); }
+      function zDe(y, d) {
+        if (y <= XA) return 0;
+        if (y <= XB) { var u = (y - XA) / (XB - XA); return d * .4 * u * u; }
+        return d * .4 + d * .8 * (y - XB) / (XB - XA);
+      }
+      var esc = .4 + .8 * (Y1 - XB) / (XB - XA);
+      // pantalla x–z
+      poli([[-R - 8, Y1, -24], [R + 8, Y1, -24], [R + 8, Y1, 24], [-R - 8, Y1, 24]], 'lb-plano');
+      var ez = P(0, Y1, 28), tp = el('text', { 'class': 'cm-et lb-et-p', x: f(ez[0]), y: f(ez[1] - 2), 'text-anchor': 'middle' }, q); tp.textContent = 'plano x–z';
+      var N = 30, i, bA = [], bB = [], cA = [], cB = [];
+      for (i = 0; i <= N; i++) { var u = i / N * 2 - 1, d = D * (1 - u * u) + 1.2; bA.push([u * R, Y1, d + 2.2]); cA.push([u * R, Y1, d - 2.2]); bB.push([u * R, Y1, -d - 2.2]); cB.push([u * R, Y1, -d + 2.2]); }
+      poli(bA.concat(cA.reverse()), 'lb-a'); poli(bB.concat(cB.reverse()), 'lb-b');
+      // polo inferior (ranura) y colimador
+      poli([[-18, XA, -9], [18, XA, -9], [18, XB, -9], [-18, XB, -9]], 'lb-polo-b');
+      poli([[-R - 8, 0, -16], [R + 8, 0, -16], [R + 8, 0, 16], [-R - 8, 0, 16]], 'lb-colim');
+      poli([[-R, 0, -1.4], [R, 0, -1.4], [R, 0, 1.4], [-R, 0, 1.4]], 'lb-cinta');
+      // átomos: x al azar dentro de la ranura, espín ↑ o ↓ al 50 %
+      var sem = 7; function rnd() { sem = (sem * 16807) % 2147483647; return sem / 2147483647; }
+      for (i = 0; i < 14; i++) {
+        var xa = (rnd() * 2 - 1) * R, s = i % 2 ? -1 : 1, dd = s * D * (1 - (xa / R) * (xa / R)) / esc + s * 1.2 / esc, o = '';
+        for (var y = 0; y <= Y1; y += 6) { var pp = P(xa, y, zDe(y, dd)); o += (y ? 'L' : 'M') + f(pp[0]) + ' ' + f(pp[1]); }
+        var at = el('circle', { 'class': s > 0 ? 'cm-at-a' : 'cm-at-b', r: 1.7 }, q);
+        el('animateMotion', { path: o, dur: '2.4s', begin: f(-i * 2.4 / 14) + 's', repeatCount: 'indefinite' }, at);
+      }
+      // filo: cuña a lo largo de y, por encima del haz
+      poli([[0, XA, 5], [-10, XA, 16], [-10, XB, 16], [0, XB, 5]], 'lb-filo-a');
+      poli([[0, XA, 5], [10, XA, 16], [10, XB, 16], [0, XB, 5]], 'lb-filo-b');
+      poli([[-10, XA, 16], [10, XA, 16], [0, XA, 5]], 'lb-filo-c');
+      var fz = P(0, (XA + XB) / 2, 18), tf = el('text', { 'class': 'cm-et', x: f(fz[0]), y: f(fz[1] - 3), 'text-anchor': 'middle' }, q); tf.textContent = 'filo';
+      // ejes (en pantalla, abajo a la izquierda)
+      var o0 = [x0 + 22, y0 + 92];
+      [[-.62, .42, 'x'], [.95, .2, 'y'], [0, -1, 'z']].forEach(function (a) {
+        var e = [o0[0] + a[0] * 13, o0[1] + a[1] * 13];
+        el('line', { 'class': 'lb-eje', x1: f(o0[0]), y1: f(o0[1]), x2: f(e[0]), y2: f(e[1]) }, q);
+        var t = el('text', { 'class': 'cm-et', x: f(e[0] + (a[2] === 'x' ? -7 : a[2] === 'y' ? 2 : -2.5)), y: f(e[1] + (a[2] === 'z' ? -2 : 4)) }, q); t.textContent = a[2];
       });
-      for (k = -3; k <= 3; k++) {
-        if (!k) continue;
-        el('path', { 'class': 'pm-campo', d: 'M' + f(cx + k * 2) + ' ' + f(tip) + ' Q' + f(cx + k * 8) + ' ' + f(tip + 14) + ' ' + f(cx + k * 15) + ' ' + f(y0 + 66) }, q);
-      }
-      el('path', { 'class': 'cm-polo', d: 'M' + f(x0 + 10) + ' ' + f(y0 + 8) + ' H' + f(x0 + 98) + ' V' + f(y0 + 20) + ' L' + f(cx) + ' ' + f(tip) + ' L' + f(x0 + 10) + ' ' + f(y0 + 20) + ' Z' }, q);
-      el('path', { 'class': 'cm-polo', d: 'M' + f(x0 + 10) + ' ' + f(y0 + 66) + ' H' + f(cx - 10) + ' V' + f(y0 + 72) + ' H' + f(cx + 10) + ' V' + f(y0 + 66) + ' H' + f(x0 + 98) + ' V' + f(y0 + 80) + ' H' + f(x0 + 10) + ' Z' }, q);
-      el('rect', { 'class': 'lb-cinta', x: f(cx - 38), y: f(tip + 7), width: 76, height: 3, rx: 1.5 }, q);
-      el('circle', { 'class': 'lb-mk', cx: f(cx), cy: f(tip + 8.5), r: 2.2 }, q);
-      el('circle', { 'class': 'lb-mk lb-mk-e', cx: f(cx + 34), cy: f(tip + 8.5), r: 2.2 }, q);
-      var t1 = el('text', { 'class': 'cm-et', x: f(x0 + 10), y: f(y0 + 92) }, q); t1.textContent = 'de frente';
-      var t1b = el('text', { 'class': 'cm-et', x: f(x0 + 10), y: f(y0 + 102) }, q); t1b.textContent = '∂B/∂z fuerte al centro';
-      // carriles de lado
-      var ox = x0 + 128, XA = ox + 34, XB = ox + 104, XS = ox + 196;
-      function zDe(x, d) {
-        if (x <= XA) return 0;
-        if (x <= XB) { var u = (x - XA) / (XB - XA); return d * .4 * u * u; }
-        return d * .4 + d * .8 * (x - XB) / (XB - XA);
-      }
-      var esc = .4 + .8 * (XS - XB) / (XB - XA);
-      [[y0 + 26, 15, 'centro', ''], [y0 + 70, 2.2, 'extremo', ' lb-mk-e']].forEach(function (c, j) {
-        var cy = c[0], D = c[1] / esc;
-        el('rect', { 'class': 'lb-zona', x: f(XA), y: f(cy - 19), width: f(XB - XA), height: 38, rx: 2, style: 'opacity:' + (j ? .35 : 1) }, q);
-        el('line', { 'class': 'lb-cero', x1: f(ox), y1: f(cy), x2: f(XS), y2: f(cy) }, q);
-        el('line', { 'class': 'cm-pantalla', x1: f(XS), y1: f(cy - 20), x2: f(XS), y2: f(cy + 20) }, q);
-        el('circle', { 'class': 'lb-mk' + c[3], cx: f(ox + 4), cy: f(cy), r: 2.2 }, q);
-        var et = el('text', { 'class': 'cm-et', x: f(ox + 10), y: f(cy - 6) }, q); et.textContent = c[2];
-        [-1, 1].forEach(function (s, kk) {
-          var o = 'M' + f(ox + 4) + ' ' + f(cy);
-          for (var x = XA; x <= XS; x += 5) o += ' L' + f(x) + ' ' + f(cy + zDe(x, -s * D));
-          o += ' L' + f(XS) + ' ' + f(cy - s * c[1]);
-          el('path', { 'class': 'cm-tray ' + (s > 0 ? 'cm-ta' : 'cm-tb'), d: o }, q);
-          el('circle', { 'class': s > 0 ? 'cm-imp-a' : 'cm-imp-b', cx: f(XS + 1.5), cy: f(cy - s * c[1]), r: 1.6 }, q);
-          for (var t = 0; t < 2; t++) {
-            var at = el('circle', { 'class': s > 0 ? 'cm-at-a' : 'cm-at-b', r: 2 }, q);
-            el('animateMotion', { path: o, dur: '2.6s', begin: f(-(t * 1.3 + kk * .65)) + 's', repeatCount: 'indefinite' }, at);
-          }
+      var t1 = el('text', { 'class': 'cm-et', x: f(x0 + 8), y: f(y0 + 112) }, q); t1.textContent = 'x: largo de la ranura';
+      // 2) eje z según la velocidad (vista de lado): Δz ∝ 1/v²; el lento tarda más y se abre más
+      var sx = x0 + 196, ex = x0 + 300, cy = y0 + 50, MA = sx + 26, MB = sx + 70;
+      el('rect', { 'class': 'lb-zona', x: f(MA), y: f(cy - 36), width: f(MB - MA), height: 72, rx: 2 }, q);
+      el('line', { 'class': 'lb-cero', x1: f(sx), y1: f(cy), x2: f(ex), y2: f(cy) }, q);
+      el('line', { 'class': 'cm-pantalla', x1: f(ex), y1: f(cy - 40), x2: f(ex), y2: f(cy + 40) }, q);
+      var e2 = (MB - MA), es2 = .4 + .8 * (ex - MB) / e2;
+      function zS(x, d) { if (x <= MA) return 0; if (x <= MB) { var u = (x - MA) / e2; return d * .4 * u * u; } return d * .4 + d * .8 * (x - MB) / e2; }
+      [[.72, 'lento'], [1, ''], [1.45, 'rápido']].forEach(function (v) {
+        var Dz = 15 / (v[0] * v[0]);
+        [-1, 1].forEach(function (s) {
+          var o = 'M' + f(sx) + ' ' + f(cy);
+          for (var x = MA; x <= ex; x += 5) o += ' L' + f(x) + ' ' + f(cy - s * zS(x, Dz / es2));
+          o += ' L' + f(ex) + ' ' + f(cy - s * Dz);
+          el('path', { 'class': 'cm-tray ' + (s > 0 ? 'cm-ta' : 'cm-tb'), d: o, style: 'opacity:' + (.35 + .25 / v[0]) }, q);
+          el('circle', { 'class': s > 0 ? 'cm-imp-a' : 'cm-imp-b', cx: f(ex + 1.5), cy: f(cy - s * Dz), r: 1.6 }, q);
+          var at = el('circle', { 'class': s > 0 ? 'cm-at-a' : 'cm-at-b', r: 1.9 }, q);
+          el('animateMotion', { path: o, dur: f(1.9 / v[0]) + 's', repeatCount: 'indefinite' }, at);
         });
-        if (j) el('ellipse', { 'class': 'lb-cierre', cx: f(XS), cy: f(cy), rx: 6, ry: 6 }, q);
+        if (v[1]) { var tv = el('text', { 'class': 'cm-et', x: f(ex + 5), y: f(cy - 15 / (v[0] * v[0]) + 3) }, q); tv.textContent = v[1]; }
       });
-      var t2 = el('text', { 'class': 'cm-et', x: f(XA), y: f(y0 + 102) }, q); t2.textContent = 'de lado: hay B en ambos';
+      var t2 = el('text', { 'class': 'cm-et', x: f(sx), y: f(y0 + 112) }, q); t2.textContent = 'z: Δz ∝ 1/v²';
     }
     function colimMini(q, x0, y0) {
       [[0, 1.6, 'haz fino'], [160, 15, 'haz ancho']].forEach(function (cfg, kp) {
@@ -1310,11 +1327,9 @@
     nota([p0], [54, 18, .5], 'Fráncfort, 1922', ['Stern y Gerlach buscaban la cuantización', 'espacial de Bohr–Sommerfeld. El espín', '(1925) explicó por qué eran justo dos.']);
     nota([pa], [79, -21, 37], 'Placa colectora', ['La línea punteada marca dónde llega el haz', 'sin campo. Con campo, la física clásica', 'esperaba una mancha continua (μz de cualquier', 'valor). Se vieron dos: μz está cuantizado.'], 300);
     nota([pz], [80, 0, 27], '¿Por qué se cierra en los bordes?', [
-      'Cada átomo cae arriba o abajo: el espín solo tiene dos valores.',
-      'Lo que cambia es cuánto: Δz ∝ (∂B/∂z)/v². En los extremos el campo',
-      'no se anula; lo que cae es su gradiente, máximo bajo el filo. Un',
-      'campo parejo no empuja, solo hace precesar el momento: el átomo',
-      'del extremo casi no se curva y ↑ y ↓, con su ancho, se tocan.'], 112, [pa], { alto: 124, ancho: 340, dibujo: labiosMini });
+      'La mancha se abre en x por el largo de la ranura y en z por las',
+      'velocidades. Lejos del filo ∂B/∂z cae (el campo no): los extremos',
+      'casi no se desvían y ↑ y ↓ se tocan.'], 112, [pa], { alto: 124, ancho: 340, dibujo: labiosMini });
 
     // física: f(v) ∝ v³ e^{−v²/v₀²} → w = v²/v₀² ~ Gamma(2,1); Δz = ±K(y)/w
     // espín: antes del imán, superposición (la flecha "titila"); al entrar al gradiente queda ↑ o ↓

@@ -1550,7 +1550,7 @@
     @keyframes mc-empuje { 0%, 100% { transform:none; } 40% { transform:translateX(4px); } }
     @keyframes mc-eco { 0% { transform:translateX(-7px); opacity:0; } 30% { opacity:.55; } 60%, 100% { transform:translateX(9px); opacity:0; } }
     .mc-item.on .mc-a:hover .mc-flecha { color:var(--moro); }
-    .mc-item.on .mc-a:hover .mc-flecha .mc-fl { filter:drop-shadow(0 0 6px rgba(var(--macento-rgb),.9)); }
+    .mc-item.on .mc-a:hover .mc-flecha .mc-fl { filter:drop-shadow(0 0 6px rgba(var(--moro-rgb),.35)); }
     .mc-item.on .mc-a:hover .mc-flecha svg { transform:translateX(5px); }
     @media (prefers-reduced-motion:reduce) { .mc-item.on .mc-flecha path { animation:none; } }
     .mc-a::before { content:''; position:absolute; left:-30px; top:50%; width:260px; height:70px; transform:translateY(-50%) scale(.9); border-radius:50%; background:radial-gradient(closest-side, rgba(var(--violeta-rgb),.06), rgba(var(--violeta-rgb),0)); opacity:0; pointer-events:none; transition:opacity .6s ease, transform .8s cubic-bezier(.16,1,.3,1); }

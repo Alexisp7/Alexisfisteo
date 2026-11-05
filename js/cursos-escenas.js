@@ -1406,17 +1406,17 @@
     var eq = function (x) { return '<p class="sg-eq">' + x + '</p>'; };
     var tx = function (x) { return '<p class="sg-tx">' + x + '</p>'; };
     var px = document.createElement('div'); px.className = 'sgx'; px.setAttribute('aria-hidden', 'true');
-    px.innerHTML = '<header class="sg-cab"><p class="bn-ecx-k">Del espín a las dos manchas</p><p class="sg-tit">Schrödinger con un campo no uniforme</p></header><div class="sg-rejilla">' +
-      paso('1', 'Ecuación de Schrödinger', eq('iħ ' + fr('∂', '∂t') + ' Ψ = Ĥ Ψ') + eq('Ψ(<b>r</b>, t) = ' + v2('ψ<sub>↑</sub>', 'ψ<sub>↓</sub>')) +
-        tx('El átomo de plata tiene espín ½: su función de onda es un espinor de dos componentes, una por cada proyección de S<sub>z</sub>.')) +
-      paso('2', 'Hamiltoniano de interacción', eq('Ĥ = ' + fr('p̂²', '2m') + ' − <b>μ̂</b>·<b>B</b>') + eq('<b>μ̂</b> = −g<sub>s</sub>μ<sub>B</sub> ' + fr('<b>Ŝ</b>', 'ħ') + ' ≈ −μ<sub>B</sub> <b>σ̂</b>') +
-        tx('El momento magnético es el del único electrón externo (g<sub>s</sub> ≈ 2). μ<sub>B</sub> = eħ/2m<sub>e</sub> es el magnetón de Bohr.')) +
-      paso('3', 'Campo del entrehierro', eq('<b>B</b> ≈ (B<sub>0</sub> + b z) <b>ẑ</b>,&nbsp; b = ' + fr('∂B<sub>z</sub>', '∂z')) + eq('Ĥ = ' + fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ' + m2('1', '0', '0', '−1')) +
-        tx('Las componentes transversales que exige ∇·<b>B</b> = 0 se promedian a cero: el espín precesa muy rápido alrededor de B<sub>0</sub>.')) +
-      paso('4', 'Se desacopla en dos ecuaciones', eq('iħ ∂<sub>t</sub>ψ<sub>↑</sub> = [ ' + fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ] ψ<sub>↑</sub>') + eq('iħ ∂<sub>t</sub>ψ<sub>↓</sub> = [ ' + fr('p̂²', '2m') + ' − μ<sub>B</sub>(B<sub>0</sub> + b z) ] ψ<sub>↓</sub>') +
-        tx('Ĥ es diagonal en la base de σ̂<sub>z</sub>: cada componente siente su propio potencial lineal, V<sub>±</sub> = ±μ<sub>B</sub>(B<sub>0</sub> + b z).')) +
+    px.innerHTML = '<header class="sg-cab"><p class="bn-ecx-k">Del imán a las dos manchas</p><p class="sg-tit">Schrödinger en un campo no uniforme</p></header><div class="sg-rejilla">' +
+      paso('1', 'Ecuación de Schrödinger', eq('iħ ' + fr('∂ψ', '∂t') + ' = Ĥψ,&nbsp; Ĥ = ' + fr('p̂²', '2m') + ' − <b>μ</b>·<b>B</b>') +
+        tx('Átomo neutro con momento magnético <b>μ</b>: no siente fuerza de Lorentz, solo la energía de un dipolo en el campo.')) +
+      paso('2', 'El campo del imán', eq('<b>B</b> ≈ (B<sub>0</sub> + b z) <b>ẑ</b>,&nbsp; b = ' + fr('∂B<sub>z</sub>', '∂z')) + eq('V = −μ<sub>z</sub>(B<sub>0</sub> + b z) &nbsp;⟹&nbsp; F<sub>z</sub> = μ<sub>z</sub> b') +
+        tx('Las componentes transversales que exige ∇·<b>B</b> = 0 se promedian: el momento precesa rápido alrededor de B<sub>0</sub>. Si μ<sub>z</sub> tomara cualquier valor entre −|μ| y |μ|, como en la física clásica, en la placa se vería una banda continua.')) +
+      paso('3', 'Lo que dicen las manchas', eq('<b>μ</b> = −g μ<sub>B</sub> ' + fr('<b>J</b>', 'ħ') + ' &nbsp;⟹&nbsp; μ<sub>z</sub> = −g μ<sub>B</sub> m,&nbsp; m = −j, …, j') +
+        tx('En cuántica μ<sub>z</sub> solo toma 2j + 1 valores: una mancha por valor. Un momento orbital (j = l entero) da un número impar de manchas, y la plata en su estado base tiene l = 0: una sola, sin desviar. Se vieron dos. Entonces 2j + 1 = 2, j = ½: un momento angular intrínseco, el espín.')) +
+      paso('4', 'Ahora sí: el estado es un espinor', eq('ψ &nbsp;⟶&nbsp; Ψ = ' + v2('ψ<sub>↑</sub>', 'ψ<sub>↓</sub>') + ',&nbsp; <b>μ</b> = −g<sub>s</sub>μ<sub>B</sub> ' + fr('<b>Ŝ</b>', 'ħ') + ' ≈ −μ<sub>B</sub> <b>σ</b>') + eq('Ĥ = ' + fr('p̂²', '2m') + ' + μ<sub>B</sub>(B<sub>0</sub> + b z) ' + m2('1', '0', '0', '−1')) +
+        tx('Con j = ½ hacen falta dos componentes, una por cada valor de S<sub>z</sub> = ±ħ/2, y g<sub>s</sub> ≈ 2. Ĥ queda diagonal: las dos ecuaciones se separan.')) +
       paso('5', 'Estados propios y fuerza', eq('|↑⟩ = ' + v2('1', '0') + ',&nbsp; |↓⟩ = ' + v2('0', '1') + ',&nbsp; E<sub>±</sub> = ±μ<sub>B</sub>B<sub>0</sub>') + eq(fr('d⟨p<sub>z</sub>⟩', 'dt') + ' = −' + fr('∂V<sub>±</sub>', '∂z') + ' = ∓ μ<sub>B</sub> b') +
-        tx('Por Ehrenfest, el centro de cada paquete se acelera como una partícula clásica, pero con solo dos fuerzas posibles, iguales y opuestas.')) +
+        tx('Cada componente siente su propio potencial lineal, V<sub>±</sub> = ±μ<sub>B</sub>(B<sub>0</sub> + b z). Por Ehrenfest, su centro se acelera como una partícula clásica, pero con solo dos fuerzas posibles, iguales y opuestas.')) +
       paso('6', 'Solución: el haz se parte', eq('Ψ(0) = φ(<b>r</b>) ( α|↑⟩ + β|↓⟩ )') + eq('⟶ Ψ(t) = α φ<sub>↑</sub>(<b>r</b>, t)|↑⟩ + β φ<sub>↓</sub>(<b>r</b>, t)|↓⟩') + eq('⟨z⟩<sub>±</sub>(t) = z<sub>0</sub> ∓ ' + fr('μ<sub>B</sub> b', '2m') + ' t²,&nbsp; Δz = ' + fr('μ<sub>B</sub> b L²', 'm v²')) +
         tx('Dentro del imán (largo L, tiempo L/v) los dos paquetes se alejan Δz. Con valores del orden de 1922 (b ≈ 10 T/cm, L ≈ 3,5 cm, v ≈ 500 m/s), Δz ≈ 0,25 mm. Cada átomo cae en una sola mancha, con probabilidad |α|² o |β|².')) +
       '</div>';

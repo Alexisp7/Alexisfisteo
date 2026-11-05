@@ -268,16 +268,16 @@
       d: ['En un sólido los núcleos distan ~10⁻¹⁰ m', 'y un neutrón recorre del orden de', 'centímetros entre choques: unas 10¹²', 'veces el tamaño del núcleo. Aquí las', 'distancias se acortan para poder verlo.'] });
     var nW = en(ABA, { k: 'Energía', tit: '≈ 200 MeV por fisión',
       d: ['Son 3,2 × 10⁻¹¹ J: muy poco. Un', 'kilotón de TNT (4,184 × 10¹² J) equivale', 'a ≈ 1,3 × 10²³ fisiones, 23 órdenes de', 'magnitud más que este destello.'] });
-    var ARR4 = { tx: 960, ty: 282, ancho: 200, lado: -1, pie: true };
+    var ARR4 = { tx: 1198, ty: 160, ancho: 220 }, DER4 = { tx: 1198, ty: 448, ancho: 220 };
     var nB = en(ARR4, { luz: true, k: 'Bola de fuego', tit: 'Brilla como un cuerpo negro',
       d: ['La energía calienta el aire hasta', 'que emite luz térmica. La esfera se', 'expande y, al enfriarse, su color', 'pasa del blanco al naranja (Wien).'] });
-    var nT = en(DER, { luz: true, k: 'Onda de choque', tit: 'R(t) ≈ (E t² / ρ)¹ᐟ⁵',
+    var nT = en(DER4, { luz: true, k: 'Onda de choque', tit: 'R(t) ≈ (E t² / ρ)¹ᐟ⁵',
       d: ['G. I. Taylor (1950), por análisis', 'dimensional: el frente crece como', 't²ᐟ⁵ y solo depende de la energía', 'E y de la densidad del aire ρ.'] });
     var nH = en(ARR4, { luz: true, k: 'Nube en forma de hongo', tit: 'Flotación y vórtice',
       d: ['El aire caliente, menos denso,', 'sube (Rayleigh–Taylor). Su borde', 'se enrolla en un toro que gira y', 'aspira polvo del suelo: el tallo.'] });
-    var nO = en(DER, { luz: true, k: 'Epílogo', tit: 'E = Δm c²',
+    var nO = en(DER4, { luz: true, k: 'Epílogo', tit: 'E = Δm c²',
       d: ['Todo empezó con un neutrón de', '0,025 eV. Cada fisión convierte en', 'energía ≈ 0,08 % de la masa del', 'núcleo; más de 10²³ fisiones llegan', 'a la escala del paisaje.'] });
-    var AGENDA = [[nB, T_FL + 1.4, T_FL + 7.6], [nT, T_FL + 2.8, T_FL + 10.6], [nH, T_FL + 8.2, FIN - .4], [nO, T_FL + 11.4, FIN - .4], [nK, T_P3 + 1.6, T_P3 + 8], [nX, T_P3 + 4.6, T_P3 + 11], [nW, T_P3 + 8.6, T_P4 + 1.2], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, 18, 22], [nF, 21.8, 27], [nP, 23, 28.6], [nE, 25.4, T_P3 + 1.4]];
+    var AGENDA = [[nB, T_FL + 3, T_FL + 8], [nT, T_FL + 2.8, T_FL + 10.6], [nH, T_FL + 8.2, FIN - .4], [nO, T_FL + 11.4, FIN - .4], [nK, T_P3 + 1.6, T_P3 + 8], [nX, T_P3 + 4.6, T_P3 + 11], [nW, T_P3 + 8.6, T_P4 + 1.2], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, 18, 22], [nF, 21.8, 27], [nP, 23, 28.6], [nE, 25.4, T_P3 + 1.4]];
 
     // ── capítulos ──
     var CAPS = [['I', 'Captura', 0], ['II', 'Fisión', T_P2], ['III', 'Cadena', T_P3], ['IV', 'Escala', T_P4]];
@@ -296,7 +296,7 @@
     var fijo = false;
     fig.fzInfo = function () { return { ev: CAD.ev.length, ne: CAD.ne.length, gen: CAD.gen, tUlt: CAD.ev[CAD.ev.length - 1].t, campo: CAD.campo.length }; };
     fig.fzSalta = salta; fig.fzFija = function (t) { salta(t); fijo = true; }; fig.fzSuelta = function () { fijo = false; };   // para capturas
-    new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.fzOn) reinicia(); if (!on && raiz) { raiz.classList.remove('fz-noche'); nocheOn = false; } fig.fzOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
+    new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.fzOn) reinicia(); if (!on && raiz) { raiz.classList.remove('fz-noche'); nocheOn = false; sacudida(-1); } fig.fzOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
 
     function aPantalla(q) { return [CAM.x + q[0] * CAM.s, CAM.y + q[1] * CAM.s]; }
     function jit(n, t, amp) { return [amp * Math.sin(n.w[0] * t + n.f[0]), amp * Math.sin(n.w[1] * t + n.f[1]), amp * Math.sin(n.w[2] * t + n.f[2])]; }
@@ -422,14 +422,15 @@
     }
 
     // ── capítulo IV: cambio de escala y explosión ──
-    var GX = 1130, SUELO = 650;   // punto cero y horizonte (en el SVG)
-    function cumbre(tf) { return SUELO - 62 - 300 * (1 - Math.exp(-tf / 5.5)); }        // altura del centro del toro
-    function radioToro(tf) { return 16 + 96 * (1 - Math.exp(-tf / 4.6)); }
-    function tuboToro(tf) { return 20 + 40 * (1 - Math.exp(-tf / 4)); }
+    var GX = 880, SUELO = 650, T_ONDA = 1.25;   // punto cero, horizonte (en el SVG) y llegada de la onda al observador
+    function cumbre(tf) { return SUELO - 62 - 330 * (1 - Math.exp(-tf / 5.5)); }        // altura del centro del toro
+    function radioToro(tf) { return 18 + 136 * (1 - Math.exp(-tf / 4.6)); }
+    function tuboToro(tf) { return 22 + 60 * (1 - Math.exp(-tf / 4)); }
     function choque(tf) { return 150 * Math.pow(Math.max(tf, 0) + .02, .4); }           // Taylor: R ∝ t^(2/5)
     function bolaFuego(tf) { return 96 * Math.pow(Math.min(1, Math.max(tf, 0) / 1.3), .4); }
     var BOCANADA = (function () {   // seis tonos, del blanco incandescente al humo: cúmulos con luz arriba y sombra abajo
-      var tonos = [[255, 246, 222], [250, 214, 140], [236, 150, 70], [176, 88, 46], [104, 60, 44], [62, 52, 56]];
+      var base = [[255, 246, 222], [250, 214, 140], [236, 150, 70], [176, 88, 46], [104, 60, 44], [62, 52, 56]], tonos = [];
+      for (var i = 0; i <= 15; i++) { var u = i / 3, a0 = Math.min(4, Math.floor(u)), w = u - a0; tonos.push(base[a0].map(function (v, j) { return Math.round(v + (base[a0 + 1][j] - v) * w); })); }
       return tonos.map(function (c, k) {
         var S = 96, cv = document.createElement('canvas'); cv.width = cv.height = S; var x = cv.getContext('2d'), r7 = semilla(40 + k);
         var cla = c.map(function (v) { return Math.min(255, Math.round(v * 1.18 + 14)); }), osc = c.map(function (v) { return Math.round(v * .62); });
@@ -438,19 +439,24 @@
           var g = x.createRadialGradient(cx - rr * .35, cy - rr * .4, rr * .1, cx, cy, rr);
           g.addColorStop(0, 'rgba(' + cla + ',.95)'); g.addColorStop(.55, 'rgba(' + c + ',.92)'); g.addColorStop(.88, 'rgba(' + osc + ',.85)'); g.addColorStop(1, 'rgba(' + osc + ',0)');
           x.fillStyle = g; x.beginPath(); x.arc(cx, cy, rr, 0, 2 * Math.PI); x.fill();
-          if (k > 2) { x.strokeStyle = 'rgba(20,16,18,.18)'; x.lineWidth = .8; x.beginPath(); x.arc(cx, cy, rr * .94, Math.PI * .15, Math.PI * .95); x.stroke(); }
+          if (k > 7) { x.strokeStyle = 'rgba(20,16,18,.18)'; x.lineWidth = .8; x.beginPath(); x.arc(cx, cy, rr * .94, Math.PI * .15, Math.PI * .95); x.stroke(); }
         }
         return cv;
       });
     })();
     var HUMO = (function () {
       var r8 = semilla(211), cap = [], tallo = [], falda = [], est = [], cerro = [];
-      for (var i = 0; i < 420; i++) cap.push({ th: r8() * 2 * Math.PI, ph: r8() * 2 * Math.PI, rr: .35 + r8() * .75, s: .55 + r8() * .7, w: .7 + r8() * .6 });
-      for (i = 0; i < 150; i++) tallo.push({ h: r8(), th: r8() * 2 * Math.PI, rr: r8(), s: .5 + r8() * .6, v: .7 + r8() * .6 });
+      var muro = [], gran = [], chis = [], collar = [];
+      for (var i = 0; i < 500; i++) cap.push({ th: r8() * 2 * Math.PI, ph: r8() * 2 * Math.PI, rr: .3 + .85 * Math.sqrt(r8()), s: .5 + r8() * .85, w: .7 + r8() * .6 });
+      for (i = 0; i < 180; i++) muro.push({ th: r8() * 2 * Math.PI, k: .8 + r8() * .24, s: .5 + r8() * .9, h: r8(), v: r8() });
+      for (i = 0; i < 60; i++) gran.push({ a: r8() * 2 * Math.PI, r: .25 + .7 * Math.sqrt(r8()), s: r8(), w: (r8() - .5) * 1.4 });
+      for (i = 0; i < 90; i++) chis.push({ a: -Math.PI * (.08 + .84 * r8()), v: .4 + r8(), vida: 1.5 + r8() * 3.5, z: r8() });
+      for (i = 0; i < 80; i++) collar.push({ th: r8() * 2 * Math.PI, k: .8 + r8() * .4, s: .5 + r8() * .7 });
+      for (i = 0; i < 170; i++) tallo.push({ h: r8(), th: r8() * 2 * Math.PI, rr: r8(), s: .5 + r8() * .6, v: .7 + r8() * .6 });
       for (i = 0; i < 130; i++) falda.push({ th: r8() * 2 * Math.PI, k: .55 + r8() * .55, s: .5 + r8() * .8, h: r8() });
       for (i = 0; i < 150; i++) est.push({ x: r8(), y: r8(), r: .4 + r8() * .8, a: .25 + r8() * .6, f: r8() * 6.28, w: .6 + r8() * 2 });
       var y = 0; for (i = 0; i <= 120; i++) { y += (r8() - .5) * 3.2; y *= .93; cerro.push(y - 4 - 6 * Math.sin(i / 120 * Math.PI * 3 + 1) * (i % 40 < 20 ? 1 : .6)); }
-      return { cap: cap, tallo: tallo, falda: falda, est: est, cerro: cerro };
+      return { cap: cap, tallo: tallo, falda: falda, est: est, cerro: cerro, muro: muro, gran: gran, chis: chis, collar: collar };
     })();
     // la noche: la tinta nace en el punto de luz y, al final, se retira hacia él como un iris que se cierra
     function iris(t) { var pr = suave((t - T_P4 - .4) / 3.2), q = suave((t - FIN + .3) / 3.6); return (60 + pr * 2000) * Math.pow(1 - q, 1.6); }
@@ -482,9 +488,8 @@
       ctx.globalAlpha = 1;
     }
     function bocanada(x, y, r, temp, al) {
-      var k = Math.max(0, Math.min(5, temp)), k0 = Math.floor(k), f2 = k - k0;
-      ctx.globalAlpha = al * (1 - f2); ctx.drawImage(BOCANADA[k0], x - r, y - r, 2 * r, 2 * r);
-      if (f2 > .05 && k0 < 5) { ctx.globalAlpha = al * f2; ctx.drawImage(BOCANADA[k0 + 1], x - r, y - r, 2 * r, 2 * r); }
+      if (al <= .004) return;
+      ctx.globalAlpha = al; ctx.drawImage(BOCANADA[Math.round(Math.max(0, Math.min(5, temp)) * 3)], x - r, y - r, 2 * r, 2 * r);
     }
     function explosion(t, vb, fundido) {
       fundido *= 1 - suave((t - FIN + 2.7) / 2.8);   // la nube se disuelve en la noche antes de que vuelva el papel
@@ -498,51 +503,112 @@
       }
       if (tf < 0) { ctx.globalAlpha = 1; return; }
       var Fb = fundido, Rt = radioToro(tf), rt = tuboToro(tf), Yc = cumbre(tf), cal = Math.exp(-tf / 6);   // cal: 1 recién nacida → 0 fría
+      var Rs = choque(tf), Rf = bolaFuego(tf), af = Fb * (1 - suave((tf - 1.2) / 3.2)), yb = SUELO - 62 - (SUELO - 62 - Yc) * .9;
       // luz del suelo
-      var gl = ctx.createRadialGradient(GX, 0, 0, GX, 0, 420);
-      gl.addColorStop(0, 'rgba(240,150,70,' + (.45 * Fb * (.25 + .75 * cal)) + ')'); gl.addColorStop(1, 'rgba(240,150,70,0)');
-      ctx.globalAlpha = 1; ctx.fillStyle = gl; ctx.save(); ctx.translate(0, SUELO); ctx.scale(1, .22); ctx.fillRect(GX - 420, -420, 840, 840); ctx.restore();
-      // onda de choque: cúpula en el aire y anillo en el suelo
-      var Rs = choque(tf), as = Fb * Math.max(0, 1 - tf / 6.5);
+      var gl = ctx.createRadialGradient(GX, 0, 0, GX, 0, 520);
+      gl.addColorStop(0, 'rgba(240,150,70,' + (.5 * Fb * (.25 + .75 * cal)) + ')'); gl.addColorStop(1, 'rgba(240,150,70,0)');
+      ctx.globalAlpha = 1; ctx.fillStyle = gl; ctx.save(); ctx.translate(0, SUELO); ctx.scale(1, .22); ctx.fillRect(GX - 520, -520, 1040, 1040); ctx.restore();
+      // el horizonte se enciende: las colinas reflejan la bola de fuego
+      if (af > .02) {
+        var gr = ctx.createLinearGradient(GX - 700, 0, GX + 700, 0);
+        gr.addColorStop(0, 'rgba(255,200,130,0)'); gr.addColorStop(.5, 'rgba(255,214,160,' + (.55 * af) + ')'); gr.addColorStop(1, 'rgba(255,200,130,0)');
+        ctx.strokeStyle = gr; ctx.lineWidth = 1.4; ctx.beginPath();
+        HUMO.cerro.forEach(function (h, i) { var x = vb.x + i / 120 * vb.width; if (i) ctx.lineTo(x, SUELO + h); else ctx.moveTo(x, SUELO + h); }); ctx.stroke();
+      }
+      // nube de Wilson: tras el frente, la expansión enfría el aire húmedo y condensa una cúpula blanca y fugaz
+      var wa = Fb * suave((tf - .7) / .45) * (1 - suave((tf - 2) / 1.4));
+      if (wa > .01) {
+        var Rw = Rs * .9;
+        ctx.save(); ctx.beginPath(); ctx.rect(vb.x, vb.y, vb.width, SUELO - vb.y); ctx.clip();
+        ctx.translate(GX, SUELO); ctx.scale(1, .94);
+        var gw = ctx.createRadialGradient(0, 0, Rw * .45, 0, 0, Rw);
+        gw.addColorStop(0, 'rgba(236,232,226,0)'); gw.addColorStop(.7, 'rgba(236,232,226,' + (.1 * wa) + ')'); gw.addColorStop(.93, 'rgba(248,246,240,' + (.34 * wa) + ')'); gw.addColorStop(1, 'rgba(248,246,240,0)');
+        ctx.globalAlpha = 1; ctx.fillStyle = gw; ctx.fillRect(-Rw, -Rw, 2 * Rw, Rw); ctx.restore();
+      }
+      // onda de choque: cúpula en el aire, eco de rarefacción y anillo en el suelo
+      var as = Fb * Math.max(0, 1 - tf / 6.5);
       if (as > 0) {
-        ctx.lineWidth = 1.1; ctx.strokeStyle = 'rgba(244,232,210,' + (.5 * as) + ')';
+        ctx.lineWidth = 1.2; ctx.strokeStyle = 'rgba(244,232,210,' + (.55 * as) + ')';
         ctx.beginPath(); ctx.ellipse(GX, SUELO, Rs, Rs * .92, 0, Math.PI, 2 * Math.PI); ctx.stroke();
-        ctx.strokeStyle = 'rgba(250,214,150,' + (.75 * as) + ')'; ctx.lineWidth = 1.5;
+        ctx.lineWidth = .7; ctx.strokeStyle = 'rgba(244,232,210,' + (.22 * as) + ')';
+        ctx.beginPath(); ctx.ellipse(GX, SUELO, Rs * .9, Rs * .83, 0, Math.PI, 2 * Math.PI); ctx.stroke();
+        ctx.strokeStyle = 'rgba(250,214,150,' + (.8 * as) + ')'; ctx.lineWidth = 1.6;
         ctx.beginPath(); ctx.ellipse(GX, SUELO + 2, Rs, Rs * .12, 0, 0, 2 * Math.PI); ctx.stroke();
       }
-      // falda de polvo que corre por el suelo
-      var rf = 30 + 220 * (1 - Math.exp(-tf / 2.6));
+      // muro de polvo que el frente levanta y empuja por el suelo
+      var rM = tf < 6.5 ? Rs : choque(6.5) + 16 * (tf - 6.5), sube = 1 - Math.exp(-tf / 2.2), aM = Fb * .62 * suave((tf - .3) / .5) * (1 - .55 * suave((tf - 15) / 8));
+      function muro(delante) {
+        HUMO.muro.forEach(function (p) {
+          var sn = Math.sin(p.th); if ((sn >= 0) !== delante) return;
+          var r = rM * p.k, x = GX + Math.cos(p.th) * r, y = SUELO + sn * r * .12 - 3 - p.h * (8 + 70 * sube) * (1.1 - p.k * .3);
+          bocanada(x, y, (9 + 21 * p.s) * (.55 + 1.1 * sube), 3.5 + 1.4 * (1 - cal) + p.v * .3, aM * (.6 + .4 * p.v));
+        });
+      }
+      // bruma de polvo baja: el suelo queda cubierto después del paso del frente
+      var bh = Fb * .55 * suave((tf - T_ONDA) / 2.5);
+      if (bh > .01) {
+        var ancho = Math.min(vb.width * .75, rM * 1.5);
+        ctx.save(); ctx.globalAlpha = 1; ctx.translate(GX, SUELO + 6); ctx.scale(ancho, 150);
+        var ghz = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        ghz.addColorStop(0, 'rgba(66,50,44,' + (.75 * bh) + ')'); ghz.addColorStop(.55, 'rgba(66,50,44,' + (.4 * bh) + ')'); ghz.addColorStop(1, 'rgba(66,50,44,0)');
+        ctx.fillStyle = ghz; ctx.fillRect(-1, -1, 2, 1.05); ctx.restore();
+      }
+      muro(false);
+      // falda de polvo interior que corre por el suelo
+      var rf = 30 + 260 * (1 - Math.exp(-tf / 2.6));
       HUMO.falda.forEach(function (p) {
-        var r = rf * p.k, x = GX + Math.cos(p.th) * r, y = SUELO + Math.sin(p.th) * r * .12 - 4 - p.h * 10 * Math.min(1, tf / 3);
-        bocanada(x, y, (7 + 15 * p.s) * (.5 + .5 * Math.min(1, tf / 3)), 3.6 + 1.3 * (1 - cal), Fb * .42 * suave(tf / .8) * (1 - .4 * suave((tf - 14) / 6)));
+        var r = rf * p.k, x = GX + Math.cos(p.th) * r, y = SUELO + Math.sin(p.th) * r * .12 - 4 - p.h * 14 * Math.min(1, tf / 3);
+        bocanada(x, y, (8 + 17 * p.s) * (.5 + .5 * Math.min(1, tf / 3)), 3.6 + 1.3 * (1 - cal), Fb * .5 * suave(tf / .8) * (1 - .4 * suave((tf - 14) / 6)));
       });
       // toro: atrás, tallo, bola de fuego, adelante
       var giro = -.55 * (1 - Math.exp(-tf / 9)) * 9;   // rotación poloidal acumulada (sube por dentro, baja por fuera)
+      var hierve = tf * .9;
       var lista = HUMO.cap.map(function (p) {
         var ph = p.ph + giro * p.w, rr = rt * p.rr, X = (Rt + rr * Math.cos(ph)), Y = rr * Math.sin(ph), x = X * Math.cos(p.th), z = X * Math.sin(p.th);
-        return { x: GX + x, y: Yc - Y * 1.05 + z * .2, z: z, r: (rt * .42 + 8) * p.s, temp: 1.6 + 2.8 * (1 - cal) + (Y / rt) * .9 - (Y < 0 ? 1.2 * (.4 + .6 * cal) : 0) };
+        var lat = Y / rt, bul = 1 + .12 * Math.sin(hierve * p.w + p.ph * 3);   // los cúmulos laten: la superficie hierve
+        return { x: GX + x, y: Yc - Y * 1.05 + z * .2, z: z, r: (rt * .4 + 8) * p.s * bul, temp: 1.4 + 2.9 * (1 - cal) + lat * .9 - (Y < 0 ? 1.3 * (.4 + .6 * cal) : 0) + (p.rr > .95 ? .35 : 0) };
       });
       lista.sort(function (a, b) { return a.z - b.z; });
       var apar = suave((tf - .5) / 2.2);
-      function dibujaCap(delante) { lista.forEach(function (q) { if ((q.z >= 0) === delante) bocanada(q.x, q.y, q.r, q.temp, Fb * apar * .92); }); }
+      function dibujaCap(delante) { lista.forEach(function (q) { if ((q.z >= 0) === delante) bocanada(q.x, q.y, q.r, q.temp, Fb * apar * .93); }); }
       dibujaCap(false);
-      var base = SUELO - 4, alto = Math.max(0, base - (Yc + rt * .5)), rS = 8 + 20 * (1 - Math.exp(-tf / 5));
-      if (tf > 1.4) HUMO.tallo.forEach(function (p) {
-        var h = (p.h + tf * .05 * p.v) % 1, y = base - h * alto, x = GX + Math.cos(p.th) * rS * p.rr * (1 + .4 * (1 - h));
-        bocanada(x, y, (6 + 11 * p.s) * (.7 + .5 * (1 - h)), 3.4 + 1.2 * (1 - cal) - h * 1.6 * (.3 + .7 * cal), Fb * .8 * suave((tf - 1.4) / 2.5) * suave(h * 6));
+      var base = SUELO - 4, alto = Math.max(0, base - (Yc + rt * .5)), rS = 12 + 34 * (1 - Math.exp(-tf / 5));
+      if (tf > 1.2) HUMO.tallo.forEach(function (p) {
+        var h = (p.h + tf * .05 * p.v) % 1, y = base - h * alto, x = GX + Math.cos(p.th) * rS * p.rr * (1 + .5 * (1 - h)) * (1 + .35 * suave((h - .8) / .2));
+        bocanada(x, y, (7 + 13 * p.s) * (.75 + .5 * (1 - h)), 3.4 + 1.2 * (1 - cal) - h * 1.6 * (.3 + .7 * cal), Fb * .82 * suave((tf - 1.2) / 2.5) * suave(h * 6));
       });
-      // bola de fuego: incandescente al principio, se funde en el toro
-      var Rf = bolaFuego(tf), af = Fb * (1 - suave((tf - 1.2) / 3.2));
+      // collar de condensación alrededor del tallo (aire húmedo que sube y se enfría)
+      var ca = Fb * suave((tf - 5) / 2) * (1 - suave((tf - 14) / 4));
+      if (ca > .01) {
+        var yC = base - alto * .55, rC = rS * 2.4 + 20;
+        HUMO.collar.forEach(function (p) { var x = GX + Math.cos(p.th) * rC * p.k, y = yC + Math.sin(p.th) * rC * p.k * .14; bocanada(x, y + (p.k - 1) * 14, (10 + 13 * p.s), .3, ca * .14); });
+      }
+      // bola de fuego: incandescente, moteada por la turbulencia, se funde en el toro
       if (af > 0) {
-        var yb = SUELO - 62 - (SUELO - 62 - Yc) * .9, gb = ctx.createRadialGradient(GX, yb, 0, GX, yb, Rf * 1.6);
+        var gb = ctx.createRadialGradient(GX, yb, 0, GX, yb, Rf * 1.6);
         gb.addColorStop(0, 'rgba(255,252,240,' + af + ')'); gb.addColorStop(.35, 'rgba(255,230,160,' + af + ')'); gb.addColorStop(.62, 'rgba(244,160,70,' + (af * .85) + ')');
         gb.addColorStop(.8, 'rgba(200,90,40,' + (af * .35) + ')'); gb.addColorStop(1, 'rgba(200,90,40,0)');
         ctx.globalAlpha = 1; ctx.fillStyle = gb; ctx.fillRect(GX - Rf * 1.7, yb - Rf * 1.7, Rf * 3.4, Rf * 3.4);
+        HUMO.gran.forEach(function (g) {
+          var a = g.a + tf * g.w, r = Rf * g.r, x = GX + Math.cos(a) * r, y = yb + Math.sin(a) * r * .95;
+          bocanada(x, y, Rf * (.14 + .14 * g.s), .15 + 2.6 * (1 - af / Fb) + g.r * 1.1, af * .5);
+        });
+        if (tf < 1.4) {   // borde nítido del primer instante
+          ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1; ctx.lineWidth = 1.4; ctx.strokeStyle = 'rgba(255,248,230,' + (.7 * af * (1 - tf / 1.4)) + ')';
+          ctx.beginPath(); ctx.arc(GX, yb, Rf * 1.02, 0, 2 * Math.PI); ctx.stroke(); ctx.globalCompositeOperation = 'source-over';
+        }
       }
       dibujaCap(true);
+      muro(true);
+      // chispas que suben desde la bola de fuego
+      ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = '#FFD9A0';
+      HUMO.chis.forEach(function (c) {
+        var u = tf - .25 - c.z * .6; if (u <= 0 || u > c.vida) return;
+        var d = 30 + 160 * c.v * (1 - Math.exp(-u / 1.2)), x = GX + Math.cos(c.a) * d, y = yb + Math.sin(c.a) * d * .8 - 26 * u;
+        ctx.globalAlpha = Fb * .9 * (1 - u / c.vida); ctx.fillRect(x, y, 1.6, 1.6);
+      });
       // brillo de la parte baja del toro (aún caliente)
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.globalAlpha = Fb * apar * .35 * (.3 + .7 * cal); ctx.drawImage(LUZ, GX - Rt * 1.4, Yc - rt * .2 - Rt * .5, Rt * 2.8, Rt);
+      ctx.globalAlpha = Fb * apar * .38 * (.3 + .7 * cal); ctx.drawImage(LUZ, GX - Rt * 1.4, Yc - rt * .2 - Rt * .5, Rt * 2.8, Rt);
       ctx.globalCompositeOperation = 'source-over';
       // el destello: todo se ilumina un instante y se apaga
       var fl = tf < .06 ? tf / .06 : Math.exp(-(tf - .06) / .7);
@@ -557,6 +623,18 @@
         ctx.globalCompositeOperation = 'source-over';
       }
       ctx.globalAlpha = 1;
+    }
+    // sacudida: cuando la onda llega al observador todo tiembla, fuerte y breve, y queda un retumbo
+    var escenas = fig.parentNode, menu = raiz && raiz.querySelector('.mc-menu'), sacOn = false;
+    var reducido = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function sacudida(t) {
+      var u = t - T_FL - T_ONDA, A = 0;
+      if (!reducido && u > 0 && u < 6) A = (1 - Math.exp(-u / .04)) * (11 * Math.exp(-u / .7) + 2.2 * Math.exp(-u / 2.6)) * (1 - suave((u - 4.5) / 1.5));
+      if (A < .05) { if (sacOn) { sacOn = false; escenas.style.transform = ''; if (menu) menu.style.transform = ''; } return; }
+      sacOn = true;
+      var x = A * (.6 * Math.sin(u * 61) + .4 * Math.sin(u * 37 + 1.3)), y = A * (.55 * Math.sin(u * 53 + .7) + .45 * Math.sin(u * 29 + 2.1)), r = A * .012 * Math.sin(u * 23);
+      escenas.style.transform = 'translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px) rotate(' + r.toFixed(3) + 'deg) scale(' + (1 + A * .0022).toFixed(4) + ')';
+      if (menu) menu.style.transform = 'translate(' + (x * .35).toFixed(2) + 'px,' + (y * .35).toFixed(2) + 'px)';
     }
     // escalera de órdenes de magnitud (SVG): de 10⁻¹⁴ m a 10³ m
     var ESC = [[-14, 'núcleo'], [-10, 'átomo'], [-7, 'virus'], [-5, 'célula'], [-2, 'centímetro'], [0, 'persona'], [3, 'kilómetro']];
@@ -693,10 +771,11 @@
       escalera(t);
       var tf = t - T_FL;
       if (tf > 0) {
-        nB.ubica(GX - 30, cumbre(tf) + 40);
-        nT.ubica(GX + choque(tf) * .7, SUELO - choque(tf) * .7 * .12 - 2);
-        nH.ubica(GX - radioToro(tf) * .8, cumbre(tf) - 6);
-        nO.ubica(GX + 26, SUELO - 30);
+        var yb4 = SUELO - 62 - (SUELO - 62 - cumbre(tf)) * .9;
+        nB.ubica(GX + bolaFuego(tf) * .55, yb4 - bolaFuego(tf) * .35);
+        nT.ubica(Math.min(GX + choque(tf) * .86, 1170), SUELO - Math.min(choque(tf) * .5, 160));
+        nH.ubica(GX + radioToro(tf) * .95, cumbre(tf) - tuboToro(tf) * .3);
+        nO.ubica(GX + 24, SUELO - 70);
       }
       if (t > T_P3) {
         var e0 = CAD.ev[0], P3 = aPantalla(e0.p); nK.ubica(P3[0], P3[1]);
@@ -751,7 +830,7 @@
         if (!fig.classList.contains('on')) return;
         if (!quieto && !fijo) { T += dt; if (T >= DUR) reinicia(); }
         AGENDA.forEach(function (a) { a[0].pon(T >= a[1] && T < a[2]); });
-        dibuja(T); lecturas(T); capitulos(T); ecuacion(T);
+        dibuja(T); lecturas(T); capitulos(T); ecuacion(T); sacudida(T);
         var nO2 = noche(T) > .5; if (nO2 !== nocheOn) { nocheOn = nO2; if (raiz) raiz.classList.toggle('fz-noche', nO2); }
       }
     };

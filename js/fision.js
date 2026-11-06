@@ -61,7 +61,7 @@
     // capítulo II
     // II·1 escisión (T_P2 → T_SC) · II·2 fragmentos (T_SC → T_P3)
     var T_P2 = 17, T_SC = 23.5;
-    var T_P3 = T_SC + 6.8, T_P4 = T_P3 + 13, T_FL = T_P4 + 3.6, FIN = T_P4 + 25.7, DUR = FIN + 4;
+    var T_P3 = T_SC + 6.8, T_P4 = T_P3 + 15, T_FL = T_P4 + 3.6, FIN = T_P4 + 25.7, DUR = FIN + 4;
     function angulo(t) { return t < T_CAP ? ROT * t : ROT * T_CAP + ROT * 1.6 * (1 - Math.exp(-(t - T_CAP) / 1.6)); }
     function gira(q, a) {
       var c = Math.cos(a), s = Math.sin(a), x = q[0] * c + q[2] * s, z = -q[0] * s + q[2] * c, y = q[1];
@@ -314,7 +314,7 @@
     }
 
     // cámara: escala (px/fm) interpolada en logaritmo entre cuadros clave, con tangentes suaves
-    var CLAVE = [[0, 19], [T_SC, 19], [T_SC + 1.5, 17], [T_SC + 5, 6.5], [T_P3 + .4, 2.3], [T_P3 + 3, 1.25], [T_P3 + 8, .85], [T_P3 + 12, .66], [T_P4, .58], [T_P4 + 1.8, .17], [T_FL, .0006], [T_FL + 30, .0005]]
+    var CLAVE = [[0, 19], [T_SC, 19], [T_SC + 1.5, 17], [T_SC + 5, 6.5], [T_P3 + .4, 2.5], [T_P3 + 3.5, 2.3], [T_P3 + 6.5, 1.6], [T_P3 + 10.5, .85], [T_P3 + 13.5, .64], [T_P4, .58], [T_P4 + 1.8, .17], [T_FL, .0006], [T_FL + 30, .0005]]
       .map(function (k) { return [k[0], Math.log(k[1])]; });
     function escala(t) {
       var K = CLAVE, i = 0; if (t <= K[0][0]) return Math.exp(K[0][1]);
@@ -327,9 +327,12 @@
 
     // ── capítulo III: reacción en cadena ──
     // Cada fisión libera 2 o 3 neutrones (media 2,4); cada uno vuela una distancia exponencial y, con
-    // probabilidad PF, causa otra fisión; si no, escapa o se absorbe sin fisión. k = 2,4 · PF ≈ 1,8.
+    // probabilidad PF, causa otra fisión; si no, escapa o se absorbe sin fisionar. k = 2,4 · PF ≈ 1,8.
     // Las distancias están comprimidas (en un sólido serían centímetros): se dice en una nota.
-    var CAD = { ev: [], ne: [], campo: [] }, PF = .75, V3 = 26, LAM = 24, MAXEV = 3400, T_FIN3 = T_P3 + 15.2;
+    // Dos tiempos: III·1, de cerca, cada fisión se dibuja entera (el núcleo se estira, se parte, los
+    // fragmentos se frenan y quedan como productos de fisión); III·2, la cámara se aleja y se cuenta.
+    var T_III2 = T_P3 + 6.5, T_SALE = .5;   // inicio de III·2 y retraso entre la captura y la salida de neutrones
+    var CAD = { ev: [], ne: [], campo: [] }, PF = .75, V3 = 30, LAM = 24, MAXEV = 5000, T_FIN3 = T_P4 + 1.2;
     (function () {
       var r4 = semilla(131), cola = [];
       function dir() { var u = r4() * 2 - 1, a = r4() * 2 * Math.PI, w = Math.sqrt(1 - u * u); return [w * Math.cos(a), w * Math.sin(a), u]; }
@@ -338,14 +341,17 @@
         var n = libres[i], th = T_P3 + dt; n.golpe = th; mete({ t: th, p: posLibre(n, th - T_SC), g: 1 });
       });
       while (cola.length && CAD.ev.length < MAXEV) {
-        var e = cola.shift(); CAD.ev.push(e);
+        var e = cola.shift(); e.i = CAD.ev.length; CAD.ev.push(e);
         var a = r4() * 2 * Math.PI; e.fd = [Math.cos(a), Math.sin(a)];   // eje de los fragmentos
+        e.gm = [r4() * 2 * Math.PI, r4() * 2 * Math.PI];                    // direcciones de dos rayos γ
         var nu = r4() < .4 ? 3 : 2;
         for (var k = 0; k < nu; k++) {
-          var d = dir(), L = 6 - LAM * Math.log(1 - r4() * .999), t0 = e.t + .15, dest = r4(), fate = dest < PF ? 'f' : dest < PF + .14 ? 'e' : 'a';
+          var d = dir(), L = 6 - LAM * Math.log(1 - r4() * .999), t0 = e.t + T_SALE, dest = r4(), fate = dest < PF ? 'f' : dest < PF + .14 ? 'e' : 'a';
           if (fate === 'e') L = L * 2.5 + 60;
-          var p1 = [e.p[0] + d[0] * L, e.p[1] + d[1] * L, e.p[2] + d[2] * L], t1 = t0 + L / V3;
-          CAD.ne.push({ t0: t0, t1: t1, p0: e.p, p1: p1, fate: fate });
+          // salen de los fragmentos ya separados, no del centro
+          var lado = k % 2 ? 1 : -1, o = [e.p[0] + e.fd[0] * lado * 3, e.p[1] + e.fd[1] * lado * 3, e.p[2]];
+          var p1 = [o[0] + d[0] * L, o[1] + d[1] * L, o[2] + d[2] * L], t1 = t0 + L / V3;
+          CAD.ne.push({ t0: t0, t1: t1, p0: o, p1: p1, fate: fate, g: e.g });
           if (fate === 'f' && t1 < T_FIN3) mete({ t: t1, p: p1, g: e.g + 1 });
           if (fate === 'a') CAD.campo.push({ p: p1, t: 1e9, abs: t1 });
         }
@@ -361,10 +367,13 @@
       CAD.campo.forEach(function (c) { var z = Math.abs(c.p[2]); c.b = c.bg ? (z < 120 ? 1 : 2) : (z < 150 ? 0 : 1); });
       CAD.ne.forEach(function (n) { n.L = Math.hypot(n.p1[0] - n.p0[0], n.p1[1] - n.p0[1]) || 1; });
       CAD.abs = CAD.ne.filter(function (n) { return n.fate === 'a'; });
+      CAD.fis = CAD.ne.filter(function (n) { return n.fate === 'f'; });
+      // por generación: cuántas fisiones y cuándo termina (para la gráfica de III·2)
+      CAD.porG = []; CAD.finG = [];
+      CAD.ev.forEach(function (e) { CAD.porG[e.g] = (CAD.porG[e.g] || 0) + 1; CAD.finG[e.g] = Math.max(CAD.finG[e.g] || 0, e.t); });
     })();
     function generacion(t) { var g = 0; for (var i = 0; i < CAD.ev.length && CAD.ev[i].t <= t; i++) g = Math.max(g, CAD.ev[i].g); return g; }
     function fisiones(t) { var lo = 0, hi = CAD.ev.length; while (lo < hi) { var m = (lo + hi) >> 1; if (CAD.ev[m].t <= t) lo = m + 1; else hi = m; } return lo; }
-
     // ── notas: punto, guía que se dibuja, regla, rótulo, título y texto ──
     var notas = [];
     function nota(o) {
@@ -419,6 +428,8 @@
       d: ['Cada fisión libera 2 o 3 neutrones; unos', 'escapan, otros se absorben sin fisionar.', 'k es cuántos causan, en promedio, una', 'nueva fisión. Si k > 1 la población crece', 'como N ≈ kᵍ por generación g.'] });
     var nX = en(ARR, { k: 'Fuera de escala', tit: 'El espacio está comprimido',
       d: ['En un sólido los núcleos distan ~10⁻¹⁰ m', 'y un neutrón recorre del orden de', 'centímetros entre choques: unas 10¹²', 'veces el tamaño del núcleo. Aquí las', 'distancias se acortan para poder verlo.'] });
+    var nV = en(ARR, { k: 'Tiempo de generación', tit: '≈ 10 ns por generación',
+      d: ['Con neutrones rápidos (≈ 2 MeV) cada', 'generación dura del orden de 10⁻⁸ s.', 'En la gráfica, kᵍ es una recta. Con', 'k ≈ 1,8, llegar a 10²³ fisiones toma', '≈ 90 generaciones: menos de 1 µs.'] });
     var nW = en(ABA, { k: 'Energía', tit: '≈ 200 MeV por fisión',
       d: ['Son 3,2 × 10⁻¹¹ J: muy poco. Un', 'kilotón de TNT (4,184 × 10¹² J) equivale', 'a ≈ 1,3 × 10²³ fisiones, 23 órdenes de', 'magnitud más que este destello.'] });
     var ARR4 = { tx: 1198, ty: 192, ancho: 220 }, DER4 = { tx: 1198, ty: 448, ancho: 220 };
@@ -430,11 +441,12 @@
       d: ['El aire caliente, menos denso,', 'sube (Rayleigh–Taylor). Su borde', 'se enrolla en un toro que gira y', 'aspira polvo del suelo: el tallo.'] });
     var nO = en(DER4, { luz: true, k: 'Epílogo', tit: 'E = Δm c²',
       d: ['Todo empezó con un neutrón de', '0,025 eV. Cada fisión convierte en', 'energía ≈ 0,08 % de la masa del', 'núcleo; más de 10²³ fisiones llegan', 'a la escala del paisaje.'] });
-    var AGENDA = [[nB, T_FL + 1.7, T_FL + 6.3], [nT, T_FL + 2.2, T_FL + 6.3], [nH, T_FL + 7.4, FIN - .4], [nO, T_FL + 11.5, FIN - .4], [nK, T_P3 + 1.6, T_P3 + 8], [nX, T_P3 + 4.6, T_P3 + 11], [nW, T_P3 + 8.6, T_P4 + 1.2], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, T_P2 + 3.2, T_SC + .5], [nF, T_SC + .9, T_SC + 6], [nP, T_SC + 2, T_SC + 7.6], [nE, T_SC + 4.4, T_P3 + 1.4]];
+    var AGENDA = [[nB, T_FL + 1.7, T_FL + 6.3], [nT, T_FL + 2.2, T_FL + 6.3], [nH, T_FL + 7.4, FIN - .4], [nO, T_FL + 11.5, FIN - .4], [nK, T_P3 + 1.8, T_III2 - .2], [nX, T_P3 + 3.4, T_III2 + 2.6], [nW, T_III2 + 2.2, T_P4 + 1.2], [nV, T_III2 + 3.2, T_P4 + 1], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, T_P2 + 3.2, T_SC + .5], [nF, T_SC + .9, T_SC + 6], [nP, T_SC + 2, T_SC + 7.6], [nE, T_SC + 4.4, T_P3 + 1.4]];
 
     // ── capítulos ──
     // 4.º elemento opcional: sub-etapas [[t, nombre], …] (la primera empieza con el capítulo); marcan la barra y dan el subtítulo
     var CAPS = [['I', 'Captura', 0], ['II', 'Fisión', T_P2, [[T_P2, 'Escisión'], [T_SC, 'Fragmentos']]], ['III', 'Cadena', T_P3], ['IV', 'Escala', T_P4, [[T_P4, 'Destello'], [T_FL + 6.5, 'Hongo']]]];
+    CAPS[2][3] = [[T_P3, 'Primeras fisiones'], [T_III2, 'Crecimiento']];   // sub-etapas de la III
     var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Capítulos de la animación');
     CAPS.forEach(function (c) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fz-cap' + (c[2] == null ? ' fz-pronto' : '');
@@ -453,7 +465,7 @@
     function salta(t) { T = t; notas.forEach(function (n) { n.pon(false); }); }
     function reinicia() { salta(0); }
     var fijo = false;
-    fig.fzInfo = function () { return { ev: CAD.ev.length, ne: CAD.ne.length, gen: CAD.gen, tUlt: CAD.ev[CAD.ev.length - 1].t, campo: CAD.campo.length }; };
+    fig.fzInfo = function () { return { ev: CAD.ev.length, ne: CAD.ne.length, gen: CAD.gen, tUlt: CAD.ev[CAD.ev.length - 1].t, campo: CAD.campo.length, porG: CAD.porG, finG: CAD.finG }; };
     fig.fzSalta = salta; fig.fzFija = function (t) { salta(t); fijo = true; }; fig.fzSuelta = function () { fijo = false; };   // para capturas
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.fzOn) reinicia(); if (!on && raiz) { raiz.classList.remove('fz-noche'); nocheOn = false; sacudida(-1); } fig.fzOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
 
@@ -514,22 +526,58 @@
       });
     }
 
-    // sprites del capítulo III: núcleo pequeño (bolitas) y destello cálido
+    // sprites del capítulo III: destello cálido y núcleos en miniatura pintados con las esferas de la parte I
     var LUZ = (function () {
       var S = 128, c = document.createElement('canvas'); c.width = c.height = S; var x = c.getContext('2d'), g = x.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
       g.addColorStop(0, 'rgba(255,244,214,1)'); g.addColorStop(.12, 'rgba(252,214,140,.95)'); g.addColorStop(.35, 'rgba(236,150,60,.45)'); g.addColorStop(.7, 'rgba(214,110,40,.12)'); g.addColorStop(1, 'rgba(214,110,40,0)');
       x.fillStyle = g; x.fillRect(0, 0, S, S); return c;
     })();
+    function miniNucleo(A, Z, sem) {
+      var R = 1.2 * Math.cbrt(A), pq = empaca(A, R, sem), S = 200, k = (S / 2 - 3) / R, c = document.createElement('canvas'); c.width = c.height = S;
+      var x = c.getContext('2d'), rz = semilla(sem + 7), tipo = pq.p.map(function (q, i) { return i < Z; }), i;
+      for (i = tipo.length - 1; i > 0; i--) { var j = Math.floor(rz() * (i + 1)), w = tipo[i]; tipo[i] = tipo[j]; tipo[j] = w; }
+      var ord = pq.p.map(function (q, i) { return i; }).sort(function (a, b) { return pq.p[a][2] - pq.p[b][2]; });
+      ord.forEach(function (i) {   // de atrás hacia adelante, como el núcleo grande
+        var q = pq.p[i], r = pq.r * .98 * k * (1 + q[2] / R * .1);
+        x.globalAlpha = .8 + .2 * cl(.5 + q[2] / (2 * R), 0, 1);
+        x.drawImage(tipo[i] ? SPR.p : SPR.n, S / 2 + q[0] * k - r, S / 2 + q[1] * k - r, 2 * r, 2 * r);
+      });
+      return { c: c, R: R * S / 2 / (S / 2 - 3) };   // radio del dibujo, en fm
+    }
+    var MINI = null, R_H = 1.2 * Math.cbrt(141), R_L = 1.2 * Math.cbrt(92);
+    // fragmentos: parten tocándose y se frenan en el material; el ligero recorre 1,5 veces más (momento)
+    var T_ESC = .45, D_H = 4.6, D_L = 7.1, V_H = 10, V_L3 = 15;
+    function despl(de) { var u = 1 - Math.exp(-Math.max(0, de - T_ESC) / .55); return [D_H + V_H * u, D_L + V_L3 * u]; }
+    function mini(M, x, y, r, a, ang, alarga) {
+      if (a <= .01 || r < .5) return;
+      ctx.globalAlpha = a;
+      if (alarga && alarga > 1.001) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.scale(alarga, 1 / Math.sqrt(alarga));
+        ctx.drawImage(M.c, -r, -r, 2 * r, 2 * r); ctx.restore();
+      } else ctx.drawImage(M.c, x - r, y - r, 2 * r, 2 * r);
+    }
+    function onda(x, y, ux, uy, dd, Lp, amp, a) {   // paquete de onda (rayo γ), como en la parte II
+      var n = 18; ctx.strokeStyle = 'rgba(196,140,52,' + a + ')'; ctx.lineWidth = 1; ctx.beginPath();
+      for (var k = 0, pr = false; k <= n; k++) {
+        var s = dd - Lp + Lp * k / n; if (s < 0) continue;
+        var env = Math.sin(Math.PI * k / n), off = amp * env * Math.sin(k / n * 6 * Math.PI);
+        var X = x + ux * s - uy * off, Y = y + uy * s + ux * off;
+        if (!pr) { ctx.moveTo(X, Y); pr = true; } else ctx.lineTo(X, Y);
+      }
+      ctx.stroke();
+    }
     function cadena(t, vb, fundido) {
-      // todo se agrupa en pocos trazos (un camino por tono) para que miles de puntos cuesten poco
-      var s = CAM.s, x0 = vb.x - 20, x1 = vb.x + vb.width + 20, y0 = vb.y - 20, y1 = vb.y + vb.height + 20, i, k, P;
+      if (!MINI) MINI = { U: miniNucleo(236, 92, 41), H: miniNucleo(141, 56, 43), L: miniNucleo(92, 36, 47) };
+      // todo lo numeroso se agrupa en pocos trazos (un camino por tono) para que miles de puntos cuesten poco
+      var s = CAM.s, x0 = vb.x - 20, x1 = vb.x + vb.width + 20, y0 = vb.y - 20, y1 = vb.y + vb.height + 20, i, k, P, Q, e, de;
       var aparece = suave((t - (T_P3 - 3)) / 3);
+      var det = 1 - suave((t - T_III2 + .6) / 2.2);   // III·1 dibujado → III·2 punteado
       function dentro(P, m) { return P[0] > x0 - m && P[0] < x1 + m && P[1] > y0 - m && P[1] < y1 + m; }
       // material: núcleos de uranio en espera, como un punteado fino de tinta (a esta escala son puntos)
       var rd = cl(RU * s * .25, .7, 1.8), tonos = [.42, .3, .17];
       ctx.fillStyle = '#5A2A20';
       for (k = 0; k < 3; k++) {
-        ctx.globalAlpha = fundido * aparece * tonos[k]; ctx.beginPath();
+        ctx.globalAlpha = fundido * aparece * tonos[k] * (1 - .35 * det); ctx.beginPath();
         for (i = 0; i < CAD.campo.length; i++) {
           var c = CAD.campo[i]; if (c.b !== k || t >= c.t) continue;
           P = aPantalla(c.p); if (!dentro(P, 0)) continue;
@@ -537,57 +585,191 @@
         }
         ctx.fill();
       }
-      // neutrones en vuelo: estela corta y punto crema con borde de tinta
-      ctx.globalAlpha = fundido; ctx.lineWidth = .8; ctx.strokeStyle = 'rgba(30,26,22,.38)'; ctx.beginPath();
-      var puntos = [];
-      for (i = 0; i < CAD.ne.length; i++) {
-        var n = CAD.ne[i]; if (t < n.t0 || t > n.t1) continue;
-        var u = (t - n.t0) / (n.t1 - n.t0), px = n.p0[0] + (n.p1[0] - n.p0[0]) * u, py = n.p0[1] + (n.p1[1] - n.p0[1]) * u;
-        P = aPantalla([px, py]); if (!dentro(P, 0)) continue;
-        var ub = Math.max(0, u - 9 / n.L), Q = aPantalla([n.p0[0] + (n.p1[0] - n.p0[0]) * ub, n.p0[1] + (n.p1[1] - n.p0[1]) * ub]);
-        ctx.moveTo(Q[0], Q[1]); ctx.lineTo(P[0], P[1]); puntos.push(P);
+      var fin = fisiones(t), ini = fisiones(t - 2.6);
+      // productos de fisión: los dos fragmentos, ya frenados, quedan como puntos oscuros
+      var rq = Math.max(.8, 1.15 * s), viejos = fisiones(t - 1.6);
+      ctx.fillStyle = '#4A241C'; ctx.globalAlpha = fundido * .62; ctx.beginPath();
+      for (i = 0; i < viejos; i++) {
+        e = CAD.ev[i]; var dq = despl(t - e.t), aq = cl((t - e.t - 1.6) / .8, 0, 1); if (aq <= 0) continue;
+        P = aPantalla(e.p); if (!dentro(P, 40)) continue;
+        var rr = rq * (.6 + .4 * aq);
+        ctx.moveTo(P[0] - e.fd[0] * dq[0] * s + rr, P[1] - e.fd[1] * dq[0] * s); ctx.arc(P[0] - e.fd[0] * dq[0] * s, P[1] - e.fd[1] * dq[0] * s, rr, 0, 2 * Math.PI);
+        ctx.moveTo(P[0] + e.fd[0] * dq[1] * s + rr * .85, P[1] + e.fd[1] * dq[1] * s); ctx.arc(P[0] + e.fd[0] * dq[1] * s, P[1] + e.fd[1] * dq[1] * s, rr * .85, 0, 2 * Math.PI);
       }
-      ctx.stroke();
-      var rp = Math.max(1.1, rN * s * .9);
-      ctx.beginPath(); for (i = 0; i < puntos.length; i++) { ctx.moveTo(puntos[i][0] + rp, puntos[i][1]); ctx.arc(puntos[i][0], puntos[i][1], rp, 0, 2 * Math.PI); }
-      ctx.fillStyle = '#F3EBDC'; ctx.fill(); ctx.lineWidth = .6; ctx.strokeStyle = 'rgba(30,26,22,.6)'; ctx.stroke();
-      // absorciones sin fisión: un anillo gris breve
-      ctx.strokeStyle = 'rgba(110,100,90,.45)'; ctx.lineWidth = .7; ctx.beginPath();
-      for (i = 0; i < CAD.abs.length; i++) {
-        var a = CAD.abs[i]; if (t < a.t1 || t > a.t1 + .6) continue;
-        P = aPantalla(a.p1); if (!dentro(P, 0)) continue;
-        var ra = rd + 2 + (t - a.t1) / .6 * 8; ctx.moveTo(P[0] + ra, P[1]); ctx.arc(P[0], P[1], ra, 0, 2 * Math.PI);
+      ctx.fill();
+      if (det > .01) {
+        // ramas: el camino de cada neutrón que causó una fisión queda un rato, a tinta discontinua (el árbol de generaciones)
+        ctx.setLineDash([2, 3.5]); ctx.lineWidth = .7;
+        for (k = 0; k < 3; k++) {
+          ctx.globalAlpha = fundido * det * .34 * (1 - k / 3); ctx.strokeStyle = '#3A2E26'; ctx.beginPath();
+          for (i = 0; i < CAD.fis.length; i++) {
+            var nf = CAD.fis[i], ed = t - nf.t1; if (ed < k * 1.4 || ed >= (k + 1) * 1.4) continue;
+            P = aPantalla(nf.p0); Q = aPantalla(nf.p1); ctx.moveTo(P[0], P[1]); ctx.lineTo(Q[0], Q[1]);
+          }
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        // el núcleo al que va un neutrón se define (de punto a núcleo dibujado) mientras este se acerca
+        var Ru = MINI.U.R * s, lim = fisiones(t + 1.1);
+        for (i = fin; i < lim && i < fin + 90; i++) {
+          e = CAD.ev[i]; var fo = suave(1 - (e.t - t) / 1.1);
+          P = aPantalla(e.p); if (!dentro(P, Ru)) continue;
+          mini(MINI.U, P[0], P[1], rd + (Ru - rd) * fo, fundido * det * fo, 0, 0);
+        }
       }
-      ctx.stroke();
-      // fisiones recientes (las más nuevas primero): destello cálido y dos fragmentos que se separan
-      var fin = fisiones(t), ini = fisiones(t - 1.6), dib = 0, sx = 0, sy = 0, cuenta = 0, frag = [[], [], [], []];
-      for (i = fin - 1; i >= ini; i--) {
-        var e = CAD.ev[i], de = t - e.t;
+      // fisiones recientes, de la más vieja a la más nueva
+      var dib = 0, sx = 0, sy = 0, cuenta = 0, frag = [[], [], [], []], Rh = MINI.H.R * s, Rl = MINI.L.R * s;
+      for (i = ini; i < fin; i++) {
+        e = CAD.ev[i]; de = t - e.t;
         P = aPantalla(e.p); if (!dentro(P, 60)) continue;
-        if (cuenta < 400) { sx += P[0]; sy += P[1]; cuenta++; }
-        if (de < .9 && dib < 160) { dib++; var rl = (RU * 2.2 * s + 10) * (.6 + de * .9), al2 = (1 - de / .9); ctx.globalAlpha = fundido * al2 * al2 * .9; ctx.drawImage(LUZ, P[0] - rl, P[1] - rl, 2 * rl, 2 * rl); }
-        frag[Math.min(3, Math.floor(de / .4))].push(P, e.fd, de);
+        if (de < 1.6 && cuenta < 400) { sx += P[0]; sy += P[1]; cuenta++; }
+        var ang = Math.atan2(e.fd[1], e.fd[0]);
+        if (det > .01 && dib < 140) {
+          dib++;
+          // núcleo compuesto ²³⁶U*: un pulso, calor y se estira a lo largo del eje de fisión
+          if (de < T_ESC + .06) {
+            var al = 1 + .6 * suave((de - .08) / (T_ESC - .08)), ac = 1 - cl((de - T_ESC) / .06, 0, 1);
+            ctx.globalAlpha = fundido * det * .3 * ac; ctx.drawImage(LUZ, P[0] - Ru * 1.8, P[1] - Ru * 1.8, Ru * 3.6, Ru * 3.6);
+            mini(MINI.U, P[0], P[1], Ru, fundido * det * ac, ang, al);
+          }
+          if (de < 1.2) {
+            var up = de / 1.2; ctx.globalAlpha = fundido * det;
+            ctx.strokeStyle = 'rgba(200,120,50,' + (.6 * (1 - up)) + ')'; ctx.lineWidth = 1.2 * (1 - up) + .3;
+            ctx.beginPath(); ctx.arc(P[0], P[1], Ru * (1 + up * 2.6), 0, 2 * Math.PI); ctx.stroke();
+          }
+          if (de > T_ESC) {
+            var d2 = de - T_ESC, dq2 = despl(de), af = fundido * det * cl(d2 / .06, 0, 1) * (1 - suave((de - 1.5) / .8)), sh = 1 - .45 * suave((de - 1.3) / 1);
+            // destello de la escisión
+            if (d2 < .8) { var rl = (Ru * 2.6 + 8) * (.5 + d2 * 1.1), a2 = 1 - d2 / .8; ctx.globalAlpha = fundido * det * a2 * a2 * .95; ctx.drawImage(LUZ, P[0] - rl, P[1] - rl, 2 * rl, 2 * rl); }
+            // dos fragmentos que se separan y se frenan; nacen alargados y vibran
+            var vib = 1 + .2 * Math.exp(-d2 / .5) * Math.cos(2 * Math.PI * d2 / .45);
+            mini(MINI.H, P[0] - e.fd[0] * dq2[0] * s, P[1] - e.fd[1] * dq2[0] * s, Rh * sh, af, ang, vib);
+            mini(MINI.L, P[0] + e.fd[0] * dq2[1] * s, P[1] + e.fd[1] * dq2[1] * s, Rl * sh, af, ang, vib);
+            // dos rayos γ que salen a la velocidad de la luz
+            if (e.i < 70 && d2 < .7) for (k = 0; k < 2; k++) onda(P[0], P[1], Math.cos(e.gm[k]), Math.sin(e.gm[k]), d2 * 620, 26, 2.6, fundido * det * .8 * (1 - d2 / .7));
+          }
+        }
+        if (det < .99) {
+          if (de < .55) { var rl2 = (RU * 1.5 * s + 6) * (.6 + de * 1.2), al2 = (1 - de / .55); ctx.globalAlpha = fundido * (1 - det) * al2 * al2 * .75; ctx.drawImage(LUZ, P[0] - rl2, P[1] - rl2, 2 * rl2, 2 * rl2); }
+          if (de < 1.6) frag[Math.min(3, Math.floor(de / .4))].push(P, e.fd, de);
+          if (de < 1) { ctx.globalAlpha = fundido * (1 - det); ctx.strokeStyle = 'rgba(200,120,50,' + (.45 * (1 - de)) + ')'; ctx.lineWidth = .7; ctx.beginPath(); ctx.arc(P[0], P[1], 3 + de * 16, 0, 2 * Math.PI); ctx.stroke(); }
+        }
       }
       var rf = Math.max(.8, RU * .4 * s);
       ctx.fillStyle = '#7A2E22';
       frag.forEach(function (L, b) {
-        ctx.globalAlpha = fundido * .5 * (1 - (b + .5) / 4); ctx.beginPath();
+        ctx.globalAlpha = fundido * (1 - det) * .5 * (1 - (b + .5) / 4); ctx.beginPath();
         for (var j = 0; j < L.length; j += 3) {
-          var Q = L[j], d = L[j + 1], dfr = (2 + L[j + 2] * 30) * s;
-          ctx.moveTo(Q[0] + d[0] * dfr * .8 + rf, Q[1] + d[1] * dfr * .8); ctx.arc(Q[0] + d[0] * dfr * .8, Q[1] + d[1] * dfr * .8, rf, 0, 2 * Math.PI);
-          ctx.moveTo(Q[0] - d[0] * dfr * 1.2 + rf, Q[1] - d[1] * dfr * 1.2); ctx.arc(Q[0] - d[0] * dfr * 1.2, Q[1] - d[1] * dfr * 1.2, rf * .85, 0, 2 * Math.PI);
+          var Q = L[j], d = L[j + 1], dq3 = despl(L[j + 2]);
+          ctx.moveTo(Q[0] - d[0] * dq3[0] * s + rf, Q[1] - d[1] * dq3[0] * s); ctx.arc(Q[0] - d[0] * dq3[0] * s, Q[1] - d[1] * dq3[0] * s, rf, 0, 2 * Math.PI);
+          ctx.moveTo(Q[0] + d[0] * dq3[1] * s + rf, Q[1] + d[1] * dq3[1] * s); ctx.arc(Q[0] + d[0] * dq3[1] * s, Q[1] + d[1] * dq3[1] * s, rf * .85, 0, 2 * Math.PI);
         }
         ctx.fill();
       });
+      // neutrones en vuelo: en III·1 esfera crema con halo dorado y estela; en III·2 punto con borde de tinta
+      var puntos = [], vuelo = 0;
+      for (i = 0; i < CAD.ne.length; i++) {
+        var n = CAD.ne[i]; if (t < n.t0 || t > n.t1) continue;
+        vuelo++;
+        var u = (t - n.t0) / (n.t1 - n.t0); P = aPantalla([n.p0[0] + (n.p1[0] - n.p0[0]) * u, n.p0[1] + (n.p1[1] - n.p0[1]) * u]); if (!dentro(P, 0)) continue;
+        var ub = Math.max(0, u - (det > .01 ? 22 : 9) / n.L); Q = aPantalla([n.p0[0] + (n.p1[0] - n.p0[0]) * ub, n.p0[1] + (n.p1[1] - n.p0[1]) * ub]);
+        puntos.push(P, Q, cl((t - n.t0) / .25, 0, 1));
+      }
+      CAD.vuelo = vuelo;
+      var rp = Math.max(1.1, rN * s * .9), rn = Math.max(2.6, rN * s * 1.3);
+      if (det < .99) {
+        ctx.globalAlpha = fundido * (1 - det); ctx.lineWidth = .8; ctx.strokeStyle = 'rgba(30,26,22,.38)'; ctx.beginPath();
+        for (i = 0; i < puntos.length; i += 3) { ctx.moveTo(puntos[i + 1][0], puntos[i + 1][1]); ctx.lineTo(puntos[i][0], puntos[i][1]); }
+        ctx.stroke();
+        ctx.beginPath(); for (i = 0; i < puntos.length; i += 3) { ctx.moveTo(puntos[i][0] + rp, puntos[i][1]); ctx.arc(puntos[i][0], puntos[i][1], rp, 0, 2 * Math.PI); }
+        ctx.fillStyle = '#F3EBDC'; ctx.fill(); ctx.lineWidth = .6; ctx.strokeStyle = 'rgba(30,26,22,.6)'; ctx.stroke();
+      }
+      if (det > .01) {
+        var halo = puntos.length < 600;
+        for (i = 0; i < puntos.length; i += 3) {
+          P = puntos[i]; Q = puntos[i + 1]; var na = fundido * det * puntos[i + 2];
+          var gt = ctx.createLinearGradient(Q[0], Q[1], P[0], P[1]); gt.addColorStop(0, 'rgba(30,26,22,0)'); gt.addColorStop(1, 'rgba(30,26,22,.5)');
+          ctx.globalAlpha = na; ctx.strokeStyle = gt; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(Q[0], Q[1]); ctx.lineTo(P[0], P[1]); ctx.stroke();
+          if (halo) { ctx.globalAlpha = na * .45; ctx.drawImage(LUZ, P[0] - rn * 2.6, P[1] - rn * 2.6, rn * 5.2, rn * 5.2); }
+          ctx.globalAlpha = na; ctx.drawImage(SPR.n, P[0] - rn, P[1] - rn, 2 * rn, 2 * rn);
+        }
+      }
+      // absorciones sin fisión: un anillo gris breve
+      ctx.globalAlpha = fundido; ctx.strokeStyle = 'rgba(110,100,90,.45)'; ctx.lineWidth = .7; ctx.beginPath();
+      for (i = 0; i < CAD.abs.length; i++) {
+        var a = CAD.abs[i]; if (t < a.t1 || t > a.t1 + .6) continue;
+        P = aPantalla(a.p1); if (!dentro(P, 0)) continue;
+        var ra = rd + 2 + (t - a.t1) / .6 * 8 * (1 + det); ctx.moveTo(P[0] + ra, P[1]); ctx.arc(P[0], P[1], ra, 0, 2 * Math.PI);
+      }
+      ctx.stroke();
       // brillo de conjunto: crece con el número de fisiones recientes
-      var nAct = fin - ini;
+      var nAct = fin - fisiones(t - 1.6);
       if (nAct > 4 && cuenta) {
         var I = Math.min(1, Math.log(nAct) / Math.log(900)), cx = sx / cuenta, cy = sy / cuenta, R = 60 + 260 * I;
-        ctx.globalAlpha = fundido * .55 * I; ctx.drawImage(LUZ, cx - R, cy - R, 2 * R, 2 * R);
+        ctx.globalAlpha = fundido * .45 * I * (1 - .5 * det); ctx.drawImage(LUZ, cx - R, cy - R, 2 * R, 2 * R);
         CAD.cx = cx; CAD.cy = cy;
       }
       ctx.globalAlpha = fundido;
       CAD.act = nAct;
+      grafica(t, fundido);
+    }
+    // III·2: gráfica a tinta de las fisiones por generación, en escala logarítmica (kᵍ es una recta)
+    var GR = { x: 1206, y: 452, w: 190, h: 150 };
+    function grafica(t, fundido) {
+      var ap = suave((t - T_III2 - .6) / 1.2) * (1 - suave((t - T_P4 + .9) / 1));
+      if (ap <= 0 || fig.clientWidth < 600) return;
+      // escala fija: todo lo que llega a verse antes de la parte IV
+      if (!GR.G) {
+        var c4 = [], f4 = fisiones(T_P4 + 1.6), mx = 1;
+        for (var j = 0; j < f4; j++) { var gj = CAD.ev[j].g; c4[gj] = (c4[gj] || 0) + 1; mx = Math.max(mx, c4[gj]); GR.G = Math.max(GR.G || 0, gj); }
+        GR.dec = Math.max(2, Math.ceil(Math.log10(mx) + .05)); GR.comp = 1;
+        for (j = 1; j <= GR.G; j++) if (CAD.finG[j] < T_P4) GR.comp = j;   // última generación completa
+      }
+      var G = GR.G, dec = GR.dec, X = GR.x, Y = GR.y + GR.h, W = GR.w, Hh = GR.h, dx = (W - 26) / G;
+      function yv(N) { return Y - Math.log10(Math.max(1, N)) / dec * Hh; }
+      function xg(g) { return X + 22 + (g - .5) * dx; }
+      var tr = suave((t - T_III2 - .6) / 1.4);   // los ejes se trazan
+      ctx.globalAlpha = fundido * ap;
+      ctx.strokeStyle = 'rgba(142,132,120,.9)'; ctx.lineWidth = .75; ctx.beginPath();
+      ctx.moveTo(X + 14, Y - Hh * tr); ctx.lineTo(X + 14, Y); ctx.lineTo(X + 14 + (W - 14) * tr, Y); ctx.stroke();
+      ctx.fillStyle = '#6B6156'; ctx.font = '700 8.5px "Space Mono", monospace'; ctx.textAlign = 'left';
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '1.8px';
+      ctx.fillText('FISIONES POR GENERACIÓN', X, GR.y - 26);
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+      ctx.font = '400 9px "Space Mono", monospace'; ctx.textAlign = 'right';
+      for (var d = 0; d <= dec; d++) {
+        var yy = yv(Math.pow(10, d)); ctx.fillText(d === 0 ? '1' : d === 1 ? '10' : '10' + '⁰¹²³⁴⁵⁶⁷⁸⁹'[d], X + 10, yy + 3);
+        ctx.beginPath(); ctx.moveTo(X + 14, yy); ctx.lineTo(X + 17, yy); ctx.stroke();
+      }
+      ctx.textAlign = 'center';
+      for (var g = 1; g <= G; g++) if (g === 1 || g % 3 === 0) ctx.fillText(String(g), xg(g), Y + 12);
+      ctx.fillText('g', X + W - 4, Y + 12);
+      // barras: llenas si la generación terminó, solo contorno mientras crece
+      var cnt = [], f0 = fisiones(t);
+      for (var i = 0; i < f0; i++) cnt[CAD.ev[i].g] = (cnt[CAD.ev[i].g] || 0) + 1;
+      for (g = 1; g <= G; g++) {
+        var N = cnt[g] || 0; if (!N) continue;
+        var bx = xg(g) - dx * .28, bw = dx * .56, by = yv(N), lleno = t >= CAD.finG[g];
+        if (N === 1) by = Y - 2;
+        if (lleno) { ctx.fillStyle = 'rgba(122,46,34,.78)'; ctx.fillRect(bx, by, bw, Y - by); }
+        else { ctx.strokeStyle = 'rgba(122,46,34,.9)'; ctx.lineWidth = .8; ctx.strokeRect(bx + .4, by, bw - .8, Y - by); }
+      }
+      // N_g = 3 · 1,8^(g−1): recta discontinua
+      // valor esperado N_g = 3 · 1,8^(g−1) (tres neutrones de la primera fisión): recta discontinua
+      var tl = suave((t - T_III2 - 1.4) / 1.6), gF = 1 + (GR.comp + .4 - 1) * tl;
+      if (tl > 0) {
+        ctx.setLineDash([3, 3]); ctx.strokeStyle = 'rgba(200,120,50,.95)'; ctx.lineWidth = 1; ctx.beginPath();
+        ctx.moveTo(xg(1), yv(3)); ctx.lineTo(xg(gF), yv(3 * Math.pow(1.8, gF - 1))); ctx.stroke(); ctx.setLineDash([]);
+        ctx.globalAlpha = fundido * ap * tl; ctx.fillStyle = '#1E1A16'; ctx.textAlign = 'left';
+        var mg = 'italic 500 16px "Cormorant Garamond", serif', pq = 'italic 500 11px "Cormorant Garamond", serif', xx = X + 22, yb = GR.y - 4;
+        ctx.font = mg; ctx.fillText('N', xx, yb); xx += ctx.measureText('N').width + 1;
+        ctx.font = pq; ctx.fillText('g', xx, yb + 4); xx += ctx.measureText('g').width + 4;
+        ctx.font = mg; ctx.fillText('≈ 3 · 1,8', xx, yb); xx += ctx.measureText('≈ 3 · 1,8').width + 1;
+        ctx.font = pq; ctx.fillText('g − 1', xx, yb - 7);
+        ctx.font = '400 8px "Space Mono", monospace'; ctx.fillStyle = '#8E8478';
+        ctx.fillText('huecas: generaciones en curso', X + 14, Y + 26);
+      }
+      ctx.globalAlpha = fundido; ctx.textAlign = 'left';
     }
 
     // ── capítulo IV: cambio de escala y explosión ──
@@ -908,7 +1090,8 @@
       if (t > T_P3) {
         var e0 = CAD.ev[0], P3 = aPantalla(e0.p); nK.ubica(P3[0], P3[1]);
         var e1 = CAD.ev[Math.min(CAD.ev.length - 1, 40)], P4 = aPantalla(e1.p); nX.ubica(P4[0], P4[1]);
-        var e2 = CAD.ev[Math.min(CAD.ev.length - 1, fisiones(T_P3 + 8.6) - 1)], P5 = aPantalla(e2.p); nW.ubica(P5[0], P5[1]);
+        var e2 = CAD.ev[Math.min(CAD.ev.length - 1, fisiones(T_III2 + 2.2) - 1)], P5 = aPantalla(e2.p); nW.ubica(P5[0], P5[1]);
+        nV.ubica(GR.x + 20, GR.y + GR.h * .55);
       }
     }
 
@@ -933,7 +1116,8 @@
         salida('alejándose · ' + coma(ee + 14, 0) + ' órdenes de magnitud', 'tamaño de la vista ≈ 10^' + coma(ee, 0) + ' m');
       } else if (t >= T_P3 + .6) {
         var nf = fisiones(t);
-        salida('generación ' + generacion(t) + ' · k ≈ 1,8', 'fisiones: ' + nf + ' · energía ≈ ' + eV(nf * 200e6));
+        if (t < T_III2) salida('generación ' + generacion(t) + ' · neutrones en vuelo: ' + (CAD.vuelo || 0), 'fisiones: ' + nf + ' · energía ≈ ' + eV(nf * 200e6));
+        else salida('generación ' + generacion(t) + ' · k ≈ 1,8', 'fisiones: ' + nf + ' · energía ≈ ' + eV(nf * 200e6));
       } else {
         var u = uDe(tau), q = Math.sqrt(Math.max(0, 1 - 1 / u)), nl = libres.filter(function (n) { return tau > n.emite.t; }).length, ng = fotones.filter(function (g) { return tau > g.t; }).length;
         salida('E cinética ≈ ' + coma(EK * (1 - 1 / u), 0) + ' MeV · d ≈ ' + coma(R0 * u, 0) + ' fm',

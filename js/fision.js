@@ -59,8 +59,9 @@
     var CAM = { x: 1010, y: 440, s: 19 };
     var T_CAP = 9.2, ROT = .16, TILT = .38;
     // capítulo II
-    var T_P2 = 17, T_SC = 21;
-    var T_P3 = 27.8, T_P4 = 40.8, T_FL = T_P4 + 3.6, FIN = 66.5, DUR = 70.5;
+    // II·1 escisión (T_P2 → T_SC) · II·2 fragmentos (T_SC → T_P3)
+    var T_P2 = 17, T_SC = 23.5;
+    var T_P3 = T_SC + 6.8, T_P4 = T_P3 + 13, T_FL = T_P4 + 3.6, FIN = T_P4 + 25.7, DUR = FIN + 4;
     function angulo(t) { return t < T_CAP ? ROT * t : ROT * T_CAP + ROT * 1.6 * (1 - Math.exp(-(t - T_CAP) / 1.6)); }
     function gira(q, a) {
       var c = Math.cos(a), s = Math.sin(a), x = q[0] * c + q[2] * s, z = -q[0] * s + q[2] * c, y = q[1];
@@ -103,11 +104,19 @@
     function uDe(tau) { if (tau <= 0) return 1; var x = tau / PASO, k = Math.floor(x); if (k >= TAB.length - 1) return TAB[TAB.length - 1] + (k - TAB.length + 1) * PASO * K_C; return TAB[k] + (TAB[k + 1] - TAB[k]) * (x - k); }
     var V_L = K_C * R0 * AH / (AH + AL), V_N = V_L * .065 / .0483, C_LUZ = V_L / .0483;   // fm/s visuales: v_n(2 MeV) ≈ 0,065 c, v_Kr ≈ 0,048 c
     // forma de dos centros: separación d(sg) de 3 fm a r₀ y alargamiento de cada fragmento hasta 1,18
-    var SG_B = .3;
+    var SG_B = .3, RH = 1.2 * Math.cbrt(AH), RL = 1.2 * Math.cbrt(AL);
+    function dist(sg) { return 3 + (R0 - 3) * (.6 * suave(sg / .75) + .4 * suave((sg - .72) / .28)); }
     function sitio(k, loc, sg) {
-      var d = 3 + (R0 - 3) * (.6 * suave(sg / .75) + .4 * suave((sg - .72) / .28)), e = 1 + .18 * suave(sg), cen = k === 'H' ? -d * AL / (AH + AL) : d * AH / (AH + AL);
+      var d = dist(sg), e = 1 + .18 * suave(sg), cen = k === 'H' ? -d * AL / (AH + AL) : d * AH / (AH + AL);
       return enEje(cen + loc[0] * e, loc[1] / Math.sqrt(e), loc[2] / Math.sqrt(e));
     }
+    // hueco entre las caras interiores de los dos fragmentos (fm); el cuello lo cubre hasta la escisión
+    function hueco2(sg) { var d = dist(sg), e = 1 + .18 * suave(sg); return d - (RH + RL) * e; }
+    function cuello(n, sg) {   // desplazamiento (a lo largo del eje) y estrechamiento de un nucleón del cuello
+      var g = hueco2(sg); return n.cu * Math.max(0, g / 2 + 1.1) * suave(sg / .45);
+    }
+    var CU0 = Math.max(0, hueco2(1) / 2 + 1.1);   // estiramiento del cuello justo al romperse
+    function sgDe(t) { var x = cl((t - T_P2) / (T_SC - T_P2), 0, 1); return x * (.75 + .25 * x); }   // pasado el punto de silla, la caída se acelera
     var fr = { H: { A: AH, Z: ZH, lado: -1, m: [] }, L: { A: AL, Z: ZL, lado: 1, m: [] } }, libres = [], fotones = [];
     (function () {
       var ini = nuc.map(function (n) { return poseI(n, T_P2); });
@@ -138,6 +147,11 @@
         ms.forEach(function (n, i) { var l = ls[asg[i]]; n.fr = l.fr; n.loc = l.loc; });
       });
       nuc.forEach(function (n) { fr[n.fr].m.push(n); });   // el cuello llega último
+      // nucleones del cuello: los de la cara interior y cerca del eje; se estiran hacia el centro y, al romperse, vuelven
+      nuc.forEach(function (n) {
+        var F = fr[n.fr], Rf = 1.2 * Math.cbrt(F.A), s2 = -F.lado * n.loc[0], rr = n.loc[1] * n.loc[1] + n.loc[2] * n.loc[2];
+        n.cu = s2 > 0 ? Math.pow(s2 / Rf, 2.5) * Math.exp(-rr / (Rf * Rf * .3)) : 0;
+      });
       ['H', 'L'].forEach(function (k) {
         var F = fr[k];
         // neutrones que se evaporan: los del extremo exterior del fragmento
@@ -158,6 +172,145 @@
     function posLibre(n, tau) {   // neutrón evaporado: sigue recto con la velocidad del fragmento más la suya
       var F = fr[n.fr], te = n.emite.t, c0 = centroFr(F, te), v = velFr(F, te), dt = tau - te, a0 = formaFr(te), l0 = enEje(n.loc[0] * a0, n.loc[1] / Math.sqrt(a0), n.loc[2] / Math.sqrt(a0));
       return [c0[0] + l0[0] + (v[0] + V_N * n.emite.d[0]) * dt, c0[1] + l0[1] + (v[1] + V_N * n.emite.d[1]) * dt, c0[2] + l0[2] + (v[2] + V_N * n.emite.d[2]) * dt];
+    }
+
+    // ── capítulo II, dibujo en tinta: II·1 contorno de dos centros, cota y barrera; II·2 fuerzas, velocidades y rótulos ──
+    var ZM1 = (function () { var d = dist(1), e = 1.18; return (-d * AL / (AH + AL) + RH * e + d * AH / (AH + AL) - RL * e) / 2; })();   // donde se rompe el cuello
+    var TINTA = 'rgba(30,26,22,', VINO = 'rgba(122,46,34,', ORO = 'rgba(196,140,52,';
+    function txt(str, x, y, o) {   // texto nítido en píxeles (el lienzo se estira con el viewBox)
+      var vb = svg.viewBox.baseVal, kx = W / vb.width * dpr, ky = H / vb.height * dpr, k = Math.min(kx, ky);
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.font = (o.it ? 'italic 500 ' : '400 ') + (o.px * k).toFixed(1) + 'px ' + (o.mono ? "'Space Mono',monospace" : "'Cormorant Garamond',serif");
+      if ('letterSpacing' in ctx) ctx.letterSpacing = o.mono ? (o.px * .18 * k).toFixed(1) + 'px' : '0px';
+      ctx.textAlign = o.al || 'left'; ctx.fillStyle = o.c; ctx.globalAlpha = o.a;
+      ctx.fillText(str, (x - vb.x) * kx, (y - vb.y) * ky); ctx.restore();
+    }
+    function flecha(x0, y0, x1, y1, col, a, w) {
+      var dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy); if (L < 2) return;
+      var ux = dx / L, uy = dy / L, hb = Math.min(7, L * .45);
+      ctx.strokeStyle = col + a + ')'; ctx.fillStyle = col + a + ')'; ctx.lineWidth = w;
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - ux * hb * .7, y1 - uy * hb * .7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - ux * hb - uy * hb * .38, y1 - uy * hb + ux * hb * .38); ctx.lineTo(x1 - ux * hb * .72, y1 - uy * hb * .72); ctx.lineTo(x1 - ux * hb + uy * hb * .38, y1 - uy * hb - ux * hb * .38); ctx.closePath(); ctx.fill();
+    }
+    function trazo(pts, cerrar) { ctx.beginPath(); pts.forEach(function (P, i) { if (i) ctx.lineTo(P[0], P[1]); else ctx.moveTo(P[0], P[1]); }); if (cerrar) ctx.closePath(); ctx.stroke(); }
+    // energía potencial (esquemática) frente a la deformación: pozo, punto de silla y caída de Coulomb
+    function Vdef(x) { return x < .14 ? 9 * Math.pow((.14 - x) / .14, 2) : x < .5 ? 6.2 * suave((x - .14) / .36) : 6.2 - 30 * Math.pow((x - .5) / .5, 1.6); }
+    var BX = 768, BY = 150, BW = 232, BH = 112, X_SC = .74;
+    function barrera(t, a) {
+      if (a <= 0) return;
+      var px = function (x) { return BX + x * BW; }, py = function (v) { return BY + BH * (9 - v) / 15; }, rv = suave((t - T_P2 + .3) / 1.8), i;
+      ctx.save(); ctx.globalAlpha *= a; ctx.lineCap = 'round';
+      txt('BARRERA DE FISIÓN', BX, BY - 14, { mono: true, px: 8, c: '#1E1A16', a: a * .85 });
+      txt('esquemática', BX + BW, BY - 14, { it: true, px: 12, c: '#8E8478', a: a, al: 'right' });
+      ctx.strokeStyle = TINTA + '.55)'; ctx.lineWidth = .8;
+      trazo([[BX, BY + 4], [BX, BY + BH * rv]]);
+      ctx.setLineDash([2, 4]); trazo([[BX, py(0)], [BX + BW * rv, py(0)]]); ctx.setLineDash([]);
+      txt('V', BX - 6, BY + 10, { it: true, px: 14, c: '#1E1A16', a: a, al: 'right' });
+      txt('deformación →', BX + BW, BY + BH + 14, { mono: true, px: 7.5, c: '#8E8478', a: a * rv, al: 'right' });
+      ctx.save(); ctx.beginPath(); ctx.rect(BX, BY, BW, BH); ctx.clip();
+      var cur = []; for (i = 0; i <= 80 * rv; i++) { var x = i / 80; cur.push([px(x), py(Vdef(x))]); }
+      ctx.strokeStyle = VINO + '.85)'; ctx.lineWidth = 1.3; if (cur.length > 1) trazo(cur);
+      ctx.restore();
+      var rv2 = suave((t - T_P2 - .9) / 1);
+      if (rv2 > 0) {
+        ctx.globalAlpha *= rv2;
+        ctx.strokeStyle = ORO + '.9)'; ctx.lineWidth = .9; ctx.setLineDash([4, 3]); trazo([[px(.03), py(6.5)], [px(X_SC + .04), py(6.5)]]); ctx.setLineDash([]);
+        txt('E* ≈ 6,5 MeV', px(.03), py(6.5) - 6, { it: true, px: 13, c: '#9A6A26', a: a * rv2 });
+        ctx.strokeStyle = TINTA + '.5)'; ctx.lineWidth = .7;
+        trazo([[px(.5), py(6.2) + 3], [px(.5), py(0) + 4]]); trazo([[px(X_SC), py(Vdef(X_SC)) - 2], [px(X_SC), py(0) + 4]]);
+        txt('silla · B_f ≈ 6,2', px(.5), py(0) + 15, { mono: true, px: 7, c: '#6E655B', a: a * rv2, al: 'center' });
+        txt('escisión', px(X_SC) + 4, py(0) - 5, { mono: true, px: 7, c: '#6E655B', a: a * rv2 });
+        txt('↓ Coulomb', px(.96), py(-4.6), { mono: true, px: 7, c: '#7A2E22', a: a * rv2, al: 'right' });
+        // el sistema: un punto que pasa la silla y cae hacia la escisión; la distancia a E* es energía de deformación cinética
+        var xd = .14 + (X_SC - .14) * sgDe(t), P = [px(xd), py(Vdef(xd))];
+        ctx.strokeStyle = ORO + '.7)'; ctx.setLineDash([1.5, 2.5]); trazo([[P[0], P[1] - 3], [P[0], py(6.5)]]); ctx.setLineDash([]);
+        ctx.globalAlpha = a * rv2; brillo(P[0], P[1], 0, 11, '232,150,70', .45);
+        ctx.fillStyle = '#7A2E22'; ctx.beginPath(); ctx.arc(P[0], P[1], 3, 0, 2 * Math.PI); ctx.fill();
+        ctx.strokeStyle = '#F4EEE3'; ctx.lineWidth = 1; ctx.stroke();
+      }
+      ctx.restore();
+    }
+    // contorno de la gota de dos centros: max(elipsoide pesado, elipsoide ligero, cuello)
+    function contornoII(t, a) {
+      var sg = sgDe(t), d = dist(sg), e = 1 + .18 * suave(sg), cH = -d * AL / (AH + AL), cL = d * AH / (AH + AL);
+      var aH = RH * e + .9, bH = RH / Math.sqrt(e) + .9, aL = RL * e + .9, bL = RL / Math.sqrt(e) + .9;
+      var zm = (cH + RH * e + cL - RL * e) / 2, rn = 2.7 * (1 - suave((sg - .5) / .5)) + .25 * (1 - sg);
+      function rho(z) {
+        var r = 0, u;
+        u = (z - cH) / aH; if (Math.abs(u) < 1) r = Math.max(r, bH * Math.sqrt(1 - u * u));
+        u = (z - cL) / aL; if (Math.abs(u) < 1) r = Math.max(r, bL * Math.sqrt(1 - u * u));
+        if (z > cH + aH * .4 && z < cL - aL * .4 && rn > .05) r = Math.max(r, Math.min(Math.min(bH, bL) * .8, rn + .3 * (z - zm) * (z - zm)));
+        return r;
+      }
+      var z0 = cH - aH, z1 = cL + aL, N = 140, seg = [], tramos = [], i;
+      for (i = 0; i <= N; i++) { var z = z0 + (z1 - z0) * i / N, r = rho(z); if (r > .06) seg.push([z, r]); else if (seg.length) { tramos.push(seg); seg = []; } }
+      if (seg.length) tramos.push(seg);
+      ctx.save(); ctx.setLineDash([3, 5]); ctx.lineWidth = .8; ctx.strokeStyle = TINTA + (.42 * a) + ')';
+      tramos.forEach(function (S) {
+        var pts = S.map(function (q) { return aPantalla(enEje(q[0], -q[1], 0)); }), abajo = S.slice().reverse().map(function (q) { return aPantalla(enEje(q[0], q[1], 0)); });
+        trazo(pts.concat(abajo), true);
+      });
+      // eje de simetría (raya y punto), centros y cota de la distancia entre centros
+      var E0 = aPantalla(enEje(z0 - 3, 0, 0)), E1 = aPantalla(enEje(z1 + 3, 0, 0)), PH = aPantalla(enEje(cH, 0, 0)), PL = aPantalla(enEje(cL, 0, 0));
+      ctx.setLineDash([10, 3, 1.5, 3]); ctx.lineWidth = .6; ctx.strokeStyle = TINTA + (.32 * a) + ')'; trazo([E0, E1]); ctx.setLineDash([]);
+      ctx.lineWidth = .9; ctx.strokeStyle = VINO + (.7 * a) + ')';
+      [PH, PL].forEach(function (P) { trazo([[P[0] - 4, P[1]], [P[0] + 4, P[1]]]); trazo([[P[0], P[1] - 4], [P[0], P[1] + 4]]); });
+      var off = Math.max(bH, bL) + 2.6, Q0 = aPantalla(enEje(cH, off, 0)), Q1 = aPantalla(enEje(cL, off, 0)), q0 = aPantalla(enEje(cH, bH * .5, 0)), q1 = aPantalla(enEje(cL, bL * .5, 0));
+      ctx.lineWidth = .6; ctx.strokeStyle = TINTA + (.4 * a) + ')'; trazo([q0, [Q0[0], Q0[1] + 5]]); trazo([q1, [Q1[0], Q1[1] + 5]]);
+      flecha((Q0[0] + Q1[0]) / 2, (Q0[1] + Q1[1]) / 2, Q0[0], Q0[1], TINTA, .55 * a, .7); flecha((Q0[0] + Q1[0]) / 2, (Q0[1] + Q1[1]) / 2, Q1[0], Q1[1], TINTA, .55 * a, .7);
+      txt('d ≈ ' + coma(d, 1) + ' fm', (Q0[0] + Q1[0]) / 2, (Q0[1] + Q1[1]) / 2 + 15, { it: true, px: 14, c: '#1E1A16', a: a * .9, al: 'center' });
+      ctx.restore();
+    }
+    function parteII(t, tau, vb) {
+      // II·1: la barrera arriba a la izquierda y el contorno que pasa de una gota a dos
+      barrera(t, suave((t - T_P2 + .3) / .9) * (1 - suave((t - T_SC - .1) / .5)));
+      var ac = suave((t - T_P2 - .2) / 1.4) * (1 - suave((t - T_SC + .05) / .2));
+      if (ac > 0 && t < T_SC + .3) contornoII(t, ac);
+      if (tau < -.1) return;
+      // la escisión: chispa en el cuello, anillo fino y astillas de tinta
+      var Pz = aPantalla(enEje(ZM1, 0, 0));
+      if (tau < 1.4) {
+        var e1 = cl(tau / .7, 0, 1), r = 6 + 120 * salidaExp(tau / 1.2), ar = 1 - suave(tau / 1.3);
+        brillo(Pz[0], Pz[1], 0, 26 + 90 * e1, '255,236,196', .75 * Math.pow(1 - e1, 2) * cl((tau + .1) / .1, 0, 1));
+        brillo(Pz[0], Pz[1], 0, 10 + 30 * e1, '255,250,236', .9 * Math.pow(1 - e1, 3));
+        ctx.lineWidth = 1.2 * ar + .2; ctx.strokeStyle = VINO + (.55 * ar) + ')'; ctx.beginPath(); ctx.arc(Pz[0], Pz[1], r, 0, 2 * Math.PI); ctx.stroke();
+        ctx.lineWidth = .7; ctx.strokeStyle = ORO + (.55 * ar * ar) + ')';
+        for (var k = 0; k < 14; k++) { var th = k / 14 * 2 * Math.PI + .2, l0 = r * .5, l1 = r * (.62 + .1 * (k % 3)); trazo([[Pz[0] + Math.cos(th) * l0, Pz[1] + Math.sin(th) * l0], [Pz[0] + Math.cos(th) * l1, Pz[1] + Math.sin(th) * l1]]); }
+      }
+      if (tau < 0) return;
+      // II·2: contornos de los fragmentos que vibran, fuerza de Coulomb (igual y opuesta), velocidades y nombres
+      var af = suave(tau / .3) * (1 - suave((tau - 2.4) / 1)), am = suave(tau / .35) * (1 - suave((tau - 3.8) / 1)), al = suave((tau - .1) / .4) * (1 - suave((tau - 5.2) / 1));
+      var fa = formaFr(tau), u = uDe(tau), q = Math.sqrt(Math.max(0, 1 - 1 / u)), ang = Math.atan2(EJE[1], EJE[0]), nx = -EJE[1], ny = EJE[0];
+      ['H', 'L'].forEach(function (k) {
+        var F = fr[k], R = k === 'H' ? RH : RL, P = aPantalla(F.c), Rs = R * CAM.s * fa, dx = EJE[0] * F.lado, dy = EJE[1] * F.lado;
+        if (af > 0) {
+          ctx.save(); ctx.translate(P[0], P[1]); ctx.rotate(ang); ctx.setLineDash([3, 5]); ctx.lineWidth = .8; ctx.strokeStyle = TINTA + (.4 * af) + ')';
+          ctx.beginPath(); ctx.ellipse(0, 0, (R * fa + .9) * CAM.s, (R / Math.sqrt(fa) + .9) * CAM.s, 0, 0, 2 * Math.PI); ctx.stroke(); ctx.restore(); ctx.setLineDash([]);
+        }
+        if (am > 0) {
+          var s0 = Rs + 10, LF = 12 + 82 / (u * u), LV = 6 + 150 * q * (k === 'H' ? AL : AH) / (AH + AL);
+          flecha(P[0] + dx * s0, P[1] + dy * s0, P[0] + dx * (s0 + LF), P[1] + dy * (s0 + LF), VINO, .85 * am, 1.3);
+          txt('F', P[0] + dx * (s0 + LF + 10), P[1] + dy * (s0 + LF + 10) + 5, { it: true, px: 15, c: '#7A2E22', a: am, al: 'center' });
+          var b0 = Rs * .95 + 14, V0 = [P[0] + nx * b0, P[1] + ny * b0], V1 = [V0[0] + dx * LV, V0[1] + dy * LV];
+          flecha(V0[0], V0[1], V1[0], V1[1], TINTA, .7 * am, 1);
+          var vv = .0483 * q * (k === 'H' ? AL / AH : 1);
+          txt('v ≈ ' + coma(vv, 3) + ' c', V1[0] + dx * 8, V1[1] + 4, { mono: true, px: 8.5, c: '#1E1A16', a: am, al: F.lado < 0 ? 'right' : 'left' });
+        }
+        if (al > 0) {
+          var nom = k === 'H' ? (tau < .8 ? '¹⁴²Ba*' : '¹⁴¹Ba') : (tau < .45 ? '⁹⁴Kr*' : tau < .95 ? '⁹³Kr*' : '⁹²Kr'), tc = k === 'H' ? [.8] : [.45, .95], parp = 1;
+          tc.forEach(function (te) { parp *= 1 - .75 * Math.exp(-Math.pow((tau - te) / .09, 2)); });
+          var Np = [P[0] - nx * (Rs + 28), P[1] - ny * (Rs + 28)];
+          txt(nom, Np[0], Np[1], { it: true, px: 21, c: '#1E1A16', a: al * parp, al: 'center' });
+          txt(k === 'H' ? 'Z = 56' : 'Z = 36', Np[0], Np[1] + 13, { mono: true, px: 7, c: '#8E8478', a: al * parp, al: 'center' });
+        }
+      });
+      // cada neutrón evaporado deja un anillo dorado donde nace
+      libres.forEach(function (n) {
+        var dt = tau - n.emite.t; if (dt < 0 || dt > .7) return;
+        var P0 = aPantalla(posLibre(n, n.emite.t)), e = dt / .7;
+        ctx.lineWidth = 1; ctx.strokeStyle = ORO + (.8 * (1 - e)) + ')'; ctx.beginPath(); ctx.arc(P0[0], P0[1], 3 + 26 * salidaExp(e), 0, 2 * Math.PI); ctx.stroke();
+        brillo(P0[0], P0[1], 0, 16, '246,214,150', .5 * (1 - e));
+      });
     }
 
     // cámara: escala (px/fm) interpolada en logaritmo entre cuadros clave, con tangentes suaves
@@ -277,16 +430,22 @@
       d: ['El aire caliente, menos denso,', 'sube (Rayleigh–Taylor). Su borde', 'se enrolla en un toro que gira y', 'aspira polvo del suelo: el tallo.'] });
     var nO = en(DER4, { luz: true, k: 'Epílogo', tit: 'E = Δm c²',
       d: ['Todo empezó con un neutrón de', '0,025 eV. Cada fisión convierte en', 'energía ≈ 0,08 % de la masa del', 'núcleo; más de 10²³ fisiones llegan', 'a la escala del paisaje.'] });
-    var AGENDA = [[nB, T_FL + 3, T_FL + 8], [nT, T_FL + 2.8, T_FL + 10.6], [nH, T_FL + 8.2, FIN - .4], [nO, T_FL + 11.4, FIN - .4], [nK, T_P3 + 1.6, T_P3 + 8], [nX, T_P3 + 4.6, T_P3 + 11], [nW, T_P3 + 8.6, T_P4 + 1.2], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, 18, 22], [nF, 21.8, 27], [nP, 23, 28.6], [nE, 25.4, T_P3 + 1.4]];
+    var AGENDA = [[nB, T_FL + 3, T_FL + 8], [nT, T_FL + 2.8, T_FL + 10.6], [nH, T_FL + 8.2, FIN - .4], [nO, T_FL + 11.4, FIN - .4], [nK, T_P3 + 1.6, T_P3 + 8], [nX, T_P3 + 4.6, T_P3 + 11], [nW, T_P3 + 8.6, T_P4 + 1.2], [nU, 1.4, 8.6], [nN, 4.2, 9.6], [nC, 9.6, 17.8], [nG, 12.2, 17.6], [nS, T_P2 + 3.2, T_SC + .5], [nF, T_SC + .9, T_SC + 6], [nP, T_SC + 2, T_SC + 7.6], [nE, T_SC + 4.4, T_P3 + 1.4]];
 
     // ── capítulos ──
-    var CAPS = [['I', 'Captura', 0], ['II', 'Fisión', T_P2], ['III', 'Cadena', T_P3], ['IV', 'Escala', T_P4]];
+    // 4.º elemento opcional: sub-etapas [[t, nombre], …] (la primera empieza con el capítulo); marcan la barra y dan el subtítulo
+    var CAPS = [['I', 'Captura', 0], ['II', 'Fisión', T_P2, [[T_P2, 'Escisión'], [T_SC, 'Fragmentos']]], ['III', 'Cadena', T_P3], ['IV', 'Escala', T_P4]];
     var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Capítulos de la animación');
     CAPS.forEach(function (c) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fz-cap' + (c[2] == null ? ' fz-pronto' : '');
       b.innerHTML = '<span class="fz-cap-n">' + c[0] + '</span><span class="fz-cap-t">' + c[1] + '</span><i class="fz-cap-l"><i></i></i>';
       if (c[2] != null) b.addEventListener('click', function () { salta(c[2]); }); else b.disabled = true;
       c.b = b; c.l = b.querySelector('.fz-cap-l i'); barra.appendChild(b);
+      if (c[3]) {
+        c.s = document.createElement('span'); c.s.className = 'fz-cap-s'; b.appendChild(c.s);
+        var k = CAPS.indexOf(c), fin = k + 1 < CAPS.length ? CAPS[k + 1][2] : FIN;
+        c[3].forEach(function (e, j) { if (!j) return; var m = document.createElement('b'); m.className = 'fz-cap-m'; m.style.left = (100 * (e[0] - c[2]) / (fin - c[2])).toFixed(1) + '%'; b.appendChild(m); });
+      }
     });
     fig.appendChild(barra);
 
@@ -325,9 +484,13 @@
         return;
       }
       if (t < T_SC) {   // dos centros que se separan: la unión de las dos esferas forma el cuello y luego se corta
-        var sg = (t - T_P2) / (T_SC - T_P2), b = suave(sg / SG_B);
+        var sg = sgDe(t), b = suave(sg / SG_B);
         nuc.forEach(function (n) {
           var w = sitio(n.fr, n.loc, sg), j = jit(n, t, .34);
+          if (n.cu > .01) {   // el cuello: se estira hacia el centro y se adelgaza hacia el eje
+            var o = cuello(n, sg) * -fr[n.fr].lado, par = w[0] * EJE[0] + w[1] * EJE[1], ap = .5 * n.cu * suave(sg / .45);
+            w = [w[0] + EJE[0] * o - (w[0] - EJE[0] * par) * ap, w[1] + EJE[1] * o - (w[1] - EJE[1] * par) * ap, w[2] * (1 - ap)];
+          }
           n.x = n.s0[0] + (w[0] - n.s0[0]) * b + j[0]; n.y = n.s0[1] + (w[1] - n.s0[1]) * b + j[1]; n.z = n.s0[2] + (w[2] - n.s0[2]) * b + j[2]; n.vis = 1;
         });
         return;
@@ -340,7 +503,13 @@
           var j = jit(n, t, ampF), loc = enEje(n.loc[0] * a, n.loc[1] * ia, n.loc[2] * ia);
           n.vis = 1;
           if (n.emite && tau > n.emite.t) { var pl = posLibre(n, tau); n.x = pl[0]; n.y = pl[1]; n.z = pl[2]; if (t > n.golpe) n.vis = 0; }
-          else { n.x = c[0] + loc[0] + j[0]; n.y = c[1] + loc[1] + j[1]; n.z = c[2] + loc[2] + j[2]; n.vis = 1 - suave((t - T_P3 - 1) / 2.5); }
+          else {
+            if (n.cu > .01 && tau < 1.5) {   // el cuello roto se recoge con un rebote amortiguado
+              var rb = Math.exp(-tau / .16) * Math.cos(tau * 13), o2 = n.cu * CU0 * rb * -F.lado, ap2 = .5 * n.cu * rb, pr = loc[0] * EJE[0] + loc[1] * EJE[1];
+              loc = [loc[0] + EJE[0] * o2 - (loc[0] - EJE[0] * pr) * ap2, loc[1] + EJE[1] * o2 - (loc[1] - EJE[1] * pr) * ap2, loc[2] * (1 - ap2)];
+            }
+            n.x = c[0] + loc[0] + j[0]; n.y = c[1] + loc[1] + j[1]; n.z = c[2] + loc[2] + j[2]; n.vis = 1 - suave((t - T_P3 - 1) / 2.5);
+          }
         });
       });
     }
@@ -755,13 +924,7 @@
         if (t < T_SC) brillo(C[0], C[1], Rp * .4, Rp * (2.3 + (t > T_P2 ? (t - T_P2) * .25 : 0)), '232,150,70', .22 * ex);
         else ['H', 'L'].forEach(function (k) { var P = aPantalla(fr[k].c); brillo(P[0], P[1], 0, Rp * 1.6, '232,150,70', .2 * (1 - tau / 2)); });
       }
-      // destello de la escisión
-      if (tau > -.15 && tau < 1.6) {
-        var e1 = cl(tau / 1.6, 0, 1);
-        brillo(C[0], C[1], 0, Rp * (.8 + 2.4 * e1), '246,214,150', .55 * (1 - e1) * cl((tau + .15) / .15, 0, 1));
-        ctx.strokeStyle = 'rgba(200,130,60,' + (.6 * (1 - e1)) + ')'; ctx.lineWidth = 1.2 * (1 - e1) + .3;
-        ctx.beginPath(); ctx.ellipse(C[0], C[1], 10 + e1 * Rp * 3.2, 10 + e1 * Rp * 3.2 * .55, -.17, 0, 2 * Math.PI); ctx.stroke();
-      }
+      if (t > T_P2 - .5 && t < T_P3) parteII(t, tau, vb);
       // estela del neutrón que llega
       var cap = nuc[hueco];
       if (t > T_N0 && t < T_CAP + .8) {
@@ -864,7 +1027,9 @@
       else if (t < T_P2) { var a = estira(t); salida('U-236* · E* ≈ 6,5 MeV', 'deformación β₂ ≈ ' + coma((Math.pow(a, 1.5) - 1) / .946, 2)); }
       else if (t < T_SC) {
         var sH = 0, sL = 0; fr.H.m.forEach(function (n) { sH += n.x * EJE[0] + n.y * EJE[1]; }); fr.L.m.forEach(function (n) { sL += n.x * EJE[0] + n.y * EJE[1]; });
-        salida('U-236* · se forma el cuello', 'distancia entre centros ≈ ' + coma(sL / fr.L.m.length - sH / fr.H.m.length, 1) + ' fm');
+        var sg = sgDe(t), xd = .14 + (X_SC - .14) * sg;
+        if (xd < .5) salida('U-236* · sube hacia el punto de silla', 'E* − V ≈ ' + coma(Math.max(.3, 6.5 - Vdef(xd)), 1) + ' MeV');
+        else salida('U-236* · el cuello se adelgaza', 'distancia entre centros ≈ ' + coma(sL / fr.L.m.length - sH / fr.H.m.length, 1) + ' fm');
       } else if (t >= T_FL) {
         var tf = t - T_FL;
         salida(tf < 9 ? 'onda de choque · R ∝ t^(2/5)' : 'nube: anillo de vórtice que sube', tf < 9 ? 'R(2t)/R(t) = 2^(2/5) ≈ 1,32' : 'de 10 fm a la escala del paisaje');
@@ -887,6 +1052,10 @@
         var on = ini != null && t >= ini && t < (sig == null ? DUR : sig);
         if (on !== c.on) { c.on = on; c.b.classList.toggle('on', on); }
         if (ini != null) c.l.style.transform = 'scaleX(' + cl((t - ini) / (fin - ini), 0, 1).toFixed(3) + ')';
+        if (c.s) {   // subtítulo de la sub-etapa: se apaga, cambia y vuelve a entrar
+          var sub = ''; if (on) c[3].forEach(function (e, j) { if (t >= e[0]) sub = c[0] + '·' + (j + 1) + ' ' + e[1]; });
+          if (sub !== c.sub) { c.sub = sub; c.s.classList.remove('ver'); clearTimeout(c.st); if (sub) c.st = setTimeout(function () { c.s.textContent = sub; c.s.classList.add('ver'); }, c.s.textContent ? 260 : 0); }
+        }
       });
     }
     function ecuacion(t) {

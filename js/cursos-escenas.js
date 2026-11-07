@@ -1546,7 +1546,7 @@
   var lect1 = raiz.querySelector('[data-lect="1"]'), lect2 = raiz.querySelector('[data-lect="2"]');
   var activo = 0;
   function salida(i) { return function (a, b) { if (i === activo) { lect1.textContent = a; lect2.textContent = b; } }; }
-  var mods = [escenaRelatividad, escenaSternGerlach, window.escenaFision || escenaProblemas].map(function (fn, i) { var sv = escenas[i].querySelector('svg'), m = fn(sv, salida(i)); if (m.notas) m.notas(); return m; });
+  var mods = [escenaRelatividad, escenaSternGerlach, window.escenaMomento || escenaProblemas, window.escenaFision || escenaProblemas].map(function (fn, i) { var sv = escenas[i].querySelector('svg'), m = fn(sv, salida(i)); if (m.notas) m.notas(); return m; });
   // Stern–Gerlach: al pasar por Fz la escena se apaga y aparece el cálculo completo, de Schrödinger a las dos manchas
   (function () {
     var ec = raiz.querySelector('.mc-ec[data-ec="1"]'); if (!ec) return;
@@ -1650,9 +1650,9 @@
     }
   });
   elegir(0);
-  if (quieto) { for (var w = 0; w < 3; w++) for (var k = 0; k < 400; k++) mods[w].tick(1 / 60); elegir(0); return; }
+  if (quieto) { for (var w = 0; w < mods.length; w++) for (var k = 0; k < 400; k++) mods[w].tick(1 / 60); elegir(0); return; }
   // precalienta cada escena para que no empiece vacía
-  for (var w2 = 0; w2 < 3; w2++) for (var k2 = 0; k2 < (w2 === 2 ? 900 : 1600); k2++) mods[w2].tick(1 / 60);
+  for (var w2 = 0; w2 < mods.length; w2++) for (var k2 = 0; k2 < (w2 >= 2 ? 900 : 1600); k2++) mods[w2].tick(1 / 60);
   var visible = true, ult = 0;
   if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(raiz);
   function bucle(t) {

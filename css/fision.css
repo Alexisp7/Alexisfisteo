@@ -1,6 +1,6 @@
 /* III · Problemas de física: fisión del uranio-235 (lienzo 2D + notas en SVG) */
-.mc-escena[data-i="2"] .fz-lienzo { position:absolute; inset:0; width:100%; height:100%; display:block; }
-.mc-escena[data-i="2"] svg { position:relative; pointer-events:none; }
+.mc-escena[data-i="3"] .fz-lienzo { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.mc-escena[data-i="3"] svg { position:relative; pointer-events:none; }
 
 /* notas: punto, guía que se traza, regla dorada, rótulo, título en cursiva y texto */
 .mc svg .fz-nota { opacity:0; transition:opacity .6s ease; }
@@ -63,8 +63,8 @@
 .mc.fz-noche .fz-cap { color:rgba(244,238,227,.45); }
 .mc.fz-noche .fz-cap.on, .mc.fz-noche .fz-cap:hover { color:#F4EEE3; }
 .mc.fz-noche .fz-cap-l { background:rgba(244,238,227,.18); }
-.mc[data-activo="2"] .mc-lectura { background:none; }
-.mc[data-activo="2"] .mc-lectura::before { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, rgba(244,238,227,0), rgba(244,238,227,.88) 28%); transition:opacity .9s ease; }
+.mc[data-activo="3"] .mc-lectura { background:none; }
+.mc[data-activo="3"] .mc-lectura::before { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, rgba(244,238,227,0), rgba(244,238,227,.88) 28%); transition:opacity .9s ease; }
 .mc.fz-noche .mc-lectura::before { opacity:0; }
 @media (max-width:600px) { .mc svg .fz-nota { display:none; } }
 .fz-blanco { position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:0; visibility:hidden; background:radial-gradient(circle at 61% 66%, #FFFFFF 0%, #FFFDF7 45%, #FFF8EA 100%); }

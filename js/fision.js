@@ -50,7 +50,7 @@
     var lienzo = document.createElement('canvas'); lienzo.className = 'fz-lienzo'; fig.insertBefore(lienzo, svg);
     var ctx = lienzo.getContext('2d');
     var capa = el('g', { 'class': 'fz-notas' }, svg);
-    var ec = raiz && raiz.querySelector('.mc-ec[data-ec="2"]');
+    var ec = raiz && raiz.querySelector('.mc-ec[data-ec="3"]');
     var SPR = { p: esfera('#D07A68', '#97392B', '#521B14', 'rgba(40,14,10,.7)'), n: esfera('#FFFDF8', '#EDE3CF', '#B3A285', 'rgba(30,26,22,.55)') };
 
 

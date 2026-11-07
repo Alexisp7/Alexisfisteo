@@ -1581,7 +1581,7 @@
     .mc-info p { margin:0 0 16px; font:400 14px/1.6 Inter,sans-serif; color:rgba(var(--mtx),.66); max-width:340px; }
     .mc-lectura { position:absolute; z-index:2; right:clamp(20px,4vw,64px); bottom:clamp(20px,5vh,48px); text-align:right; color:var(--tinta); background:linear-gradient(90deg, rgba(244,238,227,0), rgba(244,238,227,.88) 28%); padding:12px 16px 12px 60px; }
     .mc-ec { display:none; font:italic 500 26px 'Cormorant Garamond',serif; }
-    .mc[data-activo="0"] .mc-ec[data-ec="0"], .mc[data-activo="1"] .mc-ec[data-ec="1"], .mc[data-activo="2"] .mc-ec[data-ec="2"] { display:block; }
+    .mc[data-activo="0"] .mc-ec[data-ec="0"], .mc[data-activo="1"] .mc-ec[data-ec="1"], .mc[data-activo="2"] .mc-ec[data-ec="2"], .mc[data-activo="3"] .mc-ec[data-ec="3"] { display:block; }
     .mc-l1, .mc-l2 { display:block; font:400 10.5px 'Space Mono',monospace; letter-spacing:.1em; color:var(--rojo); margin-top:6px; font-variant-numeric:tabular-nums; }
     .mc-l2 { color:#6B6156; }
     /* dibujo isométrico: tinta fina, tres tonos por cara, un acento */
@@ -1972,6 +1972,7 @@
   <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
   <link rel="stylesheet" href="css/fision.css"/>
+  <link rel="stylesheet" href="css/momento.css"/>
 </head>
 <body>
 
@@ -1988,6 +1989,7 @@
       <figure class="mc-escena on" data-i="0"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"></svg></figure>
       <figure class="mc-escena" data-i="1"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"></svg></figure>
       <figure class="mc-escena" data-i="2"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"></svg></figure>
+      <figure class="mc-escena" data-i="3"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"></svg></figure>
     </div>
     <div class="mc-velo" aria-hidden="true"></div>
     <nav class="mc-menu" aria-label="Elige un curso">
@@ -2005,12 +2007,17 @@
           <a class="mc-a" href="problemas.html"><span class="mc-t">Problemas de <em>física</em><span class="mc-flecha" aria-hidden="true"><svg viewBox="0 0 14 24"><path class="mc-fl-eco" d="M3 3l8 9-8 9" pathLength="1"/><path class="mc-fl" d="M3 3l8 9-8 9" pathLength="1"/></svg></span></span><i class="mc-rombo" aria-hidden="true"></i></a>
           <div class="mc-info"><div><p>Electromagnetismo, física nuclear y termodinámica.</p></div></div>
         </li>
+        <li class="mc-item">
+          <a class="mc-a" href="problemas.html"><span class="mc-t">Física <em>nuclear</em><span class="mc-flecha" aria-hidden="true"><svg viewBox="0 0 14 24"><path class="mc-fl-eco" d="M3 3l8 9-8 9" pathLength="1"/><path class="mc-fl" d="M3 3l8 9-8 9" pathLength="1"/></svg></span></span><i class="mc-rombo" aria-hidden="true"></i></a>
+          <div class="mc-info"><div><p>Física Nuclear y Subnuclear: de la captura de un neutrón a la reacción en cadena.</p></div></div>
+        </li>
       </ol>
     </nav>
     <div class="mc-lectura" aria-live="off">
       <span class="mc-ec" data-ec="0">G<sub>μν</sub> = 8πG T<sub>μν</sub> / c⁴</span>
       <span class="mc-ec" data-ec="1">F<sub>z</sub> = μ<sub>z</sub> ∂B<sub>z</sub>/∂z</span>
-      <span class="mc-ec" data-ec="2">n + <sup>235</sup>U → <sup>236</sup>U<sup>*</sup></span>
+      <span class="mc-ec" data-ec="2"><b>L</b> = <b>r</b> × <b>p</b></span>
+      <span class="mc-ec" data-ec="3">n + <sup>235</sup>U → <sup>236</sup>U<sup>*</sup></span>
       <span class="mc-l1" data-lect="1"></span>
       <span class="mc-l2" data-lect="2"></span>
     </div>
@@ -2020,6 +2027,7 @@
 
   <script src="js/fision-nube.js"></script>
   <script src="js/fision.js"></script>
+  <script src="js/momento.js"></script>
   <script src="js/cursos-escenas.js"></script>
   <script src="js/efectos.js" defer></script>
 </body>

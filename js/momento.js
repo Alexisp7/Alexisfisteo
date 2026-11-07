@@ -40,7 +40,7 @@
     var TINTA = 'rgba(30,26,22,', VINO = 'rgba(122,46,34,', ORO = 'rgba(176,122,40,', PAPEL = '#F4EEE3';
 
     // ── tiempos ──
-    var T2 = 16, T3 = T2, T4 = 33, FIN = 51, DUR = 53;   // el capítulo de Kepler (dibujaII) quedó fuera: T3 = T2
+    var T2 = 16, TS = T2, T3 = TS + 20, T4 = T3 + 17, FIN = T4 + 18, DUR = FIN + 2;   // TS: sistema de partículas; el capítulo de Kepler (dibujaII) no se muestra
     var TILT0 = T2 + 11.5, TILT1 = T2 + 15;
 
     // ── cámara ortográfica: z hacia arriba; el = elevación de la vista (90° = desde arriba, plano de la página) ──
@@ -371,6 +371,117 @@
       return psi;
     }
 
+    // ═════════ II · Sistema: tres masas unidas por resortes (solo fuerzas internas y centrales) ═════════
+    // Se integra una vez (Verlet, paso 1/1200 s) y se guarda cada 1/60 s: el capítulo es determinista al saltar.
+    var SI = { m: [3, 2, 1], k: 9, l0: 1, D: T3 - TS + 1, cx: 1085, cy: 400, esc: 175, tab: [], par: [[0, 1], [1, 2], [0, 2]] };
+    (function () {
+      var m = SI.m, M = 6, p = [], v = [], i, j;
+      for (i = 0; i < 3; i++) { var an = -Math.PI / 2 + i * 2 * Math.PI / 3, r0 = .58 * [1.28, 1.0, .82][i]; p.push([r0 * Math.cos(an), r0 * Math.sin(an)]); }
+      var w0 = .75;   // giro inicial (antihorario) más un empujón a la masa 3 que excita las vibraciones
+      for (i = 0; i < 3; i++) v.push([-w0 * p[i][1], w0 * p[i][0]]);
+      v[2][0] += .45; v[2][1] -= .3;
+      var cm = [0, 0], pc = [0, 0];   // centro de masa en O y momento total nulo
+      for (i = 0; i < 3; i++) { cm[0] += m[i] * p[i][0] / M; cm[1] += m[i] * p[i][1] / M; pc[0] += m[i] * v[i][0] / M; pc[1] += m[i] * v[i][1] / M; }
+      for (i = 0; i < 3; i++) { p[i][0] -= cm[0]; p[i][1] -= cm[1]; v[i][0] -= pc[0]; v[i][1] -= pc[1]; }
+      function fuerzas() {   // F[i][j]: fuerza de j sobre i, a lo largo de r_i − r_j
+        var F = [[0, 0], [0, 0], [0, 0]], Fp = {};
+        SI.par.forEach(function (q) {
+          var a = q[0], b = q[1], dx = p[b][0] - p[a][0], dy = p[b][1] - p[a][1], d = Math.hypot(dx, dy), s = SI.k * (d - SI.l0) / d;
+          F[a][0] += s * dx; F[a][1] += s * dy; F[b][0] -= s * dx; F[b][1] -= s * dy; Fp[a + '' + b] = [s * dx, s * dy];
+        });
+        return { F: F, Fp: Fp };
+      }
+      var h = 1 / 1200, f0 = fuerzas(), n = Math.round(SI.D * 60);
+      for (var s = 0; s <= n; s++) {
+        var reg = { p: p.map(function (q) { return q.slice(); }), L: [], Fp: f0.Fp };
+        for (i = 0; i < 3; i++) reg.L.push(m[i] * (p[i][0] * v[i][1] - p[i][1] * v[i][0]));
+        SI.tab.push(reg);
+        for (var k = 0; k < 20; k++) {
+          for (i = 0; i < 3; i++) { v[i][0] += h / 2 * f0.F[i][0] / m[i]; v[i][1] += h / 2 * f0.F[i][1] / m[i]; p[i][0] += h * v[i][0]; p[i][1] += h * v[i][1]; }
+          f0 = fuerzas();
+          for (i = 0; i < 3; i++) { v[i][0] += h / 2 * f0.F[i][0] / m[i]; v[i][1] += h / 2 * f0.F[i][1] / m[i]; }
+        }
+      }
+      SI.L = SI.tab[0].L[0] + SI.tab[0].L[1] + SI.tab[0].L[2];
+    })();
+    function estadoS(t) { var x = cl((t - TS) * 60, 0, SI.tab.length - 1), k = Math.floor(x); return SI.tab[k]; }
+    var SPRS = null;
+    function resorte(a, b, al) {   // muelle en zigzag con extremos rectos
+      var dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy, ny = ux, n = 14, e = 14, pts = [[a[0], a[1]]];
+      var c0 = e, c1 = L - e;
+      pts.push([a[0] + ux * c0, a[1] + uy * c0]);
+      for (var i = 1; i < n; i++) { var s = c0 + (c1 - c0) * i / n, w = (i % 2 ? 1 : -1) * 6; pts.push([a[0] + ux * s + nx * w, a[1] + uy * s + ny * w]); }
+      pts.push([a[0] + ux * c1, a[1] + uy * c1]); pts.push([b[0], b[1]]);
+      ctx.strokeStyle = TINTA + al + ')'; ctx.lineWidth = 1; ctx.lineJoin = 'round'; camino(pts); ctx.stroke();
+    }
+    var NOMS = ['₁', '₂', '₃'], SPRI = null, COLS = [VINO, ORO, TINTA];
+    function dibujaS(t, a) {
+      if (a <= 0) return;
+      if (!SPRI) SPRI = [SPR.vino || (SPR.vino = esfera('#D07A68', '#97392B', '#521B14', 'rgba(40,14,10,.7)')), SPR.laton, SPR.crema];
+      ctx.globalAlpha = a;
+      var st = estadoS(t), O = [SI.cx, SI.cy], E = SI.esc;
+      function Q(q) { return [O[0] + E * q[0], O[1] - E * q[1]]; }
+      var X = st.p.map(Q), u = t - TS;
+      // rastros: ninguna trayectoria es circular
+      var k0 = Math.max(0, Math.round(u * 60) - 170);
+      for (var i = 0; i < 3; i++) {
+        var kf = Math.round(cl(u, 0, SI.D) * 60);
+        for (var k = k0 + 1; k <= kf; k += 1) {
+          var p0 = Q(SI.tab[k - 1].p[i]), p1 = Q(SI.tab[k].p[i]);
+          linea(p0, p1, COLS[i], (.55 * (k - k0) / (kf - k0 + 1)).toFixed(3), 1);
+        }
+      }
+      // par resaltado: fuerzas iguales y opuestas sobre la misma recta, mismo brazo d respecto de O
+      var fase = Math.floor(cl(u - 3.5, 0, 99) / 4.2) % 3, apar = u > 3.5 ? suave((u - 3.5) % 4.2 / .5) * (1 - suave(((u - 3.5) % 4.2 - 3.6) / .6)) : 0;
+      SI.par.forEach(function (q, j) { resorte(X[q[0]], X[q[1]], j === fase && apar > 0 ? .85 : .5); });
+      for (i = 0; i < 3; i++) linea(O, X[i], TINTA, .3, .7, [2, 3]);
+      if (apar > 0) {
+        var q = SI.par[fase], A = X[q[0]], B = X[q[1]], F = st.Fp[q[0] + '' + q[1]], fs = 60, ux = B[0] - A[0], uy = B[1] - A[1], Lb = Math.hypot(ux, uy); ux /= Lb; uy /= Lb;
+        ctx.globalAlpha = a * apar;
+        linea([A[0] - ux * 300, A[1] - uy * 300], [B[0] + ux * 300, B[1] + uy * 300], ORO, .45, .8, [3, 4]);
+        // pie de la perpendicular desde O a la línea de acción
+        var w = (O[0] - A[0]) * ux + (O[1] - A[1]) * uy, Fo = [A[0] + ux * w, A[1] + uy * w];
+        linea(O, Fo, TINTA, .75, .9);
+        var px = O[0] - Fo[0], py = O[1] - Fo[1], pl = Math.hypot(px, py) || 1; px /= pl; py /= pl;
+        ctx.strokeStyle = TINTA + '.7)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(Fo[0] + ux * 8, Fo[1] + uy * 8); ctx.lineTo(Fo[0] + ux * 8 + px * 8, Fo[1] + uy * 8 + py * 8); ctx.lineTo(Fo[0] + px * 8, Fo[1] + py * 8); ctx.stroke();
+        txt('d', (O[0] + Fo[0]) / 2 + uy * 0 - ux * 12, (O[1] + Fo[1]) / 2 - uy * 12 + 5, { px: 18, it: true, c: '#1E1A16', a: 1, al: 'center', halo: true });
+        var fx = F[0] * fs, fy = -F[1] * fs, fl = Math.hypot(fx, fy), lim = 70; if (fl > lim) { fx *= lim / fl; fy *= lim / fl; }
+        var ra = 9 + 4 * Math.cbrt(SI.m[q[0]]), rb = 9 + 4 * Math.cbrt(SI.m[q[1]]), sa = Math.sign(fx * ux + fy * uy) || 1;
+        flecha(A[0] + ux * ra * sa, A[1] + uy * ra * sa, A[0] + ux * ra * sa + fx, A[1] + uy * ra * sa + fy, ORO, .95, 1.6, 9);
+        flecha(B[0] - ux * rb * sa, B[1] - uy * rb * sa, B[0] - ux * rb * sa - fx, B[1] - uy * rb * sa - fy, ORO, .95, 1.6, 9);
+        txt('F' + NOMS[q[0]] + NOMS[q[1]], A[0] + ux * ra * sa + fx * 1.15 + uy * 14, A[1] + uy * ra * sa + fy * 1.15 - ux * 14 + 5, { px: 17, it: true, c: '#8A5A16', a: 1, al: 'center', halo: true });
+        txt('F' + NOMS[q[1]] + NOMS[q[0]], B[0] - ux * rb * sa - fx * 1.15 + uy * 14, B[1] - uy * rb * sa - fy * 1.15 - ux * 14 + 5, { px: 17, it: true, c: '#8A5A16', a: 1, al: 'center', halo: true });
+        ctx.globalAlpha = a;
+      }
+      // masas (tamaño según la masa) con sus nombres
+      for (i = 0; i < 3; i++) {
+        var R = 9 + 4 * Math.cbrt(SI.m[i]);
+        sprite(SPRI[i], X[i][0], X[i][1], R);
+        txt('m' + NOMS[i], X[i][0] + R + 4, X[i][1] - R + 2, { px: 16, it: true, c: '#4A4038', a: .85, halo: true });
+      }
+      puntoO(O[0], O[1], 1, '');
+      txt('O', O[0] - 9, O[1] + 20, { px: 17, it: true, c: '#1E1A16', a: 1, al: 'right' });
+      salePagina(O[0], O[1], 12, .9, '');
+      graficaS(t, a);
+      ctx.globalAlpha = 1;
+    }
+    // recuadro: L₁, L₂, L₃ cambian; su suma no
+    var GS = { x: 790, y: 630, w: 250, h: 130 };
+    function graficaS(t, a) {
+      var u = t - TS, D = T3 - TS, x = function (s) { return GS.x + GS.w * s / D; }, lo = -.2, hi = 1.15, y = function (v) { return GS.y + GS.h - (v - lo) / (hi - lo) * GS.h; };
+      ctx.globalAlpha = a * suave((u - .8) / .8);
+      linea([GS.x, GS.y], [GS.x, GS.y + GS.h], TINTA, .55, .7); linea([GS.x, y(0)], [GS.x + GS.w, y(0)], TINTA, .4, .7);
+      [1, .5, 0].forEach(function (v) { linea([GS.x - 3, y(v)], [GS.x, y(v)], TINTA, .55, .7); txt(coma(v, v % 1 ? 1 : 0), GS.x - 6, y(v) + 3, { px: 7, mono: true, c: '#6B6156', a: .8, al: 'right' }); });
+      txt('MOMENTO ANGULAR / L TOTAL', GS.x, GS.y - 10, { px: 7, mono: true, c: '#6B6156', a: .85 });
+      txt('t', GS.x + GS.w + 4, y(0) + 4, { px: 14, it: true, c: '#4A4038', a: .8 });
+      var kf = Math.round(cl(u, 0, D) * 60), ser = [[], [], [], []];
+      for (var k = 0; k <= kf; k += 2) { var L = SI.tab[k].L; for (var i = 0; i < 3; i++) ser[i].push([x(k / 60), y(L[i] / SI.L)]); ser[3].push([x(k / 60), y((L[0] + L[1] + L[2]) / SI.L)]); }
+      if (ser[0].length < 2) return;
+      [VINO, ORO, TINTA].forEach(function (c, i) { ctx.strokeStyle = c + '.85)'; ctx.lineWidth = 1; camino(ser[i]); ctx.stroke(); var e = ser[i][ser[i].length - 1]; txt('L' + NOMS[i], e[0] + 5, e[1] + 4, { px: 13, it: true, c: i === 1 ? '#8A5A16' : i ? '#1E1A16' : '#7A2E22', a: 1 }); });
+      ctx.strokeStyle = VINO + '.95)'; ctx.lineWidth = 2; camino(ser[3]); ctx.stroke();
+      var e3 = ser[3][ser[3].length - 1]; txt('L₁ + L₂ + L₃', e3[0] + 5, e3[1] - 5, { px: 13, it: true, c: '#7A2E22', a: 1 });
+    }
+
     // ── notas ──
     var notas = [];
     function nota(o) {
@@ -399,6 +510,10 @@
       d: ['Se define respecto de un punto O y es', 'perpendicular a r y a p: aquí sale de la', 'página (⊙). Su tamaño es r p sen φ, y', 'r sen φ es la distancia b de O a la recta.'] });
     var n2 = en(DER, { k: 'Partícula libre', tit: 'Áreas iguales, tiempos iguales',
       d: ['Sin fuerzas p no cambia y b tampoco:', '|L| = m v b se conserva. En cada Δt,', 'r barre un triángulo de base v Δt y', 'altura b, así que dA/dt = |L| / 2m.'] });
+    var nS1 = en(ARR, { k: 'Sistema de partículas', tit: 'Solo fuerzas internas',
+      d: ['Tres masas (3m, 2m y m) unidas por', 'resortes y sin fuerzas externas. Cada', 'resorte tira o empuja a lo largo de la', 'recta que une sus extremos: es central.'] });
+    var nS2 = en(DER, { k: 'Se cancelan por pares', tit: '(r₁ − r₂) × F₁₂ = 0',
+      d: ['F₂₁ = −F₁₂ (tercera ley) y ambas van', 'sobre la misma recta: igual brazo d', 'respecto de O, sentidos opuestos. Cada', 'L cambia; la suma L₁ + L₂ + L₃ no.'] });
     var n6 = en(DER, { k: 'Cuerpo rígido', tit: 'L = I ω',
       d: ['Al girar en torno a un eje fijo, L = I ω', 'con I = Σ m r². Sin torque externo en', 'el eje (sin rozamiento), I₁ω₁ = I₂ω₂:', 'así acelera una patinadora al recogerse.'] });
     var n7 = en(DER, { k: 'Al recoger las masas', tit: 'I baja 3,5 veces; ω sube 3,5',
@@ -407,10 +522,10 @@
       d: ['El peso, aplicado a d del pivote, da un', 'torque horizontal y perpendicular a L.', 'Cambia la dirección de L, no su tamaño:', 'el eje gira alrededor del pivote, no cae.'] });
     var n9 = en(DER, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
       d: ['Rotor de 150 g, R = 3 cm, d = 4 cm y', '40 vueltas/s: I ω ≈ 0,017 kg·m²/s y', 'τ ≈ 0,059 N·m, así que Ω ≈ 3,5 rad/s,', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
-    var AGENDA = [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
+    var AGENDA = [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [nS1, TS + 1, TS + 8.6], [nS2, TS + 9.2, T3 - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
 
     // ── capítulos ──
-    var CAPS = [['I', 'Definición', 0], ['II', 'Sólido', T3], ['III', 'Giróscopo', T4]];
+    var CAPS = [['I', 'Definición', 0], ['II', 'Sistema', TS], ['III', 'Sólido', T3], ['IV', 'Giróscopo', T4]];
     var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Capítulos de la animación');
     CAPS.forEach(function (c, k) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fz-cap';
@@ -454,12 +569,14 @@
       var a1 = ventana(t, 0, T2 + .6, .8) * fundido;
       dibujaI(t, a1 * (1 - suave((t - T2 + .6) / .8)) + 0);
       cam.x = OX; cam.y = OY;
+      dibujaS(t, ventana(t, TS - .2, T3 + .3, .9) * fundido);
       dibujaIII(t, ventana(t, T3 - .3, T4 + .3, .9) * fundido);
       psiAct = dibujaIV(t, ventana(t, T4 - .3, DUR, .9) * fundido) || psiAct;
       // anclas de las notas
       cam.el = Math.PI / 2; cam.s = 1; cam.x = OX; cam.y = OY;
       var O = P(0, 0, 0); n1.ubica(O[0] + 14, O[1] - 14);
       n2.ubica((P(xI(Math.min(t, 7.5)), -I.b, 0)[0] + O[0]) / 2 + 30, O[1] + I.b * .8);
+      if (t > TS && t < T3) { var stS = estadoS(t); nS1.ubica(SI.cx + SI.esc * stS.p[2][0], SI.cy - SI.esc * stS.p[2][1]); nS2.ubica(SI.cx, SI.cy); }
       n6.ubica(1085, 560 - 205 * (R.zb + .4) * Math.cos(.42));
       n7.ubica(1085 + 205 * rIII(t) * .9, 560 - 205 * R.zb * Math.cos(.42));
       cam.el = .5; cam.s = 24; cam.x = 1030; cam.y = 610;
@@ -471,6 +588,9 @@
         var x = xI(cl(t, I.ta, I.tb)), r = Math.hypot(x, I.b) / I.b, phi = Math.atan2(I.b, -x) * 180 / Math.PI;
         salida('r = ' + coma(r, 2) + ' b · φ = ' + coma(phi, 0) + '°', 'r sen φ = ' + coma(r * Math.sin(phi * Math.PI / 180), 2) + ' b  →  |L| = m v b');
       } else if (t < T3) {
+        var sL = estadoS(t).L, tot = sL[0] + sL[1] + sL[2];
+        salida('L₁ = ' + coma(sL[0] / SI.L, 2) + ' · L₂ = ' + coma(sL[1] / SI.L, 2) + ' · L₃ = ' + coma(sL[2] / SI.L, 2), 'L₁ + L₂ + L₃ = ' + coma(tot / SI.L, 4) + ' (en unidades de L)');
+      } else if (false) {
         var o = orbita(Math.max(t, K.t0)), rr = Math.hypot(o.x, o.y), vv = Math.hypot(o.vx, o.vy), cr = Math.abs(o.x * o.vy - o.y * o.vx);
         var Lref = K.a * (1 + K.e) * VA;
         salida('r = ' + coma(rr / K.a, 2) + ' a · v = ' + coma(vv / VA, 2) + ' v_a', '|r × v| = ' + coma(cr / Lref, 3) + ' (constante)');
@@ -482,7 +602,7 @@
       }
     }
     function ecuacion(t) {
-      var e = t < T2 ? '<b>L</b> = <b>r</b> × <b>p</b>' : t < T4 ? 'I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub>' : 'Ω = mgd / Iω';
+      var e = t < T2 ? '<b>L</b> = <b>r</b> × <b>p</b>' : t < T3 ? 'd<b>L</b>/dt = Σ (<b>r</b><sub>α</sub> − <b>r</b><sub>β</sub>) × <b>F</b><sub>αβ</sub> = 0' : t < T4 ? 'I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub>' : 'Ω = mgd / Iω';
       if (ec && e !== ecAct) { ecAct = e; ec.innerHTML = e; }
     }
 

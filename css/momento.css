@@ -9,3 +9,6 @@
 /* selector de ángulo del problema 1.40 */
 .fz-cap.ca-et { cursor:default; color:#1E1A16; }
 .fz-cap.ca-max .fz-cap-n { color:#5B3A8C; }
+.fz-caps.ca-sel { top:150px; }
+.mc-escena[data-i="2"] .mo-lienzo + .mo-lienzo { pointer-events:none; }
+@media (max-width:900px) { .fz-caps.ca-sel { top:64px; bottom:auto; right:14px; left:auto; } }

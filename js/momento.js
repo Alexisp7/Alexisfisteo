@@ -40,7 +40,7 @@
     var VIOL = 'rgba(91,58,140,', TINTA = 'rgba(30,26,22,', VINO = 'rgba(122,46,34,', ORO = 'rgba(176,122,40,', PAPEL = '#F4EEE3';
 
     // ── tiempos ──
-    var T2 = 16, TS = T2, T3 = TS + 20, T4 = T3 + 17, FIN = T4 + 18, DUR = FIN + 2;   // TS: sistema de partículas; el capítulo de Kepler (dibujaII) no se muestra
+    var T2 = 16, TS = T2, TC = TS + 20, T3 = TC + 21, T4 = T3 + 17, FIN = T4 + 18, DUR = FIN + 2;   // TS: sistema de partículas; el capítulo de Kepler (dibujaII) no se muestra
     var TILT0 = T2 + 11.5, TILT1 = T2 + 15;
 
     // ── cámara ortográfica: z hacia arriba; el = elevación de la vista (90° = desde arriba, plano de la página) ──
@@ -373,7 +373,7 @@
 
     // ═════════ II · Sistema: tres masas unidas por resortes (solo fuerzas internas y centrales) ═════════
     // Se integra una vez (Verlet, paso 1/1200 s) y se guarda cada 1/60 s: el capítulo es determinista al saltar.
-    var SI = { m: [3, 2, 1], k: 9, l0: 1, D: T3 - TS + 1, cx: 1195, cy: 470, esc: 150, tab: [], par: [[0, 1], [1, 2], [0, 2]] };
+    var SI = { m: [3, 2, 1], k: 9, l0: 1, D: TC - TS + 1, cx: 1195, cy: 470, esc: 150, tab: [], par: [[0, 1], [1, 2], [0, 2]] };
     (function () {
       var m = SI.m, M = 6, p = [], v = [], i, j;
       for (i = 0; i < 3; i++) { var an = -Math.PI / 2 + i * 2 * Math.PI / 3, r0 = .58 * [1.28, 1.0, .82][i]; p.push([r0 * Math.cos(an), r0 * Math.sin(an)]); }
@@ -474,7 +474,7 @@
     // recuadro: L₁, L₂, L₃ cambian; su suma no
     var GS = { x: 790, y: 630, w: 250, h: 130 };
     function graficaS(t, a) {
-      var u = t - TS, D = T3 - TS, x = function (s) { return GS.x + GS.w * s / D; }, lo = -.2, hi = 1.15, y = function (v) { return GS.y + GS.h - (v - lo) / (hi - lo) * GS.h; };
+      var u = t - TS, D = TC - TS, x = function (s) { return GS.x + GS.w * s / D; }, lo = -.2, hi = 1.15, y = function (v) { return GS.y + GS.h - (v - lo) / (hi - lo) * GS.h; };
       ctx.globalAlpha = a * suave((u - .8) / .8);
       linea([GS.x, GS.y], [GS.x, GS.y + GS.h], TINTA, .55, .7); linea([GS.x, y(0)], [GS.x + GS.w, y(0)], TINTA, .4, .7);
       [1, .5, 0].forEach(function (v) { linea([GS.x - 3, y(v)], [GS.x, y(v)], TINTA, .55, .7); txt(coma(v, v % 1 ? 1 : 0), GS.x - 6, y(v) + 3, { px: 7, mono: true, c: '#6B6156', a: .8, al: 'right' }); });
@@ -546,10 +546,13 @@
       d: ['El peso, aplicado a d del pivote, da un', 'torque horizontal y perpendicular a L.', 'Cambia la dirección de L, no su tamaño:', 'el eje gira alrededor del pivote, no cae.'] });
     var n9 = en(DER, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
       d: ['Rotor de 150 g, R = 3 cm, d = 4 cm y', '40 vueltas/s: I ω ≈ 0,017 kg·m²/s y', 'τ ≈ 0,059 N·m, así que Ω ≈ 3,5 rad/s,', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
-    var AGENDA = [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [nS1, TS + 1, TS + 5.6], [DES.cab, TS + 6, T3 - .3], [DES.p[0], TS + 6, T3 - .3], [DES.p[1], TS + 8.6, T3 - .3], [DES.p[2], TS + 11.2, T3 - .3], [nS2, TS + 13.4, T3 - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
+    var AGENDA = [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [nS1, TS + 1, TS + 5.6], [DES.cab, TS + 6, TC - .3], [DES.p[0], TS + 6, TC - .3], [DES.p[1], TS + 8.6, TC - .3], [DES.p[2], TS + 11.2, TC - .3], [nS2, TS + 13.4, TC - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
 
     // ── capítulos ──
-    var CAPS = [['I', 'Definición', 0], ['II', 'Sistema', TS], ['III', 'Sólido', T3], ['IV', 'Giróscopo', T4]];
+    var CAPS = [['I', 'Definición', 0], ['II', 'Sistema', TS], ['III', 'Cañón', TC], ['IV', 'Sólido', T3], ['V', 'Giróscopo', T4]];
+    // III: problema 1.40 de Taylor (js/canon.js), incrustado; tiene su propio lienzo, desarrollo y selector de ángulo
+    var CN = window.escenaCanon ? window.escenaCanon(svg, salida, { embebido: true, secuencia: [0, 2, 4], pausa: 2.4 }) : null;
+    if (CN) CN.mostrar(0);
     var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Capítulos de la animación');
     CAPS.forEach(function (c, k) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fz-cap';
@@ -593,14 +596,14 @@
       var a1 = ventana(t, 0, T2 + .6, .8) * fundido;
       dibujaI(t, a1 * (1 - suave((t - T2 + .6) / .8)) + 0);
       cam.x = OX; cam.y = OY;
-      dibujaS(t, ventana(t, TS - .2, T3 + .3, .9) * fundido);
+      dibujaS(t, ventana(t, TS - .2, TC + .3, .9) * fundido);
       dibujaIII(t, ventana(t, T3 - .3, T4 + .3, .9) * fundido);
       psiAct = dibujaIV(t, ventana(t, T4 - .3, DUR, .9) * fundido) || psiAct;
       // anclas de las notas
       cam.el = Math.PI / 2; cam.s = 1; cam.x = OX; cam.y = OY;
       var O = P(0, 0, 0); n1.ubica(O[0] + 14, O[1] - 14);
       n2.ubica((P(xI(Math.min(t, 7.5)), -I.b, 0)[0] + O[0]) / 2 + 30, O[1] + I.b * .8);
-      if (t > TS && t < T3) { var stS = estadoS(t); nS1.ubica(SI.cx + SI.esc * stS.p[2][0], SI.cy - SI.esc * stS.p[2][1]); var kk = Math.round(cl(t - TS, 0, SI.D) * 60) - 30; nS2.ubica(GS.x + GS.w * Math.max(0, kk) / 60 / (T3 - TS), GS.y + GS.h - (1 + .2) / 1.35 * GS.h); }
+      if (t > TS && t < TC) { var stS = estadoS(t); nS1.ubica(SI.cx + SI.esc * stS.p[2][0], SI.cy - SI.esc * stS.p[2][1]); var kk = Math.round(cl(t - TS, 0, SI.D) * 60) - 30; nS2.ubica(GS.x + GS.w * Math.max(0, kk) / 60 / (TC - TS), GS.y + GS.h - (1 + .2) / 1.35 * GS.h); }
       n6.ubica(1085, 560 - 205 * (R.zb + .4) * Math.cos(.42));
       n7.ubica(1085 + 205 * rIII(t) * .9, 560 - 205 * R.zb * Math.cos(.42));
       cam.el = .5; cam.s = 24; cam.x = 1030; cam.y = 610;
@@ -611,7 +614,7 @@
       if (t < T2) {
         var x = xI(cl(t, I.ta, I.tb)), r = Math.hypot(x, I.b) / I.b, phi = Math.atan2(I.b, -x) * 180 / Math.PI;
         salida('r = ' + coma(r, 2) + ' b · φ = ' + coma(phi, 0) + '°', 'r sen φ = ' + coma(r * Math.sin(phi * Math.PI / 180), 2) + ' b  →  |L| = m v b');
-      } else if (t < T3) {
+      } else if (t < TC) {
         var sL = estadoS(t).L, tot = sL[0] + sL[1] + sL[2];
         salida('L₁ = ' + coma(sL[0] / SI.L, 2) + ' · L₂ = ' + coma(sL[1] / SI.L, 2) + ' · L₃ = ' + coma(sL[2] / SI.L, 2), 'L₁ + L₂ + L₃ = ' + coma(tot / SI.L, 4) + ' (en unidades de L)');
       } else if (false) {
@@ -626,7 +629,7 @@
       }
     }
     function ecuacion(t) {
-      var e = t < T2 ? '<b>L</b> = <b>r</b> × <b>p</b>' : t < T3 ? 'd<b>L</b>/dt = Σ (<b>r</b><sub>α</sub> − <b>r</b><sub>β</sub>) × <b>F</b><sub>αβ</sub> = 0' : t < T4 ? 'I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub>' : 'Ω = mgd / Iω';
+      var e = t < T2 ? '<b>L</b> = <b>r</b> × <b>p</b>' : t < TC ? 'd<b>L</b>/dt = Σ (<b>r</b><sub>α</sub> − <b>r</b><sub>β</sub>) × <b>F</b><sub>αβ</sub> = 0' : t < T4 ? 'I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub>' : 'Ω = mgd / Iω';
       if (ec && e !== ecAct) { ecAct = e; ec.innerHTML = e; }
     }
 
@@ -634,14 +637,17 @@
     return {
       tick: function (dt) {
         if (!fig.classList.contains('on')) return;
-        if (!quieto && !fijo) { T += dt; if (T >= DUR) salta(0); }
+        var enC = CN && T >= TC && T < T3;
+        if (!quieto && !fijo && !(enC && CN.ocupado())) { T += dt; if (T >= DUR) salta(0); }
+        enC = CN && T >= TC && T < T3;
+        if (CN) { var aC = enC ? suave((T - TC) / .6) * (1 - suave((T - T3 + .6) / .6)) : 0; CN.mostrar(aC); if (enC) CN.tick(dt); }
         // capítulo III: el giro se integra con ω = L / I(r)
         if (T > T3 - .5 && T < T4 + .5) {
           var r = rIII(T); giro += R.L / inercia(r) * (fijo ? 0 : dt);
           [1, -1].forEach(function (sg, k) { rastro[k].push([sg * Math.cos(giro) * r, sg * Math.sin(giro) * r]); if (rastro[k].length > 90) rastro[k].shift(); });
         }
         AGENDA.forEach(function (a) { a[0].pon(T >= a[1] && T < a[2]); });
-        dibuja(T); lecturas(T); capitulos(T); ecuacion(T);
+        dibuja(T); capitulos(T); if (!enC) { lecturas(T); ecuacion(T); }
       }
     };
   };

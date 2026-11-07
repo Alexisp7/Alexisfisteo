@@ -1546,7 +1546,7 @@
   var lect1 = raiz.querySelector('[data-lect="1"]'), lect2 = raiz.querySelector('[data-lect="2"]');
   var activo = 0;
   function salida(i) { return function (a, b) { if (i === activo) { lect1.textContent = a; lect2.textContent = b; } }; }
-  var mods = [escenaRelatividad, escenaSternGerlach, window.escenaCanon || window.escenaMomento || escenaProblemas, window.escenaFision || escenaProblemas].map(function (fn, i) { var sv = escenas[i].querySelector('svg'), m = fn(sv, salida(i)); if (m.notas) m.notas(); return m; });
+  var mods = [escenaRelatividad, escenaSternGerlach, window.escenaMomento || escenaProblemas, window.escenaFision || escenaProblemas].map(function (fn, i) { var sv = escenas[i].querySelector('svg'), m = fn(sv, salida(i)); if (m.notas) m.notas(); return m; });
   // Stern–Gerlach: al pasar por Fz la escena se apaga y aparece el cálculo completo, de Schrödinger a las dos manchas
   (function () {
     var ec = raiz.querySelector('.mc-ec[data-ec="1"]'); if (!ec) return;

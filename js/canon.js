@@ -23,7 +23,8 @@
   var G = 9.81, V0 = 20, TMAX = Math.asin(Math.sqrt(8) / 3) * 180 / Math.PI;   // 70,53°
   var ANG = [45, 60, TMAX, 75, 85];
 
-  window.escenaCanon = function (svg, salida) {
+  window.escenaCanon = function (svg, salida, op) {
+    op = op || {}; var SEC = op.secuencia || [0, 1, 2, 3, 4], DY = op.embebido ? 44 : 0;
     var fig = svg.parentNode, raiz = fig.closest('.mc');
     var quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     var lienzo = document.createElement('canvas'); lienzo.className = 'mo-lienzo'; fig.insertBefore(lienzo, svg);
@@ -65,17 +66,17 @@
     function vel(o, t) { return [V0 * o.c, V0 * o.s - G * t]; }
 
     // ── estado: ángulo elegido y reloj del tiro ──
-    var sel = 3, T = 0, auto = true, LENTO = .8, PAUSA = 3.4;
+    var sel = SEC[0], T = 0, auto = true, LENTO = .8, PAUSA = op.pausa || 3.4, ocupa = 0;
     var tir = ANG.map(tiro);
     function durTiro(k) { return tir[k].tf / LENTO + PAUSA; }
 
     // ── selector de ángulo (misma tipografía que la barra de capítulos) ──
-    var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Ángulo de tiro');
+    var barra = document.createElement('nav'); barra.className = 'fz-caps' + (op.embebido ? ' ca-sel' : ''); barra.setAttribute('aria-label', 'Ángulo de tiro');
     var et = document.createElement('span'); et.className = 'fz-cap ca-et'; et.innerHTML = '<span class="fz-cap-n">θ</span>'; barra.appendChild(et);
     var bots = ANG.map(function (a, k) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fz-cap' + (k === 2 ? ' ca-max' : '');
       b.innerHTML = '<span class="fz-cap-n">' + coma(a, k === 2 ? 1 : 0) + '°</span>' + (k === 2 ? '<span class="fz-cap-t">máx</span>' : '') + '<i class="fz-cap-l"><i></i></i>';
-      b.addEventListener('click', function () { elige(k); auto = false; clearTimeout(bots.tAuto); bots.tAuto = setTimeout(function () { auto = true; }, 20000); });
+      b.addEventListener('click', function () { elige(k); auto = false; ocupa = performance.now() + 20000; clearTimeout(bots.tAuto); bots.tAuto = setTimeout(function () { auto = true; }, 20000); });
       barra.appendChild(b); return b;
     });
     fig.appendChild(barra);
@@ -95,14 +96,14 @@
       if (nota) { var d = el('text', { 'class': 'fz-d', x: x0, y: y + 46 }, g); d.textContent = nota; }
       var n = { ver: false, pon: function (v) { if (v !== n.ver) { n.ver = v; g.classList.toggle('ver', v); } } }; filas.push(n); return n;
     }
-    fila(110, 'Taylor · problema 1.40', [['x = v', ''], ['0', 's'], ['cos θ t,   y = v', ''], ['0', 's'], ['sen θ t − ½ g t', ''], ['2', 'p']], 'Segunda ley sin aire: ẍ = 0, ÿ = −g.');
-    fila(176, 'Distancia al cañón', [['r', ''], ['2', 'p'], [' = v', ''], ['0', 's'], ['2', 'p'], ['t', ''], ['2', 'p'], [' − g v', ''], ['0', 's'], [' sen θ t', ''], ['3', 'p'], [' + ¼ g', ''], ['2', 'p'], ['t', ''], ['4', 'p']]);
-    fila(226, 'Se deriva', [['d(r', ''], ['2', 'p'], [')/dt = t ( g', ''], ['2', 'p'], ['t', ''], ['2', 'p'], [' − 3 g v', ''], ['0', 's'], [' sen θ t + 2v', ''], ['0', 's'], ['2', 'p'], [' )', '']], 'r crece siempre si el paréntesis nunca se anula.');
-    fila(294, 'Sin raíces reales', [['Δ ∝ 9 sen', ''], ['2', 'p'], ['θ − 8 < 0  ⟹  sen θ < √8 / 3', '']], 'θ < arcsen(√8/3) ≈ 70,53°, sin importar v₀ ni g.');
+    fila(110 + DY, 'Taylor · problema 1.40', [['x = v', ''], ['0', 's'], ['cos θ t,   y = v', ''], ['0', 's'], ['sen θ t − ½ g t', ''], ['2', 'p']], 'Segunda ley sin aire: ẍ = 0, ÿ = −g.');
+    fila(176 + DY, 'Distancia al cañón', [['r', ''], ['2', 'p'], [' = v', ''], ['0', 's'], ['2', 'p'], ['t', ''], ['2', 'p'], [' − g v', ''], ['0', 's'], [' sen θ t', ''], ['3', 'p'], [' + ¼ g', ''], ['2', 'p'], ['t', ''], ['4', 'p']]);
+    fila(226 + DY, 'Se deriva', [['d(r', ''], ['2', 'p'], [')/dt = t ( g', ''], ['2', 'p'], ['t', ''], ['2', 'p'], [' − 3 g v', ''], ['0', 's'], [' sen θ t + 2v', ''], ['0', 's'], ['2', 'p'], [' )', '']], 'r crece siempre si el paréntesis nunca se anula.');
+    fila(294 + DY, 'Sin raíces reales', [['Δ ∝ 9 sen', ''], ['2', 'p'], ['θ − 8 < 0  ⟹  sen θ < √8 / 3', '']], 'θ < arcsen(√8/3) ≈ 70,53°, sin importar v₀ ni g.');
     filas.forEach(function (n, k) { n.t0 = .4 + k * .5; });
 
     // ── dibujo ──
-    var GQ = { x: 1140, y: 200, w: 230, h: 110 };   // q(τ) = τ² − 3 sen θ τ + 2 sobre el vuelo, τ ∈ [0, 2 sen θ]
+    var GQ = { x: 1140, y: 200 + DY, w: 230, h: 110 };   // q(τ) = τ² − 3 sen θ τ + 2 sobre el vuelo, τ ∈ [0, 2 sen θ]
     function graficaQ(o, t, a) {
       var lo = -.6, hi = 2.2, x = function (u) { return GQ.x + GQ.w * u / 2; }, y = function (v) { return GQ.y + GQ.h - (v - lo) / (hi - lo) * GQ.h; };
       ctx.globalAlpha = a;
@@ -207,15 +208,23 @@
     }
 
     var ecAct = '', reloj = 0;
-    new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.caOn) { T = 0; filas.forEach(function (n) { n.pon(false); }); reloj = 0; } fig.caOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
+    if (!op.embebido) new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.caOn) { T = 0; filas.forEach(function (n) { n.pon(false); }); reloj = 0; } fig.caOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     fig.caElige = function (k) { elige(k); auto = false; }; fig.caT2 = function (t) { T = t; };   // para capturas
+    var vista = -1;
+    function mostrar(a) {   // en modo incrustado, la escena que la contiene decide cuándo se ve
+      if (a > 0 && vista <= 0) { elige(SEC[0]); auto = true; reloj = 0; filas.forEach(function (n) { n.pon(false); }); }
+      vista = a; var d = a > 0 ? '' : 'none';
+      lienzo.style.display = d; barra.style.display = d; capa.style.display = d;
+      lienzo.style.opacity = barra.style.opacity = a.toFixed(3);
+    }
     return {
+      mostrar: mostrar, ocupado: function () { return performance.now() < ocupa; },
       tick: function (dt) {
         if (!fig.classList.contains('on')) return;
         reloj += dt; filas.forEach(function (n) { n.pon(reloj > n.t0); });
         if (!quieto) T += dt; else T = 99;
         dibuja();
-        if (auto && T > durTiro(sel)) elige((sel + 1) % ANG.length);
+        if (auto && T > durTiro(sel)) { var j = SEC.indexOf(sel); if (op.embebido) { if (j >= 0 && j < SEC.length - 1) elige(SEC[j + 1]); } else elige((sel + 1) % ANG.length); }
         var e = 'θ<sub>máx</sub> = arcsen(√8 / 3) ≈ 70,53°';
         if (ec && e !== ecAct) { ecAct = e; ec.innerHTML = e; }
       }

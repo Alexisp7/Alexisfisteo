@@ -1,12 +1,9 @@
-// III · Problemas de física — momento angular, en cuatro capítulos.
+// III · Problemas de física — momento angular, en tres capítulos (el de la órbita de Kepler, dibujaII, no se muestra).
 //  I   Definición: L = r × p respecto de un punto O. Una partícula libre barre áreas iguales en tiempos
 //      iguales: |L| = m v b no cambia porque b (distancia de O a la recta) es fija.
-//  II  Órbita: con fuerza central τ = r × F = 0. Órbita de Kepler (e = 0,6) resuelta con la ecuación
-//      de Kepler; sectores de igual duración = igual área (segunda ley). Al final la vista se inclina
-//      y L aparece como un vector perpendicular al plano de la órbita.
-//  III Sólido: L = I ω con I = 0,40 + 2·(1 kg)·r². Las masas pasan de 0,8 m a 0,2 m: ω de 2 a 7 rad/s,
+//  II  Sólido: L = I ω con I = 0,40 + 2·(1 kg)·r². Las masas pasan de 0,8 m a 0,2 m: ω de 2 a 7 rad/s,
 //      la energía L²/2I de 3,4 a 11,8 J (trabajo de los brazos).
-//  IV  Giróscopo: τ = dL/dt. Rotor de 150 g, R = 3 cm, d = 4 cm, 40 vueltas/s ⟹ Ω = mgd/(Iω) ≈ 3,5 rad/s.
+//  III Giróscopo: τ = dL/dt. Rotor de 150 g, R = 3 cm, d = 4 cm, 40 vueltas/s ⟹ Ω = mgd/(Iω) ≈ 3,5 rad/s.
 // Todo se pinta en un lienzo 2D; el SVG encima solo lleva las notas (mismas clases que la fisión).
 (function () {
   var NS = 'http://www.w3.org/2000/svg';
@@ -43,7 +40,7 @@
     var TINTA = 'rgba(30,26,22,', VINO = 'rgba(122,46,34,', ORO = 'rgba(176,122,40,', PAPEL = '#F4EEE3';
 
     // ── tiempos ──
-    var T2 = 16, T3 = 34, T4 = 51, FIN = 69, DUR = 71;
+    var T2 = 16, T3 = T2, T4 = 33, FIN = 51, DUR = 53;   // el capítulo de Kepler (dibujaII) quedó fuera: T3 = T2
     var TILT0 = T2 + 11.5, TILT1 = T2 + 15;
 
     // ── cámara ortográfica: z hacia arriba; el = elevación de la vista (90° = desde arriba, plano de la página) ──
@@ -99,7 +96,7 @@
     function xI(t) { return I.x0 + I.v * (t - I.ta); }
     function dibujaI(t, a) {
       if (a <= 0) return;
-      cam.el = Math.PI / 2; cam.s = 1;
+      cam.el = Math.PI / 2; cam.s = 1; cam.x = OX; cam.y = OY;
       var O = P(0, 0, 0), yl = -I.b, xp = xI(cl(t, I.ta - .8, I.tb + 1)), Pp = P(xp, yl, 0);
       ctx.globalAlpha = a;
       // recta del movimiento y su distancia b a O
@@ -294,7 +291,7 @@
     var LENTA = .5;
     function dibujaIV(t, a) {
       if (a <= 0) return;
-      cam.el = .5; cam.s = 24; cam.x = 1070; cam.y = 650;
+      cam.el = .5; cam.s = 24; cam.x = 1030; cam.y = 610;
       ctx.globalAlpha = a;
       var u = t - T4, psi = 2.4 + G.Om * LENTA * Math.max(0, u - 1.2) * suave((u - .4) / 1.6) , U = [Math.cos(psi), Math.sin(psi), 0], V = [-U[1], U[0], 0], Z = [0, 0, 1], h = G.h;
       function add(p, q, s) { return [p[0] + q[0] * s, p[1] + q[1] * s, p[2] + q[2] * s]; }
@@ -402,12 +399,6 @@
       d: ['Se define respecto de un punto O y es', 'perpendicular a r y a p: aquí sale de la', 'página (⊙). Su tamaño es r p sen φ, y', 'r sen φ es la distancia b de O a la recta.'] });
     var n2 = en(DER, { k: 'Partícula libre', tit: 'Áreas iguales, tiempos iguales',
       d: ['Sin fuerzas p no cambia y b tampoco:', '|L| = m v b se conserva. En cada Δt,', 'r barre un triángulo de base v Δt y', 'altura b, así que dA/dt = |L| / 2m.'] });
-    var n3 = en(ARR, { k: 'Fuerza central', tit: 'τ = r × F = 0',
-      d: ['La gravedad del Sol apunta siempre a', 'lo largo de r: no hay torque y, como', 'dL/dt = τ, L no cambia. La órbita queda', 'en un plano fijo, perpendicular a L.'] });
-    var n4 = en(DER, { k: 'Segunda ley de Kepler · 1609', tit: 'dA/dt = L / 2m',
-      d: ['Cada sector dura 1/12 del periodo y', 'todos tienen la misma área. Cerca del Sol', 'r es pequeño y v grande: rₚvₚ = rₐvₐ.', 'Con e = 0,6, vₚ/vₐ = (1 + e)/(1 − e) = 4.'] });
-    var n5 = en(ARR, { k: 'Un vector', tit: 'L es perpendicular a la órbita',
-      d: ['Vista de lado, L es una flecha fija que', 'sale del Sol. Conservar L es conservar', 'el plano, el sentido de giro y el ritmo', 'al que se barren las áreas.'] });
     var n6 = en(DER, { k: 'Cuerpo rígido', tit: 'L = I ω',
       d: ['Al girar en torno a un eje fijo, L = I ω', 'con I = Σ m r². Sin torque externo en', 'el eje (sin rozamiento), I₁ω₁ = I₂ω₂:', 'así acelera una patinadora al recogerse.'] });
     var n7 = en(DER, { k: 'Al recoger las masas', tit: 'I baja 3,5 veces; ω sube 3,5',
@@ -416,10 +407,10 @@
       d: ['El peso, aplicado a d del pivote, da un', 'torque horizontal y perpendicular a L.', 'Cambia la dirección de L, no su tamaño:', 'el eje gira alrededor del pivote, no cae.'] });
     var n9 = en(DER, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
       d: ['Rotor de 150 g, R = 3 cm, d = 4 cm y', '40 vueltas/s: I ω ≈ 0,017 kg·m²/s y', 'τ ≈ 0,059 N·m, así que Ω ≈ 3,5 rad/s,', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
-    var AGENDA = [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [n3, T2 + 1.6, T2 + 7.6], [n4, T2 + 4.2, TILT0 - .2], [n5, TILT1 - .6, T3 - .2], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
+    var AGENDA = [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
 
     // ── capítulos ──
-    var CAPS = [['I', 'Definición', 0], ['II', 'Órbita', T2, [[T2, 'Fuerza central'], [TILT0, 'L como vector']]], ['III', 'Sólido', T3], ['IV', 'Giróscopo', T4]];
+    var CAPS = [['I', 'Definición', 0], ['II', 'Sólido', T3], ['III', 'Giróscopo', T4]];
     var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Capítulos de la animación');
     CAPS.forEach(function (c, k) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'fz-cap';
@@ -460,24 +451,18 @@
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
       var fundido = t < .4 ? t / .4 : t > FIN ? 1 - suave((t - FIN) / (DUR - FIN - .3)) : 1;
       // I y II comparten el punto O; la cámara se desliza de uno al otro
-      var mv = suave((t - T2 + .4) / 1.6); cam.x = OX + (K.cx - OX) * mv; cam.y = OY + (K.cy - OY) * mv;
       var a1 = ventana(t, 0, T2 + .6, .8) * fundido;
-      var a2 = ventana(t, T2 - .2, T3 + .3, .9) * fundido;
       dibujaI(t, a1 * (1 - suave((t - T2 + .6) / .8)) + 0);
-      cam.x = OX + (K.cx - OX) * mv; cam.y = OY + (K.cy - OY) * mv;
-      dibujaII(t, a2);
+      cam.x = OX; cam.y = OY;
       dibujaIII(t, ventana(t, T3 - .3, T4 + .3, .9) * fundido);
       psiAct = dibujaIV(t, ventana(t, T4 - .3, DUR, .9) * fundido) || psiAct;
       // anclas de las notas
       cam.el = Math.PI / 2; cam.s = 1; cam.x = OX; cam.y = OY;
       var O = P(0, 0, 0); n1.ubica(O[0] + 14, O[1] - 14);
       n2.ubica((P(xI(Math.min(t, 7.5)), -I.b, 0)[0] + O[0]) / 2 + 30, O[1] + I.b * .8);
-      n3.ubica(K.cx - 14, K.cy - 14);
-      var oo = orbita(K.t0 + K.Tor * .93); n4.ubica(K.cx + oo.x * .55, K.cy - oo.y * .55);
-      n5.ubica(K.cx, K.cy - 100);
       n6.ubica(1085, 560 - 205 * (R.zb + .4) * Math.cos(.42));
       n7.ubica(1085 + 205 * rIII(t) * .9, 560 - 205 * R.zb * Math.cos(.42));
-      cam.el = .5; cam.s = 24; cam.x = 1070; cam.y = 650;
+      cam.el = .5; cam.s = 24; cam.x = 1030; cam.y = 610;
       var pv = P(0, 0, G.h); n8.ubica(pv[0], pv[1]);
       var lt = P(Math.cos(psiAct) * (G.d + 5.2), Math.sin(psiAct) * (G.d + 5.2), G.h); n9.ubica(lt[0], lt[1]);
     }
@@ -497,7 +482,7 @@
       }
     }
     function ecuacion(t) {
-      var e = t < T2 ? '<b>L</b> = <b>r</b> × <b>p</b>' : t < T3 ? 'd<b>L</b>/dt = <b>r</b> × <b>F</b> = 0' : t < T4 ? 'I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub>' : 'Ω = mgd / Iω';
+      var e = t < T2 ? '<b>L</b> = <b>r</b> × <b>p</b>' : t < T4 ? 'I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub>' : 'Ω = mgd / Iω';
       if (ec && e !== ecAct) { ecAct = e; ec.innerHTML = e; }
     }
 

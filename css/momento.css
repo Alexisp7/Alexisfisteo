@@ -6,3 +6,6 @@
 .mc svg .mo-ec { font:italic 500 21px 'Cormorant Garamond',serif; fill:#1E1A16; }
 .mc svg .mo-ec .mo-v { font-weight:700; font-style:normal; }
 .mc svg .mo-ec .mo-sub { font-size:13px; }
+/* selector de ángulo del problema 1.40 */
+.fz-cap.ca-et { cursor:default; color:#1E1A16; }
+.fz-cap.ca-max .fz-cap-n { color:#5B3A8C; }

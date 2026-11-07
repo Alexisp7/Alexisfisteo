@@ -2,3 +2,7 @@
 .mc-escena[data-i="2"] .mo-lienzo { position:absolute; inset:0; width:100%; height:100%; display:block; }
 .mc-escena[data-i="2"] svg { position:relative; pointer-events:none; }
 .mc-ec b { font-weight:600; }
+/* desarrollo del par 1–2 */
+.mc svg .mo-ec { font:italic 500 21px 'Cormorant Garamond',serif; fill:#1E1A16; }
+.mc svg .mo-ec .mo-v { font-weight:700; font-style:normal; }
+.mc svg .mo-ec .mo-sub { font-size:13px; }

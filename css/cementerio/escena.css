@@ -1,0 +1,84 @@
+/* III · Problemas de física: fisión del uranio-235 (lienzo 2D + notas en SVG) */
+.mc-escena[data-i="3"] .fz-lienzo { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.mc-escena[data-i="3"] svg { position:relative; pointer-events:none; }
+
+/* notas: punto, guía que se traza, regla dorada, rótulo, título en cursiva y texto */
+.mc svg .fz-nota { opacity:0; transition:opacity .6s ease; }
+.mc svg .fz-nota.ver { opacity:1; transition:opacity .35s ease; }
+.mc svg .fz-pt { fill:#8E8478; }
+.mc svg .fz-aro { fill:none; stroke:#8E8478; stroke-width:.7; transform-box:fill-box; transform-origin:center; opacity:0; }
+.mc svg .fz-nota.ver .fz-aro { animation:fz-aro 2.2s ease-out .2s infinite; }
+@keyframes fz-aro { 0% { transform:scale(1); opacity:.9; } 100% { transform:scale(4); opacity:0; } }
+.mc svg .fz-guia { fill:none; stroke:#8E8478; stroke-width:.75; stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset .1s; }
+.mc svg .fz-nota.ver .fz-guia { stroke-dashoffset:0; transition:stroke-dashoffset .9s cubic-bezier(.65,0,.25,1); }
+.mc svg .fz-regla { stroke:#C9A27A; stroke-width:.7; stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset .1s; }
+.mc svg .fz-nota.ver .fz-regla { stroke-dashoffset:0; transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1) .7s; }
+.mc svg .fz-nota text { paint-order:stroke; stroke:#F4EEE3; stroke-width:4px; stroke-linejoin:round; opacity:0; transform:translateY(5px); transition:opacity .4s ease, transform .4s ease; }
+.mc svg .fz-nota.ver text { opacity:1; transform:none; transition:opacity .7s ease .85s, transform .9s cubic-bezier(.16,1,.3,1) .85s; }
+.mc svg .fz-nota.ver .fz-tit { transition-delay:.95s; }
+.mc svg .fz-nota.ver .fz-d, .mc svg .fz-nota.ver .fz-ley { transition-delay:1.1s; }
+.mc svg .fz-k { font:700 8.5px 'Space Mono',monospace; letter-spacing:.22em; text-transform:uppercase; fill:#6B6156; }
+.mc svg .fz-tit { font:italic 500 23px 'Cormorant Garamond',serif; fill:#1E1A16; }
+.mc svg .fz-d { font:400 13.5px Newsreader,Georgia,serif; fill:#6F655A; }
+.mc svg .fz-ley { font:400 9px 'Space Mono',monospace; letter-spacing:.08em; fill:#6B6156; }
+.mc svg .fz-ley-p { fill:#97392B; stroke:#521B14; stroke-width:.6; opacity:0; transition:opacity .6s ease; }
+.mc svg .fz-ley-n { fill:#EDE3CF; stroke:#8E8478; stroke-width:.7; opacity:0; transition:opacity .6s ease; }
+.mc svg .fz-nota.ver .fz-ley-p, .mc svg .fz-nota.ver .fz-ley-n { opacity:1; transition-delay:1.1s; }
+
+/* capítulos: cuatro marcas romanas con una línea que se llena */
+.fz-caps { position:absolute; z-index:3; top:96px; right:clamp(20px,4vw,64px); display:flex; gap:22px; }
+.fz-cap { position:relative; display:flex; align-items:baseline; gap:7px; padding:6px 0 9px; border:0; background:none; cursor:pointer; color:#8E8478; transition:color .4s ease; }
+.fz-cap-n { font:italic 500 17px 'Cormorant Garamond',serif; }
+.fz-cap-t { font:400 8.5px 'Space Mono',monospace; letter-spacing:.2em; text-transform:uppercase; }
+.fz-cap-l { position:absolute; left:0; right:0; bottom:0; height:1px; background:rgba(142,132,120,.25); overflow:hidden; }
+.fz-cap-l i { position:absolute; inset:0; background:linear-gradient(90deg, #C9A27A, #7A2E22); transform:scaleX(0); transform-origin:left; }
+.fz-cap.on, .fz-cap:hover { color:#1E1A16; }
+.fz-cap.fz-pronto { cursor:default; opacity:.4; }
+.fz-cap.fz-pronto:hover { color:#8E8478; }
+.fz-cap-s { position:absolute; left:0; top:calc(100% + 7px); white-space:nowrap; font:italic 500 13px 'Cormorant Garamond',serif; color:#7A2E22; opacity:0; transform:translateY(-4px); transition:opacity .25s ease, transform .25s ease; pointer-events:none; }
+.fz-cap-s.ver { opacity:1; transform:none; transition:opacity .6s ease, transform .8s cubic-bezier(.16,1,.3,1); }
+.fz-cap-m { position:absolute; bottom:-2px; width:1px; height:5px; background:#C9A27A; }
+.mc.fz-noche .fz-cap-s { color:#E8C48A; }
+.fz-cap:focus-visible { outline:1px solid #C9A27A; outline-offset:4px; }
+@media (max-width:900px) { .fz-caps { top:auto; bottom:10px; right:auto; left:14px; gap:14px; } .fz-cap-t { display:none; } .fz-cap-s { top:auto; bottom:calc(100% + 4px); font-size:12px; } }
+
+/* IV · noche: notas en tinta clara, escalera de órdenes de magnitud y lectura sin caja */
+.mc svg .fz-luz text { stroke:rgba(14,14,22,.85); stroke-width:3px; }
+.mc svg .fz-luz .fz-k { fill:#CDB79A; }
+.mc svg .fz-luz .fz-tit { fill:#F4EEE3; }
+.mc svg .fz-luz .fz-d { fill:#D3C6B2; }
+.mc svg .fz-luz .fz-pt { fill:#E8C48A; }
+.mc svg .fz-luz .fz-aro, .mc svg .fz-luz .fz-guia { stroke:#E8C48A; }
+.mc svg .fz-esc { opacity:0; transition:opacity .8s ease; }
+.mc svg .fz-esc.ver { opacity:1; }
+.mc svg .fz-esc-l { stroke:rgba(232,196,138,.35); stroke-width:.8; }
+.mc svg .fz-esc-p line { stroke:rgba(232,196,138,.45); stroke-width:.8; }
+.mc svg .fz-esc-n { font:italic 500 15px 'Cormorant Garamond',serif; fill:rgba(244,238,227,.4); transition:fill .5s ease; }
+.mc svg .fz-esc-t { font:400 8px 'Space Mono',monospace; letter-spacing:.18em; text-transform:uppercase; fill:rgba(205,183,154,.35); transition:fill .5s ease; }
+.mc svg .fz-esc-p.on .fz-esc-n { fill:#F4EEE3; }
+.mc svg .fz-esc-p.on .fz-esc-t { fill:#E8C48A; }
+.mc svg .fz-esc-m { fill:#FFF1D6; stroke:#E8A23C; stroke-width:1.2; }
+.mc.fz-noche .mc-lectura { background:none; color:#F4EEE3; transition:color .8s ease; }
+.mc.fz-noche .mc-l1 { color:#E8C48A; } .mc.fz-noche .mc-l2 { color:rgba(244,238,227,.6); }
+.mc.fz-noche .fz-cap { color:rgba(244,238,227,.45); }
+.mc.fz-noche .fz-cap.on, .mc.fz-noche .fz-cap:hover { color:#F4EEE3; }
+.mc.fz-noche .fz-cap-l { background:rgba(244,238,227,.18); }
+.mc[data-activo="3"] .mc-lectura { background:none; }
+.mc[data-activo="3"] .mc-lectura::before { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, rgba(244,238,227,0), rgba(244,238,227,.88) 28%); transition:opacity .9s ease; }
+.mc.fz-noche .mc-lectura::before { opacity:0; }
+@media (max-width:600px) { .mc svg .fz-nota { display:none; } }
+.fz-blanco { position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:0; visibility:hidden; background:radial-gradient(circle at 61% 66%, #FFFFFF 0%, #FFFDF7 45%, #FFF8EA 100%); }
+/* III · Problemas de física: momento angular (lienzo 2D + notas en SVG; las notas y la barra usan las clases fz-*) */
+.mc-escena[data-i="2"] .mo-lienzo { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.mc-escena[data-i="2"] svg { position:relative; pointer-events:none; }
+.mc-ec b { font-weight:600; }
+/* desarrollo del par 1–2 */
+.mc svg .mo-ec { font:italic 500 21px 'Cormorant Garamond',serif; fill:#1E1A16; }
+.mc svg .mo-ec .mo-v { font-weight:700; font-style:normal; }
+.mc svg .mo-ec .mo-sub { font-size:13px; }
+/* selector de ángulo del problema 1.40 */
+.fz-cap.ca-et { cursor:default; color:#1E1A16; }
+.fz-cap.ca-max .fz-cap-n { color:#5B3A8C; }
+.fz-caps.ca-sel { top:150px; }
+.mc-escena[data-i="2"] .mo-lienzo + .mo-lienzo { pointer-events:none; }
+@media (max-width:900px) { .fz-caps.ca-sel { top:64px; bottom:auto; right:14px; left:auto; } }

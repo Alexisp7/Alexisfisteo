@@ -1084,6 +1084,9 @@
       justify-content: space-between;
     }
 
+    .footer-punto { color: inherit; text-decoration: none; transition: color .6s ease, text-shadow .6s ease; }
+    .footer-punto:hover, .footer-punto:focus-visible { color: var(--gold); text-shadow: 0 0 8px rgba(200,169,110,.6); outline: none; }
+
     .footer-copy {
       font-family: 'Space Mono', monospace;
       font-size: 9px;
@@ -1521,7 +1524,7 @@
   <footer class="footer-wrap" id="contacto">
     <div class="footer">
       <div class="footer-bottom">
-        <span class="footer-copy">© 2025 Alexis R. Salvatierra · Todos los derechos reservados</span>
+        <span class="footer-copy">© 2025 Alexis R. Salvatierra <a class="footer-punto" href="bitacora.html" aria-label="Bitácora">·</a> Todos los derechos reservados</span>
       </div>
     </div>
   </footer>

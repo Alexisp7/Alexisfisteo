@@ -24,7 +24,10 @@
     return c;
   }
 
-  window.escenaMomento = function (svg, salida) {
+  // Por defecto solo se muestra el giróscopo. Con op.todo = true corren los cinco capítulos
+  // (Definición, Sistema, Cañón, Sólido, Giróscopo), que siguen completos en este archivo.
+  window.escenaMomento = function (svg, salida, op) {
+    var SOLO = !(op && op.todo);
     var fig = svg.parentNode, raiz = fig.closest('.mc');
     var quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     var lienzo = document.createElement('canvas'); lienzo.className = 'mo-lienzo'; fig.insertBefore(lienzo, svg);
@@ -551,7 +554,7 @@
     // ── capítulos ──
     var CAPS = [['I', 'Definición', 0], ['II', 'Sistema', TS], ['III', 'Cañón', TC], ['IV', 'Sólido', T3], ['V', 'Giróscopo', T4]];
     // III: problema 1.40 de Taylor (js/canon.js), incrustado; tiene su propio lienzo, desarrollo y selector de ángulo
-    var CN = window.escenaCanon ? window.escenaCanon(svg, salida, { embebido: true, secuencia: [0, 2, 4], pausa: 2.4 }) : null;
+    var CN = window.escenaCanon && !SOLO ? window.escenaCanon(svg, salida, { embebido: true, secuencia: [0, 2, 4], pausa: 2.4 }) : null;
     if (CN) CN.mostrar(0);
     var barra = document.createElement('nav'); barra.className = 'fz-caps'; barra.setAttribute('aria-label', 'Capítulos de la animación');
     CAPS.forEach(function (c, k) {
@@ -565,7 +568,8 @@
         c[3].forEach(function (e, j) { if (!j) return; var m = document.createElement('b'); m.className = 'fz-cap-m'; m.style.left = (100 * (e[0] - c[2]) / (fin - c[2])).toFixed(1) + '%'; b.appendChild(m); });
       }
     });
-    fig.appendChild(barra);
+    if (!SOLO) fig.appendChild(barra);
+    var INI = SOLO ? T4 : 0;
     function capitulos(t) {
       CAPS.forEach(function (c, k) {
         var ini = c[2], sig = k + 1 < CAPS.length ? CAPS[k + 1][2] : null, fin = sig == null ? FIN : sig;
@@ -581,7 +585,7 @@
 
     function salta(t) { T = t; notas.forEach(function (n) { n.pon(false); }); rastro = [[], []]; }
     fig.moSalta = salta; fig.moFija = function (t) { salta(t); fijo = true; }; fig.moSuelta = function () { fijo = false; };   // para capturas
-    new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.moOn) salta(0); fig.moOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
+    new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.moOn) salta(INI); fig.moOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
 
     var psiAct = 0;
     function dibuja(t) {
@@ -591,14 +595,14 @@
       var vb = svg.viewBox.baseVal, kx = W / vb.width * dpr, ky = H / vb.height * dpr;
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
-      var fundido = t < .4 ? t / .4 : t > FIN ? 1 - suave((t - FIN) / (DUR - FIN - .3)) : 1;
+      var fundido = t < INI + .4 ? Math.max(0, t - INI) / .4 : t > FIN ? 1 - suave((t - FIN) / (DUR - FIN - .3)) : 1;
       // I y II comparten el punto O; la cámara se desliza de uno al otro
       var a1 = ventana(t, 0, T2 + .6, .8) * fundido;
       dibujaI(t, a1 * (1 - suave((t - T2 + .6) / .8)) + 0);
       cam.x = OX; cam.y = OY;
       dibujaS(t, ventana(t, TS - .2, TC + .3, .9) * fundido);
       dibujaIII(t, ventana(t, T3 - .3, T4 + .3, .9) * fundido);
-      psiAct = dibujaIV(t, ventana(t, T4 - .3, DUR, .9) * fundido) || psiAct;
+      psiAct = dibujaIV(t, (SOLO ? 1 : ventana(t, T4 - .3, DUR, .9)) * fundido) || psiAct;
       // anclas de las notas
       cam.el = Math.PI / 2; cam.s = 1; cam.x = OX; cam.y = OY;
       var O = P(0, 0, 0); n1.ubica(O[0] + 14, O[1] - 14);
@@ -633,12 +637,12 @@
       if (ec && e !== ecAct) { ecAct = e; ec.innerHTML = e; }
     }
 
-    if (quieto) T = 5;
+    if (quieto) T = INI + 8; else if (SOLO) T = INI;
     return {
       tick: function (dt) {
         if (!fig.classList.contains('on')) return;
         var enC = CN && T >= TC && T < T3;
-        if (!quieto && !fijo && !(enC && CN.ocupado())) { T += dt; if (T >= DUR) salta(0); }
+        if (!quieto && !fijo && !(enC && CN.ocupado())) { T += dt; if (T >= DUR || T < INI) salta(INI); }
         enC = CN && T >= TC && T < T3;
         if (CN) { var aC = enC ? suave((T - TC) / .6) * (1 - suave((T - T3 + .6) / .6)) : 0; CN.mostrar(aC); if (enC) CN.tick(dt); }
         // capítulo III: el giro se integra con ω = L / I(r)
@@ -647,7 +651,7 @@
           [1, -1].forEach(function (sg, k) { rastro[k].push([sg * Math.cos(giro) * r, sg * Math.sin(giro) * r]); if (rastro[k].length > 90) rastro[k].shift(); });
         }
         AGENDA.forEach(function (a) { a[0].pon(T >= a[1] && T < a[2]); });
-        dibuja(T); capitulos(T); if (!enC) { lecturas(T); ecuacion(T); }
+        dibuja(T); if (!SOLO) capitulos(T); if (!enC) { lecturas(T); ecuacion(T); }
       }
     };
   };

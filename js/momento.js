@@ -720,14 +720,16 @@
         var c0 = Pp(rr(fase + .5, 1 - RT * 1.1)), c1 = Pp(rr(fase + .5, 1 + RT * 1.1));
         ctx.strokeStyle = TINTA + '.9)'; ctx.lineWidth = 2.4; ctx.lineCap = 'butt'; ctx.beginPath(); ctx.moveTo(c0[0], c0[1]); ctx.lineTo(c1[0], c1[1]); ctx.stroke();
       } });
-      // estela: la huella tenue de las hojas un instante antes (se lee rápido y suave a cualquier frecuencia)
+      // estela: la huella de las hojas un instante antes, dibujada como alambre tenue con su propio contorno (una
+      // mancha difusa no tiene borde y se ve sucia); se lee rápido y suave a cualquier frecuencia
       piezas.push({ z: dep(C) - 1e3, f: function () {
         ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-        for (var g = 4; g >= 1; g--) {
-          ctx.strokeStyle = 'rgba(214,180,110,' + (.15 / g).toFixed(3) + ')'; ctx.lineWidth = RH * RS * 1.8; ctx.beginPath();
-          for (var h = 0; h < 3; h++) { var b = fase - .06 * g + h * 2 * Math.PI / 3; for (var i = 0; i <= 16; i++) { var t = i / 16, q = rr(b - .95 * Math.pow(t, 1.25), .15 + .84 * t), p = Pp(q); if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); } }
-          ctx.stroke();
-        }
+        [[.16, .34], [.08, .2]].forEach(function (gg) {
+          ctx.beginPath();
+          for (var h2 = 0; h2 < 3; h2++) { var b = fase - gg[0] + h2 * 2 * Math.PI / 3; for (var i = 0; i <= 20; i++) { var t = i / 20, p = Pp(rr(b - .95 * Math.pow(t, 1.25) + .31 * Math.sin(Math.PI * Math.pow(t, .8)), .15 + .84 * t)); if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); } }
+          ctx.strokeStyle = TINTA + (gg[1] * .55).toFixed(3) + ')'; ctx.lineWidth = RH * RS * 2 + .5; ctx.stroke();
+          ctx.strokeStyle = 'rgba(232,206,150,' + gg[1].toFixed(3) + ')'; ctx.lineWidth = RH * RS * 2 - .5; ctx.stroke();
+        });
       } });
       // cubo: casquillo de acero a lo largo del eje y un cabujón azul redondo
       var hF = add(C, U, fr[2] * .28), hB = add(C, U, -fr[2] * .28), hC = circulo3(hF, V, Z, G.Rr * QH, 28), hD = circulo3(hB, V, Z, G.Rr * QH, 28);

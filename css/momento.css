@@ -12,12 +12,13 @@
 .fz-caps.ca-sel { top:150px; }
 .mc-escena[data-i="2"] .mo-lienzo + .mo-lienzo { pointer-events:none; }
 @media (max-width:900px) { .fz-caps.ca-sel { top:64px; bottom:auto; right:14px; left:auto; } }
-/* giróscopo: las notas aparecen al señalar una pieza, así que entran más rápido que en una secuencia */
-.mc-escena[data-i="2"] svg .fz-nota { transition:opacity .3s ease; }
-.mc-escena[data-i="2"] svg .fz-nota.ver { transition:opacity .2s ease; }
-.mc-escena[data-i="2"] svg .fz-nota.ver .fz-guia { transition:stroke-dashoffset .45s cubic-bezier(.65,0,.25,1); }
-.mc-escena[data-i="2"] svg .fz-nota.ver .fz-regla { transition:stroke-dashoffset .55s cubic-bezier(.16,1,.3,1) .3s; }
-.mc-escena[data-i="2"] svg .fz-nota text { transition:opacity .2s ease, transform .2s ease; }
-.mc-escena[data-i="2"] svg .fz-nota.ver text { transition:opacity .4s ease .3s, transform .5s cubic-bezier(.16,1,.3,1) .3s; }
-.mc-escena[data-i="2"] svg .fz-nota.ver .fz-tit { transition-delay:.36s; }
-.mc-escena[data-i="2"] svg .fz-nota.ver .fz-d { transition-delay:.42s; }
+/* giróscopo: notas en caja arriba a la derecha (como Stern–Gerlach); aparecen al instante al señalar una pieza */
+.mc-escena[data-i="2"] svg .mo-caja { fill:rgba(247,243,235,.94); stroke:rgba(142,132,120,.3); stroke-width:.6; }
+.mc-escena[data-i="2"] svg .fz-nota { transition:opacity .2s ease; }
+.mc-escena[data-i="2"] svg .fz-nota.ver { transition:opacity .12s ease; }
+.mc-escena[data-i="2"] svg .fz-nota.ver .fz-guia { transition:stroke-dashoffset .3s cubic-bezier(.2,.8,.2,1); }
+.mc-escena[data-i="2"] svg .fz-nota.ver .fz-regla { transition:stroke-dashoffset .35s cubic-bezier(.16,1,.3,1) .05s; }
+.mc-escena[data-i="2"] svg .fz-nota text { transition:opacity .15s ease, transform .15s ease; }
+.mc-escena[data-i="2"] svg .fz-nota.ver text { transition:opacity .25s ease .06s, transform .3s cubic-bezier(.16,1,.3,1) .06s; }
+.mc-escena[data-i="2"] svg .fz-nota.ver .fz-tit { transition-delay:.08s; }
+.mc-escena[data-i="2"] svg .fz-nota.ver .fz-d { transition-delay:.1s; }

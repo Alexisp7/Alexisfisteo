@@ -47,8 +47,8 @@
     var TILT0 = T2 + 11.5, TILT1 = T2 + 15;
 
     // ── cámara ortográfica: z hacia arriba; el = elevación de la vista (90° = desde arriba, plano de la página) ──
-    var OX = 1090, OY = 300, cam = { x: OX, y: OY, s: 1, el: Math.PI / 2 };
-    function P(x, y, z) { var se = Math.sin(cam.el), ce = Math.cos(cam.el); return [cam.x + cam.s * x, cam.y - cam.s * (y * se + z * ce), z * se - y * ce]; }
+    var OX = 1090, OY = 300, cam = { x: OX, y: OY, s: 1, el: Math.PI / 2, az: 0 };
+    function P(x, y, z) { if (cam.az) { var ca = Math.cos(cam.az), sa = Math.sin(cam.az), xr = x * ca - y * sa; y = x * sa + y * ca; x = xr; } var se = Math.sin(cam.el), ce = Math.cos(cam.el); return [cam.x + cam.s * x, cam.y - cam.s * (y * se + z * ce), z * se - y * ce]; }
 
     var T = 0, W = 0, H = 0, dpr = 1, ecAct = '', fijo = false;
 
@@ -294,7 +294,7 @@
     var LENTA = .5;
     // Solo-giróscopo: la precesión se integra (ψ += Ω·½·vel·dt) y no hay bucle de video. Al señalar una pieza
     // la precesión sigue igual, aparece su nota y el resto queda en gris tenue, como en las otras escenas.
-    var GI = { psi: 2.4, vel: 0, arm: 9, foco: null, dim: {}, hit: null, giro: 0 };
+    var GI = { psi: 2.4, vel: 0, arm: 9, foco: null, focoVis: null, lav: 0, dim: {}, hit: null, giro: 0 };
     var PARTES = ['base', 'torre', 'eje', 'rotor', 'L', 'orb', 'mg', 'd', 'tau', 'omega'];
     PARTES.forEach(function (k) { GI.dim[k] = 1; });
     // qué queda nítido al señalar cada pieza
@@ -310,7 +310,7 @@
       var l = suave((GI.arm - e[0]) / .4); return { a: l > 0 ? 1 : 0, oy: 0, len: l };
     }
     function parte(k, a, fn) {   // dibuja una pieza con su ingreso y su atenuación
-      var e = entrada(k), g = GI.dim[k]; if (e.a <= 0 || a <= 0) return;
+      var e = entrada(k), g = SOLO ? 1 : GI.dim[k]; if (e.a <= 0 || a <= 0) return;
       // las piezas macizas se apagan con un filtro (gris claro y opaco: no se transparentan sus capas internas);
       // las líneas y los rótulos, con transparencia
       var x = (1 - g) / .8, maciza = FILTRO && SOLIDAS.indexOf(k) >= 0;
@@ -452,6 +452,171 @@
       };
       return psi;
     }
+    // ═════════ Giróscopo solo (Problemas de física): mismo lenguaje que Stern–Gerlach ═════════
+    // Vista isométrica (azimut y elevación), piezas de madera clara y latón con contorno en tinta, una placa
+    // con los datos del modelo y un pintor que ordena cada pieza por profundidad. Al señalar una pieza, lo demás
+    // queda tenue con transparencia: nada de filtros ni capas extra, para que no haya tirones.
+    var AZUL = 'rgba(43,58,103,';
+    function pinta(cola) {
+      var vis = GI.focoVis, lav = GI.lav, ver = vis ? FOCO[vis] : null;
+      if (!ver || lav < .01) { cola.forEach(function (c) { parte(c.k, 1, c.f); }); return; }
+      // lo no seleccionado, tenue (solo transparencia: sin filtros, capas ni velos, que en pantallas densas dan tirones)
+      var a = 1 - .7 * lav;
+      cola.forEach(function (c) { parte(c.k, ver.indexOf(c.k) < 0 ? a : 1, c.f); });
+    }
+    function dibujaGiro() {
+      var mov = W <= 900;
+      cam.el = .6; cam.az = -.62; cam.s = mov ? 30 : 30; cam.x = 985; cam.y = 640;
+      if (mov) { var vb0 = svg.viewBox.baseVal; cam.x = vb0.x + vb0.width / 2; cam.y = vb0.y + vb0.height - 205; }
+      var se = Math.sin(cam.el), psi = GI.psi, U = [Math.cos(psi), Math.sin(psi), 0], V = [-U[1], U[0], 0], Z = [0, 0, 1], h = G.h;
+      function add(p, q, s) { return [p[0] + q[0] * s, p[1] + q[1] * s, p[2] + q[2] * s]; }
+      function Pp(q) { return P(q[0], q[1], q[2]); }
+      function dep(q) { return Pp(q)[2]; }
+      function poli(pts, relleno, trazo, w) { camino(pts, true); ctx.fillStyle = relleno; ctx.fill(); if (trazo) { ctx.strokeStyle = trazo; ctx.lineWidth = w || .7; ctx.lineJoin = 'round'; ctx.stroke(); } }
+      var piv = [0, 0, h], C = add(piv, U, G.d), th = .75, LL = 5.2, rt = G.d + LL, B = 4.9, bz = 1.2;
+      var cola = [], objs = [];
+      GI.caja = [cam.x - 15 * cam.s, cam.y - 20 * cam.s, 30 * cam.s, 27 * cam.s];   // recuadro que contiene toda la escena
+      // ── zócalo de madera con su placa ──
+      var esq = [[-B, -B], [B, -B], [B, B], [-B, B]];
+      var tapa = esq.map(function (q) { return P(q[0], q[1], bz); });
+      var caras = [];
+      for (var i = 0; i < 4; i++) {
+        var a0 = esq[i], a1 = esq[(i + 1) % 4], m = [(a0[0] + a1[0]) / 2, (a0[1] + a1[1]) / 2];
+        var z = dep([m[0] * 1.01, m[1] * 1.01, bz / 2]) - dep([0, 0, bz / 2]);
+        if (z > 0) caras.push({ z: z, i: i, pts: [P(a0[0], a0[1], 0), P(a1[0], a1[1], 0), P(a1[0], a1[1], bz), P(a0[0], a0[1], bz)], a0: a0, a1: a1 });
+      }
+      caras.sort(function (p, q) { return p.z - q.z; });
+      cola.push({ k: 'base', f: function () {
+        var c0 = P(0, 0, 0), so = ctx.createRadialGradient(c0[0], c0[1], 0, c0[0], c0[1], B * 1.9 * cam.s);
+        so.addColorStop(0, 'rgba(30,26,22,.16)'); so.addColorStop(.6, 'rgba(30,26,22,.06)'); so.addColorStop(1, 'rgba(30,26,22,0)');
+        ctx.save(); ctx.translate(c0[0] + 14, c0[1] + 10); ctx.scale(1, se); ctx.translate(-c0[0], -c0[1]); ctx.fillStyle = so; ctx.beginPath(); ctx.arc(c0[0], c0[1], B * 1.9 * cam.s, 0, 7); ctx.fill(); ctx.restore();
+        caras.forEach(function (c, j) { poli(c.pts, j === caras.length - 1 ? '#C6AB86' : '#B0936D', TINTA + '.85)'); });
+        poli(tapa, '#D9C3A3', TINTA + '.85)');
+        // vetas de la madera y filete interior
+        ctx.strokeStyle = 'rgba(120,90,50,.18)'; ctx.lineWidth = .5;
+        for (var v = -B + .9; v < B; v += .9) { var p0 = P(-B + .3, v, bz), p1 = P(B - .3, v + .25, bz); ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke(); }
+        poli([P(-B + .5, -B + .5, bz), P(B - .5, -B + .5, bz), P(B - .5, B - .5, bz), P(-B + .5, B - .5, bz)], 'rgba(0,0,0,0)', 'rgba(30,26,22,.25)', .5);
+        // placa grabada en la cara más frontal: los datos del modelo
+        var cf = caras[caras.length - 1];
+        if (cf) {
+          var o = P(cf.a0[0], cf.a0[1], bz), e1 = P(cf.a1[0], cf.a1[1], bz), lu = Math.hypot(e1[0] - o[0], e1[1] - o[1]);
+          var ux = (e1[0] - o[0]) / lu, uy = (e1[1] - o[1]) / lu, vz = P(cf.a0[0], cf.a0[1], 0), lv = Math.hypot(vz[0] - o[0], vz[1] - o[1]), vx = (vz[0] - o[0]) / lv, vy = (vz[1] - o[1]) / lv;
+          ctx.save(); ctx.transform(ux, uy, vx, vy, o[0], o[1]);
+          var x0 = lu * .12, w0 = lu * .76;
+          ctx.fillStyle = '#E3CB93'; ctx.strokeStyle = 'rgba(70,48,18,.8)'; ctx.lineWidth = .6; ctx.fillRect(x0, lv * .2, w0, lv * .6); ctx.strokeRect(x0, lv * .2, w0, lv * .6);
+          ctx.fillStyle = '#4A3826'; ctx.textAlign = 'center';
+          var l2 = 'm = 150 g · R = 3 cm · d = 4 cm · 40 vueltas/s';
+          ctx.font = "italic 400 10px Newsreader,serif"; var px = Math.min(lv * .26, 10 * w0 * .88 / ctx.measureText(l2).width);
+          ctx.font = "700 " + (px * .78).toFixed(2) + "px 'Space Mono',monospace"; ctx.fillText('G I R Ó S C O P O', x0 + w0 / 2, lv * .2 + lv * .25);
+          ctx.font = "italic 400 " + px.toFixed(2) + "px Newsreader,serif"; ctx.fillText(l2, x0 + w0 / 2, lv * .2 + lv * .5);
+          ctx.restore();
+        }
+      } });
+      // ── trayectorias punteadas por tramos (cada tramo con su profundidad) ──
+      [[rt, 72, VINO, .45], [G.d, 48, TINTA, .28]].forEach(function (o) {
+        var pts = []; for (var k = 0; k <= o[1]; k++) { var an = 2 * Math.PI * k / o[1]; pts.push([o[0] * Math.cos(an), o[0] * Math.sin(an), h]); }
+        for (var j = 0; j < o[1]; j++) (function (q0, q1, j) {
+          var mm = [(q0[0] + q1[0]) / 2, (q0[1] + q1[1]) / 2, h], z = dep(mm);
+          if (Math.hypot(mm[0] - C[0], mm[1] - C[1]) < G.Rr) z = dep(C) - .01;
+          var p0 = Pp(q0), p1 = Pp(q1);
+          objs.push({ z: z, k: 'orb', f: function (len) {
+            if (j / o[1] > len) return;
+            ctx.setLineDash([2, 4]); ctx.lineDashOffset = -j * 6; ctx.strokeStyle = o[2] + o[3] + ')'; ctx.lineWidth = .8;
+            ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0;
+          } });
+        })(pts[j], pts[j + 1], j);
+      });
+      // ── columna: cilindros de madera clara con casquillo y cojinete de latón ──
+      function cilindro(z0, z1, r, cs, tapaC) {
+        var c0 = P(0, 0, z0), c1 = P(0, 0, z1), rx = r * cam.s, ry = rx * se;
+        var gr = ctx.createLinearGradient(c0[0] - rx, 0, c0[0] + rx, 0); cs.forEach(function (c, i) { gr.addColorStop(i / (cs.length - 1), c); });
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(c1[0] - rx, c1[1]); ctx.lineTo(c0[0] - rx, c0[1]);
+        ctx.ellipse(c0[0], c0[1], rx, ry, 0, Math.PI, 0, true); ctx.lineTo(c1[0] + rx, c1[1]); ctx.ellipse(c1[0], c1[1], rx, ry, 0, 0, Math.PI, false); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = TINTA + '.8)'; ctx.lineWidth = .7; ctx.stroke();
+        if (tapaC) { ctx.fillStyle = tapaC; ctx.beginPath(); ctx.ellipse(c1[0], c1[1], rx, ry, 0, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); }
+      }
+      var MADERA = ['#A8977E', '#D6CBB6', '#F5F0E6', '#FBF8F1', '#E2D8C4', '#B9AA92'], LATON = ['#7A5A2A', '#B48A45', '#E8CF95', '#F6E6BE', '#C39B55', '#80602C'];
+      objs.push({ z: dep(piv), k: 'torre', f: function () {
+        cilindro(bz, bz + .5, 1.15, LATON, '#E6CC92');
+        cilindro(bz + .5, h - .6, .42, MADERA);
+        cilindro(h - .6, h - .15, .66, LATON, '#EAD39E');
+      } });
+      // ── eje en tres tramos ──
+      function tramo(s0, s1) {
+        var A0 = Pp(add(piv, U, s0)), A1 = Pp(add(piv, U, s1));
+        return function () {
+          ctx.lineCap = 'round'; ctx.strokeStyle = '#1E1A16'; ctx.lineWidth = 3.6; ctx.beginPath(); ctx.moveTo(A0[0], A0[1]); ctx.lineTo(A1[0], A1[1]); ctx.stroke();
+          ctx.strokeStyle = '#8E8478'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(A0[0], A0[1] - .4); ctx.lineTo(A1[0], A1[1] - .4); ctx.stroke();
+        };
+      }
+      objs.push({ z: dep(add(piv, U, -.55)), k: 'eje', f: tramo(-1.1, 0) });
+      objs.push({ z: dep(add(piv, U, G.d / 2)), k: 'eje', f: tramo(0, G.d - th / 2) });
+      objs.push({ z: dep(add(piv, U, G.d + th / 2 + .45)), k: 'eje', f: tramo(G.d + th / 2, G.d + 1.3) });
+      var pv = Pp(piv);
+      objs.push({ z: dep(piv) + .002, k: 'torre', f: function () {
+        ctx.fillStyle = '#F5F0E6'; ctx.strokeStyle = TINTA + '.9)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(pv[0], pv[1], 4.6, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#1E1A16'; ctx.beginPath(); ctx.arc(pv[0], pv[1], 1.4, 0, 7); ctx.fill();
+      } });
+      // ── rotor de latón: canto continuo, cara con filetes, rayos que giran y cubo ──
+      var f1 = add(C, U, th / 2), f0 = add(C, U, -th / 2), fr = dep(f1) > dep(f0) ? [f0, f1, 1] : [f1, f0, -1];
+      var atras = fr[0], frente = fr[1], fc = Pp(frente), cara = circulo3(frente, V, Z, G.Rr, 64), dorso = circulo3(atras, V, Z, G.Rr, 64);
+      objs.push({ z: dep(C), k: 'rotor', f: function () {
+        for (var k = 0; k < 64; k++) {
+          var an = 2 * Math.PI * (k + .5) / 64, nz = Math.sin(an), nv = Math.cos(an);
+          var nn = [V[0] * nv, V[1] * nv, nz], fz = dep(add(C, nn, 1)) - dep(C); if (fz < -.02) continue;
+          var luz = cl(.5 + .5 * nz, 0, 1), r = Math.round(150 + 70 * luz), g = Math.round(112 + 60 * luz), b = Math.round(60 + 40 * luz);
+          ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'; ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = .6;
+          ctx.beginPath(); ctx.moveTo(dorso[k][0], dorso[k][1]); ctx.lineTo(dorso[k + 1][0], dorso[k + 1][1]); ctx.lineTo(cara[k + 1][0], cara[k + 1][1]); ctx.lineTo(cara[k][0], cara[k][1]); ctx.closePath(); ctx.fill(); ctx.stroke();
+        }
+        // contorno del canto en tinta
+        ctx.strokeStyle = TINTA + '.75)'; ctx.lineWidth = .7; camino(dorso, true); ctx.stroke();
+        var gg = ctx.createRadialGradient(fc[0] - 10, fc[1] - 12, 2, fc[0], fc[1], G.Rr * cam.s * 1.05);
+        gg.addColorStop(0, '#FBEFD0'); gg.addColorStop(.55, '#E8CF95'); gg.addColorStop(1, '#C39B55');
+        poli(cara, gg, TINTA + '.9)', .9);
+        [.84, .34].forEach(function (q) { ctx.strokeStyle = 'rgba(70,48,18,.5)'; ctx.lineWidth = .6; camino(circulo3(frente, V, Z, G.Rr * q, 48), true); ctx.stroke(); });
+        var fase = GI.giro * 9.3;
+        for (var s = 0; s < 6; s++) for (var j = 0; j < 4; j++) {
+          var an2 = fase + s * Math.PI / 3 - j * .1;
+          var a0 = add(add(frente, V, Math.cos(an2) * G.Rr * .34), Z, Math.sin(an2) * G.Rr * .34), a1 = add(add(frente, V, Math.cos(an2) * G.Rr * .84), Z, Math.sin(an2) * G.Rr * .84);
+          linea(Pp(a0), Pp(a1), 'rgba(70,48,18,', (.5 * (1 - j / 4)).toFixed(2), 1.2);
+        }
+        var hc = Pp(add(frente, U, fr[2] * .15));
+        ctx.fillStyle = '#F5F0E6'; ctx.strokeStyle = TINTA + '.9)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(hc[0], hc[1], 4.2, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#1E1A16'; ctx.beginPath(); ctx.arc(hc[0], hc[1], 1.3, 0, 7); ctx.fill();
+      } });
+      // ── vectores ──
+      function vec(p0, p1, col, al, w, hb) { return function (len) { flecha(p0[0], p0[1], p0[0] + (p1[0] - p0[0]) * len, p0[1] + (p1[1] - p0[1]) * len, col, al, w, hb); }; }
+      var Lb = Pp(add(C, U, th / 2)), Lt = Pp(add(C, U, LL)), dl = Pp(add(add(C, U, LL), V, 1.6));
+      objs.push({ z: dep(add(C, U, (th / 2 + LL) / 2)), k: 'L', f: vec(Lb, Lt, VINO, .95, 2.1, 11) });
+      objs.push({ z: dep(add(C, U, LL)) + .001, k: 'L', f: function (len) { if (len > .6) vec(Lt, dl, ORO, .95, 1.2, 7)((len - .6) / .4); } });
+      var mg0 = Pp(add(C, Z, -G.Rr - .2)), mg1 = Pp(add(C, Z, -G.Rr - 3.2));
+      objs.push({ z: dep(C) + .001, k: 'mg', f: vec(mg0, mg1, TINTA, .85, 1.3, 8) });
+      var tz = Pp(piv), tq = Pp(add(piv, V, 3.6));
+      objs.push({ z: dep(add(piv, V, 1.8)), k: 'tau', f: vec(tz, tq, ORO, .95, 1.6, 9) });
+      var om = Pp(add(piv, Z, 3.4));
+      objs.push({ z: dep(piv) + .003, k: 'omega', f: vec([tz[0], tz[1] - 7], om, AZUL, .85, 1.3, 8) });
+      objs.sort(function (p, q) { return p.z - q.z; }).forEach(function (o) { cola.push(o); });
+      // ── rótulos ──
+      var dm = Pp(add(piv, U, G.d * .45));
+      [['L', 'L', Lt[0] + 8, Lt[1] - 6, { px: 22, it: true, c: '#7A2E22', a: 1, halo: true }],
+       ['L', 'dL', dl[0] + 5, dl[1] + 12, { px: 15, it: true, c: '#8A5A16', a: .95, halo: true }],
+       ['mg', 'mg', mg1[0] + 8, mg1[1] + 2, { px: 18, it: true, c: '#1E1A16', a: .9, halo: true }],
+       ['tau', 'τ', tq[0] + 6, tq[1] + 4, { px: 20, it: true, c: '#8A5A16', a: 1, halo: true }],
+       ['omega', 'Ω', om[0] + 7, om[1] + 6, { px: 19, it: true, c: '#2B3A67', a: 1, halo: true }],
+       ['d', 'd', dm[0], dm[1] - 9, { px: 17, it: true, c: '#1E1A16', a: .9, al: 'center', halo: true }]].forEach(function (r) {
+        cola.push({ k: r[0], f: function (len) { if (len > .7) { var o = {}; for (var q in r[4]) o[q] = r[4][q]; o.a *= (len - .7) / .3; txt(r[1], r[2], r[3], o); } } });
+      });
+      pinta(cola);
+      var pisoPts = [P(-B, -B, bz), P(B, -B, bz), P(B, B, bz), P(B, B, 0), P(-B, -B, 0)];
+      GI.hit = {
+        flechas: [['L', Lb, Lt], ['L', Lt, dl], ['mg', mg0, mg1], ['tau', tz, tq], ['omega', tz, om]],
+        rotulos: [['L', [Lt[0] + 14, Lt[1] - 12]], ['L', [dl[0] + 12, dl[1] + 8]], ['mg', [mg1[0] + 18, mg1[1] - 4]], ['tau', [tq[0] + 12, tq[1]]], ['omega', [om[0] + 13, om[1]]], ['mg', [dm[0], dm[1] - 14]]],
+        rotor: [cara, dorso], piv: pv, torre: (function () { var a = P(0, 0, bz), b = P(0, 0, h), w = .7 * cam.s; return [a[0] - w, b[1], 2 * w, a[1] - b[1]]; })(),
+        base: tapa.concat([]), caras: caras.map(function (c) { return c.pts; }),
+        ancla: { rotor: fc, torre: pv, L: Lt, mg: [(mg0[0] + mg1[0]) / 2, (mg0[1] + mg1[1]) / 2], tau: tq, omega: om }
+      };
+      cam.az = 0;
+    }
     function dentro(p, poli) { var c = false; for (var i = 0, j = poli.length - 1; i < poli.length; j = i++) { var a = poli[i], b = poli[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
     function aSegmento(p, a, b) { var dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy, s = l ? cl(((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l, 0, 1) : 0; return Math.hypot(p[0] - a[0] - s * dx, p[1] - a[1] - s * dy); }
     function pieza(p) {   // qué pieza está bajo el puntero
@@ -463,7 +628,7 @@
       if (Math.hypot(p[0] - z.piv[0], p[1] - z.piv[1]) < 10) return 'torre';
       if (dentro(p, z.rotor[0]) || dentro(p, z.rotor[1])) return 'rotor';
       var r = z.torre; if (p[0] >= r[0] - 3 && p[0] <= r[0] + r[2] + 3 && p[1] >= r[1] && p[1] <= r[1] + r[3]) return 'torre';
-      if (dentro(p, z.base)) return 'torre';
+      if (dentro(p, z.base) || (z.caras && z.caras.some(function (c) { return dentro(p, c); }))) return 'torre';
       return null;
     }
 
@@ -592,6 +757,7 @@
       var guia = el('path', { 'class': 'fz-guia', pathLength: 1 }, g);
       var tx = o.tx, ty = o.ty, x0 = lado > 0 ? tx : tx - ancho, alto = 48 + (o.d.length - 1) * 17.5;
       var y0 = o.pie ? ty - alto - 18 : ty;
+      if (o.caja) el('rect', { 'class': 'mo-caja', x: f(x0 - 14), y: f(ty - 24), width: f(ancho + 28), height: f(alto + 34), rx: 2 }, g);
       el('line', { 'class': 'fz-regla', x1: f(x0), y1: f(ty), x2: f(x0 + ancho), y2: f(ty), pathLength: 1 }, g);
       var t = el('text', { 'class': 'fz-k', x: f(x0), y: f(o.pie ? y0 - 6 : ty - 9) }, g); t.textContent = o.k;
       var t2 = el('text', { 'class': 'fz-tit', x: f(x0), y: f(y0 + 25) }, g); t2.textContent = o.tit;
@@ -601,7 +767,7 @@
       n.ubica = function (ax, ay) {
         gp.setAttribute('transform', 'translate(' + f(ax) + ' ' + f(ay) + ')');
         var ex = lado > 0 ? x0 - 10 : x0 + ancho + 10;
-        if (o.recta) { var xr = cl(ax, x0, x0 + ancho); guia.setAttribute('d', 'M' + f(ax) + ' ' + f(ay) + ' L' + f(ax) + ' ' + f(ty) + (xr !== ax ? ' L' + f(xr) + ' ' + f(ty) : '')); return; }
+        if (o.recta) { var xr = cl(ax, x0, x0 + ancho); guia.setAttribute('d', 'M' + f(ax) + ' ' + f(ay) + ' L' + f(ax) + ' ' + f(ty) + (xr !== ax ? ' L' + f(o.caja ? (ax < x0 ? x0 - 14 : x0 + ancho + 14) : xr) + ' ' + f(ty) : '')); return; }
         guia.setAttribute('d', 'M' + f(ax) + ' ' + f(ay) + ' L' + f(ex) + ' ' + f(ty) + ' L' + f(lado > 0 ? x0 : x0 + ancho) + ' ' + f(ty));
       };
       n.pon = function (v) { if (v !== n.ver) { n.ver = v; g.classList.toggle('ver', v); } };
@@ -644,7 +810,7 @@
     var n9 = en(DER, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
       d: ['Rotor de 150 g, R = 3 cm, d = 4 cm y', '40 vueltas/s: I ω ≈ 0,017 kg·m²/s y', 'τ ≈ 0,059 N·m, así que Ω ≈ 3,5 rad/s,', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
     // solo-giróscopo: una nota por pieza, en el mismo lugar arriba; aparece solo al señalar la pieza
-    var ARRG = { tx: 1064, ty: 226, ancho: 252, lado: -1, pie: true, recta: true }, NG = {};
+    var ARRG = { tx: 1118, ty: 112, ancho: 272, lado: 1, recta: true, caja: true }, NG = {};
     if (SOLO) {
       NG.rotor = en(ARRG, { k: 'Rotor', tit: 'L = I ω',
         d: ['Disco de 150 g y radio 3 cm: I = ½ m R²', '≈ 6,75 × 10⁻⁵ kg·m². A 40 vueltas/s,', 'ω ≈ 251 rad/s y L = I ω ≈ 0,017 kg·m²/s,', 'dirigido a lo largo del eje.'] });
@@ -695,7 +861,7 @@
 
     function salta(t) {
       T = t; notas.forEach(function (n) { n.pon(false); }); rastro = [[], []];
-      if (SOLO) { GI.arm = quieto ? 9 : 0; GI.psi = 2.4; GI.vel = 0; GI.foco = null; GI.giro = 0; PARTES.forEach(function (k) { GI.dim[k] = 1; }); }
+      if (SOLO) { GI.arm = quieto ? 9 : 0; GI.psi = 2.4; GI.vel = 0; GI.foco = null; GI.focoVis = null; GI.lav = 0; GI.giro = 0; PARTES.forEach(function (k) { GI.dim[k] = 1; }); }
     }
     // señalar una pieza del giróscopo: el puntero se lleva a coordenadas del viewBox y se busca la pieza
     if (SOLO) {
@@ -717,7 +883,7 @@
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
       var fundido = SOLO ? 1 : t < INI + .4 ? Math.max(0, t - INI) / .4 : t > FIN ? 1 - suave((t - FIN) / (DUR - FIN - .3)) : 1;
       // I y II comparten el punto O; la cámara se desliza de uno al otro
-      if (SOLO) { psiAct = dibujaIV(t, 1); cam.el = Math.PI / 2; cam.s = 1; cam.x = OX; cam.y = OY; if (GI.hit) for (var kn in NG) NG[kn].ubica(GI.hit.ancla[kn][0], GI.hit.ancla[kn][1]); return; }
+      if (SOLO) { dibujaGiro(); cam.el = Math.PI / 2; cam.s = 1; cam.x = OX; cam.y = OY; if (GI.hit) for (var kn in NG) NG[kn].ubica(GI.hit.ancla[kn][0], GI.hit.ancla[kn][1]); return; }
       var a1 = ventana(t, 0, T2 + .6, .8) * fundido;
       dibujaI(t, a1 * (1 - suave((t - T2 + .6) / .8)) + 0);
       cam.x = OX; cam.y = OY;
@@ -767,7 +933,7 @@
           GI.arm += dt; GI.giro += quieto ? 0 : dt;
           var vObj = quieto ? 0 : GI.arm > .55 ? 1 : 0;   // la precesión arranca al terminar el ingreso y no se detiene al señalar
           GI.vel += (vObj - GI.vel) * Math.min(1, dt * 2.5); GI.psi += G.Om * LENTA * GI.vel * dt;
-          PARTES.forEach(function (k) { var o = !GI.foco || FOCO[GI.foco].indexOf(k) >= 0 ? 1 : .2; GI.dim[k] += (o - GI.dim[k]) * Math.min(1, dt * 9); });
+          if (GI.foco) GI.focoVis = GI.foco; GI.lav += ((GI.foco ? 1 : 0) - GI.lav) * Math.min(1, dt * 12); if (!GI.foco && GI.lav < .01) GI.focoVis = null;
           for (var kn in NG) NG[kn].pon(GI.foco === kn);
           dibuja(T); lecturas(T); ecuacion(T);
           return;

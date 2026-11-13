@@ -640,7 +640,7 @@
       objs.push({ z: dep(add(C, U, (th / 2 + LL) / 2)), k: 'L', f: vec(Lb, Lt, VINO, .95, 2.1, 11) });
       objs.push({ z: dep(add(C, U, LL)) + .001, k: 'L', f: function (len) { if (len > .6) vec(Lt, dl, ORO, .95, 1.2, 7)((len - .6) / .4); } });
       var mg0 = Pp(C), mg1 = Pp(add(C, Z, -G.Rr - 2.6));   // nace en el centro de masa del rotor
-      objs.push({ z: dep(C) + .001, k: 'mg', f: vec(mg0, mg1, TINTA, .85, 1.3, 8) });
+      objs.push({ z: dep(C) - .001, k: 'mg', f: vec(mg0, mg1, TINTA, .85, 1.3, 8) });
       var tz = Pp(piv), tq = Pp(add(piv, V, 3.6));
       // τ nace en el pivote y es perpendicular al eje: va delante o detrás según el lado de V que mira a la cámara,
       // nunca por comparar puntos medios. Su raíz queda siempre bajo la bola, así el cambio de lado no salta.

@@ -352,12 +352,14 @@ var menu = function () {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
-    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, fijo = false, inicio = performance.now(), armT = null;
+    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, fijo = false, medido = false, inicio = performance.now(), armT = null;
     // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
       if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
+      // hasta medir la GPU no se pinta nada: con una GPU lenta los cuadros se encolarían y la medición los esperaría
+      if (!medido && performance.now() - inicio < 4000) return;
       // la resolución casi no baja: si la GPU va lenta se ajusta poco y se salta un cuadro
       if (fijo) {   // GPU sin aceleración: un cuadro quieto, ya dibujado, que solo se repinta si cambia el foco de las notas
         var firma = dimMeta.join() + hkMeta + lienzo.getBoundingClientRect().width;
@@ -375,19 +377,26 @@ var menu = function () {
     // no cabe holgado en un cuadro, se pinta uno de cada dos (30 fps: el disco gira despacio y se ve igual de suave);
     // solo en una GPU muy lenta se baja además la resolución. Se decide una vez, antes de verse: nunca cambia a la vista.
     fig.bnMedir = function () {
+      medido = true;
       if (!listo) return;
       var r = lienzo.getBoundingClientRect(); if (!r.width) return;
-      var px = new Uint8Array(4), ms = [], gasto = 0;
-      // leer un píxel obliga a esperar a que la GPU termine el cuadro; el primero (compilación) no cuenta
-      pintar(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
-      for (var k = 0; k < 4 && gasto < 160; k++) { var a = performance.now(); pintar(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); var d = performance.now() - a; ms.push(d); gasto += d; }
-      ms.sort(function (x, y) { return x - y; });
-      var m = ms[ms.length >> 1];
+      // se mide con el lienzo reducido (1/8 y 1/4 de lado): así, aunque la GPU sea lentísima o no haya aceleración,
+      // la medición dura milésimas y no congela el navegador; el costo por píxel se extrapola al tamaño real
+      var px = new Uint8Array(4), q0 = calidad;
+      function cuadro(q) { calidad = q; pintar(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); }
+      function mide(q) { var a = performance.now(); cuadro(q); var d1 = performance.now() - a; a = performance.now(); cuadro(q); return [Math.min(d1, performance.now() - a), lienzo.width * lienzo.height]; }
+      cuadro(.125);   // el primero compila el sombreador: no cuenta
+      var A = mide(.125), B = mide(.25);
+      calidad = q0;
+      var W = Math.round(r.width * Math.min(window.devicePixelRatio || 1, 2)), H = Math.round(r.height * Math.min(window.devicePixelRatio || 1, 2));
+      var porPx = Math.max(0, (B[0] - A[0]) / Math.max(1, B[1] - A[1])), m = porPx * W * H;
+      // si el cuadro chico ya es lento (sin aceleración), la extrapolación no hace falta
+      if (B[0] > 40) m = Math.max(m, B[0] * 16);
       if (m > 10) salto = 2;
       if (m > 20) calidad = Math.max(.6, Math.sqrt(20 / m));
       // sin aceleración por hardware (cientos de ms por cuadro) animarlo congelaría la página entera
       if (m > 90) { calidad = .75; fijo = 'pendiente'; }
-      fig.bnMedida = { ms: +m.toFixed(1), salto: salto, calidad: +calidad.toFixed(2) };
+      fig.bnMedida = { ms: +m.toFixed(1), chico: +A[0].toFixed(1), medio: +B[0].toFixed(1), salto: salto, calidad: +calidad.toFixed(2) };
     };
     // la entrada de la escena (la mancha que se extiende, el disco que aparece) empieza cuando la hoja se retira
     if (window.fxRevelado) window.fxRevelado.then(function () { inicio = performance.now(); });

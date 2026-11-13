@@ -1,0 +1,1025 @@
+{
+ "version": 22,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz27-p27-1",
+   "title": "¿Moverse en un campo B sin fuerza?",
+   "text": "",
+   "key": "F = qv × B se anula cuando v es paralela (o antiparalela) a B.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, pregunta de análisis P27.1",
+   "notes": "",
+   "hints": [
+    "¿Cuándo vale cero el producto cruz?"
+   ],
+   "sol": [
+    "F = |q|vB sen φ.",
+    "Si la partícula se mueve a lo largo de las líneas de campo (φ = 0° o 180°), F = 0 y sigue en línea recta."
+   ],
+   "ans": [
+    "Sí, moviéndose paralela o antiparalela a B"
+   ],
+   "img": "img/sz27-p27-1.png",
+   "num": "P27.1"
+  },
+  {
+   "id": "sz27-p27-6",
+   "title": "Una fuerza que no hace trabajo pero sí importa",
+   "text": "",
+   "key": "F ⊥ v: no cambia la rapidez, pero sí la dirección (fuerza centrípeta).",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, pregunta de análisis P27.6",
+   "notes": "",
+   "hints": [
+    "¿Qué componente de la aceleración produce una fuerza perpendicular a v?"
+   ],
+   "sol": [
+    "W = F·d = 0 porque F ⊥ v en todo instante: la energía cinética no cambia.",
+    "Pero la fuerza curva la trayectoria: produce aceleración centrípeta y movimiento circular o helicoidal.",
+    "Otros ejemplos: la tensión de una cuerda en un movimiento circular, la normal sobre un objeto que se mueve sobre una superficie, la gravedad en una órbita circular."
+   ],
+   "ans": [
+    "Cambia la dirección de v sin cambiar su rapidez",
+    "Ej.: tensión en movimiento circular, normal, gravedad en órbita circular"
+   ],
+   "img": "img/sz27-p27-6.png",
+   "num": "P27.6"
+  },
+  {
+   "id": "sz27-p27-11",
+   "title": "Trayectorias en un campo que entra en la página",
+   "text": "",
+   "key": "R = mv/|q|B; el signo de q fija el sentido de giro.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, pregunta de análisis P27.11",
+   "notes": "",
+   "hints": [
+    "Con B hacia adentro, usa F = qv × B para ver hacia dónde curva una carga positiva."
+   ],
+   "sol": [
+    "a) Círculo de radio R = mv/qB en sentido antihorario.",
+    "b) Círculo del mismo sentido con radio 2R.",
+    "c) Círculo de radio R en sentido horario.",
+    "d) Línea recta (sin fuerza)."
+   ],
+   "ans": [
+    "a) círculo antihorario, R",
+    "b) círculo antihorario, 2R",
+    "c) círculo horario, R",
+    "d) línea recta"
+   ],
+   "img": "img/sz27-p27-11.png",
+   "num": "P27.11"
+  },
+  {
+   "id": "sz27-27-1",
+   "title": "Fuerza magnética con vectores",
+   "text": "",
+   "key": "F = qv × B componente a componente.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.1",
+   "notes": "",
+   "hints": [
+    "î × î = 0, ĵ × î = −k̂.",
+    "î × k̂ = −ĵ, ĵ × k̂ = î."
+   ],
+   "sol": [
+    "a) F = q(v_y ĵ × B î) = −qv_yB k̂ = −6.68×10⁻⁴ N k̂.",
+    "b) F = q(v_x B î×k̂ + v_y B ĵ×k̂) = (6.68×10⁻⁴ î + 7.27×10⁻⁴ ĵ) N."
+   ],
+   "ans": [
+    "a) (−6.68×10⁻⁴ N) k̂",
+    "b) (6.68 î + 7.27 ĵ)×10⁻⁴ N"
+   ],
+   "img": "img/sz27-27-1.png",
+   "num": "27.1"
+  },
+  {
+   "id": "sz27-27-2",
+   "title": "Campo mínimo que sostiene una carga",
+   "text": "",
+   "key": "qvB = mg con B ⊥ v para que la fuerza sea máxima.",
+   "topics": [
+    "mag",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.2",
+   "notes": "",
+   "hints": [
+    "La carga es negativa: la regla de la mano derecha da la dirección opuesta."
+   ],
+   "sol": [
+    "B = mg/(|q|v) = (1.95×10⁻⁴)(9.80)/[(2.50×10⁻⁸)(4.00×10⁴)] = 1.91 T.",
+    "Se necesita F hacia arriba; para q < 0, v × B debe apuntar abajo: norte × este = abajo ⇒ B hacia el este."
+   ],
+   "ans": [
+    "1.91 T hacia el este"
+   ],
+   "img": "img/sz27-27-2.png",
+   "num": "27.2"
+  },
+  {
+   "id": "sz27-27-3",
+   "title": "Signo de la carga por la desviación",
+   "text": "",
+   "key": "v × B con v al norte y B hacia arriba apunta al este.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.3",
+   "notes": "",
+   "hints": [
+    "norte × arriba = ?"
+   ],
+   "sol": [
+    "a) v × B = norte × arriba = este. La partícula se desvía al este, así que q > 0.",
+    "b) F = qvB = (8.50×10⁻⁶)(4750)(1.25) = 5.05×10⁻² N."
+   ],
+   "ans": [
+    "a) positiva",
+    "b) 0.0505 N"
+   ],
+   "img": "img/sz27-27-3.png",
+   "num": "27.3"
+  },
+  {
+   "id": "sz27-27-6",
+   "title": "Aceleración máxima y ángulo",
+   "text": "",
+   "key": "a = |q|vB sen φ/m: máxima con φ = 90°, cero con φ = 0°.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.6",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "a) a_máx = evB/m = (1.60×10⁻¹⁹)(1.40×10⁶)(7.40×10⁻²)/(9.11×10⁻³¹) = 1.82×10¹⁶ m/s²; a_mín = 0.",
+    "b) sen φ = 1/4 ⇒ φ = 14.5° (o 165.5°)."
+   ],
+   "ans": [
+    "a) 1.82×10¹⁶ m/s² y 0",
+    "b) 14.5°"
+   ],
+   "img": "img/sz27-27-6.png",
+   "num": "27.6"
+  },
+  {
+   "id": "sz27-27-7",
+   "title": "Deducir B a partir de la fuerza",
+   "text": "",
+   "key": "Con v a lo largo de −y, F solo revela B_x y B_z; B_y queda libre.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.7",
+   "notes": "Errata del libro: la fuerza es 7.60×10⁻³ N î, no 10³.",
+   "hints": [
+    "Desarrolla (−vĵ) × (B_x î + B_y ĵ + B_z k̂).",
+    "La fuerza correcta es 7.60×10⁻³ N (errata del libro: dice 10³)."
+   ],
+   "sol": [
+    "v × B = −v(B_z î − B_x k̂) ⇒ F_x = −qvB_z, F_z = qvB_x.",
+    "a) B_z = −F_x/(qv) = −0.256 T; B_x = F_z/(qv) = −0.175 T.",
+    "b) B_y no aparece en la fuerza: no se puede determinar.",
+    "c) B·F = B_xF_x + B_zF_z = 0 ⇒ el ángulo es 90° (F siempre ⊥ B)."
+   ],
+   "ans": [
+    "a) B_x = −0.175 T, B_z = −0.256 T",
+    "b) B_y indeterminada",
+    "c) B·F = 0, 90°"
+   ],
+   "img": "img/sz27-27-7.png",
+   "num": "27.7"
+  },
+  {
+   "id": "sz27-27-9",
+   "title": "Dos partículas fijan el campo",
+   "text": "",
+   "key": "Cada medición da una componente de B.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.9",
+   "notes": "",
+   "hints": [
+    "Protón por +x con F por +y: î × B da −B_z ĵ.",
+    "Electrón por −z con F por +y: (−e)(−k̂ × B) da +eB_x ĵ."
+   ],
+   "sol": [
+    "B_z = −F/(ev) = −2.25×10⁻¹⁶/(1.60×10⁻¹⁹·1500) = −0.936 T.",
+    "B_x = F/(ev) = 8.50×10⁻¹⁶/(1.60×10⁻¹⁹·4750) = 1.12 T.",
+    "a) |B| = 1.46 T, en el plano xz a 40.0° de +x hacia −z.",
+    "b) Electrón por −y a 3.20 km/s: F = (−4.80 î − 5.73 k̂)×10⁻¹⁶ N, |F| = 7.47×10⁻¹⁶ N."
+   ],
+   "ans": [
+    "a) B = (1.12 î − 0.936 k̂) T, 1.46 T",
+    "b) 7.47×10⁻¹⁶ N"
+   ],
+   "img": "img/sz27-27-9.png",
+   "num": "27.9"
+  },
+  {
+   "id": "sz27-27-12",
+   "title": "Flujo con campo inclinado",
+   "text": "",
+   "key": "Φ = BA cos φ con φ medido desde la normal; aquí la normal es vertical.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.12",
+   "notes": "",
+   "hints": [
+    "B a 30° de la horizontal forma 60° con la normal."
+   ],
+   "sol": [
+    "Φ = BA sen 30° ⇒ B = 3.10×10⁻⁴/[(8.96×10⁻⁴ m²)(0.500)] = 0.692 T."
+   ],
+   "ans": [
+    "0.692 T"
+   ],
+   "img": "img/sz27-27-12.png",
+   "num": "27.12"
+  },
+  {
+   "id": "sz27-27-13",
+   "title": "Flujo por la botella",
+   "text": "",
+   "key": "El flujo por una superficie cerrada es cero: el que entra por la boca sale por el plástico.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.13",
+   "notes": "",
+   "hints": [
+    "Botella + tapa imaginaria = superficie cerrada."
+   ],
+   "sol": [
+    "Por la boca: Φ = B cos 25° · π(0.0125)² = 7.79×10⁻⁴ Wb.",
+    "Φ_total = 0 ⇒ por el plástico pasa el mismo flujo con signo opuesto: |Φ| = 7.8×10⁻⁴ Wb."
+   ],
+   "ans": [
+    "7.8×10⁻⁴ Wb (opuesto al de la boca)"
+   ],
+   "img": "img/sz27-27-13.png",
+   "num": "27.13"
+  },
+  {
+   "id": "sz27-27-42",
+   "title": "Torca sobre una bobina rectangular",
+   "text": "",
+   "key": "En un campo uniforme F_neta = 0; τ = IAB sen φ con φ entre μ y B.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.42",
+   "notes": "",
+   "hints": [
+    "Con el plano ⊥ B, μ ∥ B."
+   ],
+   "sol": [
+    "a) F = 0 y τ = 0 (μ paralelo a B).",
+    "b) Girada 30°: F = 0 y τ = IAB sen 30° = (1.95)(0.0770)(1.50)(0.5) = 0.113 N·m."
+   ],
+   "ans": [
+    "a) 0 y 0",
+    "b) F = 0, τ = 0.113 N·m"
+   ],
+   "img": "img/sz27-27-42.png",
+   "num": "27.42"
+  },
+  {
+   "id": "sz27-27-44",
+   "title": "Bobinas en equilibrio estable e inestable",
+   "text": "",
+   "key": "U = −μ·B: mínima con μ ∥ B (estable), máxima con μ antiparalelo (inestable).",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.44",
+   "notes": "",
+   "hints": [
+    "Usa la mano derecha con el sentido de la corriente para hallar μ."
+   ],
+   "sol": [
+    "a) A: corriente horaria vista desde +z ⇒ μ hacia −z. B: antihoraria ⇒ μ hacia +z.",
+    "b) En ambas μ es paralelo o antiparalelo a B, así que τ = μ × B = 0.",
+    "c) U_A = +NIAB; U_B = −NIAB.",
+    "d) A es inestable (máximo de U); B es estable (mínimo)."
+   ],
+   "ans": [
+    "a) A: −z, B: +z",
+    "c) +NIAB y −NIAB",
+    "d) A inestable, B estable"
+   ],
+   "img": "img/sz27-27-44.png",
+   "num": "27.44"
+  },
+  {
+   "id": "sz27-27-46",
+   "title": "Cambio de energía al girar 180°",
+   "text": "",
+   "key": "U = −μB cos φ: de antiparalelo (+μB) a paralelo (−μB).",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.46",
+   "notes": "La última línea viene cortada en la captura: \"...de modo que su momento magnético sea paralelo al campo?\"",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "ΔU = −μB − (+μB) = −2μB = −2(1.45)(0.835) = −2.42 J."
+   ],
+   "ans": [
+    "ΔU = −2.42 J"
+   ],
+   "img": "img/sz27-27-46.png",
+   "num": "27.46"
+  },
+  {
+   "id": "sz27-27-48",
+   "title": "Motor de cd en serie",
+   "text": "",
+   "key": "V = ℰ + Ir; la potencia mecánica es ℰI.",
+   "topics": [
+    "mag",
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.48",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "a) I = (120 − 105)/3.2 = 4.69 A.",
+    "b) P = VI = 563 W.",
+    "c) P_mec = ℰI = 492 W."
+   ],
+   "ans": [
+    "a) 4.69 A",
+    "b) 563 W",
+    "c) 492 W"
+   ],
+   "img": "img/sz27-27-48.png",
+   "num": "27.48"
+  },
+  {
+   "id": "sz27-27-49",
+   "title": "Efecto Hall en plata",
+   "text": "",
+   "key": "v_d = I/(nqA); en equilibrio eE = ev_dB y ℰ = Ez₁.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.49",
+   "notes": "",
+   "hints": [
+    "A = z₁y₁."
+   ],
+   "sol": [
+    "a) v_d = 120/(5.85×10²⁸ · 1.60×10⁻¹⁹ · 11.8×10⁻³ · 0.23×10⁻³) = 4.72×10⁻³ m/s.",
+    "b) E = v_dB = 4.48×10⁻³ V/m, dirigido hacia +z (los electrones se acumulan en la cara +z).",
+    "c) ℰ = Ez₁ = 5.29×10⁻⁵ V."
+   ],
+   "ans": [
+    "a) 4.72 mm/s",
+    "b) 4.48×10⁻³ V/m, +z",
+    "c) 52.9 μV"
+   ],
+   "img": "img/sz27-27-49.png",
+   "num": "27.49"
+  },
+  {
+   "id": "sz27-27-50",
+   "title": "Densidad de portadores por Hall",
+   "text": "",
+   "key": "ℰ_Hall = IB/(nqy₁) ⇒ n = IB/(qy₁ℰ).",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.50",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "n = (78.0)(2.29)/[(1.60×10⁻¹⁹)(0.23×10⁻³)(131×10⁻⁶)] = 3.7×10²⁸ m⁻³."
+   ],
+   "ans": [
+    "3.7×10²⁸ m⁻³"
+   ],
+   "img": "img/sz27-27-50.png",
+   "num": "27.50"
+  },
+  {
+   "id": "sz27-27-54",
+   "title": "Momento magnético del átomo de Bohr",
+   "text": "",
+   "key": "T = 2πr/v, I = e/T y μ = IA.",
+   "topics": [
+    "mag",
+    "ato"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.54",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "a) T = 2π(5.3×10⁻¹¹)/(2.2×10⁶) = 1.51×10⁻¹⁶ s.",
+    "b) I = e/T = 1.06 mA.",
+    "c) μ = Iπr² = 9.3×10⁻²⁴ A·m² (≈ magnetón de Bohr)."
+   ],
+   "ans": [
+    "a) 1.5×10⁻¹⁶ s",
+    "b) 1.06 mA",
+    "c) 9.3×10⁻²⁴ A·m²"
+   ],
+   "img": "img/sz27-27-54.png",
+   "num": "27.54"
+  },
+  {
+   "id": "sz27-27-55",
+   "title": "Moneda con gravedad, campo eléctrico y B",
+   "text": "",
+   "key": "Para ir recta, qvB debe compensar mg + qE (ambas hacia abajo).",
+   "topics": [
+    "mag",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.55",
+   "notes": "",
+   "hints": [
+    "E hacia abajo y q > 0: la fuerza eléctrica también es hacia abajo."
+   ],
+   "sol": [
+    "mg + qE = 0.0417 + 0.0688 = 0.110 N hacia abajo.",
+    "qvB = 0.110 ⇒ B = 0.110/[(2.50×10⁻³)(12.8)] = 3.45 T.",
+    "Dirección: horizontal y perpendicular a v, hacia la izquierda del tirador (v × B hacia arriba)."
+   ],
+   "ans": [
+    "3.45 T, horizontal, ⊥ a v, hacia la izquierda"
+   ],
+   "img": "img/sz27-27-55.png",
+   "num": "27.55"
+  },
+  {
+   "id": "sz27-27-56",
+   "title": "Ciclotrón: energía máxima y periodo",
+   "text": "",
+   "key": "R = mv/qB ⇒ K = (qBR)²/2m; el periodo T = 2πm/qB no depende de v.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.56",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "a) K = (eBR)²/2m_p = 8.87×10⁻¹³ J = 5.53 MeV.",
+    "b) T = 2πm/(eB) = 7.72×10⁻⁸ s.",
+    "c) K ∝ B² ⇒ B = √2 · 0.85 = 1.20 T.",
+    "d) Alfa: K = (2e)²B²R²/(2·4m_p) = 5.56 MeV, prácticamente igual."
+   ],
+   "ans": [
+    "a) 5.53 MeV",
+    "b) 7.72×10⁻⁸ s",
+    "c) 1.20 T",
+    "d) 5.56 MeV (≈ igual)"
+   ],
+   "img": "img/sz27-27-56.png",
+   "num": "27.56"
+  },
+  {
+   "id": "sz27-27-57",
+   "title": "Hélice en un campo uniforme",
+   "text": "",
+   "key": "La componente de v paralela a B no cambia; la perpendicular gira con f = |q|B/2πm.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.57",
+   "notes": "",
+   "hints": [
+    "|F| = |q||v × B|.",
+    "Solo v_x y v_y generan fuerza."
+   ],
+   "sol": [
+    "a) |v × B| = (0.120)(1.05×10⁶)(5) ⇒ q = −2.45/6.30×10⁵ = −3.89×10⁻⁶ C.",
+    "b) a = qv × B/m = (7.60×10¹⁴ î + 5.70×10¹⁴ ĵ) m/s².",
+    "c) v_z constante + giro en xy = hélice. R = mv_⊥/(|q|B) = 2.90 cm.",
+    "d) f = |q|B/(2πm) = 2.88×10⁷ Hz.",
+    "e) En t = 2T: (R, 0, v_z·2T) = (2.90 cm, 0, 0.875 m)."
+   ],
+   "ans": [
+    "a) −3.89×10⁻⁶ C",
+    "c) R = 2.90 cm",
+    "d) 2.88×10⁷ Hz",
+    "e) (0.029 m, 0, 0.875 m)"
+   ],
+   "img": "img/sz27-27-57.png",
+   "num": "27.57"
+  },
+  {
+   "id": "sz27-27-59",
+   "title": "Selector de velocidad y separación de isótopos",
+   "text": "",
+   "key": "Selector: v = E/B. Luego R = mv/qB, y el detector mide 2R.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.59",
+   "notes": "La figura 27.24 (selector + espectrómetro) no venía en las capturas.",
+   "hints": [
+    "v = 1.88×10⁴/0.682."
+   ],
+   "sol": [
+    "v = 2.76×10⁴ m/s.",
+    "2R = 2mv/(eB): 6.87 cm (⁸²Kr), 7.04 cm (⁸⁴Kr), 7.20 cm (⁸⁶Kr).",
+    "Separación entre líneas vecinas: 2Δm·v/(eB) = 1.68 mm."
+   ],
+   "ans": [
+    "1.68 mm entre líneas"
+   ],
+   "img": "img/sz27-27-59.png",
+   "num": "27.59"
+  },
+  {
+   "id": "sz27-27-60",
+   "title": "Espectrógrafo de masas",
+   "text": "",
+   "key": "qV = ½mv² y R = mv/qB ⇒ m = qB²R²/2V.",
+   "topics": [
+    "mag",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.60",
+   "notes": "",
+   "hints": [
+    "Elimina v entre las dos ecuaciones."
+   ],
+   "sol": [
+    "a) m = qB²R²/(2V).",
+    "b) V = qB²R²/(2m) = (1.60×10⁻¹⁹)(0.150)²(0.500)²/(2·12·1.66×10⁻²⁷) = 2.26×10⁴ V.",
+    "c) Mismos v y B ⇒ R ∝ m: R(¹⁴C) = 58.3 cm. Separación en el detector 2ΔR = 16.7 cm: sí se distinguen."
+   ],
+   "ans": [
+    "a) m = qB²R²/2V",
+    "b) 22.6 kV",
+    "c) 16.7 cm"
+   ],
+   "img": "img/sz27-27-60.png",
+   "num": "27.60"
+  },
+  {
+   "id": "sz27-27-61",
+   "title": "Alambre en reposo sobre un plano inclinado",
+   "text": "",
+   "key": "La fuerza magnética es horizontal (ILB); su componente a lo largo del plano equilibra Mg sen θ.",
+   "topics": [
+    "mag",
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.61",
+   "notes": "",
+   "hints": [
+    "Con B vertical, F = IL × B es horizontal.",
+    "Iguala componentes paralelas al plano: ILB cos θ = Mg sen θ."
+   ],
+   "sol": [
+    "I = Mg tan θ/(LB).",
+    "Sentido: tal que IL × B apunte horizontalmente hacia el plano (hacia la parte alta), sosteniendo el alambre."
+   ],
+   "ans": [
+    "I = Mg tan θ/(LB)"
+   ],
+   "img": "img/sz27-27-61.png",
+   "num": "27.61"
+  },
+  {
+   "id": "sz27-27-62",
+   "title": "Barra que salta al cerrar el interruptor",
+   "text": "",
+   "key": "Resuelve el circuito, halla la corriente por la barra y usa F = ILB.",
+   "topics": [
+    "mag",
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.62",
+   "notes": "",
+   "hints": [
+    "10 Ω ∥ 10 Ω = 5 Ω en serie con 25 Ω."
+   ],
+   "sol": [
+    "I = 120/30 = 4.00 A; por la barra pasa la mitad, 2.00 A.",
+    "F = ILB = (2.00)(0.850)(1.60) = 2.72 N.",
+    "a = F/m = 2.72/(2.60/9.80) = 10.3 m/s²."
+   ],
+   "ans": [
+    "10.3 m/s²"
+   ],
+   "img": "img/sz27-27-62.png",
+   "num": "27.62"
+  },
+  {
+   "id": "sz27-27-64",
+   "title": "Torca sobre un anillo cargado que gira",
+   "text": "",
+   "key": "La carga que gira es una corriente I = qω/2π; μ = IπR².",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.64",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "I = q/T = qω/(2π).",
+    "μ = IπR² = qωR²/2.",
+    "μ ⊥ B ⇒ τ = μB = qωR²B/2."
+   ],
+   "ans": [
+    "τ = qωR²B/2"
+   ],
+   "img": "img/sz27-27-64.png",
+   "num": "27.64"
+  },
+  {
+   "id": "sz27-27-65",
+   "title": "Cañón de rieles",
+   "text": "",
+   "key": "F = ILB constante; trabajo = energía cinética.",
+   "topics": [
+    "mag",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.65",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "a) F = ILB, a lo largo de los rieles (alejándose de la fuente).",
+    "b) ILBd = ½mv² ⇒ d = mv²/(2ILB).",
+    "c) d = (25)(11 200)²/[2(2.0×10³)(0.50)(0.80)] = 1.96×10⁶ m ≈ 2000 km."
+   ],
+   "ans": [
+    "a) ILB",
+    "b) mv²/2ILB",
+    "c) ≈ 2.0×10⁶ m"
+   ],
+   "img": "img/sz27-27-65.png",
+   "num": "27.65"
+  },
+  {
+   "id": "sz27-27-67",
+   "title": "Alambre doblado en un campo",
+   "text": "",
+   "key": "En un campo uniforme, la fuerza sobre un alambre curvo es la del segmento recto que une sus extremos.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.67",
+   "notes": "",
+   "hints": [
+    "Entre la entrada y la salida del campo hay 1.00 m horizontal y 0.400 m vertical."
+   ],
+   "sol": [
+    "L_ef = √(1.00² + 0.400²) = 1.08 m, y B ⊥ L.",
+    "F = ILB = (6.50)(1.08)(0.280) = 1.96 N.",
+    "Dirección: perpendicular a L_ef en el plano de la figura, apuntando hacia arriba y a la izquierda (21.8° de +y hacia −x)."
+   ],
+   "ans": [
+    "1.96 N"
+   ],
+   "img": "img/sz27-27-67.png",
+   "num": "27.67"
+  },
+  {
+   "id": "sz27-27-70",
+   "title": "Torca sobre una barra por integración",
+   "text": "",
+   "key": "dτ = x dF = IBx dx; integrando, τ = IBL²/2 = F·(L/2).",
+   "topics": [
+    "mag"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.70",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "a) dF = IB dx ⇒ dτ = IBx dx.",
+    "b) τ = ∫₀ᴸ IBx dx = IBL²/2.",
+    "c) La fuerza total ILB aplicada en L/2 da la misma torca: (ILB)(L/2)."
+   ],
+   "ans": [
+    "τ = IBL²/2"
+   ],
+   "img": "img/sz27-27-70.png",
+   "num": "27.70"
+  },
+  {
+   "id": "sz27-27-72",
+   "title": "Barra en equilibrio rotacional",
+   "text": "",
+   "key": "Torca magnética IBL²/2 = torca del peso mg(L/2)cos θ.",
+   "topics": [
+    "mag",
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.72",
+   "notes": "",
+   "hints": [
+    "Usa el resultado de 27.70."
+   ],
+   "sol": [
+    "IBL²/2 = mg(L/2)cos θ ⇒ I = mg cos θ/(BL) = (0.0120)(9.80)(0.866)/[(0.150)(0.300)] = 2.26 A.",
+    "b) La torca magnética debe ser antihoraria: con B hacia la página, la corriente va de a a b."
+   ],
+   "ans": [
+    "a) 2.26 A",
+    "b) de a a b"
+   ],
+   "img": "img/sz27-27-72.png",
+   "num": "27.72"
+  },
+  {
+   "id": "sz27-27-73",
+   "title": "Bobina de altavoz",
+   "text": "",
+   "key": "La componente axial de B da fuerzas radiales que se cancelan; la componente radial B sen 60° da una fuerza axial que se suma en toda la vuelta.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.73",
+   "notes": "",
+   "hints": [
+    "Separa B en componente axial y radial; ¿cuál da fuerza a lo largo del eje?"
+   ],
+   "sol": [
+    "F = N I (2πr) B sen 60° = 50(0.950)(π · 0.0156)(0.220)(0.866) = 0.444 N.",
+    "Dirección: −y (hacia abajo, a lo largo del eje)."
+   ],
+   "ans": [
+    "0.444 N en −y"
+   ],
+   "img": "img/sz27-27-73.png",
+   "num": "27.73"
+  },
+  {
+   "id": "sz27-27-78",
+   "title": "Datos: R² contra V",
+   "text": "",
+   "key": "R² = (2m/qB²)V: graficar R² vs V da una recta.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.78",
+   "notes": "En d) el libro dice V = 12.0 V; se tomó 12.0 kV.",
+   "hints": [
+    "Pendiente = 2/[(q/m)B²]."
+   ],
+   "sol": [
+    "a) R² vs V (proporcional).",
+    "b) Pendiente ≈ 4.02×10⁻⁶ m²/V ⇒ q/m = 2/(pendiente·B²) = 7.96×10⁶ C/kg.",
+    "c) v = √(2(q/m)V) = 5.64×10⁵ m/s.",
+    "d) R ∝ √(V/q): con carga doble, R = 21.2/√2 = 15.0 cm (tomando V = 12.0 kV)."
+   ],
+   "ans": [
+    "b) 8.0×10⁶ C/kg",
+    "c) 5.6×10⁵ m/s",
+    "d) 15.0 cm"
+   ],
+   "img": "img/sz27-27-78.png",
+   "num": "27.78"
+  },
+  {
+   "id": "sz27-27-80",
+   "title": "Datos de un ciclotrón: f vs B",
+   "text": "",
+   "key": "f = qB/(2πm): la pendiente de f vs B da q/m.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.80",
+   "notes": "",
+   "hints": [
+    "Pendiente ≈ (30.5 − 7.6)×10⁵ Hz/0.30 T."
+   ],
+   "sol": [
+    "a) Pendiente = 7.63×10⁶ Hz/T ⇒ q/m = 2π(pend.) = 4.80×10⁷ C/kg ⇒ m = 2e/(q/m) = 6.68×10⁻²⁷ kg.",
+    "b) A 0.300 T: f_p = 4.57 MHz, f_e = 8.40 GHz; la alfa da 2.29 MHz (la mitad que el protón).",
+    "c) v = (q/m)BR = 1.73×10⁶ m/s; K = 9.96×10⁻¹⁵ J (≈ 62 keV)."
+   ],
+   "ans": [
+    "a) 6.7×10⁻²⁷ kg",
+    "b) 4.57 MHz y 8.40 GHz",
+    "c) 1.73×10⁶ m/s, 1.0×10⁻¹⁴ J"
+   ],
+   "img": "img/sz27-27-80.png",
+   "num": "27.80"
+  },
+  {
+   "id": "sz27-27-83",
+   "title": "Torca sobre el espín del protón",
+   "text": "",
+   "key": "τ = μB sen 90° con μ = 1.4×10⁻²⁶ J/T.",
+   "topics": [
+    "mag"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.83",
+   "notes": "Transición: el protón tiene μ = 1.4×10⁻²⁶ J/T.",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "τ = (1.4×10⁻²⁶)(2) = 2.8×10⁻²⁶ N·m."
+   ],
+   "ans": [
+    "c) 2.8×10⁻²⁶ N·m"
+   ],
+   "img": "img/sz27-27-83.png",
+   "num": "27.83"
+  },
+  {
+   "id": "sz27-27-85",
+   "title": "Fuerza sobre un nervio en una IRM",
+   "text": "",
+   "key": "R = ρL/A, I = V/R y F = ILB.",
+   "topics": [
+    "mag",
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 27, ej. 27.85",
+   "notes": "",
+   "hints": [
+    "Escribe la relación básica y despeja."
+   ],
+   "sol": [
+    "R = (0.6)(10⁻³)/[π(0.75×10⁻³)²] = 340 Ω.",
+    "I = 0.100/340 = 2.9×10⁻⁴ A.",
+    "F = ILB = (2.9×10⁻⁴)(10⁻³)(2) = 6×10⁻⁷ N."
+   ],
+   "ans": [
+    "a) 6×10⁻⁷ N"
+   ],
+   "img": "img/sz27-27-85.png",
+   "num": "27.85"
+  }
+ ]
+}

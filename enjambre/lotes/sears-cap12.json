@@ -1,0 +1,872 @@
+{
+ "version": 13,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz12-p12-23",
+   "title": "Hielo que se derrite en un vaso",
+   "text": "",
+   "key": "El hielo flotante desplaza justo la masa de agua en que se convertirá.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, pregunta de análisis P12.23",
+   "notes": "",
+   "hints": [
+    "Al flotar: ρ_agua·V_sum·g = m_hielo·g.",
+    "Al derretirse, esa masa ocupa m/ρ_agua."
+   ],
+   "sol": [
+    "Volumen sumergido: V_sum = m/ρ_agua",
+    "Agua de deshielo: V = m/ρ_agua = V_sum: llena exactamente el hueco"
+   ],
+   "ans": [
+    "Permanece igual (vaso de agua dulce)"
+   ],
+   "img": "img/sz12-p12-23.png",
+   "num": "P12.23"
+  },
+  {
+   "id": "sz12-p12-17",
+   "title": "¿A doble profundidad, doble presión?",
+   "text": "",
+   "key": "p = p₀ + ρgh: solo la parte manométrica se duplica, no p₀.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, pregunta de análisis P12.17",
+   "notes": "",
+   "hints": [
+    "Escribe la presión absoluta a profundidad h y a 2h.",
+    "Compara p(2h) con 2p(h)."
+   ],
+   "sol": [
+    "p = p₀ + ρgh",
+    "p(2h) = p₀ + 2ρgh = 2p − p₀"
+   ],
+   "ans": [
+    "Menor que 2p (le falta p₀)"
+   ],
+   "img": "img/sz12-p12-17.png",
+   "num": "P12.17"
+  },
+  {
+   "id": "sz12-p12-20",
+   "title": "La bola que cae de la canoa",
+   "text": "",
+   "key": "En la canoa la bola desplaza su peso en agua; en el fondo solo su volumen.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, pregunta de análisis P12.20",
+   "notes": "",
+   "hints": [
+    "Flotando: volumen desplazado = m/ρ_agua.",
+    "Hundida: desplaza solo V_bola = m/ρ_bola."
+   ],
+   "sol": [
+    "Antes: V = m/ρ_agua",
+    "Después: V = m/ρ_bola, menor porque ρ_bola > ρ_agua"
+   ],
+   "ans": [
+    "El nivel baja"
+   ],
+   "img": "img/sz12-p12-20.png",
+   "num": "P12.20"
+  },
+  {
+   "id": "sz12-p12-30",
+   "title": "Cubos de aluminio y plomo colgados",
+   "text": "",
+   "key": "El empuje depende solo del volumen sumergido; la presión, de la profundidad.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, pregunta de análisis P12.30",
+   "notes": "",
+   "hints": [
+    "B = ρ_agua·V·g, igual para volúmenes iguales.",
+    "T = peso − B; la fuerza en la cara inferior es p·A."
+   ],
+   "sol": [
+    "a) Mismo volumen → mismo empuje",
+    "b) T = mg − B: mayor para el plomo (más pesado)",
+    "c) La cara inferior del plomo está más profunda → mayor p·A",
+    "d) Δp = ρgL, igual para ambos"
+   ],
+   "ans": [
+    "a) Igual",
+    "b) Plomo",
+    "c) Plomo",
+    "d) Igual"
+   ],
+   "img": "img/sz12-p12-30.png",
+   "num": "P12.30"
+  },
+  {
+   "id": "sz12-12-16",
+   "title": "Manómetro de tubo abierto",
+   "text": "",
+   "key": "Presión en el mismo nivel de un fluido en reposo es igual: p_gas = p₀ + ρ_Hg·g·(y₂ − y₁).",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.16",
+   "notes": "",
+   "hints": [
+    "Figura 12.8a: y₁ es el nivel del mercurio del lado del gas y y₂ el del lado abierto, medidos desde la base.",
+    "La base está y₂ bajo la superficie libre."
+   ],
+   "sol": [
+    "a) p_base = p₀ + ρg·y₂ = 9.80×10⁴ + 13600·9.8·0.07",
+    "b) p = p₀ + ρg(0.04)",
+    "c) El gas está al nivel y₁, 4 cm bajo la superficie libre: misma presión que b)",
+    "d) p_man = ρg(y₂ − y₁) = 13600·9.8·0.04"
+   ],
+   "ans": [
+    "a) 1.07×10⁵ Pa",
+    "b) 1.03×10⁵ Pa",
+    "c) 1.03×10⁵ Pa",
+    "d) 5.33×10³ Pa"
+   ],
+   "img": "img/sz12-12-16.png",
+   "num": "12.16"
+  },
+  {
+   "id": "sz12-12-23",
+   "title": "Elevador hidráulico: razón de diámetros",
+   "text": "",
+   "key": "Pascal: F₁/A₁ = F₂/A₂, y el área va con D².",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.23",
+   "notes": "",
+   "hints": [
+    "F₂ = mg = 1520·9.8 N.",
+    "A₂/A₁ = F₂/F₁ y D₂/D₁ = √(A₂/A₁)."
+   ],
+   "sol": [
+    "A₂/A₁ = 14896/125 = 119",
+    "D₂/D₁ = √119"
+   ],
+   "ans": [
+    "D₂/D₁ ≈ 10.9"
+   ],
+   "img": "img/sz12-12-23.png",
+   "num": "12.23"
+  },
+  {
+   "id": "sz12-12-29",
+   "title": "Densidad de un mineral por peso aparente",
+   "text": "",
+   "key": "Empuje = peso en aire − peso aparente = ρ_agua·V·g.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.29",
+   "notes": "",
+   "hints": [
+    "B = 17.50 − 11.20 N.",
+    "V = B/(ρ_agua g) y ρ = m/V."
+   ],
+   "sol": [
+    "B = 6.30 N",
+    "V = 6.30/(1000·9.8) = 6.43×10⁻⁴ m³",
+    "ρ = (17.50/9.8)/V"
+   ],
+   "ans": [
+    "V = 6.43×10⁻⁴ m³",
+    "ρ = 2.78×10³ kg/m³"
+   ],
+   "img": "img/sz12-12-29.png",
+   "num": "12.29"
+  },
+  {
+   "id": "sz12-12-33",
+   "title": "Bloque en la interfase aceite-agua",
+   "text": "",
+   "key": "Empuje = diferencia de presión entre caras × área; esa fuerza sostiene el bloque.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.33",
+   "notes": "",
+   "hints": [
+    "La cara superior está a 10.0 − 8.5 = 1.5 cm bajo la superficie del aceite.",
+    "Cara inferior: 10 cm de aceite + 1.5 cm de agua.",
+    "m g = (p_inf − p_sup)·A."
+   ],
+   "sol": [
+    "a) p_sup = 790·9.8·0.015",
+    "b) p_inf = 790·9.8·0.100 + 1000·9.8·0.015",
+    "c) m = (p_inf − p_sup)(0.01 m²)/g; ρ = m/(10⁻³ m³)"
+   ],
+   "ans": [
+    "a) 116 Pa",
+    "b) 921 Pa",
+    "c) m = 0.822 kg; ρ = 822 kg/m³"
+   ],
+   "img": "img/sz12-12-33.png",
+   "num": "12.33"
+  },
+  {
+   "id": "sz12-12-35",
+   "title": "Líquido desconocido por tensiones",
+   "text": "",
+   "key": "El empuje es proporcional a la densidad del líquido con el mismo volumen: ρ_L/ρ_agua = B_L/B_agua.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.35",
+   "notes": "",
+   "hints": [
+    "B_agua = 39.2 − 28.4; B_L = 39.2 − 21.5.",
+    "El volumen se cancela."
+   ],
+   "sol": [
+    "B_agua = 10.8 N, B_L = 17.7 N",
+    "ρ_L = 1000·17.7/10.8"
+   ],
+   "ans": [
+    "ρ_L ≈ 1.64×10³ kg/m³"
+   ],
+   "img": "img/sz12-12-35.png",
+   "num": "12.35"
+  },
+  {
+   "id": "sz12-12-46",
+   "title": "Bernoulli completo: más abajo y más ancho",
+   "text": "",
+   "key": "Continuidad para v₂ y Bernoulli con los tres términos.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.46",
+   "notes": "",
+   "hints": [
+    "Doble diámetro → área ×4 → v₂ = v₁/4.",
+    "p₂ = p₁ + ½ρ(v₁² − v₂²) + ρg·11.0."
+   ],
+   "sol": [
+    "v₂ = 0.75 m/s",
+    "p₂ = 5.00×10⁴ + ½·1000(9 − 0.5625) + 1000·9.8·11"
+   ],
+   "ans": [
+    "p₂ ≈ 1.62×10⁵ Pa (manométrica)"
+   ],
+   "img": "img/sz12-12-46.png",
+   "num": "12.46"
+  },
+  {
+   "id": "sz12-12-53",
+   "title": "Fuerza del agua sobre una pared",
+   "text": "",
+   "key": "En una pared vertical p crece con la profundidad: integra ρgh·w·dh.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.53",
+   "notes": "",
+   "hints": [
+    "Fondo: presión uniforme ρgH sobre toda el área.",
+    "Pared de ancho w: F = ∫₀ᴴ ρg h w dh = ρgwH²/2."
+   ],
+   "sol": [
+    "a) F = ρgH·(5×4) = 1000·9.8·3·20",
+    "b) Pared de 4 m: ρg·4·3²/2; pared de 5 m: ρg·5·3²/2"
+   ],
+   "ans": [
+    "a) 5.88×10⁵ N",
+    "b) 1.76×10⁵ N (pared de 4 m) y 2.21×10⁵ N (pared de 5 m)"
+   ],
+   "img": "img/sz12-12-53.png",
+   "num": "12.53"
+  },
+  {
+   "id": "sz12-12-59",
+   "title": "Tubo en U con agua y mercurio",
+   "text": "",
+   "key": "Iguala presiones al nivel de la interfase en ambos brazos.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.59",
+   "notes": "",
+   "hints": [
+    "p_interfase = ρ_agua·g·0.150.",
+    "En el brazo derecho el mercurio sube d sobre la interfase: ρ_Hg·g·d = ρ_agua·g·0.150.",
+    "h = 15.0 cm − d."
+   ],
+   "sol": [
+    "a) p = 1000·9.8·0.15",
+    "b) d = 15.0/13.6 = 1.10 cm; h = 15.0 − 1.10"
+   ],
+   "ans": [
+    "a) 1.47×10³ Pa",
+    "b) h ≈ 13.9 cm"
+   ],
+   "img": "img/sz12-12-59.png",
+   "num": "12.59"
+  },
+  {
+   "id": "sz12-12-72",
+   "title": "Dos balanzas y un bloque sumergido",
+   "text": "",
+   "key": "El empuje sobre A sube la lectura de la balanza del vaso: tercera ley de Newton.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.72",
+   "notes": "",
+   "hints": [
+    "Balanza E: vaso + líquido + empuje (reacción del bloque sobre el líquido).",
+    "Balanza D: m_A − B/g."
+   ],
+   "sol": [
+    "B/g = 7.50 − 1.00 − 1.80 = 4.70 kg",
+    "ρ = 4.70/3.80×10⁻³",
+    "Sin A: D marca m_A = 3.50 + 4.70; E marca 1.00 + 1.80"
+   ],
+   "ans": [
+    "a) ρ ≈ 1.24×10³ kg/m³",
+    "b) D: 8.20 kg; E: 2.80 kg"
+   ],
+   "img": "img/sz12-12-72.png",
+   "num": "12.72"
+  },
+  {
+   "id": "sz12-12-77",
+   "title": "Torricelli y alcance del chorro",
+   "text": "",
+   "key": "v = √(2gh) sale horizontal y cae H − h: tiro horizontal.",
+   "topics": [
+    "flu",
+    "cin"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.77",
+   "notes": "",
+   "hints": [
+    "Tiempo de caída: t = √(2(H − h)/g).",
+    "R = v·t; busca otra profundidad con el mismo producto h(H − h)."
+   ],
+   "sol": [
+    "v = √(2gh), t = √(2(H − h)/g)",
+    "R = 2√(h(H − h))",
+    "h(H − h) es simétrico: h′ = H − h, es decir a una altura h sobre la base"
+   ],
+   "ans": [
+    "a) R = 2√(h(H − h))",
+    "b) A una altura h sobre la base (profundidad H − h)"
+   ],
+   "img": "img/sz12-12-77.png",
+   "num": "12.77"
+  },
+  {
+   "id": "sz12-12-81",
+   "title": "Tanque con tubo: caudal y presión",
+   "text": "",
+   "key": "Torricelli en la salida 3 y continuidad + Bernoulli entre 2 y 3.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.81",
+   "notes": "",
+   "hints": [
+    "v₃ = √(2g·8.0 m).",
+    "Q = A₃v₃; v₂ = Q/A₂.",
+    "p₂ = ½ρ(v₃² − v₂²) (2 y 3 a la misma altura)."
+   ],
+   "sol": [
+    "v₃ = 12.5 m/s",
+    "Q = 0.0160·12.5",
+    "v₂ = 4.17 m/s; p₂ = ½·1000(156.8 − 17.4)"
+   ],
+   "ans": [
+    "a) 0.200 m³/s",
+    "b) 6.97×10⁴ Pa"
+   ],
+   "img": "img/sz12-12-81.png",
+   "num": "12.81"
+  },
+  {
+   "id": "sz12-12-88",
+   "title": "Sifón",
+   "text": "",
+   "key": "Bernoulli de la superficie a la salida da Torricelli; en el punto alto la presión no puede ser negativa.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.88",
+   "notes": "",
+   "hints": [
+    "Salida a h bajo la superficie: v = √(2gh).",
+    "En el punto alto (H sobre la superficie) la rapidez es la misma v.",
+    "Exige p_alto ≥ 0."
+   ],
+   "sol": [
+    "a) p_atm = p_atm + ½ρv² − ρgh → v = √(2gh)",
+    "b) p_alto = p_atm − ρgH − ½ρv² = p_atm − ρg(H + h) ≥ 0"
+   ],
+   "ans": [
+    "a) v = √(2gh)",
+    "b) H_máx = p_atm/(ρg) − h"
+   ],
+   "img": "img/sz12-12-88.png",
+   "num": "12.88"
+  },
+  {
+   "id": "sz12-12-12",
+   "title": "Capas de aceite y agua",
+   "text": "",
+   "key": "Presiones manométricas se suman capa por capa: Σρgh.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.12",
+   "notes": "",
+   "hints": [
+    "Interfase: solo la capa de aceite.",
+    "Fondo: aceite + 0.250 m de agua."
+   ],
+   "sol": [
+    "a) 600·9.8·0.120",
+    "b) 705.6 + 1000·9.8·0.250"
+   ],
+   "ans": [
+    "a) 706 Pa",
+    "b) 3.16×10³ Pa"
+   ],
+   "img": "img/sz12-12-12.png",
+   "num": "12.12"
+  },
+  {
+   "id": "sz12-12-21",
+   "title": "Disco de madera sobre aceite (Pascal)",
+   "text": "",
+   "key": "Lo que se agrega en la superficie se transmite igual a todo el líquido.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.21",
+   "notes": "",
+   "hints": [
+    "p = W/A, con A = π(0.150 m)².",
+    "El cambio de presión es 83.0/A en cualquier punto."
+   ],
+   "sol": [
+    "a) p = 45.0/0.0707",
+    "b) Δp = 83.0/0.0707, igual en la base y a la mitad"
+   ],
+   "ans": [
+    "a) 637 Pa",
+    "b) i. y ii. 1.17×10³ Pa"
+   ],
+   "img": "img/sz12-12-21.png",
+   "num": "12.21"
+  },
+  {
+   "id": "sz12-12-28",
+   "title": "Bloque de hielo que soporta a una persona",
+   "text": "",
+   "key": "Con el hielo justo sumergido: ρ_agua·V·g = (m_hielo + m)g.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.28",
+   "notes": "",
+   "hints": [
+    "m_hielo = ρ_hielo·V.",
+    "Despeja V = m/(ρ_agua − ρ_hielo)."
+   ],
+   "sol": [
+    "V(1000 − 920) = 65.0",
+    "V = 65/80"
+   ],
+   "ans": [
+    "V ≈ 0.813 m³"
+   ],
+   "img": "img/sz12-12-28.png",
+   "num": "12.28"
+  },
+  {
+   "id": "sz12-12-32",
+   "title": "Esfera hueca anclada al fondo",
+   "text": "",
+   "key": "Empuje = peso + tensión; libre, flota con fracción = m/(ρV).",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.32",
+   "notes": "",
+   "hints": [
+    "B = ρ_agua·V·g.",
+    "mg = B − T.",
+    "Fracción sumergida = m/(ρ_agua V)."
+   ],
+   "sol": [
+    "a) B = 1000·9.8·0.650",
+    "b) m = (6370 − 1120)/9.8",
+    "c) f = 536/650"
+   ],
+   "ans": [
+    "a) 6.37×10³ N",
+    "b) 536 kg",
+    "c) 0.824"
+   ],
+   "img": "img/sz12-12-32.png",
+   "num": "12.32"
+  },
+  {
+   "id": "sz12-12-41",
+   "title": "Tanque sellado presurizado",
+   "text": "",
+   "key": "Bernoulli: la presión extra del aire suma como una altura adicional.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.41",
+   "notes": "",
+   "hints": [
+    "½ρv² = p_man + ρgh.",
+    "Agua de mar: ρ = 1030 kg/m³."
+   ],
+   "sol": [
+    "v = √(2(3.00·1.013×10⁵/1030 + 9.8·11.0))"
+   ],
+   "ans": [
+    "v ≈ 28.4 m/s"
+   ],
+   "img": "img/sz12-12-41.png",
+   "num": "12.41"
+  },
+  {
+   "id": "sz12-12-47",
+   "title": "Constricción en un tubo horizontal",
+   "text": "",
+   "key": "Continuidad da las rapideces; Bernoulli, la caída de presión.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.47",
+   "notes": "",
+   "hints": [
+    "v = Q/(πr²) en cada punto.",
+    "p₂ = p₁ + ½ρ(v₁² − v₂²)."
+   ],
+   "sol": [
+    "v₁ = 1.43 m/s, v₂ = 5.73 m/s",
+    "p₂ = 2.40×10⁵ − 500(32.8 − 2.05)"
+   ],
+   "ans": [
+    "p₂ ≈ 2.25×10⁵ Pa"
+   ],
+   "img": "img/sz12-12-47.png",
+   "num": "12.47"
+  },
+  {
+   "id": "sz12-12-75",
+   "title": "Bloque en dos líquidos",
+   "text": "",
+   "key": "Equilibrio: el peso del bloque iguala el empuje de cada líquido sobre su parte sumergida.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.75",
+   "notes": "",
+   "hints": [
+    "a) Fracción sumergida ρ_B/ρ_L.",
+    "b) Con agua de espesor h: ρ_B L = ρ_W h + ρ_L(L − h).",
+    "c) Hierro 7800, mercurio 13600 kg/m³."
+   ],
+   "sol": [
+    "a) Fuera: 1 − ρ_B/ρ_L",
+    "b) h = L(ρ_L − ρ_B)/(ρ_L − ρ_W)",
+    "c) h = 10.0(13600 − 7800)/(13600 − 1000)"
+   ],
+   "ans": [
+    "a) 1 − ρ_B/ρ_L",
+    "b) h = L(ρ_L − ρ_B)/(ρ_L − ρ_W)",
+    "c) h ≈ 4.6 cm"
+   ],
+   "img": "img/sz12-12-75.png",
+   "num": "12.75"
+  },
+  {
+   "id": "sz12-12-83",
+   "title": "Venturi que succiona líquido",
+   "text": "",
+   "key": "Si la constricción tiene la mitad de área, ahí v se duplica y la presión baja de la atmosférica.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.83",
+   "notes": "",
+   "hints": [
+    "v_D = √(2gh₁) (sale al aire).",
+    "v_C = 2v_D; p_C = p_atm − ½ρ(v_C² − v_D²).",
+    "El líquido en E sube hasta que ρgh₂ = p_atm − p_C."
+   ],
+   "sol": [
+    "p_atm − p_C = ½ρ(3v_D²) = 3ρgh₁",
+    "h₂ = 3h₁"
+   ],
+   "ans": [
+    "h₂ = 3h₁"
+   ],
+   "img": "img/sz12-12-83.png",
+   "num": "12.83"
+  },
+  {
+   "id": "sz12-12-52",
+   "title": "Fosa de las Marianas y compresibilidad",
+   "text": "",
+   "key": "A gran profundidad el agua se comprime: Δρ/ρ = Δp/B.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.52",
+   "notes": "",
+   "hints": [
+    "a) p = p₀ + ρgh con ρ_mar = 1030 kg/m³.",
+    "b) ΔV/V = −kΔp, con k = 45.8×10⁻¹¹ Pa⁻¹ (tabla 11.2)."
+   ],
+   "sol": [
+    "a) p ≈ 1030·9.8·10920 + p₀",
+    "b) ΔV/V = −(45.8×10⁻¹¹)(1.16×10⁸) = −5.3%",
+    "ρ ≈ 1030/(1 − 0.053)"
+   ],
+   "ans": [
+    "a) 1.10×10⁸ Pa",
+    "b) ρ ≈ 1.09×10³ kg/m³, un aumento de ≈ 5%"
+   ],
+   "img": "img/sz12-12-52.png",
+   "num": "12.52"
+  },
+  {
+   "id": "sz12-12-55",
+   "title": "Torca del agua sobre una compuerta",
+   "text": "",
+   "key": "Torca de una franja: dτ = ρgh·w·dh·(h − 1 m); integra de 0 a 2 m.",
+   "topics": [
+    "flu",
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.55",
+   "notes": "",
+   "hints": [
+    "El pivote está a 1.00 m de profundidad.",
+    "τ = ∫₀² ρg h (h − 1)·4 dh."
+   ],
+   "sol": [
+    "τ = 4ρg[h³/3 − h²/2]₀² = 4ρg(2/3)",
+    "τ = 4·1000·9.8·0.667"
+   ],
+   "ans": [
+    "τ ≈ 2.61×10⁴ N·m"
+   ],
+   "img": "img/sz12-12-55.png",
+   "num": "12.55"
+  },
+  {
+   "id": "sz12-12-71",
+   "title": "Vaciado de un tanque presurizado",
+   "text": "",
+   "key": "dh/dt = −(A_o/A_t)·v(h): la rapidez de salida depende de la altura que va quedando.",
+   "topics": [
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.71",
+   "notes": "",
+   "hints": [
+    "v = √(2(p_man/ρ + gh)).",
+    "Separa variables: dh/√(2(a + gh)) = −(A_o/A_t)dt con a = p_man/ρ.",
+    "Abierto: t = (A_t/A_o)√(2h₀/g)."
+   ],
+   "sol": [
+    "a) v = √(2(5 + 9.8·0.8)) = 5.07 m/s; abierto 3.96 m/s",
+    "b) t = (A_t/A_o)(√(2(a + gh₀)) − √(2a))/g = 10⁴(5.07 − 3.16)/9.8",
+    "Abierto: t = 10⁴√(2·0.8/9.8) = 4.04×10³ s"
+   ],
+   "ans": [
+    "a) 5.07 m/s; razón 1.28",
+    "b) 1.94×10³ s; razón 0.48"
+   ],
+   "img": "img/sz12-12-71.png",
+   "num": "12.71"
+  },
+  {
+   "id": "sz12-12-82",
+   "title": "Huracán: momento angular y Bernoulli",
+   "text": "",
+   "key": "Conservación de L: v·r = constante; Bernoulli da la caída de presión en el ojo.",
+   "topics": [
+    "flu",
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.82",
+   "notes": "",
+   "hints": [
+    "v_borde = 200·(30/350) km/h.",
+    "Δp = ½ρ_aire(v_ojo² − v_borde²) con ρ_aire = 1.20 kg/m³.",
+    "c) h = v²/2g."
+   ],
+   "sol": [
+    "a) v_borde ≈ 17 km/h",
+    "b) Δp = ½·1.2(55.6² − 4.8²) ≈ 1.8×10³ Pa",
+    "c) h = 55.6²/(2·9.8)"
+   ],
+   "ans": [
+    "a) ≈ 17 km/h",
+    "b) ≈ 1.8×10³ Pa; mayor en el borde",
+    "c) ≈ 160 m",
+    "d) El aire caliente y húmedo asciende por flotación (convección), no por la energía cinética"
+   ],
+   "img": "img/sz12-12-82.png",
+   "num": "12.82"
+  },
+  {
+   "id": "sz12-12-69",
+   "title": "Manguera de bomberos que llega a 28 m",
+   "text": "",
+   "key": "Para subir h hace falta salir con v = √(2gh); Q = A·v fija la boquilla.",
+   "topics": [
+    "flu",
+    "cin"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 12, ej. 12.69",
+   "notes": "",
+   "hints": [
+    "v = √(2g·28.0).",
+    "A = Q/v y D = √(4A/π).",
+    "Doble diámetro: área ×4 → v/4 → altura /16."
+   ],
+   "sol": [
+    "a) v = 23.4 m/s; A = 0.500/23.4; D = √(4A/π)",
+    "b) v′ = 5.86 m/s; h = v′²/2g = 28/16"
+   ],
+   "ans": [
+    "a) D ≈ 16.5 cm",
+    "b) 1.75 m"
+   ],
+   "img": "img/sz12-12-69.png",
+   "num": "12.69"
+  }
+ ]
+}

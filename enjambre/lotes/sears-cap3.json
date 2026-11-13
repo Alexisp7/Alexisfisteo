@@ -1,0 +1,239 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "id": "mcirc",
+      "name": "Movimiento circular",
+      "area": "mec",
+      "q": 1,
+      "r": -1,
+      "pre": [
+        "cin"
+      ]
+    },
+    {
+      "id": "vrel",
+      "name": "Velocidad relativa",
+      "area": "mec",
+      "q": 0,
+      "r": -1,
+      "pre": [
+        "cin"
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "id": "sz3-3-4",
+      "title": "3.4 · Ardilla: r(t) → v(t)",
+      "text": "La posición de una ardilla es r = [(0.280 m/s)t + (0.0360 m/s²)t²] i + (0.0190 m/s³)t³ j. a) vx(t) y vy(t). b) Distancia a la posición inicial en t = 5.00 s. c) Magnitud y dirección de la velocidad en t = 5.00 s.",
+      "key": "v = dr/dt componente a componente; distancia = |r(t) − r(0)|.",
+      "topics": [
+        "cin"
+      ],
+      "prio": "variante",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.4",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-7",
+      "title": "3.7 · Ave en el plano xy: v, a y si gira o frena",
+      "text": "x(t) = αt, y(t) = 3.0 m − βt², α = 2.4 m/s, β = 1.2 m/s². a) Trayectoria entre t = 0 y 2.0 s. b) v(t) y a(t). c) Magnitud y dirección de v y a en t = 2.0 s. d) Dibuja v y a: ¿acelera, frena o mantiene la rapidez? ¿Está girando y hacia dónde?",
+      "key": "Descomponer a en parte paralela a v (cambia la rapidez) y perpendicular (cambia la dirección): la idea que conecta con el movimiento circular.",
+      "topics": [
+        "cin",
+        "mcirc"
+      ],
+      "prio": "fundamental",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.7",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-8",
+      "title": "3.8 · Auto a control remoto: v(t) → a(t)",
+      "text": "v = [5.00 m/s − (0.0180 m/s³)t²] i + [2.00 m/s + (0.550 m/s²)t] j. a) ax(t), ay(t). b) Magnitud y dirección de v en t = 8.00 s. c) Magnitud y dirección de a en t = 8.00 s.",
+      "key": "a = dv/dt; el ángulo sale de arctan(vy/vx) cuidando el cuadrante.",
+      "topics": [
+        "cin"
+      ],
+      "prio": "variante",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.8",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-10",
+      "title": "3.10 · Nadadora que salta del risco",
+      "text": "Una nadadora de 510 N salta horizontalmente desde un risco de 9.00 m. ¿Qué rapidez mínima necesita para librar una saliente de 1.75 m de ancho en la base?",
+      "key": "Lanzamiento horizontal: el tiempo lo fija la caída vertical; ese tiempo da el alcance. El peso no importa.",
+      "topics": [
+        "cin"
+      ],
+      "prio": "aplicacion",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.10",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-14",
+      "title": "3.14 · Salto récord del cercopoideo",
+      "text": "Un insecto salta a 58.0° sobre la horizontal y alcanza una altura máxima de 58.7 cm. a) Velocidad de despegue. b) Distancia horizontal cubierta.",
+      "key": "En la altura máxima vy = 0: de h sale v0 sen θ; el alcance usa el tiempo total de vuelo.",
+      "topics": [
+        "cin"
+      ],
+      "prio": "aplicacion",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.14",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-15",
+      "title": "3.15 · Pelota que rueda de la mesa en el planeta X",
+      "text": "En la Tierra la pelota cae a una distancia D de la mesa; en el planeta X, con la misma mesa y rapidez, cae a 2.76D. ¿Cuánto vale g en el planeta X?",
+      "key": "Razonamiento por escalas: D ∝ 1/√g, así que g_X = g/2.76² sin conocer ni la altura ni la rapidez.",
+      "topics": [
+        "cin"
+      ],
+      "prio": "aplicacion",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.15",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-22",
+      "title": "3.22 · Piedra lanzada desde un globo que desciende",
+      "text": "Un globo desciende a 20.0 m/s constante. Desde la canastilla se lanza una piedra a 15.0 m/s perpendicular a la trayectoria (respecto a la canastilla); llega al suelo 5.00 s después. a) Altura del globo al lanzar. b) Altura al chocar la piedra. c) Distancia piedra–canastilla en ese instante. d) Componentes de la velocidad de la piedra antes del choque respecto a i) la canastilla, ii) el suelo.",
+      "key": "Sumar velocidades entre marcos (v_suelo = v_rel + v_globo) y resolver el proyectil en el marco del suelo; en el marco del globo la piedra solo “cae” con g.",
+      "topics": [
+        "vrel",
+        "cin"
+      ],
+      "prio": "clasico",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.22",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-24",
+      "title": "3.24 · Mareos: aceleración de la endolinfa",
+      "text": "Un bailarín gira a 3.0 rev/s; el oído interno está a 7.0 cm del eje. Aceleración radial de la endolinfa en m/s² y en g.",
+      "key": "a = ω²r con ω = 2πf.",
+      "topics": [
+        "mcirc"
+      ],
+      "prio": "variante",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.24",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-25",
+      "title": "3.25 · Piloto que se desmaya en el descenso",
+      "text": "La parte inferior de la picada es un cuarto de círculo de 280 m de radio. Si el piloto pierde la conciencia por encima de 5.5g, ¿a qué rapidez (m/s y mph) ocurre?",
+      "key": "Invertir a = v²/R para hallar la rapidez límite.",
+      "topics": [
+        "mcirc"
+      ],
+      "prio": "aplicacion",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.25",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-27",
+      "title": "3.27 · Rueda de la fortuna",
+      "text": "Rueda de 14.0 m de radio; el pasajero va a 6.00 m/s constante. Magnitud y dirección de su aceleración a) en el punto más bajo, b) en el más alto. c) Tiempo de una revolución.",
+      "key": "Rapidez constante no implica aceleración nula: a = v²/R apunta siempre al centro; T = 2πR/v.",
+      "topics": [
+        "mcirc"
+      ],
+      "prio": "clasico",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.27",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-29",
+      "title": "3.29 · Centrifugadora de hipergravedad",
+      "text": "Brazo de 8.84 m que gira en un plano horizontal; la cabeza del astronauta en el extremo. a) Rapidez de la cabeza para 12.5g. b) Diferencia de aceleración entre cabeza y pies (persona de 2.00 m). c) Rpm del brazo.",
+      "key": "Con ω común, a = ω²r crece con r: la diferencia cabeza–pies sale de la proporcionalidad.",
+      "topics": [
+        "mcirc"
+      ],
+      "prio": "aplicacion",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.29",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-56",
+      "title": "3.56 · Manguera que debe llenar un tanque",
+      "text": "Tanque cilíndrico de diámetro D y altura 2D a una distancia 6D; la manguera lanza a 45° desde el nivel de la base. ¿En qué intervalo de v0 entra el agua? Expresa en términos de D y g.",
+      "key": "Eliminar t para tener la trayectoria y(x) e imponerla como condición en los dos bordes del tanque: el problema se vuelve una desigualdad.",
+      "topics": [
+        "cin"
+      ],
+      "prio": "clasico",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.56",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-59",
+      "title": "3.59 · Bola de nieve que cae del techo",
+      "text": "Sale del borde de un techo inclinado 40° hacia abajo a 7.00 m/s, a 14.0 m del suelo. a) ¿A qué distancia del granero cae? b) Gráficas x-t, y-t, vx-t, vy-t. c) ¿Le cae a un hombre de 1.9 m parado a 4.0 m?",
+      "key": "Proyectil con velocidad inicial hacia abajo: ecuación cuadrática en t y lectura de la trayectoria a una altura dada (1.9 m), no en el suelo.",
+      "topics": [
+        "cin"
+      ],
+      "prio": "clasico",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.59",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-63",
+      "title": "3.63 · Salto del río en moto",
+      "text": "Rampa a 53.0°, río de 40.0 m de ancho, la otra ribera 15.0 m más abajo que la parte superior de la rampa (el río está 100 m abajo). a) Rapidez mínima para alcanzar el borde opuesto. b) Con la mitad de esa rapidez, ¿dónde cae?",
+      "key": "Proyectil general con distinto nivel de salida y llegada: ejes independientes, el tiempo como puente, y comprobar qué superficie se toca primero.",
+      "topics": [
+        "cin"
+      ],
+      "prio": "fundamental",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.63",
+      "notes": ""
+    },
+    {
+      "id": "sz3-3-80",
+      "title": "3.80 · Canoa y botella en el río",
+      "text": "Remando río arriba se les cae una botella; reman 60 min hasta un punto 2.0 km río arriba, dan la vuelta y alcanzan la botella 5.0 km río abajo del punto de giro. a) Rapidez del río. b) Rapidez de la canoa en un lago tranquilo.",
+      "key": "En el marco del agua la botella está quieta y la canoa va y vuelve a la misma rapidez: 60 min de ida = 60 min de vuelta. Elegir bien el marco resuelve el problema sin álgebra.",
+      "topics": [
+        "vrel"
+      ],
+      "prio": "fundamental",
+      "pillar": false,
+      "state": 0,
+      "source": "Sears-Zemansky, cap. 3, ej. 3.80",
+      "notes": ""
+    }
+  ]
+}

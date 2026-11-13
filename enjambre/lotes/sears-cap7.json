@@ -1,0 +1,820 @@
+{
+ "version": 1,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz7-p7-3",
+   "title": "Rampa con y sin fricción: ¿importa la forma?",
+   "text": "",
+   "key": "Gravedad conservativa → solo importa la altura. Fricción no conservativa → importa el camino.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, pregunta de análisis P7.3",
+   "notes": "",
+   "hints": [
+    "Sin fricción: ½mv² = mgh. ¿Aparece la forma de la rampa?",
+    "Con fricción: W_f = −f·(longitud del camino)."
+   ],
+   "sol": [
+    "Sin fricción: v = √(2gh), solo depende de h",
+    "Con fricción: un camino más largo o con más normal pierde más energía, así que v depende de la forma"
+   ],
+   "ans": [
+    "Sin fricción: solo de la altura",
+    "Con fricción: también de la forma (del camino)"
+   ],
+   "img": "img/sz7-p7-3.png",
+   "num": "P7.3"
+  },
+  {
+   "id": "sz7-p7-22",
+   "title": "Rapidez a partir de la curva U(x)",
+   "text": "",
+   "key": "v(x) = √[2(E − U(x))/m]: la rapidez es máxima donde U es mínima y cero en los puntos de retorno.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, pregunta de análisis P7.22",
+   "notes": "Usa la figura 7.24a del libro.",
+   "hints": [
+    "K = E − U(x) en cada punto.",
+    "Donde la línea E corta la curva U, K = 0: puntos de retorno.",
+    "La partícula solo puede estar donde E ≥ U."
+   ],
+   "sol": [
+    "v(x) = √[2(E − U(x))/m]",
+    "Con E₁ (por debajo de la barrera): oscila entre dos puntos de retorno; v es máxima en el mínimo de U",
+    "Con E₂ (por encima de los máximos): no se detiene; v baja al pasar por los máximos y sube en los mínimos"
+   ],
+   "ans": [
+    "v máxima donde U es mínima; v = 0 donde E = U"
+   ],
+   "img": "img/sz7-p7-22.png",
+   "num": "P7.22"
+  },
+  {
+   "id": "sz7-p7-17",
+   "title": "F = +kx: equilibrio inestable",
+   "text": "",
+   "key": "U = −½kx² es una \"loma\": x = 0 es equilibrio, pero inestable.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, pregunta de análisis P7.17",
+   "notes": "",
+   "hints": [
+    "Calcula U = −∫F dx con F = +kx.",
+    "Equilibrio: F = 0. Estable si U tiene mínimo, inestable si tiene máximo."
+   ],
+   "sol": [
+    "U(x) = −½kx² (parábola hacia abajo)",
+    "En x = 0, F = 0: sí es equilibrio",
+    "Es un máximo de U: cualquier empujón lo aleja más → inestable"
+   ],
+   "ans": [
+    "Sí es equilibrio, pero inestable"
+   ],
+   "img": "img/sz7-p7-17.png",
+   "num": "P7.17"
+  },
+  {
+   "id": "sz7-p7-19",
+   "title": "Signo de U entre dos partículas",
+   "text": "",
+   "key": "Con U(∞) = 0, U(r) = trabajo que TÚ haces para traerlas desde el infinito.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, pregunta de análisis P7.19",
+   "notes": "",
+   "hints": [
+    "U(r) − U(∞) = −W_fuerza (de ∞ a r).",
+    "Si se repelen, para acercarlas hay que empujar: la fuerza hace trabajo negativo."
+   ],
+   "sol": [
+    "Repulsión: al acercarlas, W_fuerza < 0 → U(r) > 0",
+    "Atracción: al acercarlas, W_fuerza > 0 → U(r) < 0"
+   ],
+   "ans": [
+    "Repulsión → U > 0; atracción → U < 0"
+   ],
+   "img": "img/sz7-p7-19.png",
+   "num": "P7.19"
+  },
+  {
+   "id": "sz7-7-3",
+   "title": "Saco de correo desplazado de lado",
+   "text": "",
+   "key": "La tensión es ⊥ a la trayectoria (arco): no trabaja. El trabajador aporta mgΔh.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.3",
+   "notes": "",
+   "hints": [
+    "Equilibrio: T cosθ = mg y T sinθ = F, con sinθ = 2.0/3.5.",
+    "El saco recorre un arco de circunferencia centrado en el punto de suspensión.",
+    "Δh = L − √(L² − 2.0²)."
+   ],
+   "sol": [
+    "a) θ = 34.8° → F = mg tanθ = 614 N",
+    "b) i. W_cuerda = 0 (siempre ⊥ al movimiento)",
+    "ii. Δh = 3.5 − √(3.5² − 2.0²) = 0.628 m → W = mgΔh = 554 J"
+   ],
+   "ans": [
+    "a) 614 N",
+    "b) i. 0  ii. 554 J"
+   ],
+   "img": "img/sz7-7-3.png",
+   "num": "7.3"
+  },
+  {
+   "id": "sz7-7-9",
+   "title": "Piedra en un tazón hemisférico",
+   "text": "",
+   "key": "La normal no trabaja; en el fondo la normal da peso + centrípeta.",
+   "topics": [
+    "ene",
+    "mcirc"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.9",
+   "notes": "",
+   "hints": [
+    "W_g = mgR (baja R).",
+    "½mv² = mgR + W_f, con W_f = −0.22 J.",
+    "En B: N − mg = mv²/R."
+   ],
+   "sol": [
+    "a) i. W_N = 0  ii. W_g = 0.20·9.8·0.50 = 0.98 J",
+    "b) ½mv² = 0.98 − 0.22 = 0.76 J → v = 2.76 m/s",
+    "c) Solo la gravedad es constante; N y la fricción cambian de dirección y magnitud",
+    "d) N = mg + mv²/R = 1.96 + 3.04 = 5.0 N"
+   ],
+   "ans": [
+    "a) 0 y 0.98 J",
+    "b) 2.76 m/s",
+    "c) solo la gravedad",
+    "d) 5.0 N"
+   ],
+   "img": "img/sz7-7-9.png",
+   "num": "7.9"
+  },
+  {
+   "id": "sz7-7-13",
+   "title": "Horno en rampa: energía y Newton dan lo mismo",
+   "text": "",
+   "key": "W_F + W_f − ΔU = ΔK; compruébalo con a = ΣF/m.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.13",
+   "notes": "",
+   "hints": [
+    "W_F = F·d; W_f = −μk mg cosθ·d.",
+    "ΔU = mg d sinθ.",
+    "e) a = (F − μk mg cosθ − mg sinθ)/m y v² = 2ad."
+   ],
+   "sol": [
+    "a) W_F = 110·6.00 = 660 J",
+    "b) W_f = −0.25·10·9.8·0.8·6 = −118 J",
+    "c) ΔU = 10·9.8·6.00·sin36.9° = 353 J",
+    "d) ΔK = 660 − 118 − 353 = 189 J",
+    "e) a = 3.16 m/s² → v² = 37.9 → K = 189 J ✓"
+   ],
+   "ans": [
+    "a) 660 J",
+    "b) −118 J",
+    "c) 353 J",
+    "d) 189 J",
+    "e) igual: 189 J"
+   ],
+   "img": "img/sz7-7-13.png",
+   "num": "7.13"
+  },
+  {
+   "id": "sz7-7-21",
+   "title": "Libro que cae sobre un resorte",
+   "text": "",
+   "key": "Mide la caída total: 0.800 m + x. Sale una cuadrática.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.21",
+   "notes": "",
+   "hints": [
+    "a) U = ½kx².",
+    "b) De reposo a reposo: mg(0.800 + x) = ½kx².",
+    "Quédate con la raíz positiva."
+   ],
+   "sol": [
+    "a) x = √(2·3.20/1600) = 0.0632 m",
+    "b) 800x² − 11.76x − 9.41 = 0 → x = 0.116 m"
+   ],
+   "ans": [
+    "a) 6.32 cm",
+    "b) 11.6 cm"
+   ],
+   "img": "img/sz7-7-21.png",
+   "num": "7.21"
+  },
+  {
+   "id": "sz7-7-33",
+   "title": "De U(x,y) a la aceleración",
+   "text": "",
+   "key": "F = −∇U: deriva parcialmente cada componente.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.33",
+   "notes": "",
+   "hints": [
+    "Fx = −∂U/∂x, Fy = −∂U/∂y.",
+    "Evalúa en (0.300, 0.600) y divide entre m."
+   ],
+   "sol": [
+    "Fx = −2(5.80)x = −3.48 N;  Fy = +3(3.60)y² = 3.89 N",
+    "a = (−87.0, 97.2) m/s²",
+    "|a| = 130 m/s², a 132° del eje +x"
+   ],
+   "ans": [
+    "130 m/s² a 132° de +x"
+   ],
+   "img": "img/sz7-7-33.png",
+   "num": "7.33"
+  },
+  {
+   "id": "sz7-7-35",
+   "title": "Potencial de Lennard-Jones",
+   "text": "",
+   "key": "F = −dU/dr; equilibrio en F = 0; disociar = subir del mínimo a U = 0.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.35",
+   "notes": "",
+   "hints": [
+    "F(r) = 12a/r¹³ − 6b/r⁷.",
+    "F = 0 → r₀ = (2a/b)^(1/6). ¿Es mínimo de U?",
+    "Energía de disociación D = U(∞) − U(r₀) = b²/(4a)."
+   ],
+   "sol": [
+    "a) F = 12a/r¹³ − 6b/r⁷",
+    "b) r₀ = (2a/b)^(1/6); es mínimo de U → estable",
+    "c) D = b²/(4a)",
+    "d) b = 2D r₀⁶ = 6.41 × 10⁻⁷⁸ J·m⁶;  a = D r₀¹² = 6.67 × 10⁻¹³⁸ J·m¹²"
+   ],
+   "ans": [
+    "b) r₀ = (2a/b)^(1/6), estable",
+    "c) b²/4a",
+    "d) a = 6.67 × 10⁻¹³⁸ J·m¹², b = 6.41 × 10⁻⁷⁸ J·m⁶"
+   ],
+   "img": "img/sz7-7-35.png",
+   "num": "7.35"
+  },
+  {
+   "id": "sz7-7-37",
+   "title": "Cubeta, caja y grava: estática y luego energía",
+   "text": "",
+   "key": "Primero equilibrio (fricción estática), luego energía con fricción cinética del sistema.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.37",
+   "notes": "",
+   "hints": [
+    "a) Nada acelera: la grava no necesita fricción horizontal.",
+    "La caja: f_s = T = peso de la cubeta. ¿Cabe en μs N?",
+    "b) ΔK del sistema = m_c g h − μk m_caja g h."
+   ],
+   "sol": [
+    "a) Grava: 0.  Caja: f_s = 65·9.8 = 637 N (máx 0.7·130·9.8 = 892 N, no resbala)",
+    "b) ½(145)v² = 65·9.8·2 − 0.4·80·9.8·2 = 1274 − 627 = 647 J",
+    "v = 2.99 m/s"
+   ],
+   "ans": [
+    "a) 0 y 637 N",
+    "b) 2.99 m/s"
+   ],
+   "img": "img/sz7-7-37.png",
+   "num": "7.37"
+  },
+  {
+   "id": "sz7-7-42",
+   "title": "Rizo vertical: h mínima y aceleración en C",
+   "text": "",
+   "key": "Arriba del rizo: mg = mv²/R como mínimo; energía conecta A con el rizo.",
+   "topics": [
+    "ene",
+    "mcirc"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.42",
+   "notes": "",
+   "hints": [
+    "En B (altura 2R): v_B² ≥ gR.",
+    "mgh = mg(2R) + ½mv_B² → h mín.",
+    "En C (altura R): a_rad = v²/R; a_tan = g (solo la gravedad es tangente)."
+   ],
+   "sol": [
+    "a) h = 2R + R/2 = 5R/2",
+    "b) v_C² = 2g(3.5R − R) = 5gR → v = 26.2 m/s",
+    "a_rad = 5g = 49.0 m/s²;  a_tan = 9.80 m/s²"
+   ],
+   "ans": [
+    "a) 5R/2",
+    "b) 26.2 m/s; 49.0 m/s² y 9.80 m/s²"
+   ],
+   "img": "img/sz7-7-42.png",
+   "num": "7.42"
+  },
+  {
+   "id": "sz7-7-44",
+   "title": "Roca que sube y baja una colina",
+   "text": "",
+   "key": "Subida: K se reparte en U y fricción. Se queda arriba solo si tanθ ≤ μs.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.44",
+   "notes": "",
+   "hints": [
+    "Distancia sobre la ladera = H/sinθ; fricción μk mg cosθ.",
+    "b) Compara tan40° con μs = 0.75.",
+    "c) Bajada: mgH − μk mg cosθ·H/sinθ = ½mv²."
+   ],
+   "sol": [
+    "a) ½v² = gH(1 + μk/tanθ) → H = 9.27 m",
+    "b) tan40° = 0.84 > 0.75 → se desliza",
+    "c) v² = 2gH(1 − μk/tanθ) → v = 11.8 m/s"
+   ],
+   "ans": [
+    "a) 9.27 m",
+    "b) Se desliza",
+    "c) 11.8 m/s"
+   ],
+   "img": "img/sz7-7-44.png",
+   "num": "7.44"
+  },
+  {
+   "id": "sz7-7-47",
+   "title": "Elegir la cuerda de bungee",
+   "text": "",
+   "key": "Cae 41.0 m de los que 11.0 m estiran la cuerda: mg·41 = ½k(11)².",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.47",
+   "notes": "",
+   "hints": [
+    "La cuerda empieza a estirar tras 30.0 m de caída libre.",
+    "De reposo a reposo: toda la U gravitacional se guarda en la cuerda.",
+    "En la prueba: x = 380/k."
+   ],
+   "sol": [
+    "95·9.8·41.0 = ½k(11.0)² → k = 631 N/m",
+    "x prueba = 380/631 = 0.602 m"
+   ],
+   "ans": [
+    "0.602 m"
+   ],
+   "img": "img/sz7-7-47.png",
+   "num": "7.47"
+  },
+  {
+   "id": "sz7-7-48",
+   "title": "Diseñar el resorte de una rampa",
+   "text": "",
+   "key": "Energía da ½kx²; \"no rebotar\" exige kx ≤ W sinθ + f_s,máx.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.48",
+   "notes": "",
+   "hints": [
+    "Energía a disipar: W sinθ·5.0 + ½mv² − 515·5.0 = ½kx².",
+    "Para no rebotar: kx − W sinθ ≤ 515 N.",
+    "Combina: k ≤ F²/(2E)."
+   ],
+   "sol": [
+    "E = 1470·sin22°·5 + ½(150)(1.8)² − 515·5 = 421 J",
+    "F_máx = 515 + 1470 sin22° = 1066 N",
+    "k ≤ F²/(2E) = 1.35 × 10³ N/m"
+   ],
+   "ans": [
+    "k ≈ 1.35 × 10³ N/m (como máximo)"
+   ],
+   "img": "img/sz7-7-48.png",
+   "num": "7.48"
+  },
+  {
+   "id": "sz7-7-55",
+   "title": "Esquiadora sobre una bola de nieve",
+   "text": "",
+   "key": "Se despega cuando N = 0: mg cosα = mv²/R, con v de la energía.",
+   "topics": [
+    "ene",
+    "mcirc"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.55",
+   "notes": "",
+   "hints": [
+    "Energía: v² = 2gR(1 − cosα).",
+    "Radial: mg cosα − N = mv²/R. Pon N = 0."
+   ],
+   "sol": [
+    "g cosα = 2g(1 − cosα)",
+    "cosα = 2/3 → α = 48.2°"
+   ],
+   "ans": [
+    "α = 48.2°"
+   ],
+   "img": "img/sz7-7-55.png",
+   "num": "7.55"
+  },
+  {
+   "id": "sz7-7-58",
+   "title": "Camión desbocado y rampa de seguridad",
+   "text": "",
+   "key": "Energía con dos tramos: bajada sin fricción, subida con fricción de rodamiento.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.58",
+   "notes": "",
+   "hints": [
+    "Bajada: ½mv² = ½mv₀² + mgL sinα.",
+    "Rampa: la fricción es μr mg cosβ y sube altura d sinβ."
+   ],
+   "sol": [
+    "½mv₀² + mgL sinα = mg d sinβ + μr mg cosβ·d",
+    "d = (v₀²/2g + L sinα)/(sinβ + μr cosβ)"
+   ],
+   "ans": [
+    "d = (v₀²/2g + L sinα)/(sinβ + μr cosβ)"
+   ],
+   "img": "img/sz7-7-58.png",
+   "num": "7.58"
+  },
+  {
+   "id": "sz7-7-60",
+   "title": "Trineo que sale del risco",
+   "text": "",
+   "key": "Energía para la rapidez arriba y luego tiro horizontal.",
+   "topics": [
+    "ene",
+    "cin"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.60",
+   "notes": "",
+   "hints": [
+    "v² = 22.5² − 2g(11.0).",
+    "Sale horizontal desde 11.0 m: t = √(2h/g)."
+   ],
+   "sol": [
+    "v = 17.0 m/s",
+    "t = 1.50 s",
+    "x = 17.0·1.50 = 25.5 m"
+   ],
+   "ans": [
+    "25.5 m"
+   ],
+   "img": "img/sz7-7-60.png",
+   "num": "7.60"
+  },
+  {
+   "id": "sz7-7-64",
+   "title": "Pez soltado en un resorte",
+   "text": "",
+   "key": "Bajarlo despacio da k = mg/d; soltarlo estira el doble: 2d.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.64",
+   "notes": "",
+   "hints": [
+    "Equilibrio: kd = mg.",
+    "Soltado: mgx = ½kx²."
+   ],
+   "sol": [
+    "k = mg/d",
+    "mgx = ½(mg/d)x² → x = 2d"
+   ],
+   "ans": [
+    "2d"
+   ],
+   "img": "img/sz7-7-64.png",
+   "num": "7.64"
+  },
+  {
+   "id": "sz7-7-65",
+   "title": "Caja con resorte y fricción: rapidez máxima",
+   "text": "",
+   "key": "v máxima donde la fuerza neta es cero: kx = μk mg, ANTES de que el resorte se suelte.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.65",
+   "notes": "",
+   "hints": [
+    "a) ½kx₀² − μk mg x₀ = ½mv².",
+    "b) Busca la compresión x donde kx = μk mg.",
+    "Aplica energía desde x₀ hasta esa x."
+   ],
+   "sol": [
+    "a) v = √[(45·0.28² − 2·0.3·1.6·9.8·0.28)/1.6] = 0.747 m/s",
+    "b) x = μk mg/k = 0.105 m de compresión",
+    "½mv² = ½k(x₀² − x²) − μk mg(x₀ − x) → v = 0.931 m/s"
+   ],
+   "ans": [
+    "a) 0.747 m/s",
+    "b) 0.931 m/s"
+   ],
+   "img": "img/sz7-7-65.png",
+   "num": "7.65"
+  },
+  {
+   "id": "sz7-7-71",
+   "title": "Normal arriba y abajo en un rizo",
+   "text": "",
+   "key": "Sin fricción: N_abajo − N_arriba = 6mg, siempre.",
+   "topics": [
+    "ene",
+    "mcirc"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.71",
+   "notes": "",
+   "hints": [
+    "Abajo: N₁ − mg = mv₁²/R. Arriba: N₂ + mg = mv₂²/R.",
+    "Energía: v₁² = v₂² + 4gR."
+   ],
+   "sol": [
+    "Restando: N₁ − N₂ = 2mg + m(v₁² − v₂²)/R = 6mg",
+    "N₂ = 3.40 − 6(0.0500)(9.8) = 0.46 N"
+   ],
+   "ans": [
+    "0.46 N"
+   ],
+   "img": "img/sz7-7-71.png",
+   "num": "7.71"
+  },
+  {
+   "id": "sz7-7-72",
+   "title": "Péndulo a 45°: rapidez y tensiones",
+   "text": "",
+   "key": "Energía da v abajo; T = mg cosθ + mv²/L en cada punto.",
+   "topics": [
+    "ene",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.72",
+   "notes": "",
+   "hints": [
+    "Altura que baja: L(1 − cos45°).",
+    "En 45° la piedra está quieta: T = mg cos45°.",
+    "Abajo: T = mg + mv²/L."
+   ],
+   "sol": [
+    "a) v = √[2gL(1 − cos45°)] = 2.14 m/s",
+    "b) T = 0.12·9.8·cos45° = 0.832 N",
+    "c) T = 1.18 + 0.12·2.14²/0.80 = 1.86 N"
+   ],
+   "ans": [
+    "a) 2.14 m/s",
+    "b) 0.832 N",
+    "c) 1.86 N"
+   ],
+   "img": "img/sz7-7-72.png",
+   "num": "7.72"
+  },
+  {
+   "id": "sz7-7-75",
+   "title": "¿F = −αxy² ĵ es conservativa?",
+   "text": "",
+   "key": "Calcula W por dos caminos con los mismos extremos; si difieren, no es conservativa.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.75",
+   "notes": "",
+   "hints": [
+    "Solo cuenta dy: W = ∫ −αxy² dy.",
+    "Recta y = x: sustituye x = y.",
+    "Camino en L: sobre el eje x, y = 0 → F = 0."
+   ],
+   "sol": [
+    "a) W = −α∫₀³ y³ dy = −2.50·81/4 = −50.6 J",
+    "b) Tramo 1: 0. Tramo 2 (x = 3): −α·3∫₀³y² dy = −67.5 J",
+    "c) Distintos → no conservativa"
+   ],
+   "ans": [
+    "a) −50.6 J",
+    "b) −67.5 J",
+    "c) No conservativa"
+   ],
+   "img": "img/sz7-7-75.png",
+   "num": "7.75"
+  },
+  {
+   "id": "sz7-7-76",
+   "title": "Leer un diagrama de energía U(x)",
+   "text": "",
+   "key": "F = −pendiente de U; equilibrio estable en mínimos, inestable en máximos.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.76",
+   "notes": "",
+   "hints": [
+    "En A la curva baja hacia la derecha: ¿signo de F?",
+    "K es máxima donde U es mínima.",
+    "La partícula llega hasta donde U vuelve a valer U(A) ≈ 3 J."
+   ],
+   "sol": [
+    "a) Pendiente negativa → F hacia +x",
+    "b) En B la curva sube → F hacia −x",
+    "c) K máxima en el mínimo, x ≈ 0.75 m",
+    "d) En C (máximo): F = 0",
+    "e) Pasa por C (U_C < U_A) y llega a x ≈ 2.2 m",
+    "f) Estable: x ≈ 0.75 m y 1.75 m",
+    "g) Inestable: x ≈ 1.25 m"
+   ],
+   "ans": [
+    "Valores aproximados leídos de la gráfica: a) +x  b) −x  c) ≈0.75 m  d) 0  e) ≈2.2 m  f) ≈0.75 y 1.75 m  g) ≈1.25 m"
+   ],
+   "img": "img/sz7-7-76.png",
+   "num": "7.76"
+  },
+  {
+   "id": "sz7-7-79",
+   "title": "De datos de K(x) a U(x) y F(x)",
+   "text": "",
+   "key": "E es constante: U(x) = E − K(x). F = −dU/dx = dK/dx.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.79",
+   "notes": "Valores leídos de la gráfica: son aproximados.",
+   "hints": [
+    "Como sale del reposo en −1.50 m, E = U(−1.50).",
+    "Con U(0) = 0: E = K(0) ≈ 0.14 J.",
+    "F > 0 donde K crece al avanzar en +x."
+   ],
+   "sol": [
+    "a) K es simétrica → U también: U(x) = U(−x)",
+    "b) U(−1.50) = E = 0.14 J",
+    "c) U = 0.14 − K: pozo doble con mínimos en ±1.0 m (U ≈ −0.25 J) y una loma en 0",
+    "d) F = 0 en x = 0 y x = ±1.0 m",
+    "e) F > 0 en (−1.5, −1.0) y (0, 1.0); F < 0 en (−1.0, 0) y (1.0, 1.5)",
+    "f) E = U(−1.30) ≈ −0.13 J < 0 → no cruza la loma: x máx ≈ −0.6 m; K máx ≈ 0.12 J"
+   ],
+   "ans": [
+    "b) 0.14 J",
+    "d) 0 y ±1.0 m",
+    "f) x ≈ −0.6 m; K ≈ 0.12 J"
+   ],
+   "img": "img/sz7-7-79.png",
+   "num": "7.79"
+  },
+  {
+   "id": "sz7-7-80",
+   "title": "Protón en un pozo de potencial",
+   "text": "",
+   "key": "U(x₀) = 0 y v(x) = √[2(E − U)/m]; v máxima en el mínimo de U.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 7, ej. 7.80",
+   "notes": "El libro escribe (α/x)²; para que cuadre con la forma pedida se usa U = α/x² − β/x.",
+   "hints": [
+    "Usa U = α/x² − β/x (así cuadra la forma dada) y x₀ = α/β.",
+    "dU/dx = 0 en x = 2α/β.",
+    "Con E = U(x₁), resuelve U(x) = E para los puntos de retorno."
+   ],
+   "sol": [
+    "a) U = (α/x₀²)[(x₀/x)² − x₀/x];  U(x₀) = 0",
+    "b) v = √[(2α/mx₀²)(x₀/x − x₀²/x²)]: acelera, luego frena y se va al infinito con v → 0",
+    "c) v máx en x = 2x₀: v = β/√(2mα)",
+    "d) F = 0 (mínimo de U)",
+    "e) Desde x₁ = 3x₀: oscila entre 1.5x₀ y 3x₀",
+    "f) Caso x₀: x mín = x₀, sin máximo. Caso x₁: entre 1.5α/β y 3α/β"
+   ],
+   "ans": [
+    "c) x = 2α/β, v = β/√(2mα)",
+    "d) 0",
+    "f) [x₀, ∞) y [1.5α/β, 3α/β]"
+   ],
+   "img": "img/sz7-7-80.png",
+   "num": "7.80"
+  }
+ ]
+}

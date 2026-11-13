@@ -1,0 +1,817 @@
+{
+ "version": 1,
+ "topics": [
+  {
+   "id": "equi",
+   "name": "Equilibrio y elasticidad",
+   "area": "mec",
+   "q": 2,
+   "r": 1,
+   "pre": [
+    "rot"
+   ]
+  }
+ ],
+ "exercises": [
+  {
+   "id": "sz11-p11-18",
+   "title": "Refrigerador: ¿resbala o se vuelca?",
+   "text": "",
+   "key": "Compara la fuerza para volcar (F·h = W·b/2) con la necesaria para deslizar (μs W).",
+   "topics": [
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, pregunta de análisis P11.18",
+   "notes": "",
+   "hints": [
+    "Volcar: torca respecto de la arista delantera.",
+    "Deslizar: F = μs N."
+   ],
+   "sol": [
+    "Vuelca si W b/(2h) < μs W, es decir si h > b/(2μs)",
+    "Influyen: altura donde empujas, ancho de la base, μs y la posición del CG"
+   ],
+   "ans": [
+    "Se vuelca si h > b/(2μs); si no, resbala"
+   ],
+   "img": "img/sz11-p11-18.png",
+   "num": "P11.18"
+  },
+  {
+   "id": "sz11-p11-21",
+   "title": "Triple de peso, mismo estiramiento",
+   "text": "",
+   "key": "Mismo Δl y misma L ⇒ mismo esfuerzo F/A: el área se triplica.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, pregunta de análisis P11.21",
+   "notes": "",
+   "hints": [
+    "Δl = FL/(AY).",
+    "A ∝ D²."
+   ],
+   "sol": [
+    "F/A debe ser igual ⇒ A′ = 3A",
+    "D′² = 3D²"
+   ],
+   "ans": [
+    "D′ = √3 D"
+   ],
+   "img": "img/sz11-p11-21.png",
+   "num": "P11.21"
+  },
+  {
+   "id": "sz11-p11-19",
+   "title": "Dirección de la fuerza de la bisagra",
+   "text": "",
+   "key": "Toma torcas respecto del punto donde se ata el cable: solo quedan el peso y la bisagra.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, pregunta de análisis P11.19",
+   "notes": "",
+   "hints": [
+    "El cable se ata entre la bisagra y el centro de masa.",
+    "La componente horizontal compensa la del cable."
+   ],
+   "sol": [
+    "Torcas respecto del punto del cable: el peso (más lejos de la pared) gira hacia abajo, la bisagra debe girar al revés: su fuerza apunta hacia abajo",
+    "Horizontal: el cable jala hacia la pared, la bisagra empuja alejándose de la pared"
+   ],
+   "ans": [
+    "Vertical: hacia abajo",
+    "Horizontal: alejándose de la pared (izquierda)"
+   ],
+   "img": "img/sz11-p11-19.png",
+   "num": "P11.19"
+  },
+  {
+   "id": "sz11-p11-2",
+   "title": "Equilibrio traslacional sin rotacional (y al revés)",
+   "text": "",
+   "key": "ΣF = 0 y Στ = 0 son condiciones independientes.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, pregunta de análisis P11.2",
+   "notes": "",
+   "hints": [
+    "Piensa en un par de fuerzas.",
+    "Piensa en una fuerza que pasa por el centro de masa."
+   ],
+   "sol": [
+    "a) Sí: un par (dos fuerzas iguales y opuestas no colineales) da ΣF = 0 pero Στ ≠ 0",
+    "b) Sí: un cuerpo en caída libre, el peso pasa por el CG: Στ = 0 pero ΣF ≠ 0"
+   ],
+   "ans": [
+    "a) sí, un par de fuerzas",
+    "b) sí, una fuerza que pasa por el CG"
+   ],
+   "img": "img/sz11-p11-2.png",
+   "num": "P11.2"
+  },
+  {
+   "id": "sz11-11-10",
+   "title": "Escalera contra pared lisa: ¿hasta dónde sube?",
+   "text": "",
+   "key": "Pared lisa ⇒ solo normal horizontal; la fricción del piso la iguala; torcas respecto del pie.",
+   "topics": [
+    "equi",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.10",
+   "notes": "",
+   "hints": [
+    "N_piso = 160 + 740 = 900 N.",
+    "Torcas respecto del pie: N_pared·4.0 = Σ peso·(distancia horizontal).",
+    "Altura 4.0 m, base 3.0 m: horizontal = 0.6 × distancia sobre la escalera."
+   ],
+   "sol": [
+    "a) f_max = 0.40·900 = 360 N",
+    "b) N_pared·4 = 160·1.5 + 740·0.6 → f = N_pared = 171 N",
+    "c) 360·4 = 240 + 740·x → x = 1.62 m horizontal = 2.70 m a lo largo"
+   ],
+   "ans": [
+    "a) 360 N",
+    "b) 171 N",
+    "c) 2.70 m a lo largo de la escalera"
+   ],
+   "img": "img/sz11-11-10.png",
+   "num": "11.10"
+  },
+  {
+   "id": "sz11-11-72",
+   "title": "Subir una rueda a un escalón",
+   "text": "",
+   "key": "En el instante de despegar N del piso = 0; torcas respecto de la esquina del escalón.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.72",
+   "notes": "",
+   "hints": [
+    "Brazo del peso: √(2Rh − h²).",
+    "Brazo de F en el centro: R − h; en la parte superior: 2R − h."
+   ],
+   "sol": [
+    "a) F(R − h) = mg√(2Rh − h²) → F = mg√(2Rh − h²)/(R − h)",
+    "b) F(2R − h) = mg√(2Rh − h²) → F = mg√(2Rh − h²)/(2R − h)",
+    "c) Arriba se necesita menos: mayor brazo"
+   ],
+   "ans": [
+    "a) mg√(2Rh − h²)/(R − h)",
+    "b) mg√(2Rh − h²)/(2R − h)",
+    "c) en la parte superior"
+   ],
+   "img": "img/sz11-11-72.png",
+   "num": "11.72"
+  },
+  {
+   "id": "sz11-11-58",
+   "title": "Puente levadizo: estática y luego rotación",
+   "text": "",
+   "key": "Primero Στ = 0; al romperse el cable, τ = Iα y energía con I = ML²/3.",
+   "topics": [
+    "equi",
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.58",
+   "notes": "",
+   "hints": [
+    "Torcas respecto de la bisagra: T·3.5 sin37° = W·7 cos37°.",
+    "I = (W/g)L²/3.",
+    "El CM baja 7 sin37° al volver a horizontal."
+   ],
+   "sol": [
+    "a) T = 45000·7·cos37°/(3.5·sin37°) = 1.19 × 10⁵ N",
+    "b) F = √(T² + W²) = 1.28 × 10⁵ N, 20.6° sobre la horizontal (hacia el lado opuesto al cable)",
+    "c) α = W·7 cos37°/I = 0.839 rad/s²",
+    "d) ω = √(2W·7 sin37°/I) = 1.12 rad/s"
+   ],
+   "ans": [
+    "a) 1.19 × 10⁵ N",
+    "b) 1.28 × 10⁵ N a 20.6°",
+    "c) 0.839 rad/s²",
+    "d) 1.12 rad/s"
+   ],
+   "img": "img/sz11-11-58.png",
+   "num": "11.58"
+  },
+  {
+   "id": "sz11-11-13",
+   "title": "Viga con cable: tensión y fuerza del pivote",
+   "text": "",
+   "key": "Torcas respecto del pivote eliminan su fuerza; luego ΣF da sus componentes.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.13",
+   "notes": "",
+   "hints": [
+    "La viga pesa w (en su centro) y la caja w (en el extremo).",
+    "En b) el ángulo entre cable y viga es 15°."
+   ],
+   "sol": [
+    "a) T·L sin30° = 1.5w·L cos30° → T = 2.60w",
+    "a) Pivote: 2.60w horizontal y 2w vertical → 3.28w a 37.6° sobre la horizontal",
+    "b) T·L sin15° = 1.5w·L cos45° → T = 4.10w",
+    "b) Pivote: 3.55w horizontal y 4.05w vertical → 5.38w a 48.8°"
+   ],
+   "ans": [
+    "a) T = 2.60w; 3.28w a 37.6°",
+    "b) T = 4.10w; 5.38w a 48.8°"
+   ],
+   "img": "img/sz11-11-13.png",
+   "num": "11.13"
+  },
+  {
+   "id": "sz11-11-14",
+   "title": "Viga horizontal con cable 3-4-5",
+   "text": "",
+   "key": "Torca respecto de la pared con la componente vertical del cable (3/5).",
+   "topics": [
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.14",
+   "notes": "",
+   "hints": [
+    "T sen θ = 3/5 T.",
+    "La pared da lo que falte en cada eje."
+   ],
+   "sol": [
+    "a) (3/5)T·4.00 = 190·2.00 + 300·4.00 → T = 658 N",
+    "b) Horizontal: (4/5)T = 527 N",
+    "Vertical: 490 − (3/5)T = 95 N hacia arriba"
+   ],
+   "ans": [
+    "a) 658 N",
+    "b) 527 N horizontal, 95 N vertical hacia arriba"
+   ],
+   "img": "img/sz11-11-14.png",
+   "num": "11.14"
+  },
+  {
+   "id": "sz11-11-65",
+   "title": "Volcar una caja jalando de una esquina",
+   "text": "",
+   "key": "Al iniciar el vuelco el piso solo actúa en la arista de giro; torcas respecto de ella.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.65",
+   "notes": "",
+   "hints": [
+    "Brazo del peso: 1.10 m.",
+    "Brazo del tirón: 1.50 sin53°."
+   ],
+   "sol": [
+    "a) F·1.50 sin53° = 1250·1.10 → F = 1.15 × 10³ N",
+    "b) N = 1250 + F cos53° = 1.94 × 10³ N",
+    "c) f = F sin53° = 917 N",
+    "d) μ_min = 917/1941 = 0.47"
+   ],
+   "ans": [
+    "a) 1.15 × 10³ N",
+    "b) 1.94 × 10³ N",
+    "c) 917 N",
+    "d) 0.47"
+   ],
+   "img": "img/sz11-11-65.png",
+   "num": "11.65"
+  },
+  {
+   "id": "sz11-11-75",
+   "title": "Dos canicas apiladas en un recipiente",
+   "text": "",
+   "key": "Geometría: centros a 2 cm con 1 cm horizontal ⇒ la línea forma 30° con la vertical.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.75",
+   "notes": "",
+   "hints": [
+    "Canica de arriba: peso, pared C y la de abajo.",
+    "Sistema de las dos: B = 2mg y A = C."
+   ],
+   "sol": [
+    "sin φ = 1/2 → φ = 30° con la vertical",
+    "Canica de arriba: C = mg tan30° = 0.424 N; contacto = mg/cos30° = 0.849 N",
+    "Sistema: B = 2mg = 1.47 N; A = C = 0.424 N"
+   ],
+   "ans": [
+    "a) A = 0.424 N, B = 1.47 N, C = 0.424 N",
+    "b) 0.849 N"
+   ],
+   "img": "img/sz11-11-75.png",
+   "num": "11.75"
+  },
+  {
+   "id": "sz11-11-81",
+   "title": "Masa girando en círculo vertical con alambre",
+   "text": "",
+   "key": "Newton radial da la tensión; Δl = TL₀/(AY).",
+   "topics": [
+    "equi",
+    "mcirc"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.81",
+   "notes": "",
+   "hints": [
+    "ω = 4π rad/s.",
+    "Abajo T = m(g + ω²L); arriba T = m(ω²L − g)."
+   ],
+   "sol": [
+    "T_abajo = 12(9.8 + 16π²·0.70) = 1.44 × 10³ N",
+    "T_arriba = 1.21 × 10³ N",
+    "Δl = TL/(AY) con Y = 7.0 × 10¹⁰ Pa, A = 1.4 × 10⁻⁶ m²"
+   ],
+   "ans": [
+    "a) 1.03 cm",
+    "b) 0.86 cm"
+   ],
+   "img": "img/sz11-11-81.png",
+   "num": "11.81"
+  },
+  {
+   "id": "sz11-11-77",
+   "title": "Paca en la banda: ¿vuelca o resbala?",
+   "text": "",
+   "key": "Vuelca cuando la vertical del CG pasa la arista: tanβ = ancho/alto. Resbala cuando tanβ = μs.",
+   "topics": [
+    "equi",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.77",
+   "notes": "",
+   "hints": [
+    "Vuelco: tanβ = 0.25/0.50.",
+    "Deslizamiento: tanβ = μs."
+   ],
+   "sol": [
+    "Vuelco: β = arctan 0.5 = 26.6°",
+    "Deslizamiento: β = arctan 0.60 = 31.0° → primero vuelca",
+    "b) Con μs = 0.40: desliza a 21.8°, antes de volcar"
+   ],
+   "ans": [
+    "a) Vuelca a 26.6° (resbalaría a 31.0°)",
+    "b) Sí: con 0.40 resbala primero, a 21.8°"
+   ],
+   "img": "img/sz11-11-77.png",
+   "num": "11.77"
+  },
+  {
+   "id": "sz11-11-17",
+   "title": "Carga máxima del cable de una viga",
+   "text": "",
+   "key": "La componente vertical del cable (4/5) da la torca; la bisagra puede jalar hacia abajo.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.17",
+   "notes": "",
+   "hints": [
+    "El cable se une a 3.00 m de la bisagra (triángulo 3-4-5).",
+    "Torcas: T(4/5)·3 = W·4.5."
+   ],
+   "sol": [
+    "b) W = 1000·0.8·3/4.5 = 533 N",
+    "c) Horizontal: T·3/5 = 600 N (alejándose de la pared)",
+    "Vertical: 533 − 800 = −267 N → 267 N hacia abajo"
+   ],
+   "ans": [
+    "b) 533 N",
+    "c) 600 N horizontal; 267 N hacia abajo"
+   ],
+   "img": "img/sz11-11-17.png",
+   "num": "11.17"
+  },
+  {
+   "id": "sz11-11-41",
+   "title": "Elevador: esfuerzo máximo del cable",
+   "text": "",
+   "key": "σ = T/A ≤ σ_lim/3 y T = m(g + a).",
+   "topics": [
+    "equi",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.41",
+   "notes": "",
+   "hints": [
+    "T_max = (2.40 × 10⁸/3)·3.00 × 10⁻⁴.",
+    "a = T/m − g."
+   ],
+   "sol": [
+    "T_max = 2.40 × 10⁴ N",
+    "a = 24000/1200 − 9.8"
+   ],
+   "ans": [
+    "a = 10.2 m/s²"
+   ],
+   "img": "img/sz11-11-41.png",
+   "num": "11.41"
+  },
+  {
+   "id": "sz11-11-26",
+   "title": "Varillas de acero y cobre en serie",
+   "text": "",
+   "key": "En serie la fuerza es la misma; cada una se estira según su Y.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.26",
+   "notes": "",
+   "hints": [
+    "A = π(0.75 cm)².",
+    "Y acero 20 × 10¹⁰, cobre 11 × 10¹⁰ Pa."
+   ],
+   "sol": [
+    "σ = 4000/1.77 × 10⁻⁴ = 2.26 × 10⁷ Pa",
+    "a) ε_acero = 1.13 × 10⁻⁴, ε_cobre = 2.06 × 10⁻⁴",
+    "b) Δl_acero = 0.0849 mm, Δl_cobre = 0.154 mm"
+   ],
+   "ans": [
+    "a) 1.13 × 10⁻⁴ y 2.06 × 10⁻⁴",
+    "b) 0.0849 mm y 0.154 mm"
+   ],
+   "img": "img/sz11-11-26.png",
+   "num": "11.26"
+  },
+  {
+   "id": "sz11-11-82",
+   "title": "El alambre como resorte: k = AY/l₀",
+   "text": "",
+   "key": "Ley de Hooke del alambre: F = (AY/l₀)Δl.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.82",
+   "notes": "",
+   "hints": [
+    "Despeja F de Y = (F/A)/(Δl/l₀).",
+    "Y cobre = 11 × 10¹⁰ Pa."
+   ],
+   "sol": [
+    "a) F = (AY/l₀)Δl → k = AY/l₀",
+    "b) k = π(0.6455 mm)²·11 × 10¹⁰/0.750 = 1.92 × 10⁵ N/m",
+    "c) W = kΔl = 1.92 × 10⁵·1.25 × 10⁻³ = 240 N"
+   ],
+   "ans": [
+    "b) 1.92 × 10⁵ N/m",
+    "c) 240 N"
+   ],
+   "img": "img/sz11-11-82.png",
+   "num": "11.82"
+  },
+  {
+   "id": "sz11-11-89",
+   "title": "Escaleras de tijera unidas por una cuerda",
+   "text": "",
+   "key": "Sistema completo para las normales; una escalera sola (torcas en A) para la cuerda.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.89",
+   "notes": "",
+   "hints": [
+    "Forman ángulo recto: base 5.00 m, A a 2.40 m de altura.",
+    "Torcas respecto de A para la escalera de 4 m: brazo de la cuerda 1.50 m."
+   ],
+   "sol": [
+    "a) N₂·5 = 480·1.6 + 360·4.1 → N₂ = 449 N, N₁ = 391 N",
+    "b) T·1.5 = 391·3.2 − 480·1.6 → T = 323 N",
+    "c) En A: √(323² + 89²) = 335 N",
+    "d) Con 800 N en A: N₁ = 679 N y T = 937 N"
+   ],
+   "ans": [
+    "a) 391 N y 449 N",
+    "b) 323 N",
+    "c) 335 N",
+    "d) 937 N"
+   ],
+   "img": "img/sz11-11-89.png",
+   "num": "11.89"
+  },
+  {
+   "id": "sz11-11-90",
+   "title": "Jalar un poste: ¿cuándo resbala?",
+   "text": "",
+   "key": "La cuerda (tensión) aumenta N; si F se aplica alto, la fricción necesaria crece menos que μN.",
+   "topics": [
+    "equi",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.90",
+   "notes": "",
+   "hints": [
+    "Torcas en la base: T sin36.9°·h = F·y.",
+    "f = F(1 − y/h), N = 400 + T cos36.9°."
+   ],
+   "sol": [
+    "a) y = h/2: F/2 = 0.30(400 + 0.667F) → F = 400 N",
+    "b) y = 0.6h: 0.4F = 0.30(400 + 0.8F) → F = 750 N",
+    "c) Para F grande: 1 − u ≤ 0.4u → u ≥ 0.714"
+   ],
+   "ans": [
+    "a) 400 N",
+    "b) 750 N",
+    "c) a 0.714h o más arriba no resbala"
+   ],
+   "img": "img/sz11-11-90.png",
+   "num": "11.90"
+  },
+  {
+   "id": "sz11-11-34",
+   "title": "Agua en la fosa de las Marianas",
+   "text": "",
+   "key": "ΔV/V = −kΔp; la densidad sube en la misma proporción.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.34",
+   "notes": "",
+   "hints": [
+    "k = 45.8 × 10⁻¹¹ Pa⁻¹.",
+    "ρ′ = ρ/(1 − |ΔV|/V)."
+   ],
+   "sol": [
+    "a) ΔV = −45.8 × 10⁻¹¹·1.16 × 10⁸·1 m³ = −0.0531 m³",
+    "b) ρ = 1030/(1 − 0.0531) = 1.09 × 10³ kg/m³"
+   ],
+   "ans": [
+    "a) −0.0531 m³",
+    "b) 1.09 × 10³ kg/m³"
+   ],
+   "img": "img/sz11-11-34.png",
+   "num": "11.34"
+  },
+  {
+   "id": "sz11-11-91",
+   "title": "Pez en un alambre: trabajos y energía elástica",
+   "text": "",
+   "key": "Estirar más el alambre: la energía elástica sube ½k[(x₀ + d)² − x₀²].",
+   "topics": [
+    "equi",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.91",
+   "notes": "",
+   "hints": [
+    "k = AY/L = 6.67 × 10⁴ N/m.",
+    "La fuerza del alambre crece de kx₀ a k(x₀ + d)."
+   ],
+   "sol": [
+    "a) x₀ = mgL/(AY) = 0.661 mm",
+    "b) W_g = mg·d = 0.0221 J",
+    "c) W_F = ½kd² = 8.33 × 10⁻³ J",
+    "d) W_alambre = −(kx₀d + ½kd²) = −0.0304 J",
+    "e) ΔU = +0.0304 J = −W_alambre"
+   ],
+   "ans": [
+    "a) 0.661 mm",
+    "b) 0.0221 J",
+    "c) 8.33 × 10⁻³ J",
+    "d) −0.0304 J",
+    "e) 0.0304 J"
+   ],
+   "img": "img/sz11-11-91.png",
+   "num": "11.91"
+  },
+  {
+   "id": "sz11-11-79",
+   "title": "Puerta corrediza con ruedas trabadas",
+   "text": "",
+   "key": "Fricción cinética en ambas ruedas; F aplicada abajo genera torca que carga una rueda.",
+   "topics": [
+    "equi",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.79",
+   "notes": "",
+   "hints": [
+    "Velocidad constante: F = μk·950 N.",
+    "Torcas respecto de A (nivel del riel): 2N_B = 950·1 + F·h."
+   ],
+   "sol": [
+    "F = 0.52·950 = 494 N",
+    "a) N_B = (950 + 494·1.60)/2 = 870 N; N_A = 80 N",
+    "b) N_A = 0 cuando h = 950/494 = 1.92 m"
+   ],
+   "ans": [
+    "a) A: 80 N; B: 870 N",
+    "b) 1.92 m"
+   ],
+   "img": "img/sz11-11-79.png",
+   "num": "11.79"
+  },
+  {
+   "id": "sz11-11-86",
+   "title": "Péndulo de alambre: Y a partir de una gráfica",
+   "text": "",
+   "key": "Pendiente Δl/m = gL/(AY); en el punto bajo T = m(g + v²/L).",
+   "topics": [
+    "equi",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.86",
+   "notes": "",
+   "hints": [
+    "A = π(0.430 mm)².",
+    "v² abajo = 2gL(1 − cos36°)."
+   ],
+   "sol": [
+    "a) Y = gL/(A·pendiente) = 9.8·22/(5.81 × 10⁻⁷·4.22 × 10⁻⁴) = 8.8 × 10¹¹ Pa",
+    "b) T = 9.5(9.8 + 2·9.8(1 − cos36°)) = 129 N",
+    "Δl = TL/(AY) = 5.5 mm"
+   ],
+   "ans": [
+    "a) 8.8 × 10¹¹ Pa",
+    "b) 5.5 mm"
+   ],
+   "img": "img/sz11-11-86.png",
+   "num": "11.86"
+  },
+  {
+   "id": "sz11-11-12",
+   "title": "Niño sobre una viga en dos apoyos",
+   "text": "",
+   "key": "F_A y F_B lineales en x; se inclina cuando F_A = 0.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.12",
+   "notes": "",
+   "hints": [
+    "Apoyos a 2.00 m de cada extremo.",
+    "Torcas respecto de B: 5F_A = 300·2.5 + 600(5 − x)."
+   ],
+   "sol": [
+    "a) F_A = 750 − 120x; F_B = 150 + 120x (N, x en m)",
+    "b) F_A = 0 en x = 6.25 m → 1.25 m más allá de B",
+    "c) 600d = 300(4.5 − d) → d = 1.5 m"
+   ],
+   "ans": [
+    "a) F_A = 750 − 120x, F_B = 150 + 120x",
+    "b) 1.25 m",
+    "c) 1.50 m del extremo derecho"
+   ],
+   "img": "img/sz11-11-12.png",
+   "num": "11.12"
+  },
+  {
+   "id": "sz11-11-31",
+   "title": "Hueso humano bajo presión",
+   "text": "",
+   "key": "ΔV/V = −Δp/B; la presión crece 10⁴ Pa por metro.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.31",
+   "notes": "",
+   "hints": [
+    "Δp = B·0.0010.",
+    "h = Δp/(1.0 × 10⁴ Pa/m)."
+   ],
+   "sol": [
+    "a) Δp = 15 × 10⁹·0.0010 = 1.5 × 10⁷ Pa = 148 atm",
+    "b) h = 1.5 × 10⁷/10⁴ = 1.5 km; no es preocupación real"
+   ],
+   "ans": [
+    "a) 148 atm",
+    "b) 1.5 km; no le preocupa"
+   ],
+   "img": "img/sz11-11-31.png",
+   "num": "11.31"
+  },
+  {
+   "id": "sz11-11-62",
+   "title": "Adorno: varilla, nodo y dos esferas",
+   "text": "",
+   "key": "Nodo B: dos cuerdas perpendiculares; luego torcas en la varilla.",
+   "topics": [
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 11, ej. 11.62",
+   "notes": "",
+   "hints": [
+    "A sostiene solo la esfera de abajo; B las dos.",
+    "En el nodo D·cos36.9° = C·cos53.1°."
+   ],
+   "sol": [
+    "A = 0.353 N, B = 0.588 N",
+    "C = 0.470 N, D = 0.353 N",
+    "Varilla: F = 0.931 N, E = 0.833 N"
+   ],
+   "ans": [
+    "A 0.353 N, B 0.588 N, C 0.470 N",
+    "D 0.353 N, E 0.833 N, F 0.931 N"
+   ],
+   "img": "img/sz11-11-62.png",
+   "num": "11.62"
+  }
+ ]
+}

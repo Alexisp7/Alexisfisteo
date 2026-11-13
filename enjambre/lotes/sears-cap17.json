@@ -1,0 +1,720 @@
+{
+ "version": 14,
+ "topics": [
+  {
+   "id": "cal",
+   "name": "Temperatura y calor",
+   "area": "ter",
+   "q": -1,
+   "r": -1,
+   "pre": [
+    "ene"
+   ]
+  }
+ ],
+ "exercises": [
+  {
+   "id": "sz17-p17-19",
+   "title": "Metal frío contra madera fría",
+   "text": "",
+   "key": "Lo que sentimos es la rapidez con que entra o sale calor de la piel, no la temperatura del objeto.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, pregunta de análisis P17.19",
+   "notes": "",
+   "hints": [
+    "Compara la conductividad térmica del metal y de la madera.",
+    "¿Cuándo no hay flujo de calor entre la mano y el bloque?"
+   ],
+   "sol": [
+    "El metal conduce mucho mejor: saca (o mete) calor de la piel más rápido",
+    "A la temperatura de la piel no hay flujo de calor con ninguno"
+   ],
+   "ans": [
+    "Por la conductividad; se sienten igual a la temperatura de la piel (≈ 33–37 °C)"
+   ],
+   "img": "img/sz17-p17-19.png",
+   "num": "P17.19"
+  },
+  {
+   "id": "sz17-p17-2",
+   "title": "¿Duplicar °C duplica la presión?",
+   "text": "",
+   "key": "A volumen constante p ∝ T absoluta (kelvin), no ∝ T en Celsius.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, pregunta de análisis P17.2",
+   "notes": "",
+   "hints": [
+    "p/T = constante solo con T en kelvin.",
+    "Prueba con 20 °C → 40 °C."
+   ],
+   "sol": [
+    "293 K → 313 K: T absoluta sube solo 6.8%",
+    "La presión sube en la misma proporción"
+   ],
+   "ans": [
+    "No: p sube solo en la razón de las temperaturas kelvin (≈ 7% en el ejemplo)"
+   ],
+   "img": "img/sz17-p17-2.png",
+   "num": "P17.2"
+  },
+  {
+   "id": "sz17-p17-5",
+   "title": "Cuerpo hueco y macizo al calentarse",
+   "text": "",
+   "key": "La dilatación es una \"ampliación fotográfica\": el hueco se dilata como si fuera del mismo material.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, pregunta de análisis P17.5",
+   "notes": "",
+   "hints": [
+    "Imagina rellenar el hueco con el mismo material.",
+    "Cada longitud crece en el mismo factor (1 + αΔT)."
+   ],
+   "sol": [
+    "Todas las dimensiones, incluido el hueco, crecen igual",
+    "El volumen exterior cambia lo mismo"
+   ],
+   "ans": [
+    "La misma expansión de volumen global"
+   ],
+   "img": "img/sz17-p17-5.png",
+   "num": "P17.5"
+  },
+  {
+   "id": "sz17-p17-27",
+   "title": "La Tierra y el Sol no están en equilibrio",
+   "text": "",
+   "key": "La Tierra está en estado estacionario: absorbe radiación de un Sol diminuto en el cielo y emite hacia el espacio frío.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, pregunta de análisis P17.27",
+   "notes": "",
+   "hints": [
+    "El equilibrio térmico exigiría estar rodeada por el Sol por todos lados.",
+    "El resto del cielo es espacio a ≈ 3 K."
+   ],
+   "sol": [
+    "Recibe energía solo del pequeño ángulo sólido del Sol",
+    "Emite en todas direcciones al espacio frío; el balance da ≈ 255–290 K, no 5800 K"
+   ],
+   "ans": [
+    "Porque intercambia radiación con el Sol y con el espacio frío: estado estacionario, no equilibrio"
+   ],
+   "img": "img/sz17-p17-27.png",
+   "num": "P17.27"
+  },
+  {
+   "id": "sz17-17-4",
+   "title": "Donde coinciden las escalas",
+   "text": "",
+   "key": "Iguala las dos fórmulas de conversión: T_F = T_C y T_F = T_K.",
+   "topics": [
+    "cal",
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.4",
+   "notes": "",
+   "hints": [
+    "T_F = (9/5)T_C + 32.",
+    "T_F = (9/5)(T_K − 273.15) + 32."
+   ],
+   "sol": [
+    "a) x = 9x/5 + 32 → x = −40",
+    "b) x = 9(x − 273.15)/5 + 32 → x = 574.59"
+   ],
+   "ans": [
+    "a) −40 °C = −40 °F",
+    "b) 574.59 K = 574.59 °F"
+   ],
+   "img": "img/sz17-17-4.png",
+   "num": "17.4"
+  },
+  {
+   "id": "sz17-17-17",
+   "title": "Mercurio que se derrama de un matraz",
+   "text": "",
+   "key": "Lo que se derrama es la diferencia entre la dilatación del mercurio y la del vidrio.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.17",
+   "notes": "",
+   "hints": [
+    "ΔV_derramado = (β_Hg − β_vidrio)V₀ΔT.",
+    "Despeja β_vidrio."
+   ],
+   "sol": [
+    "8.95 = (18.0×10⁻⁵ − β_v)(1000)(55.0)",
+    "β_v = 18.0×10⁻⁵ − 1.627×10⁻⁴"
+   ],
+   "ans": [
+    "β_vidrio ≈ 1.7×10⁻⁵ K⁻¹"
+   ],
+   "img": "img/sz17-17-17.png",
+   "num": "17.17"
+  },
+  {
+   "id": "sz17-17-21",
+   "title": "Rieles: holgura y esfuerzo térmico",
+   "text": "",
+   "key": "Si no puede dilatarse, aparece un esfuerzo F/A = Y·α·ΔT.",
+   "topics": [
+    "cal",
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.21",
+   "notes": "",
+   "hints": [
+    "ΔL = αL₀ΔT con ΔT = 42 C°.",
+    "Acero: α = 1.2×10⁻⁵ K⁻¹, Y = 20×10¹⁰ Pa."
+   ],
+   "sol": [
+    "a) ΔL = 1.2×10⁻⁵·12.0·42 = 6.05×10⁻³ m",
+    "b) F/A = YαΔT = 20×10¹⁰·1.2×10⁻⁵·42"
+   ],
+   "ans": [
+    "a) ≈ 6.0 mm",
+    "b) ≈ 1.0×10⁸ Pa (compresión)"
+   ],
+   "img": "img/sz17-17-21.png",
+   "num": "17.21"
+  },
+  {
+   "id": "sz17-17-45",
+   "title": "Hielo a −10 °C hasta vapor a 100 °C",
+   "text": "",
+   "key": "Suma los cinco tramos: calentar hielo, fundir, calentar agua, evaporar.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.45",
+   "notes": "",
+   "hints": [
+    "c_hielo = 2100, L_f = 334×10³, c_agua = 4190, L_v = 2256×10³ (SI).",
+    "1 cal = 4.186 J; 1 Btu = 1055 J."
+   ],
+   "sol": [
+    "Q = 0.018[2100·10 + 334×10³ + 4190·100 + 2256×10³]",
+    "Q = 5.45×10⁴ J"
+   ],
+   "ans": [
+    "5.45×10⁴ J = 1.30×10⁴ cal = 51.7 Btu"
+   ],
+   "img": "img/sz17-17-45.png",
+   "num": "17.45"
+  },
+  {
+   "id": "sz17-17-56",
+   "title": "Barras de latón y cobre en serie",
+   "text": "",
+   "key": "En estado estable la misma corriente de calor H cruza ambas barras.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.56",
+   "notes": "",
+   "hints": [
+    "k_latón(100 − T)/L₁ = k_Cu(T − 0)/L₂.",
+    "k_latón = 109, k_Cu = 385 W/m·K.",
+    "Masa de hielo: H·t/L_f."
+   ],
+   "sol": [
+    "a) 109(100 − T)/0.300 = 385·T/0.800 → T = 43.0 °C",
+    "b) H = 385·0.005·43.0/0.800 = 103.5 W; m = 103.5·300/334×10³"
+   ],
+   "ans": [
+    "a) 43.0 °C",
+    "b) ≈ 0.093 kg (93 g)"
+   ],
+   "img": "img/sz17-17-56.png",
+   "num": "17.56"
+  },
+  {
+   "id": "sz17-17-79",
+   "title": "Esfuerzo con dilatación parcial",
+   "text": "",
+   "key": "El esfuerzo depende de lo que la varilla no pudo dilatarse: ΔL/L₀ − αΔT.",
+   "topics": [
+    "cal",
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.79",
+   "notes": "",
+   "hints": [
+    "La deformación mecánica es la total menos la térmica.",
+    "b) Los alambres de acero se estiran lo que se dilata el latón."
+   ],
+   "sol": [
+    "a) F/A = Y(ΔL/L₀ − αΔT)",
+    "b) F/A = Y_acero(α_latón − α_acero)ΔT = 20×10¹⁰(2.0 − 1.2)×10⁻⁵·120"
+   ],
+   "ans": [
+    "b) ≈ 1.9×10⁸ Pa (suponiendo que el latón grueso se dilata libremente)"
+   ],
+   "img": "img/sz17-17-79.png",
+   "num": "17.79"
+  },
+  {
+   "id": "sz17-17-93",
+   "title": "Agua con hielo: ¿se funde todo?",
+   "text": "",
+   "key": "Primero compara el calor que puede dar el agua al bajar a 0 °C con el que necesita el hielo para fundirse.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.93",
+   "notes": "",
+   "hints": [
+    "Disponible: 1.50·4190·28.",
+    "Necesario: 0.600(2100·22 + 334×10³).",
+    "Si no alcanza, T = 0 °C y calcula cuánto se fundió."
+   ],
+   "sol": [
+    "Disponible 1.76×10⁵ J < necesario 2.28×10⁵ J: no se funde todo",
+    "Fundido: (1.76×10⁵ − 2.77×10⁴)/334×10³ = 0.444 kg"
+   ],
+   "ans": [
+    "a) No",
+    "b) T = 0 °C; quedan ≈ 0.156 kg de hielo"
+   ],
+   "img": "img/sz17-17-93.png",
+   "num": "17.93"
+  },
+  {
+   "id": "sz17-17-105",
+   "title": "Lago que se congela: x ∝ √t",
+   "text": "",
+   "key": "El calor de fusión del agua que se congela abajo se conduce a través del hielo ya formado.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.105",
+   "notes": "",
+   "hints": [
+    "ρL_f A dx = k A ΔT/x · dt.",
+    "Integra: x² = 2kΔT t/(ρL_f).",
+    "Hielo: k = 1.6 W/m·K, ρ = 920 kg/m³."
+   ],
+   "sol": [
+    "a) El hielo aísla y el agua más densa (4 °C) queda abajo",
+    "b) x dx = (kΔT/ρL_f) dt → x = √(2kΔT t/ρL_f)",
+    "c) t = ρL_f x²/(2kΔT) = 920·334×10³·0.25²/(2·1.6·10)",
+    "d) Con x = 40 m: t ≈ 1.5×10¹⁰ s"
+   ],
+   "ans": [
+    "b) x ∝ √t",
+    "c) ≈ 6.0×10⁵ s ≈ 7 días",
+    "d) ≈ 490 años: no ocurre"
+   ],
+   "img": "img/sz17-17-105.png",
+   "num": "17.105"
+  },
+  {
+   "id": "sz17-17-106",
+   "title": "Temperatura del Sol desde la Tierra",
+   "text": "",
+   "key": "La potencia total se conserva: I_sol·R_sol² = I_Tierra·d².",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.106",
+   "notes": "",
+   "hints": [
+    "I_sup = 1500(d/R_sol)².",
+    "Cuerpo negro: I = σT⁴."
+   ],
+   "sol": [
+    "a) I = 1500(1.50×10¹¹/6.96×10⁸)² = 6.97×10⁷ W/m²",
+    "b) T = (I/σ)^¼"
+   ],
+   "ans": [
+    "a) ≈ 6.97×10⁷ W/m²",
+    "b) ≈ 5.92×10³ K"
+   ],
+   "img": "img/sz17-17-106.png",
+   "num": "17.106"
+  },
+  {
+   "id": "sz17-17-115",
+   "title": "Conducción radial en un tubo",
+   "text": "",
+   "key": "En un cilindro la corriente es la misma por cada capa: dT/dr ∝ 1/r, la resistencia es ln(b/a)/(2πkL).",
+   "topics": [
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.115",
+   "notes": "",
+   "hints": [
+    "H = −k(2πrL) dT/dr; integra de a a b.",
+    "Capas en serie: suma ln(b/a)/(2πkL).",
+    "Pared delgada: ln(1 + d/a) ≈ d/a."
+   ],
+   "sol": [
+    "a) H = 2πkL(T₂ − T₁)/ln(b/a)",
+    "b) T(r) = T₂ − (T₂ − T₁)ln(r/a)/ln(b/a)",
+    "d) R₁ = ln2/(2π·0.04·2), R₂ = ln1.5/(2π·0.027·2); H = 125/(R₁ + R₂); T = 140 − H·R₁"
+   ],
+   "ans": [
+    "a) H = 2πkL(T₂ − T₁)/ln(b/a)",
+    "c) Con b − a = d ≪ a: H ≈ k(2πaL)ΔT/d",
+    "d) ≈ 73 °C",
+    "e) ≈ 49 W"
+   ],
+   "img": "img/sz17-17-115.png",
+   "num": "17.115"
+  },
+  {
+   "id": "sz17-17-9",
+   "title": "Cero absoluto con un termómetro de gas",
+   "text": "",
+   "key": "A volumen constante p es lineal en T: extrapola a p = 0.",
+   "topics": [
+    "cal",
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.9",
+   "notes": "",
+   "hints": [
+    "Pendiente: (6.50 − 4.80)×10⁴ Pa por 100 C°.",
+    "b) Si p ∝ T (kelvin): p₁/p₂ = 273.16/373.15."
+   ],
+   "sol": [
+    "a) T₀ = −100·4.80/1.70",
+    "b) p = 6.50×10⁴·273.16/373.15"
+   ],
+   "ans": [
+    "a) ≈ −282 °C",
+    "b) 4.76×10⁴ Pa (no obedece exactamente)"
+   ],
+   "img": "img/sz17-17-9.png",
+   "num": "17.9"
+  },
+  {
+   "id": "sz17-17-38",
+   "title": "Plomo caliente en calorímetro con hielo",
+   "text": "",
+   "key": "Primero se funde el hielo y luego todo sube hasta la T final común.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.38",
+   "notes": "",
+   "hints": [
+    "Cu: c = 390; Pb: c = 130 J/kg·K.",
+    "Calor que cede el plomo = fundir hielo + calentar agua (0.178 kg) y cobre desde 0 °C."
+   ],
+   "sol": [
+    "0.750·130(255 − T) = 0.018·334×10³ + (0.178·4190 + 0.100·390)T",
+    "T = 21.4 °C"
+   ],
+   "ans": [
+    "T ≈ 21.4 °C"
+   ],
+   "img": "img/sz17-17-38.png",
+   "num": "17.38"
+  },
+  {
+   "id": "sz17-17-46",
+   "title": "Curva de calentamiento del hielo",
+   "text": "",
+   "key": "Con potencia constante, cada tramo dura Q/P.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.46",
+   "notes": "",
+   "hints": [
+    "Hasta 0 °C: m·c_hielo·15.",
+    "Fusión: m·L_f."
+   ],
+   "sol": [
+    "a) t₁ = 0.550·2100·15/800 = 21.7 min",
+    "b) t₂ = t₁ + 0.550·334×10³/800 = 251 min"
+   ],
+   "ans": [
+    "a) 21.7 min",
+    "b) 251 min",
+    "c) Rampa, meseta larga a 0 °C y luego otra rampa"
+   ],
+   "img": "img/sz17-17-46.png",
+   "num": "17.46"
+  },
+  {
+   "id": "sz17-17-47",
+   "title": "Bala que se funde al frenar",
+   "text": "",
+   "key": "½mv² = mcΔT + mL_f: la masa se cancela.",
+   "topics": [
+    "cal",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.47",
+   "notes": "",
+   "hints": [
+    "Plomo: c = 130, T_fusión = 327.3 °C, L_f = 24.5×10³ J/kg.",
+    "v = √(2(cΔT + L_f))."
+   ],
+   "sol": [
+    "½v² = 130(302.3) + 24.5×10³",
+    "v = √(2·63.8×10³)"
+   ],
+   "ans": [
+    "v ≈ 357 m/s"
+   ],
+   "img": "img/sz17-17-47.png",
+   "num": "17.47"
+  },
+  {
+   "id": "sz17-17-72",
+   "title": "Aro de acero alrededor del ecuador",
+   "text": "",
+   "key": "ΔR = R·αΔT: el aro se separa lo mismo que crece su radio.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.72",
+   "notes": "",
+   "hints": [
+    "ΔL = 2πR·αΔT y ΔR = ΔL/2π.",
+    "R = 6.38×10⁶ m, α = 1.2×10⁻⁵ K⁻¹."
+   ],
+   "sol": [
+    "ΔR = 6.38×10⁶·1.2×10⁻⁵·0.500"
+   ],
+   "ans": [
+    "≈ 38 m"
+   ],
+   "img": "img/sz17-17-72.png",
+   "num": "17.72"
+  },
+  {
+   "id": "sz17-17-95",
+   "title": "Vapor en calorímetro con hielo",
+   "text": "",
+   "key": "Ve qué fase sobra: el vapor al condensarse y enfriarse a 0 °C da más calor del que necesita fundir el hielo.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.95",
+   "notes": "",
+   "hints": [
+    "Vapor hasta agua a 0 °C: 0.035(L_v + 4190·100).",
+    "Fundir hielo: 0.095·L_f.",
+    "Si sobra, todo queda líquido a T > 0."
+   ],
+   "sol": [
+    "9.36×10⁴ J > 3.17×10⁴ J: todo el hielo se funde y todo el vapor se condensa",
+    "0.035[L_v + 4190(100 − T)] = 0.095L_f + (0.095·4190 + 0.446·390)T"
+   ],
+   "ans": [
+    "a) T ≈ 86.1 °C",
+    "b) 0 kg de hielo, 0.130 kg de agua, 0 kg de vapor"
+   ],
+   "img": "img/sz17-17-95.png",
+   "num": "17.95"
+  },
+  {
+   "id": "sz17-17-102",
+   "title": "Unión en Y de tres varillas",
+   "text": "",
+   "key": "En el nodo, el calor que entra por el cobre sale por el latón y el acero.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.102",
+   "notes": "",
+   "hints": [
+    "k_Cu(100 − T)/0.13 = k_lat·T/0.18 + k_ac·T/0.24.",
+    "k: Cu 385, latón 109, acero 50.2 W/m·K."
+   ],
+   "sol": [
+    "a) T = 78.4 °C",
+    "b) H = kAΔT/L en cada varilla"
+   ],
+   "ans": [
+    "a) 78.4 °C",
+    "b) Cu 12.8 W; latón 9.5 W; acero 3.3 W"
+   ],
+   "img": "img/sz17-17-102.png",
+   "num": "17.102"
+  },
+  {
+   "id": "sz17-17-103",
+   "title": "Tres barras en serie",
+   "text": "",
+   "key": "En serie la corriente es la misma y las resistencias L/(kA) se suman.",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.103",
+   "notes": "",
+   "hints": [
+    "R = L/(kA) para latón, cobre y aluminio (k = 109, 385, 205).",
+    "H = 100/ΣR; T₁ = 100 − H·R_lat."
+   ],
+   "sol": [
+    "H = 100/(ΣR) = 8.40 W",
+    "T₁ = 100 − H R_lat = 59.8 °C; T₂ = T₁ − H R_Cu = 42.7 °C"
+   ],
+   "ans": [
+    "a) T₁ ≈ 59.8 °C",
+    "b) T₂ ≈ 42.7 °C",
+    "c) H ≈ 8.4 W"
+   ],
+   "img": "img/sz17-17-103.png",
+   "num": "17.103"
+  },
+  {
+   "id": "sz17-17-108",
+   "title": "Emisividad de una esfera en una caja",
+   "text": "",
+   "key": "La potencia necesaria es la radiación neta: eσA(T⁴ − T_alr⁴).",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.108",
+   "notes": "",
+   "hints": [
+    "A = 4πr², T en kelvin.",
+    "Al duplicar los °C la temperatura absoluta no se duplica."
+   ],
+   "sol": [
+    "a) e = 0.660/[σA(314.15⁴ − 303.15⁴)]",
+    "b) P = eσA(355.15⁴ − 303.15⁴)"
+   ],
+   "ans": [
+    "a) e ≈ 0.70",
+    "b) P ≈ 3.8 W; razón ≈ 5.8, no 16: se usa T absoluta y el intercambio neto"
+   ],
+   "img": "img/sz17-17-108.png",
+   "num": "17.108"
+  },
+  {
+   "id": "sz17-17-111",
+   "title": "Leer calores de una gráfica T(t)",
+   "text": "",
+   "key": "Con potencia constante, la meseta da L y las pendientes dan c = P/(m·dT/dt).",
+   "topics": [
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 17, ej. 17.111",
+   "notes": "",
+   "hints": [
+    "P = 10 kJ/min, m = 0.500 kg.",
+    "Meseta de 1.0 a 2.5 min; sólido de −5 a 10 °C en 1 min; líquido de 10 a 40 °C en 1.5 min."
+   ],
+   "sol": [
+    "L_f = (10 kJ·1.5)/0.500",
+    "c_s = 10×10³/(0.500·15); c_l = 15×10³/(0.500·30)"
+   ],
+   "ans": [
+    "a) L_f = 3.0×10⁴ J/kg",
+    "b) c_líquido ≈ 1.0×10³; c_sólido ≈ 1.3×10³ J/kg·K"
+   ],
+   "img": "img/sz17-17-111.png",
+   "num": "17.111"
+  }
+ ]
+}

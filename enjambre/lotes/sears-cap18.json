@@ -1,0 +1,792 @@
+{
+ "version": 15,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz18-p18-8",
+   "title": "Expansión libre a doble volumen",
+   "text": "",
+   "key": "El gas no hace trabajo ni recibe calor: su energía interna (y su T) no cambia.",
+   "topics": [
+    "tmp",
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, pregunta de análisis P18.8",
+   "notes": "",
+   "hints": [
+    "Hacia el vacío no hay nada que empujar: W = 0.",
+    "Recipiente aislado: Q = 0. Para gas ideal U depende solo de T."
+   ],
+   "sol": [
+    "ΔU = Q − W = 0 → T = T₀",
+    "pV = nRT con V doble y T igual → p = p₀/2"
+   ],
+   "ans": [
+    "T = T₀, p = p₀/2"
+   ],
+   "img": "img/sz18-p18-8.png",
+   "num": "P18.8"
+  },
+  {
+   "id": "sz18-p18-20",
+   "title": "De 25 °C a 50 °C: ¿doble energía cinética?",
+   "text": "",
+   "key": "K_med = (3/2)kT con T en kelvin.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, pregunta de análisis P18.20",
+   "notes": "",
+   "hints": [
+    "Convierte a kelvin: 298 K → 323 K.",
+    "Para duplicar K hay que duplicar T absoluta."
+   ],
+   "sol": [
+    "K sube en 323/298 ≈ 1.08",
+    "Doble: T = 2·298.15 K = 596.3 K"
+   ],
+   "ans": [
+    "No, solo ≈ 8%",
+    "T = 596 K ≈ 323 °C"
+   ],
+   "img": "img/sz18-p18-20.png",
+   "num": "P18.20"
+  },
+  {
+   "id": "sz18-p18-11",
+   "title": "Oxígeno y nitrógeno con la altura",
+   "text": "",
+   "key": "Cada gas tiene su propia escala de altura RT/(Mg): el más pesado decae más rápido.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, pregunta de análisis P18.11",
+   "notes": "",
+   "hints": [
+    "p_i ∝ e^(−M_i g y/RT).",
+    "M(O₂) = 32 > M(N₂) = 28 g/mol."
+   ],
+   "sol": [
+    "El O₂ decae más rápido con y",
+    "La razón O₂/N₂ ∝ e^(−(M_O − M_N)gy/RT) disminuye"
+   ],
+   "ans": [
+    "Menor proporción de O₂ a gran altura (si no hubiera mezcla turbulenta)"
+   ],
+   "img": "img/sz18-p18-11.png",
+   "num": "P18.11"
+  },
+  {
+   "id": "sz18-p18-22",
+   "title": "Mismo calor a gas mono y diatómico",
+   "text": "",
+   "key": "Equipartición: el diatómico reparte energía también en rotación, C_V = 5R/2 contra 3R/2.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, pregunta de análisis P18.22",
+   "notes": "",
+   "hints": [
+    "ΔT = Q/(nC_V).",
+    "Cuenta grados de libertad: 3 contra 5."
+   ],
+   "sol": [
+    "C_V mono = 3R/2 < C_V di = 5R/2",
+    "El monoatómico sube más: ΔT_mono/ΔT_di = 5/3"
+   ],
+   "ans": [
+    "a) El monoatómico",
+    "b) Parte del calor va a rotación de la molécula"
+   ],
+   "img": "img/sz18-p18-22.png",
+   "num": "P18.22"
+  },
+  {
+   "id": "sz18-18-38",
+   "title": "Mismo calor a H₂ y a Ne",
+   "text": "",
+   "key": "ΔT ∝ 1/C_V: hidrógeno 5R/2, neón 3R/2.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.38",
+   "notes": "",
+   "hints": [
+    "Mismos n y Q.",
+    "ΔT_Ne/ΔT_H₂ = C_V,H₂/C_V,Ne."
+   ],
+   "sol": [
+    "ΔT_Ne = 2.50·(5/2)/(3/2)"
+   ],
+   "ans": [
+    "ΔT_Ne ≈ 4.17 K"
+   ],
+   "img": "img/sz18-18-38.png",
+   "num": "18.38"
+  },
+  {
+   "id": "sz18-18-49",
+   "title": "Globo de aire caliente",
+   "text": "",
+   "key": "Empuje = peso del aire frío desplazado; a igual presión ρT = constante.",
+   "topics": [
+    "tmp",
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.49",
+   "notes": "",
+   "hints": [
+    "ρ_frío V g = ρ_cal V g + 290 g.",
+    "ρ_cal T_cal = ρ_frío T_frío."
+   ],
+   "sol": [
+    "ρ_cal = 1.23 − 290/500 = 0.650 kg/m³",
+    "T_cal = 288.15·1.23/0.650"
+   ],
+   "ans": [
+    "T ≈ 545 K ≈ 272 °C"
+   ],
+   "img": "img/sz18-18-49.png",
+   "num": "18.49"
+  },
+  {
+   "id": "sz18-18-52",
+   "title": "Campana de inmersión del Squalus",
+   "text": "",
+   "key": "El aire atrapado se comprime con pV/T = constante a la presión del fondo.",
+   "topics": [
+    "tmp",
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.52",
+   "notes": "",
+   "hints": [
+    "p_fondo = p₀ + ρgh = 1.013×10⁵ + 1030·9.8·73.",
+    "V_f/V_i = (p₀/p_f)(T_f/T_i) con T en kelvin."
+   ],
+   "sol": [
+    "p_f = 8.38×10⁵ Pa",
+    "Altura de aire = 2.30(1.013/8.38)(280.15/300.15) = 0.26 m → el agua sube 2.04 m",
+    "b) p_man = ρgh = 7.37×10⁵ Pa"
+   ],
+   "ans": [
+    "a) ≈ 2.04 m",
+    "b) ≈ 7.4×10⁵ Pa"
+   ],
+   "img": "img/sz18-18-52.png",
+   "num": "18.52"
+  },
+  {
+   "id": "sz18-18-73",
+   "title": "Escapar de un planeta: ¿a qué temperatura?",
+   "text": "",
+   "key": "Escape desde la superficie si ½mv² > mgR_p; compara con (3/2)kT.",
+   "topics": [
+    "tmp",
+    "grav"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.73",
+   "notes": "",
+   "hints": [
+    "a) Energía: ½mv² − GMm/R ≥ 0 y GM/R² = g.",
+    "b) (3/2)kT = mgR → T = 2mgR/(3k)."
+   ],
+   "sol": [
+    "b) N₂: T = 2(4.65×10⁻²⁶)(9.8)(6.38×10⁶)/(3k)",
+    "H₂ con m 14 veces menor",
+    "c) Luna con g = 1.63, R = 1.74×10⁶ m"
+   ],
+   "ans": [
+    "b) N₂ 1.4×10⁵ K; H₂ 1.0×10⁴ K",
+    "c) N₂ 6.4×10³ K; H₂ 459 K",
+    "d) En la Luna una fracción mayor de moléculas supera el escape"
+   ],
+   "img": "img/sz18-18-73.png",
+   "num": "18.73"
+  },
+  {
+   "id": "sz18-18-79",
+   "title": "Pistón que oscila sobre un gas",
+   "text": "",
+   "key": "Gas isotérmico como resorte: k_ef = pA/h.",
+   "topics": [
+    "tmp",
+    "osc"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.79",
+   "notes": "",
+   "hints": [
+    "a) Equilibrio del pistón: pA = p₀A + mg.",
+    "b) p′ = ph/(h + y) ≈ p(1 − y/h).",
+    "c) ω = √(k_ef/m)."
+   ],
+   "sol": [
+    "a) p = p₀ + mg/(πr²)",
+    "b) F = −(pA/h)·y",
+    "c) f = (1/2π)√((p₀πr² + mg)/(m h))"
+   ],
+   "ans": [
+    "a) p₀ + mg/πr²",
+    "b) F ≈ −(p₀πr² + mg)y/h",
+    "c) f = (1/2π)√((p₀πr² + mg)/(mh)); no son armónicas si y no es pequeño"
+   ],
+   "img": "img/sz18-18-79.png",
+   "num": "18.79"
+  },
+  {
+   "id": "sz18-18-81",
+   "title": "Punto de rocío y altura de las nubes",
+   "text": "",
+   "key": "La presión parcial del vapor se conserva al enfriar; el rocío aparece donde iguala a la presión de vapor.",
+   "topics": [
+    "tmp",
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.81",
+   "notes": "",
+   "hints": [
+    "a) HR = p_v(16 °C)/p_v(30 °C).",
+    "b) p_parcial = HR·p_v(28 °C); interpola la tabla para T_rocío.",
+    "Altura = (28 − T_rocío)/(0.6 °C/100 m)."
+   ],
+   "sol": [
+    "a) 1.81/4.25",
+    "b) 0.35·3.78×10³ = 1.32×10³ Pa → T ≈ 11.1 °C → 2.8 km",
+    "c) 0.80·3.78×10³ = 3.02×10³ Pa → T ≈ 24.2 °C → 0.64 km"
+   ],
+   "ans": [
+    "a) ≈ 43%",
+    "b) ≈ 2.8 km",
+    "c) ≈ 0.64 km"
+   ],
+   "img": "img/sz18-18-81.png",
+   "num": "18.81"
+  },
+  {
+   "id": "sz18-18-84",
+   "title": "Presión en una troposfera con gradiente",
+   "text": "",
+   "key": "dp/dy = −ρg con ρ = pM/RT y T = T₀ − αy: separa variables.",
+   "topics": [
+    "tmp",
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.84",
+   "notes": "",
+   "hints": [
+    "dp/p = −(Mg/R)dy/(T₀ − αy).",
+    "b) ln(1 − αy/T₀) ≈ −αy/T₀."
+   ],
+   "sol": [
+    "a) ln(p/p₀) = (Mg/Rα)ln((T₀ − αy)/T₀)",
+    "b) α → 0: ln(p/p₀) = −Mgy/(RT₀)",
+    "c) p = exp[(0.0288·9.8/(8.314·0.006))·ln(234.8/288)]"
+   ],
+   "ans": [
+    "c) p ≈ 0.315 atm (isoterma a 273 K: 0.332 atm)"
+   ],
+   "img": "img/sz18-18-84.png",
+   "num": "18.84"
+  },
+  {
+   "id": "sz18-18-17",
+   "title": "Altura donde la presión es 90%",
+   "text": "",
+   "key": "Atmósfera isoterma: p = p₀e^(−Mgy/RT) (ejemplo 18.4, T = 273 K, M = 28.8 g/mol).",
+   "topics": [
+    "tmp",
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.17",
+   "notes": "",
+   "hints": [
+    "ln(0.90) = −Mgy/RT.",
+    "RT/Mg ≈ 8.0 km es la escala de altura."
+   ],
+   "sol": [
+    "y = −(RT/Mg)ln 0.90 = 8042·0.105"
+   ],
+   "ans": [
+    "y ≈ 850 m"
+   ],
+   "img": "img/sz18-18-17.png",
+   "num": "18.17"
+  },
+  {
+   "id": "sz18-18-33",
+   "title": "Una molécula de O₂: de la rapidez a la presión",
+   "text": "",
+   "key": "La presión es el promedio de muchos choques; solo 1/3 de las moléculas va en cada eje.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.33",
+   "notes": "",
+   "hints": [
+    "K = (3/2)kT; v_rms = √(3RT/M).",
+    "Choque con una pared cada 2L/v: F = mv²/L.",
+    "En el gas real solo un tercio de v² va en cada dirección."
+   ],
+   "sol": [
+    "a) K = 6.21×10⁻²¹ J; b) v² = 2.34×10⁵ m²/s²; c) v_rms = 484 m/s",
+    "d) p = 2.57×10⁻²³ kg·m/s; e) F = mv²/L = 1.24×10⁻¹⁹ N; f) 1.24×10⁻¹⁷ Pa",
+    "g) N = 1.013×10⁵/1.24×10⁻¹⁷ = 8.2×10²¹; h) N = pV/kT = 2.45×10²²"
+   ],
+   "ans": [
+    "c) 484 m/s",
+    "g) 8.2×10²¹; h) 2.4×10²²",
+    "i) Las moléculas se mueven en 3 direcciones: ⟨v_x²⟩ = v²/3"
+   ],
+   "img": "img/sz18-18-33.png",
+   "num": "18.33"
+  },
+  {
+   "id": "sz18-18-43",
+   "title": "Diagrama de fases del agua",
+   "text": "",
+   "key": "Fusión requiere p sobre el punto triple; ebullición, p bajo el punto crítico.",
+   "topics": [
+    "tmp",
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.43",
+   "notes": "",
+   "hints": [
+    "Punto triple del agua: 610 Pa, 0.01 °C.",
+    "Punto crítico: 2.21×10⁷ Pa, 374 °C."
+   ],
+   "sol": [
+    "a) p < p₁: sólido → vapor (sublimación)",
+    "b) p₁ < p < p₂: sólido → líquido → vapor"
+   ],
+   "ans": [
+    "a) p₁ = 610 Pa (punto triple)",
+    "b) p₂ = 2.21×10⁷ Pa (punto crítico)"
+   ],
+   "img": "img/sz18-18-43.png",
+   "num": "18.43"
+  },
+  {
+   "id": "sz18-18-80",
+   "title": "Cero absoluto con datos de un termómetro de gas",
+   "text": "",
+   "key": "A volumen constante p es lineal en T: el ajuste corta p = 0 en el cero absoluto.",
+   "topics": [
+    "tmp",
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.80",
+   "notes": "",
+   "hints": [
+    "Ajusta una recta p(T) con los cinco puntos.",
+    "b) ΔV/V = 3αΔT con α = 1.2×10⁻⁵ K⁻¹."
+   ],
+   "sol": [
+    "Recta: corte en T ≈ −275 °C",
+    "ΔV/V = 3(1.2×10⁻⁵)(427.8) ≈ 1.5%"
+   ],
+   "ans": [
+    "a) ≈ −275 °C",
+    "b) ≈ 1.5%: pequeño, es razonable ignorarlo"
+   ],
+   "img": "img/sz18-18-80.png",
+   "num": "18.80"
+  },
+  {
+   "id": "sz18-18-83",
+   "title": "Nebulosa oscura",
+   "text": "",
+   "key": "Trayectoria libre λ = 1/(4π√2 r²n) y equilibrio de presión nkT con el medio interestelar.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.83",
+   "notes": "",
+   "hints": [
+    "n = 50×10⁶ m⁻³, r = 5.0×10⁻¹¹ m.",
+    "Tiempo libre = λ/v_rms; p = nkT.",
+    "f) n_neb T_neb = n_MIE T_MIE."
+   ],
+   "sol": [
+    "a) λ = 4.5×10¹¹ m",
+    "b) v_rms = √(3kT/m) = 704 m/s; t ≈ 6.4×10⁸ s ≈ 20 años",
+    "c) p = 1.4×10⁻¹⁴ Pa",
+    "d) v_esc ≈ 650 m/s ≈ v_rms: se evaporaría",
+    "f) T_MIE = 20·50/(1/200) = 2×10⁵ K"
+   ],
+   "ans": [
+    "a) ≈ 4.5×10¹¹ m",
+    "b) 704 m/s, ≈ 20 años: choques poco importantes",
+    "c) ≈ 1.4×10⁻¹⁴ Pa",
+    "d) Tendería a evaporarse",
+    "f) ≈ 2×10⁵ K; no se quemaría: hay poquísimas partículas"
+   ],
+   "img": "img/sz18-18-83.png",
+   "num": "18.83"
+  },
+  {
+   "id": "sz18-18-8",
+   "title": "Tanque de oxígeno con fuga",
+   "text": "",
+   "key": "pV = (m/M)RT con presión absoluta y T en kelvin.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.8",
+   "notes": "",
+   "hints": [
+    "p_abs = p_man + 1.013×10⁵ Pa.",
+    "m = pVM/(RT) antes y después."
+   ],
+   "sol": [
+    "m₁ = (4.013×10⁵)(0.0750)(0.032)/(8.314·310.15) = 0.374 kg",
+    "m₂ = (2.813×10⁵)(0.0750)(0.032)/(8.314·295.15) = 0.275 kg"
+   ],
+   "ans": [
+    "a) 0.374 kg",
+    "b) ≈ 0.098 kg"
+   ],
+   "img": "img/sz18-18-8.png",
+   "num": "18.8"
+  },
+  {
+   "id": "sz18-18-14",
+   "title": "Burbuja que sube del fondo de un lago",
+   "text": "",
+   "key": "pV/T = constante: menos presión y más temperatura agrandan la burbuja.",
+   "topics": [
+    "tmp",
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.14",
+   "notes": "",
+   "hints": [
+    "V₂/V₁ = (p₁/p₂)(T₂/T₁).",
+    "T en kelvin."
+   ],
+   "sol": [
+    "V₂/V₁ = 3.50·296.15/277.15"
+   ],
+   "ans": [
+    "a) ≈ 3.74",
+    "b) No: el aire de los pulmones se expandiría casi 4 veces"
+   ],
+   "img": "img/sz18-18-14.png",
+   "num": "18.14"
+  },
+  {
+   "id": "sz18-18-29",
+   "title": "Dos cajas a distinta temperatura",
+   "text": "",
+   "key": "T solo fija la energía cinética media por molécula; p y N dependen de cuánta materia hay.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.29",
+   "notes": "",
+   "hints": [
+    "K_med = (3/2)kT, no depende del gas.",
+    "v_rms depende también de la masa molecular."
+   ],
+   "sol": [
+    "Deben: d)",
+    "Podrían: a), b), c) y e)"
+   ],
+   "ans": [
+    "Debe ser verdad solo d); a, b, c y e podrían serlo"
+   ],
+   "img": "img/sz18-18-29.png",
+   "num": "18.29"
+  },
+  {
+   "id": "sz18-18-40",
+   "title": "Calor específico del vapor de agua",
+   "text": "",
+   "key": "Equipartición: 6 grados de libertad → C_V = 3R.",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.40",
+   "notes": "",
+   "hints": [
+    "C_V molar = (6/2)R.",
+    "c_V = C_V/M."
+   ],
+   "sol": [
+    "c_V = 3·8.314/0.018 = 1386 J/kg·K",
+    "Real ≈ 2000: la vibración sí aporta"
+   ],
+   "ans": [
+    "a) ≈ 1.39×10³ J/kg·K",
+    "b) Menor que el real: la vibración contribuye"
+   ],
+   "img": "img/sz18-18-40.png",
+   "num": "18.40"
+  },
+  {
+   "id": "sz18-18-44",
+   "title": "Humedad relativa",
+   "text": "",
+   "key": "p_parcial = HR·p_vapor; con gas ideal, m = p_parcial V M/(RT).",
+   "topics": [
+    "tmp",
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.44",
+   "notes": "",
+   "hints": [
+    "p = 0.60·2.34×10³.",
+    "m = pVM/(RT), T = 293.15 K."
+   ],
+   "sol": [
+    "a) p = 1.40×10³ Pa",
+    "b) m = 1404·1.00·0.018/(8.314·293.15)"
+   ],
+   "ans": [
+    "a) 1.40×10³ Pa",
+    "b) ≈ 10.4 g"
+   ],
+   "img": "img/sz18-18-44.png",
+   "num": "18.44"
+  },
+  {
+   "id": "sz18-18-50",
+   "title": "Disco sobre un gas al poner un ladrillo",
+   "text": "",
+   "key": "Isotermo: pV = constante, y la presión la fija el peso sobre el disco (recinto evacuado).",
+   "topics": [
+    "tmp",
+    "equi"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.50",
+   "notes": "",
+   "hints": [
+    "p₁A = 3.00g; p₂A = 12.0g.",
+    "h₂ = h₁ p₁/p₂."
+   ],
+   "sol": [
+    "h₂ = 4.00·3/12"
+   ],
+   "ans": [
+    "h = 1.00 m"
+   ],
+   "img": "img/sz18-18-50.png",
+   "num": "18.50"
+  },
+  {
+   "id": "sz18-18-54",
+   "title": "Presión en Venus a 1 km",
+   "text": "",
+   "key": "Atmósfera isoterma: p = p₀e^(−Mgy/RT); v_rms solo depende de T.",
+   "topics": [
+    "tmp",
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.54",
+   "notes": "",
+   "hints": [
+    "g = 0.894·9.8; T = 733 K; M = 0.044 kg/mol.",
+    "v_rms = √(3RT/M)."
+   ],
+   "sol": [
+    "p/p₀ = e^(−0.044·8.76·1000/(8.314·733)) = 0.939",
+    "v_rms = √(3·8.314·733/0.044)"
+   ],
+   "ans": [
+    "a) 0.939 atm_V ≈ 86 atm terrestres",
+    "b) ≈ 645 m/s en ambos puntos"
+   ],
+   "img": "img/sz18-18-54.png",
+   "num": "18.54"
+  },
+  {
+   "id": "sz18-18-59",
+   "title": "Tanque presurizado que se vacía",
+   "text": "",
+   "key": "El aire de arriba se expande isotérmicamente; Bernoulli con esa presión y la altura sobre la manguera.",
+   "topics": [
+    "tmp",
+    "flu"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.59",
+   "notes": "",
+   "hints": [
+    "p(h) = 4.20×10⁵·0.50/(4.00 − h).",
+    "½v² = (p − p₀)/ρ + g(h − 1.00)."
+   ],
+   "sol": [
+    "a) h = 3.50: v = √(2(320 + 24.5)) = 26.2 m/s",
+    "b) h = 3.00: 16.1 m/s; h = 2.00: 5.44 m/s",
+    "c) Se detiene cuando (p − p₀)/ρ + g(h − 1) = 0"
+   ],
+   "ans": [
+    "a) 26.2 m/s",
+    "b) 16.1 y 5.4 m/s",
+    "c) h ≈ 1.74 m"
+   ],
+   "img": "img/sz18-18-59.png",
+   "num": "18.59"
+  },
+  {
+   "id": "sz18-18-63",
+   "title": "Igualar v_rms de dos gases",
+   "text": "",
+   "key": "A igual T tienen igual energía cinética media; v_rms ∝ √(T/m).",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.63",
+   "notes": "",
+   "hints": [
+    "v_rms = √(3kT/m).",
+    "Para igualar: T_B/m_B = T_A/m_A."
+   ],
+   "sol": [
+    "a) Igual K; v_rms mayor en A (más ligero)",
+    "b) Calentar B",
+    "c) T_B = 283.15·(5.34×10⁻²⁶/3.34×10⁻²⁷)",
+    "d) B (más caliente)"
+   ],
+   "ans": [
+    "a) Igual K; A más rápido",
+    "b) B",
+    "c) ≈ 4.53×10³ K",
+    "d) B"
+   ],
+   "img": "img/sz18-18-63.png",
+   "num": "18.63"
+  },
+  {
+   "id": "sz18-18-77",
+   "title": "Contar moléculas con la distribución de Maxwell",
+   "text": "",
+   "key": "ΔN ≈ N f(v)Δv con f(v) = 4π(m/2πkT)^(3/2) v² e^(−mv²/2kT).",
+   "topics": [
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 18, ej. 18.77",
+   "notes": "",
+   "hints": [
+    "v_mp = √(2kT/m).",
+    "En v_mp: f·Δv = (4/√π)(Δv/v_mp)/e.",
+    "En 7v_mp aparece e^(−49)."
+   ],
+   "sol": [
+    "b) 300 K: v_mp = 395 m/s → ΔN ≈ 0.042N",
+    "c) 7v_mp: ΔN ≈ 2.9×10⁻²¹N",
+    "d) 600 K: 0.030N y 2.1×10⁻²¹N; e) 150 K: 0.059N y 4.2×10⁻²¹N"
+   ],
+   "ans": [
+    "b) 0.042N",
+    "c) 2.9×10⁻²¹N",
+    "f) Al subir T la distribución se ensancha y baja el pico"
+   ],
+   "img": "img/sz18-18-77.png",
+   "num": "18.77"
+  }
+ ]
+}

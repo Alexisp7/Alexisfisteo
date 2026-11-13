@@ -1,0 +1,859 @@
+{
+ "version": 21,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz25-p25-1",
+   "title": "¿Campo eléctrico dentro de un conductor?",
+   "text": "",
+   "key": "E = 0 solo en equilibrio electrostático; con corriente estacionaria el conductor no está en equilibrio.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, pregunta de análisis P25.1",
+   "notes": "",
+   "hints": [
+    "¿Qué suponía el capítulo 21 sobre el movimiento de las cargas?"
+   ],
+   "sol": [
+    "E = 0 dentro de un conductor vale cuando las cargas están en reposo.",
+    "Si circula corriente, hace falta un campo E = ρJ que empuje las cargas contra las colisiones.",
+    "No hay contradicción: son situaciones distintas."
+   ],
+   "ans": [
+    "No hay contradicción: E = 0 solo en equilibrio; con corriente E = ρJ"
+   ],
+   "img": "img/sz25-p25-1.png",
+   "num": "P25.1"
+  },
+  {
+   "id": "sz25-p25-2",
+   "title": "Varilla con longitud y diámetro triplicados",
+   "text": "",
+   "key": "R = ρL/A, con A ∝ diámetro².",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, pregunta de análisis P25.2",
+   "notes": "",
+   "hints": [
+    "L × 3 y A × 9."
+   ],
+   "sol": [
+    "R′ = ρ(3L)/(9A) = R/3."
+   ],
+   "ans": [
+    "R/3"
+   ],
+   "img": "img/sz25-p25-2.png",
+   "num": "P25.2"
+  },
+  {
+   "id": "sz25-p25-14",
+   "title": "Brillo de bombillas en serie",
+   "text": "",
+   "key": "Brillo = potencia I²R; en serie la corriente es la misma.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, pregunta de análisis P25.14",
+   "notes": "",
+   "hints": [
+    "¿Por cuál pasa más corriente?",
+    "Al quitar B, ¿cómo cambia la resistencia total?"
+   ],
+   "sol": [
+    "a) En serie pasa la misma corriente por bombillas idénticas: B brilla igual que A.",
+    "b) Sin B la resistencia total se reduce a la mitad, la corriente se duplica y P = I²R se cuadruplica: A brilla más."
+   ],
+   "ans": [
+    "a) Igual",
+    "b) A brilla más (4 veces la potencia)"
+   ],
+   "img": "img/sz25-p25-14.png",
+   "num": "P25.14"
+  },
+  {
+   "id": "sz25-25-3",
+   "title": "Electrones, densidad de corriente y deriva",
+   "text": "",
+   "key": "n_e/s = I/e, J = I/A, v_d = J/(nq).",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.3",
+   "notes": "",
+   "hints": [
+    "A = π(1.025 mm)²."
+   ],
+   "sol": [
+    "a) I/e = 5.00/1.60×10⁻¹⁹ = 3.12×10¹⁹ electrones/s.",
+    "b) J = 5.00/3.30×10⁻⁶ m² = 1.51×10⁶ A/m².",
+    "c) v_d = J/(ne) = 1.11×10⁻⁴ m/s.",
+    "d) Con diámetro doble: a) no cambia; J y v_d bajan a la cuarta parte."
+   ],
+   "ans": [
+    "a) 3.12×10¹⁹ s⁻¹",
+    "b) 1.51×10⁶ A/m²",
+    "c) 1.11×10⁻⁴ m/s",
+    "d) J y v_d ÷4"
+   ],
+   "img": "img/sz25-25-3.png",
+   "num": "25.3"
+  },
+  {
+   "id": "sz25-25-7",
+   "title": "Carga con corriente variable",
+   "text": "",
+   "key": "Q = ∫I dt.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.7",
+   "notes": "",
+   "hints": [
+    "Integra 55 − 0.65t² de 0 a 8 s."
+   ],
+   "sol": [
+    "a) Q = 55(8) − 0.65(8³)/3 = 440 − 111 = 329 C.",
+    "b) I = Q/t = 329/8.0 = 41.1 A."
+   ],
+   "ans": [
+    "a) 329 C",
+    "b) 41.1 A"
+   ],
+   "img": "img/sz25-25-7.png",
+   "num": "25.7"
+  },
+  {
+   "id": "sz25-25-8",
+   "title": "Corriente con iones positivos y negativos",
+   "text": "",
+   "key": "Los iones de signo opuesto en sentidos opuestos suman corriente en el mismo sentido.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.8",
+   "notes": "",
+   "hints": [
+    "I = (N₊ + N₋)e/t."
+   ],
+   "sol": [
+    "a) I = (2.68 + 3.92)×10¹⁶ × 1.60×10⁻¹⁹ = 1.06×10⁻² A.",
+    "b) Hacia el electrodo negativo (sentido de los Na⁺)."
+   ],
+   "ans": [
+    "a) 10.6 mA",
+    "b) Hacia el electrodo negativo"
+   ],
+   "img": "img/sz25-25-8.png",
+   "num": "25.8"
+  },
+  {
+   "id": "sz25-25-11",
+   "title": "Resistividad y coeficiente de temperatura",
+   "text": "",
+   "key": "R = V/I a cada temperatura; ρ = RA/L y α = (R/R₀ − 1)/ΔT.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.11",
+   "notes": "",
+   "hints": [
+    "Calcula R a 20 °C y a 92 °C."
+   ],
+   "sol": [
+    "R₂₀ = 15.0/18.5 = 0.811 Ω; R₉₂ = 15.0/17.2 = 0.872 Ω.",
+    "a) ρ = RA/L = 0.811 × π(2.50×10⁻³)²/1.50 = 1.06×10⁻⁵ Ω·m.",
+    "b) α = (0.872/0.811 − 1)/72.0 = 1.05×10⁻³ (°C)⁻¹."
+   ],
+   "ans": [
+    "a) 1.06×10⁻⁵ Ω·m",
+    "b) 1.05×10⁻³ °C⁻¹"
+   ],
+   "img": "img/sz25-25-11.png",
+   "num": "25.11"
+  },
+  {
+   "id": "sz25-25-16",
+   "title": "Alambre estirado al triple",
+   "text": "",
+   "key": "Volumen constante: L × 3 ⇒ A ÷ 3.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.16",
+   "notes": "",
+   "hints": [
+    "R = ρL/A."
+   ],
+   "sol": [
+    "R′ = ρ(3L)/(A/3) = 9R."
+   ],
+   "ans": [
+    "9R"
+   ],
+   "img": "img/sz25-25-16.png",
+   "num": "25.16"
+  },
+  {
+   "id": "sz25-25-18",
+   "title": "Cobre con la misma resistencia que aluminio",
+   "text": "",
+   "key": "Misma L y R ⇒ ρ/d² igual.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.18",
+   "notes": "ρ(Cu) = 1.72×10⁻⁸ Ω·m, ρ(Al) = 2.75×10⁻⁸ Ω·m (tabla 25.1).",
+   "hints": [
+    "ρ(Cu) = 1.72×10⁻⁸, ρ(Al) = 2.75×10⁻⁸ Ω·m (tabla 25.1)."
+   ],
+   "sol": [
+    "d_Cu = d_Al √(ρ_Cu/ρ_Al) = 2.14 √(1.72/2.75) = 1.69 mm."
+   ],
+   "ans": [
+    "1.69 mm"
+   ],
+   "img": "img/sz25-25-18.png",
+   "num": "25.18"
+  },
+  {
+   "id": "sz25-25-19",
+   "title": "120 hilos en paralelo y en serie",
+   "text": "",
+   "key": "Lado a lado = paralelo (R/N); extremo con extremo = serie (NR).",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.19",
+   "notes": "",
+   "hints": [
+    "Identifica qué se conserva y qué fórmula conecta los datos."
+   ],
+   "sol": [
+    "a) R = 5.60 μΩ/120 = 4.67×10⁻⁸ Ω.",
+    "b) R = 120 × 5.60 μΩ = 6.72×10⁻⁴ Ω."
+   ],
+   "ans": [
+    "a) 4.67×10⁻⁸ Ω",
+    "b) 6.72×10⁻⁴ Ω"
+   ],
+   "img": "img/sz25-25-19.png",
+   "num": "25.19"
+  },
+  {
+   "id": "sz25-25-24",
+   "title": "Resistor de carbono como termómetro",
+   "text": "",
+   "key": "R = R₀[1 + α(T − T₀)] con α(carbono) = −0.0005 °C⁻¹: si R baja, T sube.",
+   "topics": [
+    "circ",
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.24",
+   "notes": "α(carbono) = −0.0005 °C⁻¹ (tabla 25.2).",
+   "hints": [
+    "α del carbono es negativo (tabla 25.2)."
+   ],
+   "sol": [
+    "215.8/217.3 − 1 = −6.90×10⁻³ = αΔT.",
+    "ΔT = 13.8 °C ⇒ T = 17.8 °C."
+   ],
+   "ans": [
+    "T ≈ 17.8 °C"
+   ],
+   "img": "img/sz25-25-24.png",
+   "num": "25.24"
+  },
+  {
+   "id": "sz25-25-26",
+   "title": "Resistencia interna desde el voltaje terminal",
+   "text": "",
+   "key": "V_ab = ℰ − Ir y V_ab = IR.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.26",
+   "notes": "",
+   "hints": [
+    "Identifica qué se conserva y qué fórmula conecta los datos."
+   ],
+   "sol": [
+    "a) r = (24.0 − 21.2)/4.00 = 0.700 Ω.",
+    "b) R = 21.2/4.00 = 5.30 Ω."
+   ],
+   "ans": [
+    "a) 0.700 Ω",
+    "b) 5.30 Ω"
+   ],
+   "img": "img/sz25-25-26.png",
+   "num": "25.26"
+  },
+  {
+   "id": "sz25-25-27",
+   "title": "Voltímetro ideal en serie",
+   "text": "",
+   "key": "Un voltímetro ideal tiene resistencia infinita: en serie corta la corriente.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.27",
+   "notes": "",
+   "hints": [
+    "¿Cuánta corriente circula si hay una resistencia infinita en el lazo?"
+   ],
+   "sol": [
+    "a) I = 0.",
+    "b) V_ab = ℰ − Ir = 5.0 V.",
+    "c) El voltímetro lee 5.0 V (no hay caída en r ni en el resistor de 2.0 Ω)."
+   ],
+   "ans": [
+    "a) 0",
+    "b) 5.0 V",
+    "c) 5.0 V"
+   ],
+   "img": "img/sz25-25-27.png",
+   "num": "25.27"
+  },
+  {
+   "id": "sz25-25-28",
+   "title": "Amperímetro ideal sobre la batería",
+   "text": "",
+   "key": "El amperímetro ideal (R = 0) pone en corto la batería y el resistor.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.28",
+   "notes": "",
+   "hints": [
+    "¿Por dónde prefiere ir la corriente: por 0 Ω o por 4 Ω?"
+   ],
+   "sol": [
+    "a) I = ℰ/r = 10.0/2.00 = 5.00 A.",
+    "b) Por el resistor de 4.00 Ω: 0 (está en corto).",
+    "c) Voltaje terminal = 0."
+   ],
+   "ans": [
+    "a) 5.00 A",
+    "b) 0",
+    "c) 0"
+   ],
+   "img": "img/sz25-25-28.png",
+   "num": "25.28"
+  },
+  {
+   "id": "sz25-25-29",
+   "title": "Fem, resistencia interna y R con interruptor",
+   "text": "",
+   "key": "Con el circuito abierto el voltímetro lee la fem; cerrado lee ℰ − Ir.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.29",
+   "notes": "",
+   "hints": [
+    "Identifica qué se conserva y qué fórmula conecta los datos."
+   ],
+   "sol": [
+    "ℰ = 3.08 V.",
+    "r = (3.08 − 2.97)/1.65 = 0.067 Ω.",
+    "R = 2.97/1.65 = 1.80 Ω."
+   ],
+   "ans": [
+    "ℰ = 3.08 V, r = 0.067 Ω, R = 1.80 Ω"
+   ],
+   "img": "img/sz25-25-29.png",
+   "num": "25.29"
+  },
+  {
+   "id": "sz25-25-30",
+   "title": "Dos baterías opuestas en un lazo",
+   "text": "",
+   "key": "Fem neta / resistencia total; la batería mayor manda el sentido.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.30",
+   "notes": "",
+   "hints": [
+    "Fem neta = 16.0 − 8.0 V.",
+    "R total = 1.6 + 5.0 + 1.4 + 9.0 Ω."
+   ],
+   "sol": [
+    "a) I = 8.0/17.0 = 0.471 A, en sentido antihorario (sale por a hacia el resistor de 5.0 Ω).",
+    "b) V_ab = 16.0 − 0.471(1.6) = 15.2 V.",
+    "c) V_ac = 0.471(5.0) + 0.471(1.4) + 8.0 = 11.0 V."
+   ],
+   "ans": [
+    "a) 0.471 A, antihorario",
+    "b) 15.2 V",
+    "c) 11.0 V"
+   ],
+   "img": "img/sz25-25-30.png",
+   "num": "25.30"
+  },
+  {
+   "id": "sz25-25-35",
+   "title": "Resistencia de bombillas de 100 y 60 W",
+   "text": "",
+   "key": "P = V²/R e I = P/V.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.35",
+   "notes": "",
+   "hints": [
+    "Identifica qué se conserva y qué fórmula conecta los datos."
+   ],
+   "sol": [
+    "a) R = 120²/100 = 144 Ω.",
+    "b) R = 120²/60 = 240 Ω.",
+    "c) I = 0.833 A y 0.500 A."
+   ],
+   "ans": [
+    "a) 144 Ω",
+    "b) 240 Ω",
+    "c) 0.833 A y 0.500 A"
+   ],
+   "img": "img/sz25-25-35.png",
+   "num": "25.35"
+  },
+  {
+   "id": "sz25-25-36",
+   "title": "Bombilla de 75 W a 220 V",
+   "text": "",
+   "key": "R fija: P ∝ V².",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.36",
+   "notes": "",
+   "hints": [
+    "R = 120²/75."
+   ],
+   "sol": [
+    "R = 192 Ω ⇒ P = 220²/192 = 252 W."
+   ],
+   "ans": [
+    "252 W"
+   ],
+   "img": "img/sz25-25-36.png",
+   "num": "25.36"
+  },
+  {
+   "id": "sz25-25-44",
+   "title": "Resistencia interna con un voltímetro",
+   "text": "",
+   "key": "I = V/R en el dispositivo y r = (ℰ − V)/I.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.44",
+   "notes": "",
+   "hints": [
+    "Identifica qué se conserva y qué fórmula conecta los datos."
+   ],
+   "sol": [
+    "a) P = V²/R = 11.9²/75.0 = 1.89 W.",
+    "b) I = 0.159 A ⇒ r = (15.0 − 11.9)/0.159 = 19.5 Ω."
+   ],
+   "ans": [
+    "a) 1.89 W",
+    "b) 19.5 Ω"
+   ],
+   "img": "img/sz25-25-44.png",
+   "num": "25.44"
+  },
+  {
+   "id": "sz25-25-45",
+   "title": "Porcentaje de potencia perdida en r",
+   "text": "",
+   "key": "Misma corriente: la fracción perdida es r/(R + r).",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.45",
+   "notes": "",
+   "hints": [
+    "Identifica qué se conserva y qué fórmula conecta los datos."
+   ],
+   "sol": [
+    "P_r/P_total = r/(R + r) = 3.50/28.5 = 12.3%."
+   ],
+   "ans": [
+    "12.3%"
+   ],
+   "img": "img/sz25-25-45.png",
+   "num": "25.45"
+  },
+  {
+   "id": "sz25-25-47",
+   "title": "Balance de potencia en un circuito simple",
+   "text": "",
+   "key": "ℰI = I²r + I²R.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.47",
+   "notes": "",
+   "hints": [
+    "I = ℰ/(R + r)."
+   ],
+   "sol": [
+    "I = 12.0/6.0 = 2.0 A.",
+    "a) ℰI = 24 W.",
+    "b) I²r = 4.0 W.",
+    "c) I²R = 20 W."
+   ],
+   "ans": [
+    "a) 24 W",
+    "b) 4.0 W",
+    "c) 20 W"
+   ],
+   "img": "img/sz25-25-47.png",
+   "num": "25.47"
+  },
+  {
+   "id": "sz25-25-52",
+   "title": "Localizar un corto en un cable",
+   "text": "",
+   "key": "La resistencia medida desde cada extremo es proporcional a la distancia al corto.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.52",
+   "notes": "",
+   "hints": [
+    "R_A = 9.00/2.86, R_B = 9.00/1.65.",
+    "x/(2000 − x) = R_A/R_B."
+   ],
+   "sol": [
+    "R_A = 3.15 Ω, R_B = 5.45 Ω.",
+    "x = 2000 × 3.15/(3.15 + 5.45) = 732 m desde A."
+   ],
+   "ans": [
+    "732 m desde A"
+   ],
+   "img": "img/sz25-25-52.png",
+   "num": "25.52"
+  },
+  {
+   "id": "sz25-25-53",
+   "title": "Resistencia por metro con batería real",
+   "text": "",
+   "key": "El voltímetro da ℰ; las dos lecturas de corriente dan r y la resistencia por metro.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.53",
+   "notes": "",
+   "hints": [
+    "ℰ = 12.6 V; 12.6 = I(r + λL)."
+   ],
+   "sol": [
+    "12.6/7.00 = 1.80 = r + 20λ; 12.6/4.20 = 3.00 = r + 40λ.",
+    "λ = 0.0600 Ω/m (y r = 0.600 Ω)."
+   ],
+   "ans": [
+    "0.0600 Ω/m"
+   ],
+   "img": "img/sz25-25-53.png",
+   "num": "25.53"
+  },
+  {
+   "id": "sz25-25-58",
+   "title": "R para disipar 80 W",
+   "text": "",
+   "key": "P = ℰ²R/(R + r)²: cuadrática con dos soluciones.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.58",
+   "notes": "",
+   "hints": [
+    "Identifica qué se conserva y qué fórmula conecta los datos."
+   ],
+   "sol": [
+    "80(R + 0.40)² = 144R ⇒ R² − R + 0.16 = 0.",
+    "R = 0.800 Ω o R = 0.200 Ω."
+   ],
+   "ans": [
+    "R = 0.800 Ω o 0.200 Ω"
+   ],
+   "img": "img/sz25-25-58.png",
+   "num": "25.58"
+  },
+  {
+   "id": "sz25-25-60",
+   "title": "Resistencia entre esferas concéntricas",
+   "text": "",
+   "key": "Suma cascarones en serie: dR = ρ dr/(4πr²).",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.60",
+   "notes": "",
+   "hints": [
+    "Integra de a a b.",
+    "J = I/(4πr²)."
+   ],
+   "sol": [
+    "a) R = ∫ρ dr/(4πr²) = (ρ/4π)(1/a − 1/b).",
+    "b) J = I/(4πr²) = V_ab/[ρr²(1/a − 1/b)].",
+    "c) Si L = b − a ≪ a: 1/a − 1/b = L/(ab) ≈ L/a² ⇒ R ≈ ρL/(4πa²) = ρL/A."
+   ],
+   "ans": [
+    "b) J = V_ab/[ρr²(1/a − 1/b)]",
+    "c) R → ρL/A"
+   ],
+   "img": "img/sz25-25-60.png",
+   "num": "25.60"
+  },
+  {
+   "id": "sz25-25-61",
+   "title": "Batería cargando y descargando",
+   "text": "",
+   "key": "Descarga: V = ℰ − Ir. Carga (corriente inversa): V = ℰ + Ir.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.61",
+   "notes": "",
+   "hints": [
+    "Identifica qué se conserva y qué fórmula conecta los datos."
+   ],
+   "sol": [
+    "8.40 = ℰ − 1.50r; 10.20 = ℰ + 3.50r.",
+    "a) r = 1.80/5.00 = 0.360 Ω.",
+    "b) ℰ = 8.94 V."
+   ],
+   "ans": [
+    "a) 0.360 Ω",
+    "b) 8.94 V"
+   ],
+   "img": "img/sz25-25-61.png",
+   "num": "25.61"
+  },
+  {
+   "id": "sz25-25-66",
+   "title": "Resistor variable: lecturas extremas",
+   "text": "",
+   "key": "V_ab = ℰR/(R + r) e I = ℰ/(R + r).",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.66",
+   "notes": "",
+   "hints": [
+    "Evalúa R = 0 y R → ∞."
+   ],
+   "sol": [
+    "a) Voltímetro: R = 0 ⇒ 0; R → ∞ ⇒ 15.0 V.",
+    "b) Amperímetro: R = 0 ⇒ 15.0/4.00 = 3.75 A; R → ∞ ⇒ 0.",
+    "c) V sube con R hacia 15 V; I baja desde 3.75 A hacia 0."
+   ],
+   "ans": [
+    "a) de 0 a 15.0 V",
+    "b) de 3.75 A a 0"
+   ],
+   "img": "img/sz25-25-66.png",
+   "num": "25.66"
+  },
+  {
+   "id": "sz25-25-73",
+   "title": "Capacitor en paralelo con R₁",
+   "text": "",
+   "key": "Con el capacitor cargado no pasa corriente por él: queda con el voltaje de R₁.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.73",
+   "notes": "",
+   "hints": [
+    "V_C = Q/C.",
+    "La corriente recorre R₂ y R₁ en serie."
+   ],
+   "sol": [
+    "V_C = 36.0 μC/9.00 μF = 4.00 V = IR₁ ⇒ I = 0.667 A.",
+    "ℰ = I(R₁ + R₂) = 0.667 × 10.0 = 6.67 V."
+   ],
+   "ans": [
+    "ℰ = 6.67 V"
+   ],
+   "img": "img/sz25-25-73.png",
+   "num": "25.73"
+  },
+  {
+   "id": "sz25-25-74",
+   "title": "Fem y r desde la gráfica V_ab vs I",
+   "text": "",
+   "key": "V_ab = ℰ − Ir: la ordenada al origen es ℰ y la pendiente es −r.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.74",
+   "notes": "Valores leídos de la gráfica: tolera ±5%.",
+   "hints": [
+    "Toma dos puntos de la recta."
+   ],
+   "sol": [
+    "Pendiente: de (3.0 A, 30.0 V) a (6.0 A, 24.0 V) ⇒ r = 2.0 Ω; ℰ = 30.0 + 3.0 × 2.0 = 36 V.",
+    "b) V_ab = 0.8ℰ ⇒ Ir = 0.2ℰ ⇒ I = 3.6 A ⇒ R = 28.8/3.6 = 8.0 Ω (= 4r)."
+   ],
+   "ans": [
+    "a) ℰ ≈ 36 V, r ≈ 2.0 Ω",
+    "b) R ≈ 8.0 Ω"
+   ],
+   "img": "img/sz25-25-74.png",
+   "num": "25.74"
+  },
+  {
+   "id": "sz25-25-78",
+   "title": "Máxima potencia: R = r",
+   "text": "",
+   "key": "P = ℰ²R/(R + r)², máxima cuando R = r: P_máx = ℰ²/4r.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 25, ej. 25.78",
+   "notes": "",
+   "hints": [
+    "Deriva P respecto a R e iguala a cero."
+   ],
+   "sol": [
+    "a) R → 0: P → 0. b) R → ∞: P → 0.",
+    "c) dP/dR = 0 ⇒ R = r ⇒ P_máx = ℰ²/(4r).",
+    "d) R = 2.00 Ω: 228 W; R = 4.00 Ω: 256 W (máximo); R = 6.00 Ω: 246 W."
+   ],
+   "ans": [
+    "a) 0",
+    "b) 0",
+    "c) ℰ²/4r",
+    "d) 228, 256, 246 W"
+   ],
+   "img": "img/sz25-25-78.png",
+   "num": "25.78"
+  }
+ ]
+}

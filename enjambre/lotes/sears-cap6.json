@@ -1,0 +1,782 @@
+{
+ "version": 1,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz6-p6-8",
+   "title": "Tres caídas desde la misma altura",
+   "text": "",
+   "key": "La rapidez final depende solo de h; el trabajo depende también de la masa.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, pregunta de análisis P6.8",
+   "notes": "",
+   "hints": [
+    "Sin fricción, la normal no trabaja: solo la gravedad hace trabajo.",
+    "El trabajo de la gravedad es mgh, sea cual sea el camino.",
+    "½mv² = mgh: ¿la masa se cancela?"
+   ],
+   "sol": [
+    "W_grav = mgh en los tres casos (la forma del camino no importa)",
+    "½mv² = mgh → v = √(2gh): igual en a), b) y c)",
+    "El trabajo sí escala con m: en c) es 2mgh, el doble"
+   ],
+   "ans": [
+    "i. Igual rapidez en los tres",
+    "ii. Mayor trabajo en c) (masa 2m)"
+   ],
+   "img": "img/sz6-p6-8.png",
+   "num": "P6.8"
+  },
+  {
+   "id": "sz6-p6-5",
+   "title": "Fuerza neta sin trabajo",
+   "text": "",
+   "key": "Trabajo = F·s: una fuerza perpendicular al desplazamiento no trabaja aunque exista.",
+   "topics": [
+    "ene",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, pregunta de análisis P6.5",
+   "notes": "",
+   "hints": [
+    "Busca un movimiento donde la fuerza neta sea siempre perpendicular a la velocidad.",
+    "Si W_total = 0, ¿qué pasa con la rapidez?"
+   ],
+   "sol": [
+    "W_total = ΔK, así que basta con que la rapidez no cambie",
+    "Ejemplo: movimiento circular uniforme. La fuerza neta (centrípeta) es ⊥ a v en todo momento",
+    "Hay fuerza y aceleración, pero W = 0 porque cambia solo la dirección"
+   ],
+   "ans": [
+    "Sí. Ejemplo: movimiento circular uniforme"
+   ],
+   "img": "img/sz6-p6-5.png",
+   "num": "P6.5"
+  },
+  {
+   "id": "sz6-p6-20",
+   "title": "Potencia constante: ¿la aceleración crece o baja?",
+   "text": "",
+   "key": "P = Fv: con P fija, más rapidez significa menos fuerza.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, pregunta de análisis P6.20",
+   "notes": "",
+   "hints": [
+    "Escribe F en función de P y v.",
+    "Con F = ma, ¿qué le pasa a a cuando v aumenta?"
+   ],
+   "sol": [
+    "F = P/v",
+    "a = P/(mv): disminuye cuando v aumenta",
+    "Por eso un auto \"pica\" fuerte al inicio y luego acelera cada vez menos"
+   ],
+   "ans": [
+    "Mayor al inicio"
+   ],
+   "img": "img/sz6-p6-20.png",
+   "num": "P6.20"
+  },
+  {
+   "id": "sz6-p6-24",
+   "title": "Estirar un resorte el doble cuesta el cuádruple",
+   "text": "",
+   "key": "W = ½kx² es cuadrático: duplicar x cuadruplica el trabajo.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, pregunta de análisis P6.24",
+   "notes": "",
+   "hints": [
+    "W = ½kx². ¿Cuánto vale W para 2x?",
+    "Lo que piden es el trabajo ADICIONAL, de x a 2x."
+   ],
+   "sol": [
+    "W(x) = ½kx² = W",
+    "W(2x) = ½k(2x)² = 4W",
+    "Adicional = 4W − W = 3W"
+   ],
+   "ans": [
+    "3W"
+   ],
+   "img": "img/sz6-p6-24.png",
+   "num": "P6.24"
+  },
+  {
+   "id": "sz6-6-4",
+   "title": "Empujar una caja hacia abajo en ángulo (con 6.3)",
+   "text": "",
+   "key": "Empujar hacia abajo aumenta la normal y la fricción; luego cada fuerza tiene su trabajo.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.4",
+   "notes": "",
+   "hints": [
+    "Primero Newton: ΣFy da N = mg + F sin30°; ΣFx a v constante da F cos30° = μk N.",
+    "El trabajo de F solo usa su componente horizontal: W = F cos30°·d.",
+    "Normal y peso son ⊥ al desplazamiento."
+   ],
+   "sol": [
+    "F cos30° = 0.25(30·9.8 + F sin30°) → F = 0.25·294/(0.866 − 0.125) = 99.2 N",
+    "b) W_F = 99.2·cos30°·4.5 = 387 J",
+    "c) W_f = −387 J (v constante: lo cancela)",
+    "d) W_N = 0, W_g = 0",
+    "e) W_total = 0 (ΔK = 0)"
+   ],
+   "ans": [
+    "a) 99.2 N",
+    "b) 387 J",
+    "c) −387 J",
+    "d) 0 y 0",
+    "e) 0"
+   ],
+   "img": "img/sz6-6-4.png",
+   "num": "6.4"
+  },
+  {
+   "id": "sz6-6-9",
+   "title": "Trabajo en un círculo vertical",
+   "text": "",
+   "key": "La tensión es siempre ⊥ a la velocidad; la gravedad solo cuenta el cambio de altura.",
+   "topics": [
+    "ene",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.9",
+   "notes": "",
+   "hints": [
+    "¿Qué ángulo forma la tensión con el desplazamiento en cada instante?",
+    "Para la gravedad W = −mgΔy. En una vuelta completa Δy = 0.",
+    "De abajo hasta arriba sube 2L."
+   ],
+   "sol": [
+    "a) W_T = 0 (siempre ⊥);  W_g = 0 (vuelve a la misma altura)",
+    "b) W_T = 0;  W_g = −mg(2L) = −0.800·9.8·3.20 = −25.1 J"
+   ],
+   "ans": [
+    "a) 0 y 0",
+    "b) 0 y −25.1 J"
+   ],
+   "img": "img/sz6-6-9.png",
+   "num": "6.9"
+  },
+  {
+   "id": "sz6-6-23",
+   "title": "Rapidez mínima para subir una caja por una pendiente con fricción",
+   "text": "",
+   "key": "Trabajo-energía con la distancia sobre la rampa d = h/sinα.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.23",
+   "notes": "",
+   "hints": [
+    "La caja debe llegar con v = 0 justo arriba: ΔK = −½mv₀².",
+    "Recorre d = h/sinα; la fricción vale μk mg cosα.",
+    "Suma W_g = −mgh y W_f = −μk mg cosα·h/sinα."
+   ],
+   "sol": [
+    "−½mv₀² = −mgh − μk mg cosα·(h/sinα)",
+    "v₀² = 2gh(1 + μk/tanα)",
+    "v₀ = √[2gh(1 + μk cotα)]"
+   ],
+   "ans": [
+    "v₀ = √[2gh(1 + μk cotα)]"
+   ],
+   "img": "img/sz6-6-23.png",
+   "num": "6.23"
+  },
+  {
+   "id": "sz6-6-26",
+   "title": "La rapidez al pie del plano no depende del ángulo",
+   "text": "",
+   "key": "La componente del peso ⊥ al plano no trabaja; la paralela trabaja mg sinα·(h/sinα) = mgh.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.26",
+   "notes": "",
+   "hints": [
+    "Descompón mg en mg sinα (paralela) y mg cosα (perpendicular).",
+    "La longitud del plano es h/sinα.",
+    "c) Aplica v = √(2gh) con h = 15.0 m."
+   ],
+   "sol": [
+    "a) W_∥ = mg sinα·(h/sinα) = mgh;  W_⊥ = 0",
+    "b) ½mv² = mgh → v = √(2gh): el ángulo se cancela",
+    "Un plano más inclinado acelera más, pero el camino es más corto: se compensa",
+    "c) v = √(2·9.8·15.0) = 17.1 m/s"
+   ],
+   "ans": [
+    "a) W = mgh",
+    "b) v = √(2gh)",
+    "c) 17.1 m/s"
+   ],
+   "img": "img/sz6-6-26.png",
+   "num": "6.26"
+  },
+  {
+   "id": "sz6-6-31",
+   "title": "Distancia de frenado",
+   "text": "",
+   "key": "d = v₀²/(2μk g): cuadrática en v₀, inversa en μk.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.31",
+   "notes": "",
+   "hints": [
+    "Solo la fricción trabaja: −μk mg·d = 0 − ½mv₀².",
+    "Mira cómo escala d con cada variable."
+   ],
+   "sol": [
+    "a) d = v₀²/(2μk g)",
+    "b) i. μk×2 → d/2",
+    "ii. v₀×2 → 4d",
+    "iii. ambos ×2 → 4/2 = 2d"
+   ],
+   "ans": [
+    "a) d = v₀²/(2μk g)",
+    "b) i. ½  ii. 4  iii. 2"
+   ],
+   "img": "img/sz6-6-31.png",
+   "num": "6.31"
+  },
+  {
+   "id": "sz6-6-41",
+   "title": "Deslizador con resorte: que no regrese",
+   "text": "",
+   "key": "En el reposo instantáneo, la fricción estática debe aguantar la fuerza del resorte: kx ≤ μs mg.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.41",
+   "notes": "Datos del ejemplo 6.7: m = 0.100 kg, k = 20.0 N/m.",
+   "hints": [
+    "Datos del ejemplo 6.7: m = 0.100 kg, k = 20.0 N/m, v₁ = 1.50 m/s; se detiene a x = 0.086 m.",
+    "a) Para no regresar: kx ≤ μs mg.",
+    "b) Primero halla la x máxima permitida por μs = 0.60; luego trabajo-energía con fricción cinética."
+   ],
+   "sol": [
+    "a) μs ≥ kx/(mg) = 20.0·0.086/(0.100·9.8) = 1.76",
+    "b) x_max = μs mg/k = 0.60·0.98/20.0 = 0.0294 m",
+    "½mv₁² = ½kx² + μk mg x → v₁ = √[(20·0.0294² + 2·0.47·0.98·0.0294)/0.100]",
+    "v₁ = 0.67 m/s"
+   ],
+   "ans": [
+    "a) μs ≥ 1.76",
+    "b) v₁ máx = 0.67 m/s"
+   ],
+   "img": "img/sz6-6-41.png",
+   "num": "6.41"
+  },
+  {
+   "id": "sz6-6-43",
+   "title": "Trabajo como área bajo F(x)",
+   "text": "",
+   "key": "W = área con signo bajo la curva F(x); si vas hacia −x, el signo se invierte.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.43",
+   "notes": "",
+   "hints": [
+    "Divide la gráfica en triángulos y rectángulos.",
+    "Área bajo el eje cuenta negativa.",
+    "e) Ir de 7 a 2 es el negativo de ir de 2 a 7."
+   ],
+   "sol": [
+    "a) 0→3: triángulo ½·2·2 + rectángulo 1·2 = 4.0 J",
+    "b) 3→4: F = 0 → 0",
+    "c) 4→7: triángulo ½·2·(−1) = −1.0 J",
+    "d) 0→7: 4 + 0 − 1 = 3.0 J",
+    "e) 7→2: −(2 + 0 − 1) = −1.0 J"
+   ],
+   "ans": [
+    "a) 4.0 J",
+    "b) 0",
+    "c) −1.0 J",
+    "d) 3.0 J",
+    "e) −1.0 J"
+   ],
+   "img": "img/sz6-6-43.png",
+   "num": "6.43"
+  },
+  {
+   "id": "sz6-6-47",
+   "title": "Resorte en un riel inclinado: ¿sigue en contacto?",
+   "text": "",
+   "key": "La energía del resorte se convierte en altura; el resorte se queda atrás cuando llega a su longitud natural.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.47",
+   "notes": "",
+   "hints": [
+    "De la posición inicial al punto más alto: ½kx² = mg(1.80 sin40°).",
+    "Compara 0.80 m con la compresión x.",
+    "En 0.80 m el resorte ya soltó: K = ½kx² − mg(0.80 sin40°)."
+   ],
+   "sol": [
+    "a) x = √[2mg(1.80 sin40°)/k] = √(2·0.09·9.8·1.157/640) = 0.0565 m",
+    "b) 0.80 m > 0.0565 m → ya no toca el resorte",
+    "K = mg sin40°·(1.80 − 0.80) = 0.567 J"
+   ],
+   "ans": [
+    "a) 5.65 cm",
+    "b) No; K = 0.567 J"
+   ],
+   "img": "img/sz6-6-47.png",
+   "num": "6.47"
+  },
+  {
+   "id": "sz6-6-48",
+   "title": "Resorte vertical que lanza un ladrillo",
+   "text": "",
+   "key": "½kx² = mgh con h medido desde la posición comprimida.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.48",
+   "notes": "",
+   "hints": [
+    "Desde el punto más bajo hasta el más alto, K inicial y final son cero.",
+    "h = 3.6 m ya incluye la compresión.",
+    "El resorte no tiene masa: al volver a su longitud natural se detiene y no puede jalar al ladrillo."
+   ],
+   "sol": [
+    "½kx² = mgh → x = √(2·1.80·9.8·3.6/450)",
+    "x = 0.53 m",
+    "Pierde contacto porque un resorte sin masa no puede ir más allá ni tirar hacia abajo de algo que no está unido"
+   ],
+   "ans": [
+    "x = 0.53 m"
+   ],
+   "img": "img/sz6-6-48.png",
+   "num": "6.48"
+  },
+  {
+   "id": "sz6-6-63",
+   "title": "Maleta subiendo una rampa: trabajo de cada fuerza",
+   "text": "",
+   "key": "Calcula cada W por separado y súmalos: W_total = ΔK.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.63",
+   "notes": "",
+   "hints": [
+    "W_F = F·d (paralela).",
+    "W_g = −mg sin32°·d; la fricción usa N = mg cos32°.",
+    "f) ½mv² = W_total."
+   ],
+   "sol": [
+    "a) W_F = 160·3.80 = 608 J",
+    "b) W_g = −20·9.8·sin32°·3.80 = −395 J",
+    "c) W_N = 0",
+    "d) W_f = −0.300·20·9.8·cos32°·3.80 = −189 J",
+    "e) W_total = 24 J",
+    "f) v = √(2·24/20) = 1.5 m/s"
+   ],
+   "ans": [
+    "a) 608 J",
+    "b) −395 J",
+    "c) 0",
+    "d) −189 J",
+    "e) 24 J",
+    "f) 1.5 m/s"
+   ],
+   "img": "img/sz6-6-63.png",
+   "num": "6.63"
+  },
+  {
+   "id": "sz6-6-69",
+   "title": "Fricción que aumenta con la distancia",
+   "text": "",
+   "key": "Fuerza variable → W = −∫μ(x) mg dx.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.69",
+   "notes": "",
+   "hints": [
+    "μ(x) = 0.100 + 0.0400x (sube 0.500 en 12.5 m).",
+    "½mv₀² = mg∫₀ˣ μ dx; la masa se cancela.",
+    "Resuelve la cuadrática en x."
+   ],
+   "sol": [
+    "½v₀² = g(0.100x + 0.0200x²)",
+    "10.125 = 0.98x + 0.196x² → x = 5.11 m",
+    "b) μ = 0.100 + 0.04·5.11 = 0.304",
+    "c) Con μ = 0.100: x = v₀²/(2μg) = 10.3 m"
+   ],
+   "ans": [
+    "a) 5.11 m",
+    "b) 0.304",
+    "c) 10.3 m"
+   ],
+   "img": "img/sz6-6-69.png",
+   "num": "6.69"
+  },
+  {
+   "id": "sz6-6-71",
+   "title": "Bloque que gira y se jala por un orificio",
+   "text": "",
+   "key": "La tensión hace la centrípeta; el trabajo de la persona es solo ΔK.",
+   "topics": [
+    "ene",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.71",
+   "notes": "",
+   "hints": [
+    "T = mv²/r en cada situación.",
+    "La superficie no tiene fricción y la gravedad no trabaja: W_persona = ΔK."
+   ],
+   "sol": [
+    "a) T₁ = 0.0600·0.70²/0.40 = 0.0735 N",
+    "b) T₂ = 0.0600·2.80²/0.10 = 4.70 N",
+    "c) W = ½m(2.80² − 0.70²) = 0.221 J"
+   ],
+   "ans": [
+    "a) 0.0735 N",
+    "b) 4.70 N",
+    "c) 0.221 J"
+   ],
+   "img": "img/sz6-6-71.png",
+   "num": "6.71"
+  },
+  {
+   "id": "sz6-6-72",
+   "title": "Protón repelido por un núcleo (F = α/x²)",
+   "text": "",
+   "key": "W de una fuerza 1/x² = α(1/x₀ − 1/x); con trabajo-energía sale el máximo acercamiento.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.72",
+   "notes": "",
+   "hints": [
+    "Al acercarse, la fuerza repulsiva hace trabajo negativo: W = −α(1/x − 1/x₀).",
+    "Máximo acercamiento: v = 0.",
+    "La fuerza es conservativa: al regresar al mismo punto recupera la rapidez."
+   ],
+   "sol": [
+    "a) ½mv² = ½mv₀² − α(1/x − 1/x₀) → v = 2.41 × 10⁵ m/s en x = 8.00 × 10⁻¹⁰ m",
+    "b) 0 = ½mv₀² − α(1/x − 1/x₀) → x = 2.82 × 10⁻¹⁰ m",
+    "c) Vuelve con 3.00 × 10⁵ m/s"
+   ],
+   "ans": [
+    "a) 2.41 × 10⁵ m/s",
+    "b) 2.82 × 10⁻¹⁰ m",
+    "c) 3.00 × 10⁵ m/s"
+   ],
+   "img": "img/sz6-6-72.png",
+   "num": "6.72"
+  },
+  {
+   "id": "sz6-6-75",
+   "title": "Libro lanzado por un resorte con fricción",
+   "text": "",
+   "key": "Toda la energía del resorte se la come la fricción: ½kx² = μk mg d.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.75",
+   "notes": "",
+   "hints": [
+    "Inicio y final con v = 0.",
+    "La fricción actúa desde el principio, también mientras el resorte empuja.",
+    "d se mide desde la posición inicial."
+   ],
+   "sol": [
+    "½·250·0.250² = 0.30·2.50·9.8·d",
+    "7.81 = 7.35d → d = 1.06 m"
+   ],
+   "ans": [
+    "d = 1.06 m"
+   ],
+   "img": "img/sz6-6-75.png",
+   "num": "6.75"
+  },
+  {
+   "id": "sz6-6-76",
+   "title": "Rifle de resorte con resistencia: ¿dónde va más rápido?",
+   "text": "",
+   "key": "La rapidez es máxima donde la fuerza neta es cero: kx = f.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.76",
+   "notes": "",
+   "hints": [
+    "a) ½kx² = ½mv².",
+    "b) Resta el trabajo de la fricción: f·0.0600 m.",
+    "c) La esfera acelera mientras kx > f. Busca x tal que kx = 6.00 N."
+   ],
+   "sol": [
+    "a) v = x√(k/m) = 0.06·√(400/0.03) = 6.93 m/s",
+    "b) ½mv² = ½·400·0.06² − 6·0.06 → v = 4.90 m/s",
+    "c) kx = 6 → x = 0.015 m (a 4.5 cm del inicio)",
+    "½mv² = ½·400(0.06² − 0.015²) − 6·0.045 → v = 5.20 m/s"
+   ],
+   "ans": [
+    "a) 6.93 m/s",
+    "b) 4.90 m/s",
+    "c) a 4.50 cm de la posición inicial; 5.20 m/s"
+   ],
+   "img": "img/sz6-6-76.png",
+   "num": "6.76"
+  },
+  {
+   "id": "sz6-6-81",
+   "title": "Sistema con polea que se frena: hallar μk",
+   "text": "",
+   "key": "Trabajo-energía del sistema completo: la tensión es interna y se cancela.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.81",
+   "notes": "La traducción dice \"hacia arriba\", pero con la figura el bloque de 6 kg baja; con \"arriba\" no hay solución física.",
+   "hints": [
+    "ΔK del sistema = −½(8 + 6)(0.900)².",
+    "El bloque de 6 kg BAJA 2.00 m (con la figura, si el de 8 kg va a la derecha, el de 6 kg baja).",
+    "W_g = +6g·2, W_f = −μk·8g·2."
+   ],
+   "sol": [
+    "−½·14·0.81 = 6·9.8·2 − μk·8·9.8·2",
+    "−5.67 = 117.6 − 156.8μk",
+    "μk = 0.786"
+   ],
+   "ans": [
+    "μk = 0.786"
+   ],
+   "img": "img/sz6-6-81.png",
+   "num": "6.81"
+  },
+  {
+   "id": "sz6-6-88",
+   "title": "Trabajo de F = αxy î por tres caminos",
+   "text": "",
+   "key": "Si el trabajo depende del camino, la fuerza no es conservativa.",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.88",
+   "notes": "",
+   "hints": [
+    "Solo cuenta dx: W = ∫ αxy dx a lo largo del camino.",
+    "En b) el movimiento es en y: dx = 0.",
+    "En c) sustituye y = 1.5x."
+   ],
+   "sol": [
+    "a) y = 3: W = ∫₀² 2.50·x·3 dx = 7.50·2 = 15.0 J",
+    "b) dx = 0 → W = 0",
+    "c) W = ∫₀² 2.50·1.5x² dx = 3.75·8/3 = 10.0 J",
+    "Mismos extremos, trabajos distintos: no conservativa"
+   ],
+   "ans": [
+    "a) 15.0 J",
+    "b) 0",
+    "c) 10.0 J"
+   ],
+   "img": "img/sz6-6-88.png",
+   "num": "6.88"
+  },
+  {
+   "id": "sz6-6-91",
+   "title": "Datos de resorte con fricción: ajustar v²(d)",
+   "text": "",
+   "key": "v² es cuadrática en d: el coeficiente de d² da k y el de d da μk.",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.91",
+   "notes": "",
+   "hints": [
+    "½mv² = ½k[x₀² − (x₀ − d)²] − μk mg d.",
+    "Ordena: v² = −(k/m)d² + (2kx₀/m − 2μk g)d.",
+    "Ajusta los datos a un polinomio de grado 2 y compara coeficientes."
+   ],
+   "sol": [
+    "a) Primero el resorte hace más trabajo que la fricción; al soltarse, solo la fricción trabaja y frena",
+    "b) v² = −(k/m)d² + (2kx₀/m − 2μk g)d",
+    "c) Ajuste: v² ≈ −40.0d² + 16.3d → v máx en d = 0.204 m, v ≈ 1.29 m/s",
+    "d) k = 40.0·0.300 = 12.0 N/m;  μk = (2·12·0.4/0.3 − 16.3)/(2·9.8) ≈ 0.80"
+   ],
+   "ans": [
+    "c) v máx ≈ 1.29 m/s en d ≈ 0.20 m",
+    "d) k ≈ 12.0 N/m, μk ≈ 0.80"
+   ],
+   "img": "img/sz6-6-91.png",
+   "num": "6.91"
+  },
+  {
+   "id": "sz6-6-93",
+   "title": "Resorte con masa: K = Mv²/6",
+   "text": "",
+   "key": "Cada trozo dl se mueve a v·l/L: integras ½(dm)(vl/L)².",
+   "topics": [
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.93",
+   "notes": "",
+   "hints": [
+    "dm = (M/L)dl y su rapidez es v·l/L.",
+    "K = ∫₀ᴸ ½(M/L)(vl/L)² dl.",
+    "En el rifle: ½kx² = ½mv² + Mv²/6."
+   ],
+   "sol": [
+    "a) K = (Mv²/2L³)∫₀ᴸ l² dl = Mv²/6",
+    "b) Sin masa: v = x√(k/m) = 0.025·√(3200/0.053) = 6.14 m/s",
+    "c) ½kx² = ½(m + M/3)v² → v = 3.86 m/s",
+    "d) K_esfera = 0.40 J, K_resorte = 0.60 J (suman ½kx² = 1.00 J)"
+   ],
+   "ans": [
+    "a) Mv²/6",
+    "b) 6.14 m/s",
+    "c) 3.86 m/s",
+    "d) 0.40 J y 0.60 J"
+   ],
+   "img": "img/sz6-6-93.png",
+   "num": "6.93"
+  },
+  {
+   "id": "sz6-6-94",
+   "title": "Avión: rapidez de alcance y de permanencia máximas",
+   "text": "",
+   "key": "Alcance → mínima energía por metro (F mínima). Permanencia → mínima energía por segundo (P = Fv mínima).",
+   "topics": [
+    "ene",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 6, ej. 6.94",
+   "notes": "",
+   "hints": [
+    "El combustible da energía fija. Distancia = E/F; tiempo = E/P.",
+    "Minimiza F(v) = αv² + β/v².",
+    "Minimiza P(v) = αv³ + β/v."
+   ],
+   "sol": [
+    "a) dF/dv = 2αv − 2β/v³ = 0 → v = (β/α)^¼ = 32.9 m/s = 118 km/h",
+    "b) dP/dv = 3αv² − β/v² = 0 → v = (β/3α)^¼ = 25.0 m/s = 89.9 km/h"
+   ],
+   "ans": [
+    "a) 118 km/h",
+    "b) 89.9 km/h"
+   ],
+   "img": "img/sz6-6-94.png",
+   "num": "6.94"
+  }
+ ]
+}

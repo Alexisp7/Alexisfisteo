@@ -521,28 +521,73 @@ body:has(#v-hive.on) nav button.on{background:linear-gradient(180deg,#7b34c4,#4c
 .dr.dr-l{fill:#e6ff7a}
 .veins{filter:drop-shadow(0 0 3px rgba(190,100,255,.55))}
 @media (max-width:760px){.swarm{background:#14061f}}
+
+/* ============ guía de diseño ENJAMBRE 2.0 ============ */
+:root{--bg:#100817;--surface:#1B1025;--surface-2:#25132F;--primary:#9228E8;--secondary:#C44AFF;--glow:#E5A4FF;--biomass:#56234D;--acid:#B8F52D;--text:#F3EAF8;--muted-2:#AA91B9;--car:#160E20;--car-line:rgba(196,74,255,.3)}
+body:has(#v-hive.on){background:var(--bg)}
+body:has(#v-hive.on) header{background:var(--bg);border-bottom:1px solid rgba(146,40,232,.25);box-shadow:0 2px 20px rgba(16,8,23,.8)}
+body:has(#v-hive.on) .wordmark{color:var(--text)}
+body:has(#v-hive.on) .wordmark small{color:var(--acid)}
+body:has(#v-hive.on) nav button,body:has(#v-hive.on) .navlink{color:var(--muted-2)}
+body:has(#v-hive.on) nav button.on{background:radial-gradient(ellipse at 50% 30%,#C44AFF,#9228E8 55%,#56234D);color:var(--text);box-shadow:0 0 12px rgba(196,74,255,.45)}
+body:has(#v-hive.on) #saveState{color:var(--muted-2)}
+.navlink{padding:7px 12px;border-radius:999px;text-decoration:none;color:var(--mute);font-size:14px}
+.navlink:hover{color:var(--text)}
+.emblema{filter:drop-shadow(0 0 6px rgba(196,74,255,.6))}
+.swarm{background:var(--bg)}
+/* paneles: contenedor biomecánico con borde irregular de quitina */
+.resume,.evo,.helix{background:var(--car);background-clip:padding-box;border:16px solid transparent;border-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22q%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2356234D%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%2325132F%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2356234D%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon%20points%3D%2218.0%2C10.7%2024.0%2C8.9%2030.0%2C9.4%2036.0%2C9.5%2042.0%2C9.9%2048.0%2C7.4%2054.0%2C11.8%2060.0%2C6.4%2066.0%2C11.9%2072.0%2C7.0%2078.0%2C11.7%2084.0%2C9.4%2090.0%2C10.3%2096.0%2C4.2%20108.5%2C18.0%20111.6%2C24.0%20110.5%2C30.0%20116.6%2C36.0%20110.3%2C42.0%20112.8%2C48.0%20111.9%2C54.0%20110.3%2C60.0%20111.4%2C66.0%20112.0%2C72.0%20108.6%2C78.0%20110.8%2C84.0%20109.2%2C90.0%20115.7%2C96.0%20102.0%2C108.7%2096.0%2C114.1%2090.0%2C110.6%2084.0%2C112.6%2078.0%2C110.2%2072.0%2C110.4%2066.0%2C108.2%2060.0%2C111.4%2054.0%2C110.7%2048.0%2C113.0%2042.0%2C109.3%2036.0%2C114.1%2030.0%2C109.8%2024.0%2C112.1%208.8%2C102.0%205.1%2C96.0%2011.0%2C90.0%206.0%2C84.0%209.9%2C78.0%203.9%2C72.0%209.1%2C66.0%208.0%2C60.0%208.1%2C54.0%209.2%2C48.0%2010.3%2C42.0%204.7%2C36.0%2011.4%2C30.0%206.6%2C24.0%22%20fill%3D%22url%28%23q%29%22%20stroke%3D%22%23C44AFF%22%20stroke-opacity%3D%22.55%22%20stroke-width%3D%221.6%22%20stroke-linejoin%3D%22round%22/%3E%3Crect%20x%3D%2222%22%20y%3D%2222%22%20width%3D%2276%22%20height%3D%2276%22%20rx%3D%2210%22%20fill%3D%22%23160E20%22%20stroke%3D%22%239228E8%22%20stroke-opacity%3D%22.5%22%20stroke-width%3D%221%22/%3E%3C/svg%3E") 30 round;border-radius:0;box-shadow:none;filter:drop-shadow(0 0 14px rgba(146,40,232,.35)) drop-shadow(0 18px 30px rgba(5,0,10,.65));backdrop-filter:none}
+.resume{padding:8px 10px 6px}
+.evo{padding:4px 8px}
+.helix{width:max(92px,7vw);padding:2px 0 0}
+.resume,.evo{left:calc(max(92px,7vw) + 34px)}
+.resume .eyebrow{color:var(--acid)}
+.resume h1{color:var(--text)}
+.resume h1 small{color:var(--glow)}
+.resume .sub,.hx-note{color:var(--muted-2)!important}
+.resume .go{background:var(--acid);color:#100817;box-shadow:0 0 16px rgba(184,245,45,.65),0 0 34px rgba(184,245,45,.25)}
+.hx-k{color:var(--glow)}
+.hx-v b{color:var(--acid)}
+.evo .evo-v b{color:var(--acid)}
+.evo .evo-bar span{background:linear-gradient(90deg,#6f9a12,var(--acid));box-shadow:0 0 10px rgba(184,245,45,.7)}
+/* células */
+.node .thorn{fill:var(--biomass);fill-opacity:.95;stroke:#100817}
+.node:hover .thorn,.node.sel .thorn,.node:focus-visible .thorn{fill:#6e2c63}
+.node .nm{fill:var(--text);stroke:#100817}
+.node .cnt{fill:var(--acid);stroke:#100817}
+.node .huevo{fill:#2a1236;stroke:#56234D;stroke-width:1.4}
+.node .huevo-v{fill:none;stroke:rgba(184,245,45,.35);stroke-width:.9;stroke-linecap:round}
+.node.evol .glow{fill:url(#gGlow);filter:drop-shadow(0 0 10px rgba(184,245,45,.8))}
+.node.evol .thorn{fill:#3c5a10;stroke:var(--acid)}
+.vein.live{fill:var(--primary);stroke:var(--secondary)}
+.vein.link{fill:#56234D;stroke:var(--secondary)}
+.vein.hot,.twig.hot{fill:var(--glow)}
+.twig,.twig.feel{fill:#6a1fae}
+.tnode{fill:var(--acid)}
+.dr{fill:var(--acid)}
+@media (max-width:760px){.resume,.evo{left:auto}.helix{width:auto}}
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
-    <svg width="30" height="26" viewBox="0 0 30 26" aria-hidden="true">
-      <path d="M7 15 Q14 6 23 9" fill="none" stroke="#c9b3dc" stroke-width="1.2"/>
-      <path d="M7 15 Q16 20 22 19" fill="none" stroke="#c9b3dc" stroke-width="1.2"/>
-      <circle cx="7" cy="15" r="5.5" fill="#efe4f6" stroke="#4b1f6f" stroke-width="1.4"/><circle cx="7" cy="15" r="2" fill="#4b1f6f"/>
-      <circle cx="23" cy="8.5" r="3.6" fill="#fff" stroke="#8e4fc4" stroke-width="1.2"/>
-      <circle cx="22.5" cy="19" r="2.6" fill="#c3dc4a" stroke="#7d9c1c" stroke-width="1"/>
+    <svg width="32" height="32" viewBox="-16 -16 32 32" aria-hidden="true" class="emblema">
+      <defs><radialGradient id="emG"><stop offset="0" stop-color="#E5A4FF"/><stop offset=".6" stop-color="#C44AFF"/><stop offset="1" stop-color="#56234D"/></radialGradient></defs>
+      <path d="M0,0 C2,-4 8,-5 11,-1 C13,3 10,9 4,11 M0,0 C-4,-2 -5,-8 -1,-11 C3,-13 9,-10 11,-4 M0,0 C2,4 -2,9 -7,9 C-12,8 -13,2 -11,-3 M0,0 C-4,2 -10,1 -11,-4" fill="none" stroke="url(#emG)" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M0,0 C1,-2 4,-2.5 5,0 C5.5,2.5 3,4 0.5,4" fill="none" stroke="#E5A4FF" stroke-width="1.2" stroke-linecap="round"/>
+      <circle r="1.8" fill="#B8F52D"/>
     </svg>
     <span class="wordmark">Enjambre<small>física</small></span>
   </div>
   <nav id="tabs">
+    <a class="navlink" href="../bitacora.html">Físicas</a>
     <button data-v="hive" class="on">Enjambre</button>
     <button data-v="list">Estudiar</button>
     <button data-v="inv">Invasión</button>
     <button data-v="data" title="Datos y ajustes" aria-label="Datos">⚙</button>
   </nav>
   <div class="grow"></div>
-  <span class="pill" id="saveState">guardado local</span>
+  <span class="pill" id="saveState">Guardado local</span>
 </header>
 
 <main>
@@ -767,7 +812,7 @@ function migrate(d){
 }
 let fileHandle=null, saveTimer=null;
 function save(){
-  try{localStorage.setItem(KEY,JSON.stringify(DB)); setSave('guardado local');}catch(e){setSave('no se pudo guardar');}
+  try{localStorage.setItem(KEY,JSON.stringify(DB)); setSave('Guardado local');}catch(e){setSave('no se pudo guardar');}
   if(fileHandle){clearTimeout(saveTimer); saveTimer=setTimeout(writeFile,400);}
 }
 async function writeFile(){
@@ -934,17 +979,17 @@ function drawHive(){
       return `<path class="larva${st>=2?' ok':''}" data-ex="${e.id}" d="M-4.5,0 Q-2,-3.3 2.5,-2.2 Q5.5,0 2.5,2.2 Q-2,3.3 -4.5,0Z" fill="${f}" stroke="#0b0210" stroke-width="${st>=2?1.5:1.1}" data-sc="${sc.toFixed(2)}"><title>${esc(e.num?e.num+' · ':'')}${esc(e.title)} — ${STATES[st]}</title></path>`;}).join('');
     const ro=p.r*1.05+16, ly=dorm?(up?-p.r-8:p.r+15):(up?-ro-20:ro+12);
     p.done=done; p.nT=dorm?0:Math.min(9,Math.floor(done/2));
-    nodes+=`<g class="node ${dorm?'dormant':''}" data-id="${t.id}" transform="translate(${f1(p.x)},${f1(p.y)})" tabindex="0" role="button" aria-label="${esc(t.name)}">
+    nodes+=`<g class="node ${dorm?'dormant':''}${!dorm&&all.length&&done===all.length?' evol':''}" data-id="${t.id}" transform="translate(${f1(p.x)},${f1(p.y)})" tabindex="0" role="button" aria-label="${esc(t.name)}">
       ${nt.has(t.id)?`<circle class="halo" r="${f1(p.r+14)}"/>`:''}<g class="tents">${'<path class="tent"/><path class="barb"/>'.repeat(p.nT)}</g>
-      <g class="br">${dorm?`<path class="mem" d="${blob(p.r,p.ph,0,.12)}"/><g class="pu-i" style="--d:${(-(hashStr(t.id)%40)/10).toFixed(1)}s;--s:4.2s"><circle class="pu-h" r="${f1(p.r*.9)}"/><circle r="${f1(Math.max(1.6,p.r*.32))}" fill="#c3dc4a"/></g>`
+      <g class="br">${dorm?`<path class="mem huevo" d="${blob(p.r*.86,p.ph,0,.05,12,.74,1)}"/><path class="huevo-v" d="M${f1(-p.r*.3)},${f1(-p.r*.6)} Q${f1(p.r*.12)},${f1(-p.r*.1)} ${f1(-p.r*.1)},${f1(p.r*.55)} M${f1(p.r*.28)},${f1(-p.r*.5)} Q${f1(p.r*.05)},${f1(p.r*.05)} ${f1(p.r*.3)},${f1(p.r*.5)}"/><g class="pu-i" style="--d:${(-(hashStr(t.id)%40)/10).toFixed(1)}s;--s:4.2s"><circle class="pu-h" r="${f1(p.r*.9)}"/><circle r="${f1(Math.max(1.6,p.r*.32))}" fill="#c3dc4a"/></g>`
         :`<circle class="glow" r="${f1(p.r*1.9)}" fill="url(#gGlow)"/><path class="mem thorn"/><g class="fangs" style="--c:${(2.6+(hashStr(t.id)%17)/10).toFixed(1)}s;--cd:${(-(hashStr(t.id)%30)/10).toFixed(1)}s">${fangRing(p.r,3+Math.min(14,Math.ceil(done/2)),p.ph)}</g><circle class="body" r="${f1(p.r*.78)}" fill="url(#gOrg)" fill-opacity="${f1(.7+.3*p.m)}"/>
-          <circle r="${f1(p.r*.5)}" fill="url(#gCore)"/><circle r="${f1(p.r*.5)}" fill="none" stroke="#ffe6ff" stroke-opacity=".45"/><g class="gl">${glyph(p.r*.36,p.m>=.999?'#c3dc4a':'#f3e9fa')}</g><g class="pus">${pusRing(p.r,Math.min(6,1+Math.ceil((all.length-done)/7)),hashStr(t.id+'pus'))}</g>`}</g>
+          <path class="nucleo" d="${blob(p.r*.5,p.ph+1.3,0,.16,9,1,.88)}" fill="url(#gCore)"/><path class="nucleo-b" d="${blob(p.r*.5,p.ph+1.3,0,.16,9,1,.88)}" fill="none" stroke="#E5A4FF" stroke-opacity=".5"/><g class="gl">${glyph(p.r*.36,p.m>=.999?'#c3dc4a':'#f3e9fa')}</g><g class="pus">${pusRing(p.r,Math.min(6,1+Math.ceil((all.length-done)/7)),hashStr(t.id+'pus'))}</g>`}</g>
       <text class="nm${p.hl?' hl':''}" y="${f1(ly)}">${esc(t.name)}</text>${dorm?'':`<text class="cnt" y="${f1(ly+15)}">${done}/${all.length}</text>`}
       <g class="lv">${lv}</g></g>`;
   }
   svg.innerHTML=`<defs>
-      <radialGradient id="gGlow"><stop offset="0" stop-color="#ff9bf0" stop-opacity=".42"/><stop offset=".5" stop-color="#c46cff" stop-opacity=".14"/><stop offset="1" stop-color="#c46cff" stop-opacity="0"/></radialGradient>
-      <radialGradient id="gCore" cx=".42" cy=".38"><stop offset="0" stop-color="#e2b6ff"/><stop offset=".45" stop-color="#7a2cc0"/><stop offset="1" stop-color="#16032a"/></radialGradient>
+      <radialGradient id="gGlow"><stop offset="0" stop-color="#E5A4FF" stop-opacity=".45"/><stop offset=".5" stop-color="#C44AFF" stop-opacity=".16"/><stop offset="1" stop-color="#9228E8" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gCore" cx=".42" cy=".38"><stop offset="0" stop-color="#F3EAF8"/><stop offset=".25" stop-color="#E5A4FF"/><stop offset=".55" stop-color="#9228E8"/><stop offset="1" stop-color="#100817"/></radialGradient>
       <radialGradient id="gOrg" cx=".45" cy=".4"><stop offset="0" stop-color="#fbe2ff"/><stop offset=".55" stop-color="#c06ae8"/><stop offset="1" stop-color="#3d0d6b"/></radialGradient>
       <radialGradient id="gCreep"><stop offset="0" stop-color="#170330" stop-opacity=".42"/><stop offset=".65" stop-color="#2a0750" stop-opacity=".18"/><stop offset="1" stop-color="#2a0750" stop-opacity="0"/></radialGradient>
       <radialGradient id="gPus" cx=".38" cy=".35"><stop offset="0" stop-color="#f6ffc2"/><stop offset=".5" stop-color="#c3dc4a"/><stop offset="1" stop-color="#5d7a0c"/></radialGradient>
@@ -1073,7 +1118,7 @@ function paisaje(){
   cv.width=Math.round(W*k); cv.height=Math.round(H*k); const c=cv.getContext('2d'); c.setTransform(k,0,0,k,0,0);
   const R=rng(2026), hz=H*.6;
   // cielo: violeta hondo con un resplandor en el horizonte
-  let g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,'#0b0312'); g.addColorStop(.38,'#1f0833'); g.addColorStop(.6,'#3a1260'); g.addColorStop(.72,'#18062a'); g.addColorStop(1,'#07020c');
+  let g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,'#100817'); g.addColorStop(.36,'#1B1025'); g.addColorStop(.58,'#3d1660'); g.addColorStop(.62,'#56234D'); g.addColorStop(.74,'#25132F'); g.addColorStop(1,'#100817');
   c.fillStyle=g; c.fillRect(0,0,W,H);
   const neb=(x,y,r,col,a)=>{const q=c.createRadialGradient(x,y,0,x,y,r); q.addColorStop(0,`rgba(${col},${a})`); q.addColorStop(1,`rgba(${col},0)`); c.fillStyle=q; c.fillRect(x-r,y-r,2*r,2*r);};
   neb(W*.62,hz,W*.5,'190,80,255',.2); neb(W*.3,hz*.95,W*.3,'255,90,200',.12); neb(W*.85,H*.25,W*.3,'120,60,220',.18); neb(W*.4,H*.18,W*.25,'90,30,160',.25);

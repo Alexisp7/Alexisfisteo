@@ -642,9 +642,12 @@
       var mg0 = Pp(C), mg1 = Pp(add(C, Z, -G.Rr - 2.6));   // nace en el centro de masa del rotor
       objs.push({ z: dep(C) - .001, k: 'mg', f: vec(mg0, mg1, TINTA, .85, 1.3, 8) });
       var tz = Pp(piv), tq = Pp(add(piv, V, 3.6));
-      // τ nace en el pivote y es perpendicular al eje: va delante o detrás según el lado de V que mira a la cámara,
-      // nunca por comparar puntos medios. Su raíz queda siempre bajo la bola, así el cambio de lado no salta.
-      var dV = dep(add(piv, V, 1)) - zp, zT = dV >= 0 ? zBola - .0002 : Math.min(dep(add(piv, V, 1.8)), zp - .0003);
+      // τ vive a la altura del pivote, por encima del cojinete: con la cámara mirando desde arriba la columna nunca
+      // lo tapa, y el eje solo lo cruza en la raíz, que cubre la bola. Lo único que puede taparlo es el rotor, que está
+      // en el plano paralelo U = d: lo tapa solo si ese plano está más cerca de la cámara (dep(C) > dep(piv)).
+      // Así τ tiene una sola capa fija respecto del centro y no salta en toda la vuelta.
+      var zT = zBola - .0002;
+      if (dep(C) > zp) zT = Math.max(Math.min(zT, dep(C) - .0003), zp + .00005);
       objs.push({ z: zT, k: 'tau', f: vec(tz, tq, ORO, .95, 1.6, 9) });
       var om = Pp(add(piv, Z, 3.4));
       objs.push({ z: zBola + .0004, k: 'omega', f: vec([tz[0], tz[1] - 7], om, AZUL, .85, 1.3, 8) });

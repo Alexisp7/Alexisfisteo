@@ -490,7 +490,7 @@
       function Pp(q) { return P(q[0], q[1], q[2]); }
       function dep(q) { return Pp(q)[2]; }
       function poli(pts, relleno, trazo, w) { camino(pts, true); ctx.fillStyle = relleno; ctx.fill(); if (trazo) { ctx.strokeStyle = trazo; ctx.lineWidth = w || .7; ctx.lineJoin = 'round'; ctx.stroke(); } }
-      var piv = [0, 0, h], C = add(piv, U, G.d), th = .75, LL = 5.2, rt = G.d + LL, B = 4.9, bz = 1.2;
+      var piv = [0, 0, h], C = add(piv, U, G.d), th = .75, LL = 5.2, rt = G.d + LL, B = 4.9, bz = 2;
       var cola = [], objs = [];
       GI.caja = [cam.x - 15 * cam.s, cam.y - 20 * cam.s, 30 * cam.s, 27 * cam.s];   // recuadro que contiene toda la escena
       // ── zócalo de madera con su placa ──
@@ -519,13 +519,25 @@
           var o = P(cf.a0[0], cf.a0[1], bz), e1 = P(cf.a1[0], cf.a1[1], bz), lu = Math.hypot(e1[0] - o[0], e1[1] - o[1]);
           var ux = (e1[0] - o[0]) / lu, uy = (e1[1] - o[1]) / lu, vz = P(cf.a0[0], cf.a0[1], 0), lv = Math.hypot(vz[0] - o[0], vz[1] - o[1]), vx = (vz[0] - o[0]) / lv, vy = (vz[1] - o[1]) / lv;
           ctx.save(); ctx.transform(ux, uy, vx, vy, o[0], o[1]);
-          var x0 = lu * .12, w0 = lu * .76;
-          ctx.fillStyle = '#E3CB93'; ctx.strokeStyle = 'rgba(70,48,18,.8)'; ctx.lineWidth = .6; ctx.fillRect(x0, lv * .2, w0, lv * .6); ctx.strokeRect(x0, lv * .2, w0, lv * .6);
-          ctx.fillStyle = '#4A3826'; ctx.textAlign = 'center';
-          var l2 = 'm = 150 g · R = 3 cm · d = 4 cm · 40 vueltas/s';
-          ctx.font = "italic 400 10px Newsreader,serif"; var px = Math.min(lv * .26, 10 * w0 * .88 / ctx.measureText(l2).width);
-          ctx.font = "700 " + (px * .78).toFixed(2) + "px 'Space Mono',monospace"; ctx.fillText('G I R Ó S C O P O', x0 + w0 / 2, lv * .2 + lv * .25);
-          ctx.font = "italic 400 " + px.toFixed(2) + "px Newsreader,serif"; ctx.fillText(l2, x0 + w0 / 2, lv * .2 + lv * .5);
+          // placa de latón: nombre y lema, con bisel, doble filete y texto grabado (sombra clara debajo)
+          var x0 = lu * .14, w0 = lu * .72, y0 = lv * .12, h0 = lv * .76, cx = x0 + w0 / 2;
+          var gl = ctx.createLinearGradient(0, y0, 0, y0 + h0); gl.addColorStop(0, '#F3DFA8'); gl.addColorStop(.5, '#DDBE7C'); gl.addColorStop(1, '#C9A461');
+          ctx.fillStyle = 'rgba(40,26,8,.35)'; ctx.fillRect(x0 + .8, y0 + 1, w0, h0);
+          ctx.fillStyle = gl; ctx.fillRect(x0, y0, w0, h0);
+          ctx.strokeStyle = 'rgba(60,40,14,.9)'; ctx.lineWidth = .7; ctx.strokeRect(x0, y0, w0, h0);
+          ctx.strokeStyle = 'rgba(70,48,18,.55)'; ctx.lineWidth = .4; ctx.strokeRect(x0 + 2, y0 + 2, w0 - 4, h0 - 4);
+          [[x0 + 4.5, y0 + h0 / 2], [x0 + w0 - 4.5, y0 + h0 / 2]].forEach(function (q) { ctx.fillStyle = '#B08A48'; ctx.strokeStyle = 'rgba(50,32,10,.85)'; ctx.lineWidth = .4; ctx.beginPath(); ctx.arc(q[0], q[1], 1.3, 0, 7); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(q[0] - .9, q[1]); ctx.lineTo(q[0] + .9, q[1]); ctx.stroke(); });
+          ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+          var t1 = 'GIRÓSCOPO', t2 = 'Conservación del momento angular';
+          ctx.font = "600 10px 'Cormorant Garamond',serif"; var p1 = Math.min(h0 * .46, 10 * (w0 - 16) * .9 / ctx.measureText(t1).width);
+          ctx.font = "italic 500 10px 'Cormorant Garamond',serif"; var p2 = Math.min(h0 * .3, 10 * (w0 - 16) * .9 / ctx.measureText(t2).width);
+          var b1 = y0 + h0 * .52, b2 = y0 + h0 * .86;
+          function grabado(t, f, y) { ctx.font = f; ctx.fillStyle = 'rgba(255,246,220,.7)'; ctx.fillText(t, cx + .35, y + .45); ctx.fillStyle = '#3A2810'; ctx.fillText(t, cx, y); }
+          if ('letterSpacing' in ctx) ctx.letterSpacing = (p1 * .12).toFixed(2) + 'px';
+          grabado(t1, '600 ' + p1.toFixed(2) + "px 'Cormorant Garamond',serif", b1);
+          if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+          ctx.strokeStyle = 'rgba(70,48,18,.6)'; ctx.lineWidth = .35; ctx.beginPath(); ctx.moveTo(cx - w0 * .22, y0 + h0 * .62); ctx.lineTo(cx + w0 * .22, y0 + h0 * .62); ctx.stroke();
+          grabado(t2, 'italic 500 ' + p2.toFixed(2) + "px 'Cormorant Garamond',serif", b2);
           ctx.restore();
         }
       } });
@@ -613,10 +625,10 @@
         poli(cara, gg, TINTA + '.9)', .9);
         [.84, .34].forEach(function (q) { ctx.strokeStyle = 'rgba(70,48,18,.5)'; ctx.lineWidth = .6; camino(circulo3(frente, V, Z, G.Rr * q, 48), true); ctx.stroke(); });
         var fase = GI.giro * 9.3;
-        for (var s = 0; s < 6; s++) for (var j = 0; j < 4; j++) {
-          var an2 = fase + s * Math.PI / 3 - j * .1;
+        for (var s = 0; s < 6; s++) {   // seis rayos iguales, sin estela: se ven igual a ambos lados del eje
+          var an2 = fase + s * Math.PI / 3;
           var a0 = add(add(frente, V, Math.cos(an2) * G.Rr * .34), Z, Math.sin(an2) * G.Rr * .34), a1 = add(add(frente, V, Math.cos(an2) * G.Rr * .84), Z, Math.sin(an2) * G.Rr * .84);
-          linea(Pp(a0), Pp(a1), 'rgba(70,48,18,', (.5 * (1 - j / 4)).toFixed(2), 1.2);
+          linea(Pp(a0), Pp(a1), 'rgba(70,48,18,', '.55', 1.1);
         }
         var hc = Pp(add(frente, U, fr[2] * .15));
         ctx.fillStyle = '#F5F0E6'; ctx.strokeStyle = TINTA + '.9)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(hc[0], hc[1], 4.2, 0, 7); ctx.fill(); ctx.stroke();

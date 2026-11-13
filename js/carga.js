@@ -52,10 +52,13 @@
     var cargada = new Promise(function (ok) { if (d.readyState === 'complete') ok(); else addEventListener('load', ok, { once: true }); });
     // las fuentes rara vez tardan, pero si tardan no retienen la página más de 1,2 s
     var fuentes = d.fonts && d.fonts.ready ? Promise.race([d.fonts.ready, new Promise(function (ok) { setTimeout(ok, 1200); })]) : Promise.resolve();
-    cargada.then(function () { return Promise.all([fuentes].concat(esperas)); }).then(retirar, retirar);
+    // al cambiar de sección, la hoja se queda 1,5 s más una vez que todo está listo, para que el péndulo se luzca
+    var extra = guardado ? 1500 : 0;
+    var pausa = function () { return new Promise(function (ok) { setTimeout(ok, extra); }); };
+    cargada.then(function () { return Promise.all([fuentes].concat(esperas)); }).then(pausa, pausa).then(retirar);
     // tope de seguridad: una página con escenas puede esperar más; ninguna se queda tapada
-    setTimeout(function () { if (!esperas.length) retirar(); }, 2600);
-    setTimeout(retirar, 7000);
+    setTimeout(function () { if (!esperas.length) retirar(); }, 2600 + extra);
+    setTimeout(retirar, 7000 + extra);
   } else { raiz.classList.remove('fx-llega'); yaRevelado = true; revelar(); }
 
   var yendo = false;

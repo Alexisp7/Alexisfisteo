@@ -42,21 +42,21 @@
     '  vec2 w = vec2(fbm(q * 1.7 + 1.3), fbm(q * 1.7 + 8.1));',
     '  float n1 = fbm(q * 2.1 + w * 1.6), n2 = fbm(q * 3.4 - w * 1.2 + 5.0), n3 = fbm(q * 7.0 + w * 2.0 + 11.0);',
     '  float banda = exp(-pow((q.y + .38 * q.x - .02) / .34, 2.0)) * .85 + .35 * smoothstep(.1, -.55, q.y);',
-    '  vec3 col = vec3(.010, .011, .019);',
-    '  col += vec3(.34, .06, .075) * smoothstep(.40, .82, n1) * banda * 1.1;',
-    '  col += vec3(.07, .095, .23) * smoothstep(.36, .80, n2) * (.5 + .6 * banda);',
-    '  col += vec3(.62, .38, .17) * pow(smoothstep(.55, .95, n1 * n2 * 1.9), 2.0) * banda * .35;',   // polvo dorado iluminado
+    '  vec3 col = vec3(.004, .005, .009);',
+    '  col += vec3(.30, .05, .065) * smoothstep(.50, .88, n1) * banda * .75;',
+    '  col += vec3(.06, .08, .20) * smoothstep(.48, .86, n2) * (.3 + .5 * banda) * .8;',
+    '  col += vec3(.62, .38, .17) * pow(smoothstep(.55, .95, n1 * n2 * 1.9), 2.0) * banda * .22;',   // polvo dorado iluminado
     '  col *= 1.0 - .55 * smoothstep(.52, .78, n3) * banda;',                                        // franjas de polvo oscuro
     // supercúmulo: filamentos tenues y, sobre ellos, muchas galaxias diminutas; en los nudos, cúmulos densos
     '  vec3 v = voronoi(q * 3.2 + w * .6); float fil = exp(-v.z * 9.0), nudo = exp(-v.x * 5.0) * fil;',
-    '  col += vec3(.20, .17, .24) * fil * .10 + vec3(.40, .30, .26) * nudo * .07;',
+    '  col += vec3(.20, .17, .24) * fil * .06 + vec3(.40, .30, .26) * nudo * .05;',
     '  vec2 c = floor(q * 260.0), f = fract(q * 260.0) - .5; float hg = h21(c + 41.0);',
     '  if (hg < .06 + .55 * fil * fil + .5 * nudo) { vec2 o = (h22(c + 7.0) - .5) * .6, e = f - o; float a = h21(c + 2.0) * 6.283;',
     '    e = mat2(cos(a), -sin(a), sin(a), cos(a)) * e; e.y *= 1.6 + 2.2 * h21(c + 4.0);',
     '    float g = exp(-dot(e, e) * 70.0) * (.25 + .55 * h21(c + 8.0));',
     '    col += mix(vec3(1.0, .78, .55), vec3(.75, .82, 1.0), h21(c + 6.0)) * g * .6; }',
     // estrellas: tres capas, las más brillantes con cruz de difracción fina (como en la mancha de Cursos)
-    '  float s = estrellas(q, 60.0, .9, px * 1.2) + estrellas(q + 3.7, 140.0, .9, px) * .7 + estrellas(q + 9.1, 300.0, .93, px * .8) * .45;',
+    '  float s = estrellas(q, 60.0, .93, px * 1.2) + estrellas(q + 3.7, 140.0, .94, px) * .6 + estrellas(q + 9.1, 300.0, .96, px * .8) * .4;',
     '  vec3 tinte = mix(vec3(.78, .85, 1.0), vec3(1.0, .88, .70), h21(floor(q * 160.0)));',
     '  col += tinte * s;',
     '  vec2 cb = floor(q * 22.0), fb = fract(q * 22.0) - .5; if (h21(cb + 77.0) > .975) { vec2 o = (h22(cb + 5.0) - .5) * .6, e = (fb - o) / 22.0;',
@@ -85,12 +85,12 @@
   var lienzo = d.querySelector('.rg-agujero'), gl = window.GLSL_AGUJERO && lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false }), U = {}, pr = null;
   if (gl) { gl.getExtension('OES_standard_derivatives'); pr = programa(gl, window.GLSL_AGUJERO); }
   if (pr) ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk', 'uEx', 'uSal', 'uAg'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
-  var ROLL = -9 * Math.PI / 180, INCL = 80 * Math.PI / 180, t0 = performance.now(), tEntrada = null, zoom = 1;
+  var ROLL = 0, INCL = 80 * Math.PI / 180, t0 = performance.now(), tEntrada = null, zoom = 1;
   function geometria() {
     var w = innerWidth, h = innerHeight, ancho = w <= 900;
     // el disco ocupa casi todo el ancho; su centro queda bajo el borde de la pantalla y se ven la sombra y el arco de atrás
-    var SC = Math.min(w * (ancho ? .95 : .6) / 44, h * .3 / 12);
-    return { SC: SC, cx: w * .5, cy: h - SC * 4.0 };
+    var SC = Math.min(w * (ancho ? 1.05 : .84) / 44, h * .42 / 12);
+    return { SC: SC, cx: w * .5, cy: h - SC * 3.3 };
   }
   function suave(x) { x = Math.min(Math.max(x, 0), 1); return x * x * (3 - 2 * x); }
   function pintar(t) {

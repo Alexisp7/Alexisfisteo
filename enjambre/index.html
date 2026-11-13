@@ -566,6 +566,13 @@ body:has(#v-hive.on) #saveState{color:var(--muted-2)}
 .tnode{fill:var(--acid)}
 .dr{fill:var(--acid)}
 @media (max-width:760px){.resume,.evo{left:auto}.helix{width:auto}}
+
+/* tejido vivo: el shader pinta fondo, tentáculos y cuerpos; el SVG deja solo rótulos, pústulas, larvas y crías */
+#tejido{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:0}
+body.con-tejido #paisaje{display:none}
+body.con-tejido #cyto{mix-blend-mode:screen;opacity:.5}
+body.con-tejido .node .glow,body.con-tejido .node .thorn,body.con-tejido .node .mem,body.con-tejido .node .nucleo,body.con-tejido .node .nucleo-b,body.con-tejido .node .huevo-v,body.con-tejido .node .fangs,body.con-tejido .node .pu-h,body.con-tejido .vein,body.con-tejido .creep{display:none}
+body.con-tejido .node .gl,body.con-tejido .node .tents,body.con-tejido .node .body{display:none}
 </style>
 </head>
 <body>
@@ -1007,7 +1014,7 @@ function drawHive(){
   q('.dr').forEach((el,i)=>DR[i].el=el);
   swarmEls={svg,E,FE,DR,DE,fx:svg.querySelector('.fx'),creep:q('.creepm').map(el=>({el,id:el.dataset.id})),motes:q('.mote'),vs:vEls,
     nodes:q('.node').map(g=>({g,id:g.dataset.id,br:g.querySelector('.br'),tn:[...g.querySelectorAll('.tent')],tp:[...g.querySelectorAll('.barb')],mem:g.querySelector('.mem'),gl:g.querySelector('.gl'),lv:[...g.querySelectorAll('.larva')]}))};
-  cytoInit(); bindSwarm(svg); drawResume(); paint(); applyFocus(); drawLegend(); checkMutations();
+  cytoInit(); tejidoInit(); bindSwarm(svg); drawResume(); paint(); applyFocus(); drawLegend(); checkMutations();
   if(!RMs && !raf) raf=requestAnimationFrame(loop);
 }
 // vena orgánica: cúbica con curvas propias, ahusada y con un leve abultamiento
@@ -1179,6 +1186,104 @@ function paisaje(){
 
 
 }
+/* ============ tejido vivo: fondo, tentáculos y organismos pintados por un shader ============ */
+const TJ={};
+function tejidoInit(){
+  const sw=document.getElementById('swarm'); if(!sw) return;
+  let cv=document.getElementById('tejido');
+  if(!cv){ cv=document.createElement('canvas'); cv.id='tejido'; cv.setAttribute('aria-hidden','true'); sw.insertBefore(cv,document.getElementById('cyto')); }
+  if(!TJ.gl){
+    const gl=cv.getContext('webgl',{premultipliedAlpha:false,antialias:false}); if(!gl){ document.body.classList.remove('con-tejido'); return; }
+    const vs=`attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
+    const fs=`precision highp float;
+uniform vec2 uR; uniform float uT; uniform vec4 uN[32]; uniform vec4 uS[32]; uniform int uNn; uniform vec4 uE[48]; uniform int uEn;
+float h21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+vec2 h22(vec2 p){float n=h21(p);return vec2(n,h21(p+n));}
+float vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h21(i),h21(i+vec2(1,0)),f.x),mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<5;i++){v+=a*vn(p);p=m*p;a*=.5;}return v;}
+vec2 vor(vec2 p){vec2 i=floor(p),f=fract(p);float d1=8.,d2=8.;for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++){vec2 g=vec2(x,y),o=h22(i+g);o=.5+.4*sin(uT*.4+6.28*o);float d=length(g+o-f);if(d<d1){d2=d1;d1=d;}else if(d<d2)d2=d;}return vec2(d1,d2-d1);}
+float seg(vec2 p,vec2 a,vec2 b,out float t){vec2 pa=p-a,ba=b-a;t=clamp(dot(pa,ba)/dot(ba,ba),0.,1.);return length(pa-ba*t);}
+void main(){
+  vec2 px=vec2(gl_FragCoord.x,uR.y-gl_FragCoord.y); vec2 q=px/uR.y;
+  // tejido: fbm con deformación de dominio
+  vec2 w=q*3.; vec2 o=vec2(fbm(w+uT*.03),fbm(w+vec2(5.2,1.3)-uT*.025));
+  float hgt=fbm(w*1.4+o*2.2);
+  vec2 cel=vor(q*7.+o*1.5);
+  float pared=smoothstep(.09,.0,cel.y);
+  float e=.002; float hx=fbm((q+vec2(e,0.))*4.2+o*2.2)-hgt, hy=fbm((q+vec2(0.,e))*4.2+o*2.2)-hgt;
+  vec3 nrm=normalize(vec3(-hx*14.,-hy*14.,1.)); vec3 L=normalize(vec3(-.4,-.6,.7));
+  float dif=clamp(dot(nrm,L),0.,1.), spc=pow(clamp(dot(reflect(-L,nrm),vec3(0,0,1)),0.,1.),22.);
+  vec3 bg=vec3(.063,.031,.09), bio=vec3(.337,.137,.30), pri=vec3(.573,.157,.91), sec=vec3(.77,.29,1.), glo=vec3(.9,.64,1.), acid=vec3(.72,.96,.18);
+  float y=px.y/uR.y;
+  vec3 col=mix(bg,mix(bio,pri*.55,hgt),smoothstep(.25,.85,hgt)*.85);
+  col*= .45+.9*dif; col+=spc*glo*.25;
+  col=mix(col,sec*.55,pareda(pared));
+  // niebla del horizonte y profundidad
+  col+=sec*.12*exp(-pow((y-.58)*5.,2.))*fbm(q*2.+uT*.02);
+  col*=mix(1.,.55,smoothstep(.75,1.,y));
+  // tentáculos musculares
+  for(int i=0;i<48;i++){ if(i>=uEn) break; vec4 E=uE[i]; vec2 a=E.xy,b=E.zw; float t; vec2 dir=normalize(b-a), nr=vec2(-dir.y,dir.x);
+    float len=length(b-a); vec2 pp=px; float d0=seg(pp,a,b,t); if(d0>60.) continue;
+    float ond=sin(t*6.28*1.5+uT*1.2+float(i))*len*.04*sin(t*3.14); vec2 c=a+(b-a)*t+nr*ond;
+    float d=length(pp-c), wd=mix(9.,4.,abs(t-.5)*2.)*(1.+.12*sin(uT*2.+t*20.));
+    if(d<wd*1.8){ float u=clamp(d/wd,0.,1.); float cil=sqrt(max(0.,1.-u*u));
+      float fib=.5+.5*sin(t*len*.45+fbm(vec2(t*len*.05,u*3.))*4.); 
+      vec3 tc=mix(vec3(.08,.02,.09),mix(bio,pri*.7,cil),cil)*(.45+.55*fib)*(.4+.8*cil)+glo*pow(cil,14.)*.22;
+      float pulso=exp(-pow(fract(t-uT*.25+float(i)*.13)-.5,2.)*90.);
+      tc+=sec*pulso*pow(cil,2.)*.55;
+      float m=smoothstep(1.,.85,u); col=mix(col*(1.-.5*smoothstep(1.8,1.,u)),tc,m); } }
+  // organismos
+  for(int i=0;i<32;i++){ if(i>=uNn) break; vec4 N=uN[i]; vec4 S=uS[i]; vec2 d=px-N.xy; float r=N.z;
+    if(length(d)>r*2.6) continue;
+    float st=N.w; float an=atan(d.y,d.x);
+    float puls=1.+.035*sin(uT*1.6+S.x*6.);
+    vec2 dd=d; if(st<.5) dd.x/=.74;
+    float esp=st<.5?0.:pow(abs(sin(an*(5.+floor(S.x*4.))+S.x*6.)),12.)*.28; float rr=r*puls*(1.+.16*(fbm(vec2(an*1.6+S.x*9.,S.x*3.)+uT*.05)-.5)*(st<.5?.3:1.)+esp);
+    float dl=length(dd)/rr;
+    // halo
+    col+= (st>1.5?acid:sec)*.22*exp(-pow(dl-1.,2.)*3.)*(st<.5?.3:1.);
+    if(dl<1.){ float z=sqrt(1.-dl*dl); vec2 lp=dd/rr;
+      vec2 cv=vor(lp*3.2+S.x*7.); float placa=smoothstep(.0,.16,cv.y);
+      float tx=fbm(lp*5.+S.x*11.+uT*.04);
+      vec3 n3=normalize(vec3(lp*1.1+vec2(tx-.5)*.6,z));
+      float df=clamp(dot(n3,L),0.,1.), sp=pow(clamp(dot(reflect(-L,n3),vec3(0,0,1)),0.,1.),26.);
+      vec3 cas;
+      if(st<.5){ cas=mix(vec3(.12,.05,.15),bio,tx)*(.35+.9*df); float vena=smoothstep(.06,.0,abs(fbm(lp*3.+S.x*5.)-.5)); cas+=acid*vena*.35*z; cas+=sp*glo*.4; }
+      else{ cas=mix(vec3(.13,.04,.11),bio*1.5+vec3(.06,0,.02),placa*(.4+tx))*(.3+1.1*df); cas*=.55+.45*placa; cas+=sp*glo*.7; cas+=acid*.5*smoothstep(.07,.0,abs(cv.x-.12))*step(.6,h21(floor(lp*3.2+S.x*7.)));
+        float nuc=smoothstep(.34,.18,dl); float ra=atan(lp.y,lp.x)+dl*7.-uT*.6; float rem=fbm(vec2(cos(ra),sin(ra))*2.+dl*4.+S.x*9.); vec3 nc=mix(pri*.45,glo,smoothstep(.28,.0,dl)*.7+rem*.45)*(.7+.3*sin(uT*2.+S.x*5.));
+        float rimN=smoothstep(.5,.42,dl)*smoothstep(.28,.42,dl);
+        cas=mix(cas,nc,nuc*.95); cas+=sec*rimN*.25;
+        if(st>1.5) cas=mix(cas,acid,.25*placa*z); }
+      float borde=smoothstep(1.,.9,dl);
+      col=mix(col*.25,cas,borde); } }
+  // grano y viñeta
+  col+= (h21(px+uT)-.5)*.025;
+  vec2 v=gl_FragCoord.xy/uR-.5; col*=1.-.55*dot(v*vec2(1.,1.2),v*vec2(1.,1.2));
+  gl_FragColor=vec4(pow(max(col,0.),vec3(.95)),1.);
+}`.replace('pareda(pared)','pared*.35');
+    const sh=(t,src)=>{const s=gl.createShader(t); gl.shaderSource(s,src); gl.compileShader(s); if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s;};
+    try{ const pr=gl.createProgram(); gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs)); gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(pr); if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(pr)); gl.useProgram(pr);
+      const b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+      const lp=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp,2,gl.FLOAT,false,0,0);
+      TJ.gl=gl; TJ.u={R:gl.getUniformLocation(pr,'uR'),T:gl.getUniformLocation(pr,'uT'),N:gl.getUniformLocation(pr,'uN'),S:gl.getUniformLocation(pr,'uS'),Nn:gl.getUniformLocation(pr,'uNn'),E:gl.getUniformLocation(pr,'uE'),En:gl.getUniformLocation(pr,'uEn')};
+    }catch(err){ console.warn('tejido:',err.message); return; }
+  }
+  const k=Math.min(1,.85*(devicePixelRatio||1)); TJ.k=k; TJ.W=sw.clientWidth; TJ.H=sw.clientHeight;
+  cv.width=Math.round(TJ.W*k); cv.height=Math.round(TJ.H*k); TJ.gl.viewport(0,0,cv.width,cv.height); TJ.cv=cv;
+  document.body.classList.add('con-tejido'); tejidoDraw(performance.now());
+}
+function tejidoDraw(t){
+  const gl=TJ.gl; if(!gl||!TJ.cv||!TJ.cv.isConnected||!LAY) return; const k=TJ.k;
+  const svg=document.getElementById('hiveSvg'), m=svg.getScreenCTM(), sb=document.getElementById('swarm').getBoundingClientRect(); if(!m) return;
+  const P=(x,y)=>[(m.a*x+m.e-sb.left)*k,(m.d*y+m.f-sb.top)*k];
+  const N=new Float32Array(128), S=new Float32Array(128); let n=0;
+  for(const tp of DB.topics){ const p=LAY.pos[tp.id]; if(!p||n>=32) continue; const [x,y]=P(p.x,p.y);
+    const st=!p.n?0:(p.m>=.999?2:1); N.set([x,y,p.r*m.a*k*(st?1.05:.9),st],4*n); S.set([(hashStr(tp.id)%1000)/1000,0,0,0],4*n); n++; }
+  const E=new Float32Array(192); let ne=0;
+  for(const tp of DB.topics) for(const pid of tp.pre){ const a=LAY.pos[pid], b=LAY.pos[tp.id]; if(!a||!b||ne>=48) continue; if(!a.n&&!b.n) continue; const A=P(a.x,a.y), B=P(b.x,b.y); E.set([A[0],A[1],B[0],B[1]],4*ne); ne++; }
+  const u=TJ.u; gl.uniform2f(u.R,TJ.cv.width,TJ.cv.height); gl.uniform1f(u.T,(t||0)/1000); gl.uniform4fv(u.N,N); gl.uniform4fv(u.S,S); gl.uniform1i(u.Nn,n); gl.uniform4fv(u.E,E); gl.uniform1i(u.En,ne);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+}
 function cytoInit(){
   const cv=document.getElementById('cyto'), sw=document.getElementById('swarm'); if(!cv||!sw) return; paisaje();
   const W=sw.clientWidth, H=sw.clientHeight, k=.5;
@@ -1211,7 +1316,7 @@ function cytoDraw(t){
 }
 function loop(){
   raf=0; if(document.hidden || !document.getElementById('v-hive').classList.contains('on')) return;
-  paint(); raf=requestAnimationFrame(loop);
+  paint(); tejidoDraw(performance.now()); raf=requestAnimationFrame(loop);
 }
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden && !RMs && !raf) raf=requestAnimationFrame(loop); });
 let rzT=0; addEventListener('resize',()=>{clearTimeout(rzT); rzT=setTimeout(()=>{ if(document.getElementById('v-hive').classList.contains('on')) drawHive(); },160);});

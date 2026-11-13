@@ -4,73 +4,7 @@
   var d = document;
   function todos(sel) { return Array.prototype.slice.call(d.querySelectorAll(sel)); }
 
-  // ── transición académica: la hoja con el título de la sección ──
-  var SECCION = { 'index.html': 'Inicio', '': 'Inicio', 'cursos.html': 'Cursos', 'proyectos.html': 'Proyectos', 'contacto.html': 'Contacto',
-    'quantumquipu.html': 'QuantumQuipu', 'blackscholes.html': 'Black–Scholes cuántico', 'relatividad.html': 'Relatividad General',
-    'mecanica-cuantica.html': 'Mecánica Cuántica', 'problemas.html': 'Problemas de física' };
-  function nombreDe(url) { var f = url.pathname.split('/').pop(); return SECCION[f] || (d.title.split('—')[0] || '').trim(); }
-  function hoja(titulo, clase) {
-    var h = d.createElement('div'); h.className = 'fx-hoja ' + (clase || ''); h.setAttribute('aria-hidden', 'true');
-    h.innerHTML = '<div class="fx-hoja-c"><span class="fx-hoja-k">Alexis R. Salvatierra · Física · UNMSM</span><span class="fx-hoja-t"></span><span class="fx-hoja-r"></span></div>';
-    h.querySelector('.fx-hoja-t').textContent = titulo; d.body.appendChild(h); return h;
-  }
-  var guardado = null;
-  try { guardado = sessionStorage.getItem('fx-hoja'); sessionStorage.removeItem('fx-hoja'); } catch (e) {}
-  if (guardado && !quieto) {
-    // llega desde otra página: la hoja cubre la pantalla como pantalla de carga mientras se cargan
-    // imágenes, fuentes y escenas; cuando la página ya pintó sus primeros cuadros, se retira a la izquierda
-    var h0 = hoja(guardado, 'fx-quieta fx-cargando'), t0 = performance.now(), fuera = false;
-    d.documentElement.classList.remove('fx-llega');
-    var retirar = function () {
-      if (fuera) return; fuera = true;
-      var espera = Math.max(0, 180 - (performance.now() - t0));
-      setTimeout(function () { requestAnimationFrame(function () { requestAnimationFrame(function () {
-        h0.className = 'fx-hoja fx-sale'; setTimeout(function () { h0.remove(); }, 560);
-      }); }); }, espera);
-    };
-    var cargada = new Promise(function (ok) { if (d.readyState === 'complete') ok(); else addEventListener('load', ok, { once: true }); });
-    var fuentes = d.fonts && d.fonts.ready ? d.fonts.ready : Promise.resolve();
-    Promise.all([cargada, fuentes]).then(retirar);
-    setTimeout(retirar, 2600);   // nunca más de 2,6 s
-  } else d.documentElement.classList.remove('fx-llega');
-  var yendo = false;
-  function ir(href) {
-    if (quieto || yendo) { location.href = href; return; }
-    var u = new URL(href, location.href);
-    yendo = true;
-    var t = nombreDe(u), h = hoja(t);
-    try { sessionStorage.setItem('fx-hoja', t); } catch (e) {}
-    requestAnimationFrame(function () { requestAnimationFrame(function () { h.classList.add('fx-entra'); }); });
-    precargar(u.href);
-    setTimeout(function () { location.href = u.href; }, 300);
-  }
-  window.fxIr = ir;
-  // precarga: al acercar el cursor (o tocar) un enlace interno, el navegador ya va pidiendo esa página
-  var precargadas = {};
-  function precargar(href) {
-    if (precargadas[href]) return; precargadas[href] = 1;
-    var l = d.createElement('link'); l.rel = 'prefetch'; l.href = href; d.head.appendChild(l);
-  }
-  function interno(a) {
-    if (!a || a.target === '_blank') return null;
-    var h = a.getAttribute('href'); if (!h || h.charAt(0) === '#' || /^(mailto|tel|javascript):/i.test(h) || /\.pdf($|\?|#)/i.test(h)) return null;
-    var u = new URL(a.href, location.href);
-    return u.host === location.host && u.pathname !== location.pathname ? u.href.split('#')[0] : null;
-  }
-  ['pointerover', 'touchstart', 'focusin'].forEach(function (tipo) {
-    d.addEventListener(tipo, function (ev) { var u = interno(ev.target.closest && ev.target.closest('a[href]')); if (u) precargar(u); }, { passive: true });
-  });
-  d.addEventListener('click', function (ev) {
-    var a = ev.target.closest && ev.target.closest('a[href]');
-    if (!a || ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
-    var h = a.getAttribute('href');
-    if (a.target === '_blank' || a.hasAttribute('download') || !h || h.charAt(0) === '#' || /^(mailto|tel|javascript):/i.test(h) || /\.pdf($|\?|#)/i.test(h)) return;
-    var u = new URL(a.href, location.href);
-    if (u.protocol !== location.protocol || u.host !== location.host || (u.pathname === location.pathname && u.search === location.search)) return;
-    ev.preventDefault(); ir(a.href);
-  });
-  // al volver con "atrás" desde la caché del navegador, ninguna hoja debe quedar encima
-  window.addEventListener('pageshow', function (e) { if (e.persisted) { yendo = false; Array.prototype.forEach.call(d.querySelectorAll('.fx-hoja'), function (n) { n.remove(); }); d.documentElement.classList.remove('fx-llega'); } });
+  // la pantalla de carga y la transición entre páginas viven en js/carga.js
 
   // ── haz de progreso ──
   var haz = d.createElement('div'); haz.className = 'fx-haz'; haz.setAttribute('aria-hidden', 'true'); d.body.appendChild(haz);
@@ -88,6 +22,7 @@
     '.contact-info-item', '.contact-form-group', '.about-photo', '.about-text > *', '.skills-tags', '.form-group', '.qq-links', '.ro-panel',
     '.proj-section', '.pagina', '.carousel', '.problema-card', '.problemas-lista > *'];
   if (!quieto && 'IntersectionObserver' in window) {
+    var empezar = function (fn) { if (window.fxRevelado) window.fxRevelado.then(fn); else fn(); };
     var vistos = new Set();
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
@@ -100,8 +35,10 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
     todos(WARP.join(',')).forEach(function (n) {
       if (vistos.has(n) || n.closest('.hero, .qq-hero, .fx-portal') || getComputedStyle(n).position === 'fixed') return;
-      vistos.add(n); n.classList.add('fx-warp'); io.observe(n);
+      vistos.add(n); n.classList.add('fx-warp');
     });
+    // los bloques aparecen cuando la hoja de carga se retira, no detrás de ella
+    empezar(function () { vistos.forEach(function (n) { io.observe(n); }); });
   }
 
   // ── brillo en las cursivas doradas de los títulos ──

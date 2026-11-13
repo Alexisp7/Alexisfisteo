@@ -532,10 +532,11 @@
     }
     @media (prefers-reduced-motion: reduce) { .ro-panel { animation:none; opacity:1; } .ro-panel .camion-aire line { animation:none !important; } }
   </style>
-  <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
+  <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
 </head>
 <body>
+  <script src="js/carga.js"></script>
 
   <!-- HEADER -->
   <header class="header">
@@ -564,11 +565,11 @@
   <!-- PROJECT HERO: el collage de la presentación como fondo del título -->
   <section class="qq-hero">
     <div class="qq-mosaic" aria-hidden="true">
-      <figure class="qq-cell qq-c1"><img src="img/quantumquipu/qubo.png" alt=""/></figure>
-      <figure class="qq-cell qq-c2"><img src="img/quantumquipu/titulo.png" alt=""/></figure>
-      <figure class="qq-cell qq-c3"><img src="img/quantumquipu/optimizador.png" alt=""/></figure>
-      <figure class="qq-cell qq-c4"><img src="img/quantumquipu/trayec.png" alt=""/></figure>
-      <figure class="qq-cell qq-c5"><img src="img/quantumquipu/vqe.png" alt=""/></figure>
+      <figure class="qq-cell qq-c1"><img decoding="async" src="img/quantumquipu/qubo.webp" alt=""/></figure>
+      <figure class="qq-cell qq-c2"><img decoding="async" src="img/quantumquipu/titulo.webp" alt=""/></figure>
+      <figure class="qq-cell qq-c3"><img decoding="async" src="img/quantumquipu/optimizador.webp" alt=""/></figure>
+      <figure class="qq-cell qq-c4"><img decoding="async" src="img/quantumquipu/trayec.webp" alt=""/></figure>
+      <figure class="qq-cell qq-c5"><img decoding="async" src="img/quantumquipu/vqe.webp" alt=""/></figure>
     </div>
     <div class="qq-frame" aria-hidden="true"></div>
   </section>

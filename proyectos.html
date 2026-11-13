@@ -1365,10 +1365,11 @@
     .proj-cf-carta--soon .soon { aspect-ratio: 16/10; }
     @media (min-width: 901px) { .proj-cf-carta--soon .soon { aspect-ratio:auto; height:430px; } }
   </style>
-  <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
+  <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
 </head>
 <body>
+  <script src="js/carga.js"></script>
 
   <header class="header">
     <div class="header-inner">
@@ -1384,7 +1385,7 @@
       <div class="proj-cf-pista">
 
         <a href="quantumquipu.html" class="proj-cf-carta is-left">
-          <div class="proj-cf-img"><img src="img/minas.png" alt=""/></div>
+          <div class="proj-cf-img"><img loading="lazy" decoding="async" src="img/minas.webp" alt=""/></div>
           <div class="proj-cf-texto">
             <p class="proj-cf-meta">2025 · Hackathon Quantum Quipu · 2.do lugar</p>
             <h3 class="proj-cf-title">QuantumQuipu: Optimización de Rutas en Minería con VQE</h3>
@@ -1394,7 +1395,7 @@
         </a>
 
         <a href="blackscholes.html" class="proj-cf-carta is-center">
-          <div class="proj-cf-img"><img src="img/blackscholes-portada.webp" alt=""/></div>
+          <div class="proj-cf-img"><img loading="lazy" decoding="async" src="img/blackscholes-portada.webp" alt=""/></div>
           <div class="proj-cf-texto">
             <p class="proj-cf-meta">2025 · PUCP · Hackathon Qiskit Fall Fest (IBM Quantum) · 1.er lugar</p>
             <h3 class="proj-cf-title">Black–Scholes con Caminata Aleatoria Cuántica</h3>

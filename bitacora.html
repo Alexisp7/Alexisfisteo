@@ -1281,10 +1281,11 @@
     .bt-pronto .bt-t { color: #9A9A9A; }
     @media (max-width: 640px) { .bt { padding: 48px 20px 80px; } .bt-a { grid-template-columns: 36px 1fr; } .bt-f { grid-column: 2; grid-row: 3; margin-top: 10px; } .bt-a::after { left: 60px; } }
   </style>
-  <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
+  <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
 </head>
 <body>
+  <script src="js/carga.js"></script>
 
   <header class="header">
     <div class="header-inner">

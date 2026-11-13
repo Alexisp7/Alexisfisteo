@@ -2,31 +2,47 @@
    brillo dorado en los títulos y reflejos psiónicos en tarjetas y botones ═══ */
 :root { --fx-oro:#C8A96E; --fx-oro-claro:#E8D5A3; --fx-oro-hondo:#8C6D33; --fx-noche:#0B0F15; --fx-ease:cubic-bezier(.16,1,.3,1); }
 
-/* transición académica: una hoja de papel con el encabezado de la sección pasa como una página */
-html.fx-llega body::after { content:''; position:fixed; inset:0; z-index:9998; background:#F7F3EA; }
+/* transición académica: una hoja de papel con el encabezado de la sección pasa como una página.
+   También es la pantalla de carga: mientras la página se arma, un péndulo cuelga de la regla y oscila.
+   Todo lo que se mueve en la hoja usa solo transform, así sigue fluido aunque la página esté ocupada. */
+html.fx-llega body::after { content:''; position:fixed; inset:0; z-index:9998; background:#F7F3EA; animation:fxSeguro 0s linear 8s forwards; }
+@keyframes fxSeguro { to { visibility:hidden; } }
+/* mientras la hoja tapa la página, sus animaciones esperan: empiezan cuando se ve */
+html.fx-espera body > :not(.fx-hoja), html.fx-espera body > :not(.fx-hoja) *,
+html.fx-espera body > :not(.fx-hoja)::before, html.fx-espera body > :not(.fx-hoja)::after,
+html.fx-espera body > :not(.fx-hoja) *::before, html.fx-espera body > :not(.fx-hoja) *::after { animation-play-state:paused !important; }
 .fx-hoja { position:fixed; inset:0; z-index:9999; pointer-events:none; display:flex; align-items:center; justify-content:center;
   background:
     linear-gradient(90deg, rgba(27,42,74,.10), rgba(27,42,74,0) 3%),
     repeating-linear-gradient(0deg, rgba(27,42,74,.035) 0 1px, transparent 1px 30px),
     #F7F3EA;
   box-shadow:-30px 0 60px -20px rgba(20,25,40,.35);
-  transform:translateX(102%); transition:transform .38s cubic-bezier(.7,0,.3,1); will-change:transform; }
+  transform:translateX(102%); transition:transform .3s cubic-bezier(.7,0,.3,1); will-change:transform; }
 .fx-hoja::before { content:''; position:absolute; top:0; bottom:0; left:9%; width:1px; background:rgba(110,26,34,.28); }
-.fx-hoja-c { text-align:center; color:#1B2A4A; opacity:0; transform:translateY(6px); transition:opacity .3s ease .12s, transform .45s cubic-bezier(.16,1,.3,1) .12s; }
+.fx-hoja-c { text-align:center; color:#1B2A4A; opacity:0; transform:translateY(6px); transition:opacity .24s ease .08s, transform .36s cubic-bezier(.16,1,.3,1) .08s; }
 .fx-hoja-k { display:block; font-family:'Space Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.32em; text-transform:uppercase; color:#8C6D33; }
 .fx-hoja-t { display:block; margin-top:14px; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:clamp(34px,5vw,58px); line-height:1.05; color:#111; }
-.fx-hoja-r { display:block; width:140px; height:1px; margin:18px auto 0; background:#1B2A4A; transform:scaleX(0); transition:transform .5s cubic-bezier(.16,1,.3,1) .16s; }
+.fx-hoja-r { display:block; width:140px; height:1px; margin:18px auto 0; background:#1B2A4A; transform:scaleX(0); transition:transform .4s cubic-bezier(.16,1,.3,1) .1s; }
 .fx-hoja.fx-entra { transform:none; }
 .fx-hoja.fx-entra .fx-hoja-c, .fx-hoja.fx-quieta .fx-hoja-c { opacity:1; transform:none; }
 .fx-hoja.fx-entra .fx-hoja-r, .fx-hoja.fx-quieta .fx-hoja-r { transform:scaleX(1); }
 .fx-hoja.fx-quieta { transform:none; transition:none; }
 .fx-hoja.fx-quieta .fx-hoja-c, .fx-hoja.fx-quieta .fx-hoja-r { transition:none; }
-/* mientras carga: una luz recorre la regla bajo el título, como barra de progreso */
+/* mientras carga: una luz recorre la regla bajo el título */
 .fx-hoja.fx-cargando .fx-hoja-r { position:relative; overflow:hidden; background:rgba(27,42,74,.25); }
 .fx-hoja.fx-cargando .fx-hoja-r::after { content:''; position:absolute; top:0; left:0; width:40%; height:1px; background:linear-gradient(90deg, transparent, #1B2A4A, transparent); animation:fxCarga 1s cubic-bezier(.45,0,.55,1) infinite; will-change:transform; }
 @keyframes fxCarga { from { transform:translateX(-100%); } to { transform:translateX(250%); } }
-.fx-hoja.fx-sale { transform:translateX(-102%); box-shadow:30px 0 60px -20px rgba(20,25,40,.35); transition:transform .5s cubic-bezier(.7,0,.3,1); }
-.fx-hoja.fx-sale .fx-hoja-c { opacity:0; transition:opacity .2s ease; }
+/* el péndulo: cuelga del centro de la regla; con amplitud pequeña su movimiento es armónico (vaivén senoidal) */
+.fx-pend { position:relative; display:block; width:100px; height:84px; margin:0 auto; }
+.fx-pend-arco { position:absolute; inset:0; width:100%; height:100%; overflow:visible; fill:none; }
+.fx-pend-arco path { stroke:rgba(27,42,74,.32); stroke-width:1; stroke-dasharray:1.5 3; }
+.fx-pend-arco .fx-pend-eje { stroke:#1B2A4A; stroke-dasharray:none; }
+.fx-pend-brazo { position:absolute; left:49.5px; top:0; width:1px; height:64px; background:#1B2A4A; transform-origin:50% 0; transform:rotate(12deg);
+  animation:fxPendulo 1.6s cubic-bezier(.37,0,.63,1) var(--fx-fase,0ms) infinite alternate; will-change:transform; }
+.fx-pend-brazo i { position:absolute; left:-4px; top:calc(100% - .5px); width:9px; height:9px; border-radius:50%; background:#1B2A4A; box-shadow:inset -2px -2px 0 rgba(255,255,255,.12); }
+@keyframes fxPendulo { from { transform:rotate(12deg); } to { transform:rotate(-12deg); } }
+.fx-hoja.fx-sale { transform:translateX(-102%); box-shadow:30px 0 60px -20px rgba(20,25,40,.35); transition:transform .42s cubic-bezier(.7,0,.3,1); }
+.fx-hoja.fx-sale .fx-hoja-c { opacity:0; transition:opacity .16s ease; }
 
 /* haz de progreso de lectura */
 .fx-haz { position:fixed; top:0; left:0; right:0; height:2px; z-index:9000; pointer-events:none; transform-origin:left; transform:scaleX(var(--fx-p,0)); background:linear-gradient(90deg,var(--fx-oro-hondo),var(--fx-oro) 60%,#fff); box-shadow:0 0 10px rgba(232,213,163,.8); }
@@ -68,6 +84,7 @@ html.fx-llega body::after { content:''; position:fixed; inset:0; z-index:9998; b
 
 @media (prefers-reduced-motion: reduce) {
   .fx-hoja { display:none; } html.fx-llega body::after { display:none; }
+  .fx-pend-brazo, .fx-hoja-r::after { animation:none !important; }
   .fx-warp, .fx-warp.fx-dentro { opacity:1; animation:none; }
   .fx-brillo { animation:none; background-position:50% 0; }
   .fx-pie::after { animation:none; display:none; }

@@ -1969,12 +1969,13 @@
     }
     @media (prefers-reduced-motion: reduce) { .mc-escena, .mc-info, .mc-t { transition:none; } }
   </style>
-  <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
+  <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
   <link rel="stylesheet" href="css/fision.css"/>
   <link rel="stylesheet" href="css/momento.css"/>
 </head>
 <body>
+  <script src="js/carga.js"></script>
 
   <header class="header">
     <div class="header-inner">

@@ -1262,10 +1262,11 @@
     @media (max-width: 640px) { nav.main-nav a { padding: 8px 10px; } }
     .hero-eyebrow::before { content: none; }
   </style>
-  <script>try{if(sessionStorage.getItem("fx-hoja")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
+  <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
 </head>
 <body>
+  <script src="js/carga.js"></script>
 
   <header class="header">
     <div class="header-inner">

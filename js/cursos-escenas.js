@@ -6,6 +6,11 @@
 //  III Problemas — imán de barra con limaduras (modelo de dos polos), una brújula que sigue
 //      el campo y un péndulo de amplitud grande integrado con RK4 (T/T₀ medido).
 (function () {
+// todo se arma detrás de la hoja de carga (js/carga.js): la hoja se pinta primero, luego se construyen las escenas,
+// se precalientan, se mide la GPU y se pintan los primeros cuadros; solo entonces la hoja se retira
+var avisar, armado = new Promise(function (ok) { avisar = ok; });
+if (window.fxEspera) window.fxEspera(armado);
+var menu = function () {
   var raiz = document.querySelector('[data-cursos-menu]');
   if (!raiz) return;
   var NS = 'http://www.w3.org/2000/svg';
@@ -317,7 +322,7 @@
     function enPantalla(bx, by) { var sx = bx * SC, sy = -by * SC; return [C[0] + Math.cos(ROLL) * sx - Math.sin(ROLL) * sy, C[1] + Math.sin(ROLL) * sx + Math.cos(ROLL) * sy]; }
     var BC = Math.sqrt(27), RSH = BC * SC;   // radio de la sombra en pantalla
     // ── WebGL
-    var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true }), U = {}, listo = false;
+    var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false }), U = {}, listo = false;
     if (gl) gl.getExtension('OES_standard_derivatives');
     if (gl) {
       var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }'); gl.compileShader(vs);
@@ -347,13 +352,18 @@
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
-    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, inicio = performance.now(), armT = null;
+    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, fijo = false, inicio = performance.now(), armT = null;
     // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
       if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
       // la resolución casi no baja: si la GPU va lenta se ajusta poco y se salta un cuadro
+      if (fijo) {   // GPU sin aceleración: un cuadro quieto, ya dibujado, que solo se repinta si cambia el foco de las notas
+        var firma = dimMeta.join() + hkMeta + lienzo.getBoundingClientRect().width;
+        if (firma === fijo) return;
+        fijo = firma; dim[0] = dimMeta[0]; dim[1] = dimMeta[1]; hk = hkMeta; armT = 9; pintar(); return;
+      }
       if (++cuadro % salto) return;
       pintar();
       // si va lento se pinta un cuadro de cada dos; la resolución no cambia nunca (si bajara, se pixelaría a mitad de la escena)
@@ -361,6 +371,26 @@
         if (lentos > 25) { lentos = 0; if (salto < 2) salto = 2; } }
       previo = t;
     })(0);
+    // medición de la GPU (bajo la hoja de carga): se pintan unos cuadros esperando a que terminen. Si el trazado de rayos
+    // no cabe holgado en un cuadro, se pinta uno de cada dos (30 fps: el disco gira despacio y se ve igual de suave);
+    // solo en una GPU muy lenta se baja además la resolución. Se decide una vez, antes de verse: nunca cambia a la vista.
+    fig.bnMedir = function () {
+      if (!listo) return;
+      var r = lienzo.getBoundingClientRect(); if (!r.width) return;
+      var px = new Uint8Array(4), ms = [], gasto = 0;
+      // leer un píxel obliga a esperar a que la GPU termine el cuadro; el primero (compilación) no cuenta
+      pintar(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      for (var k = 0; k < 4 && gasto < 160; k++) { var a = performance.now(); pintar(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); var d = performance.now() - a; ms.push(d); gasto += d; }
+      ms.sort(function (x, y) { return x - y; });
+      var m = ms[ms.length >> 1];
+      if (m > 10) salto = 2;
+      if (m > 20) calidad = Math.max(.6, Math.sqrt(20 / m));
+      // sin aceleración por hardware (cientos de ms por cuadro) animarlo congelaría la página entera
+      if (m > 90) { calidad = .75; fijo = 'pendiente'; }
+      fig.bnMedida = { ms: +m.toFixed(1), salto: salto, calidad: +calidad.toFixed(2) };
+    };
+    // la entrada de la escena (la mancha que se extiende, el disco que aparece) empieza cuando la hoja se retira
+    if (window.fxRevelado) window.fxRevelado.then(function () { inicio = performance.now(); });
     fig.bnT = function (t) { tiempo = t; };
     fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
@@ -1628,6 +1658,7 @@
     requestAnimationFrame(function () { requestAnimationFrame(function () { e.classList.remove('armando'); e.classList.add('armado'); tArmado = setTimeout(function () { e.classList.remove('armado'); }, 1700); }); });
   }
   function elegir(i) {
+    if (typeof faltan !== 'undefined' && faltan[i]) calienta(i, Infinity);
     var previo = activo; activo = i;
     items.forEach(function (it, k) { it.classList.toggle('on', k === i); it.setAttribute('aria-current', k === i ? 'true' : 'false'); });
     escenas.forEach(function (e, k) { e.classList.toggle('on', k === i); });
@@ -1652,7 +1683,18 @@
   elegir(0);
   if (quieto) { for (var w = 0; w < mods.length; w++) for (var k = 0; k < 400; k++) mods[w].tick(1 / 60); elegir(0); return; }
   // precalienta cada escena para que no empiece vacía
-  for (var w2 = 0; w2 < mods.length; w2++) for (var k2 = 0; k2 < (w2 >= 2 ? 900 : 1600); k2++) mods[w2].tick(1 / 60);
+  // la escena visible se precalienta ya, bajo la hoja; las otras, a pedacitos cuando el navegador está libre
+  // (si alguien pasa a una antes de que termine, se completa en ese momento)
+  var faltan = mods.map(function (m, w) { return w >= 2 ? 900 : 1600; });
+  function calienta(w, n) { n = Math.min(n, faltan[w]); for (var k = 0; k < n; k++) mods[w].tick(1 / 60); faltan[w] -= n; }
+  calienta(activo, Infinity);
+  var ocioso = window.requestIdleCallback || function (fn) { return setTimeout(function () { fn({ timeRemaining: function () { return 8; } }); }, 30); };
+  (function sigue(plazo) {
+    var w = faltan.findIndex(function (x) { return x > 0; }); if (w < 0) return;
+    if (plazo.didTimeout) calienta(w, 40);
+    while (w >= 0 && plazo.timeRemaining() > 3) { calienta(w, 40); w = faltan.findIndex(function (x) { return x > 0; }); }
+    ocioso(sigue, { timeout: 300 });
+  })({ timeRemaining: function () { return 0; } });
   var visible = true, ult = 0;
   if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(raiz);
   function bucle(t) {
@@ -1662,4 +1704,14 @@
     mods[activo].tick(dt);
   }
   requestAnimationFrame(bucle);
+  // la GPU se mide ahora, con la hoja encima: así la calidad del agujero negro queda fija antes de que se vea
+  var fig0 = escenas[0];
+  if (fig0.bnMedir) fig0.bnMedir();
+  // dos cuadros más para que todo lo que se compila o decodifica al primer dibujo ocurra todavía bajo la hoja
+  return new Promise(function (ok) { requestAnimationFrame(function () { requestAnimationFrame(ok); }); });
+};
+requestAnimationFrame(function () { setTimeout(function () {
+  var r; try { r = menu(); } catch (e) { avisar(); throw e; }
+  Promise.resolve(r).then(avisar, avisar);
+}, 0); });
 })();

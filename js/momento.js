@@ -598,8 +598,16 @@
           ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'; ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = .6;
           ctx.beginPath(); ctx.moveTo(dorso[k][0], dorso[k][1]); ctx.lineTo(dorso[k + 1][0], dorso[k + 1][1]); ctx.lineTo(cara[k + 1][0], cara[k + 1][1]); ctx.lineTo(cara[k][0], cara[k][1]); ctx.closePath(); ctx.fill(); ctx.stroke();
         }
-        // contorno del canto en tinta
-        ctx.strokeStyle = TINTA + '.75)'; ctx.lineWidth = .7; camino(dorso, true); ctx.stroke();
+        // contorno del canto en tinta: solo las aristas que se ven (el borde trasero de los tramos que miran al
+        // lector y las dos generatrices donde el canto pasa de verse a no verse); nunca el borde oculto
+        ctx.strokeStyle = TINTA + '.75)'; ctx.lineWidth = .7; ctx.lineCap = 'round'; ctx.beginPath();
+        var vis = [];
+        for (var k2 = 0; k2 < 64; k2++) { var an3 = 2 * Math.PI * (k2 + .5) / 64, n3 = [V[0] * Math.cos(an3), V[1] * Math.cos(an3), Math.sin(an3)]; vis.push(dep(add(C, n3, 1)) - dep(C) >= -.02); }
+        for (var k3 = 0; k3 < 64; k3++) {
+          if (vis[k3]) { ctx.moveTo(dorso[k3][0], dorso[k3][1]); ctx.lineTo(dorso[k3 + 1][0], dorso[k3 + 1][1]); }
+          if (vis[k3] !== vis[(k3 + 63) % 64]) { ctx.moveTo(dorso[k3][0], dorso[k3][1]); ctx.lineTo(cara[k3][0], cara[k3][1]); }
+        }
+        ctx.stroke();
         var gg = ctx.createRadialGradient(fc[0] - 10, fc[1] - 12, 2, fc[0], fc[1], G.Rr * cam.s * 1.05);
         gg.addColorStop(0, '#FBEFD0'); gg.addColorStop(.55, '#E8CF95'); gg.addColorStop(1, '#C39B55');
         poli(cara, gg, TINTA + '.9)', .9);
@@ -625,17 +633,18 @@
       objs.push({ z: dep(add(piv, V, 1.8)), k: 'tau', f: vec(tz, tq, ORO, .95, 1.6, 9) });
       var om = Pp(add(piv, Z, 3.4));
       objs.push({ z: zBola + .0004, k: 'omega', f: vec([tz[0], tz[1] - 7], om, AZUL, .85, 1.3, 8) });
-      objs.sort(function (p, q) { return p.z - q.z; }).forEach(function (o) { cola.push(o); });
-      // ── rótulos ──
+      // ── rótulos: cada uno con la profundidad de su pieza, así una pieza que pasa por delante lo tapa ──
       var dm = Pp(add(piv, U, G.d * .45));
       [['L', 'L', Lt[0] + 8, Lt[1] - 6, { px: 22, it: true, c: '#7A2E22', a: 1, halo: true }],
        ['L', 'dL', dl[0] + 5, dl[1] + 12, { px: 15, it: true, c: '#8A5A16', a: .95, halo: true }],
        ['mg', 'mg', mg1[0] + 8, mg1[1] + 2, { px: 18, it: true, c: '#1E1A16', a: .9, halo: true }],
        ['tau', 'τ', tq[0] + 6, tq[1] + 4, { px: 20, it: true, c: '#8A5A16', a: 1, halo: true }],
        ['omega', 'Ω', om[0] + 7, om[1] + 6, { px: 19, it: true, c: '#2B3A67', a: 1, halo: true }],
-       ['d', 'd', dm[0], dm[1] - 9, { px: 17, it: true, c: '#1E1A16', a: .9, al: 'center', halo: true }]].forEach(function (r) {
-        cola.push({ k: r[0], f: function (len) { if (len > .7) { var o = {}; for (var q in r[4]) o[q] = r[4][q]; o.a *= (len - .7) / .3; txt(r[1], r[2], r[3], o); } } });
+       ['d', 'd', dm[0], dm[1] - 9, { px: 17, it: true, c: '#1E1A16', a: .9, al: 'center', halo: true }]].forEach(function (r, i) {
+        var zr = [dep(add(C, U, LL)) + .0012, dep(add(C, U, LL)) + .0013, dep(C) + .0015, dep(add(piv, V, 3.6)) + .001, zBola + .0006, Math.min(dep(add(piv, U, G.d * .45)), zBola - .0002) + .0001][i];
+        objs.push({ z: zr, k: r[0], f: function (len) { if (len > .7) { var o = {}; for (var q in r[4]) o[q] = r[4][q]; o.a *= (len - .7) / .3; txt(r[1], r[2], r[3], o); } } });
       });
+      objs.sort(function (p, q) { return p.z - q.z; }).forEach(function (o) { cola.push(o); });
       pinta(cola);
       var pisoPts = [P(-B, -B, bz), P(B, -B, bz), P(B, B, bz), P(B, B, 0), P(-B, -B, 0)];
       GI.hit = {

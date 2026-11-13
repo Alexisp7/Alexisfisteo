@@ -1409,14 +1409,16 @@ void main(){
     if(l<r*.62){c=O[i].xy;rn=r*.62;om=Q[i].z;float k=1.-l/rn;core=k*k;gl=Q[i].w;br=b;}
   }
   // los tentáculos oscilan un poco: onda lenta anclada en cada célula
-  float zn=S.x>1800.?.6:smoothstep(380.,540.,p.x)*smoothstep(40.,95.,p.y)*(1.-smoothstep(690.,790.,p.y));
+  float fr=S.x>1800.?0.:1.;
+  float zn=fr*smoothstep(380.,540.,p.x)*smoothstep(40.,95.,p.y)*(1.-smoothstep(560.,680.,p.y));
   q+=vec2(sin(p.y*.017+p.x*.006+t*.9)+.5*sin(p.x*.031-t*1.3),cos(p.x*.015-p.y*.008+t*.75)+.5*sin(p.y*.027+t*1.1))*3.2*an*zn;
   vec3 o=tx(p);
   float gr=clamp((o.g-max(o.r,o.b))*4.,0.,1.);
   float vi=clamp(((o.r+o.b)*.5-o.g-.22)*2.2,0.,1.);
   vec2 fl=vec2(n(p*.05+vec2(t*.45,0.)),n(p*.05+vec2(3.,t*.38)))-.5;
   vec2 fl2=vec2(n(p*.11-vec2(0.,t*.7)),n(p*.11+vec2(t*.6,9.)))-.5;
-  q+=fl*(gr*4.+vi*1.6)+fl2*gr*1.6;
+  float lq=fr*max(1.-an,zn);
+  q+=(fl*(gr*4.+vi*1.6)+fl2*gr*1.6)*lq;
   vec3 col;
   if(core>0.){
     float T1=fract(t*.2),T2=fract(t*.2+.5),w1=1.-abs(2.*T1-1.);

@@ -529,9 +529,9 @@
           ctx.restore();
         }
       } });
-      // ── zona activa: anillo tenue en el plano del pivote (las zonas son fijas, por radio) ──
+      // ── zona activa: no se dibuja (las zonas fijas por radio funcionan, pero son invisibles) ──
       var zAct = null; ZONAS.forEach(function (zz) { if (zz[0] === GI.focoVis) zAct = zz; });
-      if (zAct && GI.lav > .01) cola.push({ k: '_zona', f: function () {
+      if (false && zAct) cola.push({ k: '_zona', f: function () {
         var c0 = P(0, 0, h), r0 = zAct[1] * cam.s, r1 = zAct[2] * cam.s;
         ctx.save(); ctx.globalAlpha *= GI.lav; ctx.beginPath(); ctx.ellipse(c0[0], c0[1], r1, r1 * se, 0, 0, 2 * Math.PI);
         if (r0 > 0) { ctx.moveTo(c0[0] + r0, c0[1]); ctx.ellipse(c0[0], c0[1], r0, r0 * se, 0, 0, 2 * Math.PI, true); }
@@ -852,13 +852,13 @@
     // solo-giróscopo: una nota por pieza, en el mismo lugar arriba; aparece solo al señalar la pieza
     var ARRG = { tx: 1118, ty: 112, ancho: 272, lado: 1, recta: true, caja: true }, NG = {};
     if (SOLO) {
-      NG.torre = en(ARRG, { k: 'Zona 1 · Base y apoyo', tit: 'Un apoyo sin torque',
+      NG.torre = en(ARRG, { k: 'Base y apoyo', tit: 'Un apoyo sin torque',
         d: ['La fuerza del soporte actúa en el pivote,', 'así que no hace torque respecto de él.', 'Solo el peso lo hace. Si el rotor no', 'girara (L = 0), ese torque lo haría caer.'] });
-      NG.omega = en(ARRG, { k: 'Zona 2 · Centro: precesión', tit: 'Ω = m g d / (I ω)',
+      NG.omega = en(ARRG, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
         d: ['El torque del peso, τ = dL/dt, es', 'horizontal y perpendicular a L: gira L', 'sin cambiar su tamaño. Con I ω ≈ 0,017', 'kg·m²/s y τ ≈ 0,059 N·m, Ω ≈ 3,5 rad/s:', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
-      NG.rotor = en(ARRG, { k: 'Zona 3 · Rotor', tit: 'L = I ω',
+      NG.rotor = en(ARRG, { k: 'Rotor', tit: 'L = I ω',
         d: ['Disco de 150 g y radio 3 cm: I = ½ m R²', '≈ 6,75 × 10⁻⁵ kg·m². A 40 vueltas/s,', 'L = I ω ≈ 0,017 kg·m²/s. Su peso actúa', 'a d = 4 cm del pivote: m g d ≈ 0,059 N·m.'] });
-      NG.L = en(ARRG, { k: 'Zona 4 · Momento angular', tit: 'dL = τ dt',
+      NG.L = en(ARRG, { k: 'Momento angular', tit: 'dL = τ dt',
         d: ['L apunta a lo largo del eje. En cada dt', 'cambia en dL = τ dt, horizontal y', 'perpendicular a L: la punta recorre el', 'círculo punteado y |L| no cambia.'] });
     }
     var AGENDA = SOLO ? [] : [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [nS1, TS + 1, TS + 5.6], [DES.cab, TS + 6, TC - .3], [DES.p[0], TS + 6, TC - .3], [DES.p[1], TS + 8.6, TC - .3], [DES.p[2], TS + 11.2, TC - .3], [nS2, TS + 13.4, TC - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];

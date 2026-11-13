@@ -373,9 +373,8 @@ var menu = function () {
         if (lentos > 25) { lentos = 0; if (salto < 2) salto = 2; } }
       previo = t;
     })(0);
-    // medición de la GPU (bajo la hoja de carga): se pintan unos cuadros esperando a que terminen. Si el trazado de rayos
-    // no cabe holgado en un cuadro, se pinta uno de cada dos (30 fps: el disco gira despacio y se ve igual de suave);
-    // solo en una GPU muy lenta se baja además la resolución. Se decide una vez, antes de verse: nunca cambia a la vista.
+    // medición de la GPU (bajo la hoja de carga): solo distingue un navegador sin aceleración gráfica; la resolución
+    // del trazado nunca se reduce.
     fig.bnMedir = function () {
       medido = true;
       if (!listo) return;
@@ -388,15 +387,12 @@ var menu = function () {
       cuadro(.125);   // el primero compila el sombreador: no cuenta
       var A = mide(.125), B = mide(.25);
       calidad = q0;
-      var W = Math.round(r.width * Math.min(window.devicePixelRatio || 1, 2)), H = Math.round(r.height * Math.min(window.devicePixelRatio || 1, 2));
-      var porPx = Math.max(0, (B[0] - A[0]) / Math.max(1, B[1] - A[1])), m = porPx * W * H;
-      // si el cuadro chico ya es lento (sin aceleración), la extrapolación no hace falta
-      if (B[0] > 40) m = Math.max(m, B[0] * 16);
-      if (m > 10) salto = 2;
-      if (m > 20) calidad = Math.max(.6, Math.sqrt(20 / m));
-      // sin aceleración por hardware (cientos de ms por cuadro) animarlo congelaría la página entera
-      if (m > 90) { calidad = .75; fijo = 'pendiente'; }
-      fig.bnMedida = { ms: +m.toFixed(1), chico: +A[0].toFixed(1), medio: +B[0].toFixed(1), salto: salto, calidad: +calidad.toFixed(2) };
+      // la resolución nunca se toca: el agujero negro se ve siempre con su nitidez completa. La medición solo detecta
+      // un navegador sin aceleración gráfica (un cuadro de 1/4 de lado ya tarda decenas de ms); ahí se deja un cuadro
+      // quieto, porque animarlo congelaría la página. Si la GPU va justa, el bucle pasa solo a 30 fps (ver bucleGL).
+      var m = B[0] * 16;
+      if (B[0] > 40) fijo = 'pendiente';
+      fig.bnMedida = { ms: +m.toFixed(1), chico: +A[0].toFixed(1), medio: +B[0].toFixed(1), salto: salto, calidad: calidad, fijo: !!fijo };
     };
     // la entrada de la escena (la mancha que se extiende, el disco que aparece) empieza cuando la hoja se retira
     if (window.fxRevelado) window.fxRevelado.then(function () { inicio = performance.now(); });

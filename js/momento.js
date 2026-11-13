@@ -293,21 +293,21 @@
     G.I = .5 * G.m * Math.pow(G.Rr / 100, 2); G.w = 2 * Math.PI * G.rps; G.Lm = G.I * G.w; G.tau = G.m * 9.81 * G.d / 100; G.Om = G.tau / G.Lm;
     var LENTA = .5;
     // Solo-giróscopo: la precesión se integra (ψ += Ω·½·vel·dt) y no hay bucle de video. Al señalar una pieza
-    // la precesión se detiene suavemente, aparece su nota y el resto queda en gris tenue, como en las otras escenas.
+    // la precesión sigue igual, aparece su nota y el resto queda en gris tenue, como en las otras escenas.
     var GI = { psi: 2.4, vel: 0, arm: 9, foco: null, dim: {}, hit: null, giro: 0 };
     var PARTES = ['base', 'torre', 'eje', 'rotor', 'L', 'orb', 'mg', 'd', 'tau', 'omega'];
     PARTES.forEach(function (k) { GI.dim[k] = 1; });
     // qué queda nítido al señalar cada pieza
     var FOCO = { rotor: ['rotor', 'eje'], torre: ['torre', 'base', 'eje'], L: ['L', 'orb', 'rotor', 'eje'], mg: ['mg', 'd', 'eje', 'rotor'], tau: ['tau', 'L', 'mg', 'd'], omega: ['omega', 'orb', 'L'] };
     // ingreso: las piezas caen en orden (base, torre, eje, rotor) y después se trazan los vectores
-    var ENTRA = { base: [0, -22], torre: [.14, -46], eje: [.34, -34], rotor: [.5, -54], orb: [1, 0], tau: [1.15, 0], mg: [1.25, 0], d: [1.3, 0], L: [1.4, 0], omega: [1.6, 0] };
+    var ENTRA = { base: [0, -18], torre: [.07, -34], eje: [.17, -26], rotor: [.25, -40], orb: [.45, 0], tau: [.52, 0], mg: [.56, 0], d: [.58, 0], L: [.6, 0], omega: [.68, 0] };
     var FILTRO = 'filter' in ctx, desY = 0, SOLIDAS = ['base', 'torre', 'eje', 'rotor'];
     function rebote(x) { x = cl(x, 0, 1); var c1 = 1.1, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
     function entrada(k) {
       if (!SOLO || quieto) return { a: 1, oy: 0, len: 1 };
-      var e = ENTRA[k], u = (GI.arm - e[0]) / .55;
+      var e = ENTRA[k], u = (GI.arm - e[0]) / .38;
       if (e[1]) return { a: suave(u * 1.8), oy: (1 - rebote(u)) * e[1], len: 1 };
-      var l = suave((GI.arm - e[0]) / .6); return { a: l > 0 ? 1 : 0, oy: 0, len: l };
+      var l = suave((GI.arm - e[0]) / .4); return { a: l > 0 ? 1 : 0, oy: 0, len: l };
     }
     function parte(k, a, fn) {   // dibuja una pieza con su ingreso y su atenuación
       var e = entrada(k), g = GI.dim[k]; if (e.a <= 0 || a <= 0) return;
@@ -320,7 +320,7 @@
     }
     function dibujaIV(t, a) {
       if (a <= 0) return;
-      cam.el = .5; cam.s = SOLO ? 26 : 24; cam.x = SOLO ? 1100 : 1030; cam.y = SOLO ? 598 : 610;
+      cam.el = .5; cam.s = SOLO ? 26 : 24; cam.x = SOLO ? 1050 : 1030; cam.y = SOLO ? 598 : 610;
       if (SOLO && W <= 900) { var vb = svg.viewBox.baseVal; cam.s = 30; cam.x = vb.x + vb.width / 2; cam.y = vb.y + vb.height - 165; }   // móvil: la escena va arriba, bajo la ecuación
       var u = t - T4, psi = SOLO ? GI.psi : 2.4 + G.Om * LENTA * Math.max(0, u - 1.2) * suave((u - .4) / 1.6), U = [Math.cos(psi), Math.sin(psi), 0], V = [-U[1], U[0], 0], Z = [0, 0, 1], h = G.h;
       function add(p, q, s) { return [p[0] + q[0] * s, p[1] + q[1] * s, p[2] + q[2] * s]; }
@@ -355,12 +355,30 @@
         })(pts[j], pts[j + 1], j);
       });
       // ── torre ──
-      var bz2 = .9, t0 = P(0, 0, bz2), t1 = P(0, 0, h), tw = .42 * cam.s;
+      var bz2 = .9, t0 = P(0, 0, bz2), t1 = P(0, 0, h), tw = .42 * cam.s, se = Math.sin(cam.el);
+      // cilindro vertical de radio r entre z0 y z1: costado con degradado de metal, base elíptica y tapa
+      function cilindro(z0, z1, r, cs, tapa, borde) {
+        var a0 = P(0, 0, z0), a1 = P(0, 0, z1), rx = r * cam.s, ry = rx * se;
+        var gr = ctx.createLinearGradient(a0[0] - rx, 0, a0[0] + rx, 0);
+        cs.forEach(function (c, i) { gr.addColorStop(i / (cs.length - 1), c); });
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(a1[0] - rx, a1[1]); ctx.lineTo(a0[0] - rx, a0[1]);
+        ctx.ellipse(a0[0], a0[1], rx, ry, 0, Math.PI, 0, true); ctx.lineTo(a1[0] + rx, a1[1]); ctx.ellipse(a1[0], a1[1], rx, ry, 0, 0, Math.PI, false); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = borde || 'rgba(50,32,10,.55)'; ctx.lineWidth = .6; ctx.stroke();
+        if (tapa) { ctx.fillStyle = tapa; ctx.beginPath(); ctx.ellipse(a1[0], a1[1], rx, ry, 0, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); }
+      }
+      var LATON = ['#4E3716', '#8A6428', '#E6CB8E', '#F7E7C0', '#B48A45', '#6B4A1E', '#3E2B10'];
       objs.push({ z: dep(piv), k: 'torre', f: function () {
-        var gt = ctx.createLinearGradient(t0[0] - tw, 0, t0[0] + tw, 0); gt.addColorStop(0, '#5C4220'); gt.addColorStop(.38, '#E9CF94'); gt.addColorStop(1, '#6B4A1E');
-        ctx.fillStyle = gt; ctx.fillRect(t0[0] - tw, t1[1], 2 * tw, t0[1] - t1[1]);
-        ctx.strokeStyle = TINTA + '.6)'; ctx.lineWidth = .6; ctx.strokeRect(t0[0] - tw, t1[1], 2 * tw, t0[1] - t1[1]);
-        for (var k = 1; k < 4; k++) { var yy = t0[1] - (t0[1] - t1[1]) * k / 4; linea([t0[0] - tw, yy], [t0[0] + tw, yy], TINTA, .25, .5); }
+        // sombra de contacto sobre la base
+        var sb = P(0, 0, bz2), so = ctx.createRadialGradient(sb[0], sb[1], 0, sb[0], sb[1], 1.6 * cam.s);
+        so.addColorStop(0, 'rgba(20,14,8,.45)'); so.addColorStop(1, 'rgba(20,14,8,0)');
+        ctx.save(); ctx.translate(sb[0], sb[1]); ctx.scale(1, se); ctx.translate(-sb[0], -sb[1]); ctx.fillStyle = so; ctx.beginPath(); ctx.arc(sb[0], sb[1], 1.6 * cam.s, 0, 7); ctx.fill(); ctx.restore();
+        cilindro(bz2, bz2 + .45, .95, LATON, '#D9B877');            // casquillo
+        cilindro(bz2 + .45, h - .55, .36, LATON);                   // columna
+        // brillo especular fino a lo largo de la columna
+        var c0 = P(0, 0, bz2 + .5), c1 = P(0, 0, h - .6), xb = c0[0] - .36 * cam.s * .32;
+        var gb = ctx.createLinearGradient(0, c1[1], 0, c0[1]); gb.addColorStop(0, 'rgba(255,250,235,.0)'); gb.addColorStop(.3, 'rgba(255,250,235,.55)'); gb.addColorStop(1, 'rgba(255,250,235,.15)');
+        ctx.strokeStyle = gb; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(xb, c0[1]); ctx.lineTo(xb, c1[1]); ctx.stroke();
+        cilindro(h - .55, h - .15, .6, LATON, '#E2C487');           // cojinete bajo el pivote
       } });
       // ── eje en tres tramos: detrás del pivote, entre pivote y rotor, y la punta que asoma por fuera ──
       function tramo(s0, s1) {
@@ -379,10 +397,15 @@
       var f1 = add(C, U, th / 2), f0 = add(C, U, -th / 2), fr = dep(f1) > dep(f0) ? [f0, f1, 1] : [f1, f0, -1];
       var atras = fr[0], frente = fr[1], fc = Pp(frente), cara = circulo3(frente, V, Z, G.Rr, 64), dorso = circulo3(atras, V, Z, G.Rr, 64);
       objs.push({ z: dep(C), k: 'rotor', f: function () {
-        for (var k = 0; k <= 8; k++) {
-          var cc = add(atras, U, fr[2] * th * k / 8);
-          ctx.fillStyle = k < 8 ? '#6B4A1E' : '#8A6228'; camino(circulo3(cc, V, Z, G.Rr, 64), true); ctx.fill();
+        // canto: para cada tramo del borde, el cuadrilátero entre la cara de atrás y la de adelante, sombreado según su normal
+        for (var k = 0; k < 64; k++) {
+          var an = 2 * Math.PI * (k + .5) / 64, nz = Math.sin(an), nv = Math.cos(an);
+          if ((nv * V[1]) * -Math.cos(cam.el) + nz * Math.sin(cam.el) < -.02) continue;   // tramo de espaldas: lo tapan la cara y el resto del canto
+          var luz = cl(.55 + .45 * nz - .2 * nv, 0, 1), r = Math.round(70 + 90 * luz), gC = Math.round(46 + 62 * luz), b = Math.round(18 + 26 * luz);
+          ctx.fillStyle = 'rgb(' + r + ',' + gC + ',' + b + ')'; ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = .6;
+          ctx.beginPath(); ctx.moveTo(dorso[k][0], dorso[k][1]); ctx.lineTo(dorso[k + 1][0], dorso[k + 1][1]); ctx.lineTo(cara[k + 1][0], cara[k + 1][1]); ctx.lineTo(cara[k][0], cara[k][1]); ctx.closePath(); ctx.fill(); ctx.stroke();
         }
+
         var gg = ctx.createRadialGradient(fc[0] - 18, fc[1] - 22, 4, fc[0], fc[1], G.Rr * cam.s * 1.1);
         gg.addColorStop(0, '#FBEFD0'); gg.addColorStop(.5, '#D2A35A'); gg.addColorStop(1, '#7C5521');
         ctx.fillStyle = gg; camino(cara, true); ctx.fill(); ctx.strokeStyle = 'rgba(60,38,12,.85)'; ctx.lineWidth = .9; ctx.stroke();
@@ -578,6 +601,7 @@
       n.ubica = function (ax, ay) {
         gp.setAttribute('transform', 'translate(' + f(ax) + ' ' + f(ay) + ')');
         var ex = lado > 0 ? x0 - 10 : x0 + ancho + 10;
+        if (o.recta) { var xr = cl(ax, x0, x0 + ancho); guia.setAttribute('d', 'M' + f(ax) + ' ' + f(ay) + ' L' + f(ax) + ' ' + f(ty) + (xr !== ax ? ' L' + f(xr) + ' ' + f(ty) : '')); return; }
         guia.setAttribute('d', 'M' + f(ax) + ' ' + f(ay) + ' L' + f(ex) + ' ' + f(ty) + ' L' + f(lado > 0 ? x0 : x0 + ancho) + ' ' + f(ty));
       };
       n.pon = function (v) { if (v !== n.ver) { n.ver = v; g.classList.toggle('ver', v); } };
@@ -620,7 +644,7 @@
     var n9 = en(DER, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
       d: ['Rotor de 150 g, R = 3 cm, d = 4 cm y', '40 vueltas/s: I ω ≈ 0,017 kg·m²/s y', 'τ ≈ 0,059 N·m, así que Ω ≈ 3,5 rad/s,', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
     // solo-giróscopo: una nota por pieza, en el mismo lugar arriba; aparece solo al señalar la pieza
-    var ARRG = { tx: 1112, ty: 226, ancho: 252, lado: -1, pie: true }, NG = {};
+    var ARRG = { tx: 1064, ty: 226, ancho: 252, lado: -1, pie: true, recta: true }, NG = {};
     if (SOLO) {
       NG.rotor = en(ARRG, { k: 'Rotor', tit: 'L = I ω',
         d: ['Disco de 150 g y radio 3 cm: I = ½ m R²', '≈ 6,75 × 10⁻⁵ kg·m². A 40 vueltas/s,', 'ω ≈ 251 rad/s y L = I ω ≈ 0,017 kg·m²/s,', 'dirigido a lo largo del eje.'] });
@@ -676,7 +700,7 @@
     // señalar una pieza del giróscopo: el puntero se lleva a coordenadas del viewBox y se busca la pieza
     if (SOLO) {
       var aVB = function (ev) { var r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal; return [vb.x + (ev.clientX - r.left) / r.width * vb.width, vb.y + (ev.clientY - r.top) / r.height * vb.height]; };
-      var senala = function (ev) { if (!fig.classList.contains('on')) return; GI.foco = GI.arm > 1.4 ? pieza(aVB(ev)) : null; fig.style.cursor = GI.foco ? 'help' : ''; };
+      var senala = function (ev) { if (!fig.classList.contains('on')) return; GI.foco = GI.arm > .7 ? pieza(aVB(ev)) : null; fig.style.cursor = GI.foco ? 'help' : ''; };
       fig.addEventListener('pointermove', senala); fig.addEventListener('pointerdown', senala);
       fig.addEventListener('pointerleave', function () { GI.foco = null; fig.style.cursor = ''; });
     }
@@ -741,8 +765,8 @@
           if (!fig.classList.contains('on')) return;
           if (!fig.moOn) { salta(INI); fig.moOn = true; }
           GI.arm += dt; GI.giro += quieto ? 0 : dt;
-          var vObj = quieto || GI.foco ? 0 : GI.arm > 1.9 ? 1 : 0;   // la precesión arranca al terminar el ingreso y se detiene al señalar
-          GI.vel += (vObj - GI.vel) * Math.min(1, dt * 3); GI.psi += G.Om * LENTA * GI.vel * dt;
+          var vObj = quieto ? 0 : GI.arm > .55 ? 1 : 0;   // la precesión arranca al terminar el ingreso y no se detiene al señalar
+          GI.vel += (vObj - GI.vel) * Math.min(1, dt * 2.5); GI.psi += G.Om * LENTA * GI.vel * dt;
           PARTES.forEach(function (k) { var o = !GI.foco || FOCO[GI.foco].indexOf(k) >= 0 ? 1 : .2; GI.dim[k] += (o - GI.dim[k]) * Math.min(1, dt * 9); });
           for (var kn in NG) NG[kn].pon(GI.foco === kn);
           dibuja(T); lecturas(T); ecuacion(T);

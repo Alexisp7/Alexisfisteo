@@ -170,7 +170,7 @@ var menu = function () {
   var GLSL_AGUJERO = [
     '#extension GL_OES_standard_derivatives : enable',
     'precision highp float;',
-    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix, uArm, uTD, uHk; uniform vec2 uDim;',
+    'uniform vec2 uRes; uniform vec4 uVB; uniform vec2 uC; uniform float uSC, uRoll, uT, uIncl, uPix, uArm, uTD, uHk, uEx, uSal; uniform vec2 uDim;',
     'float hash(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
     'float ruido(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);',
     '  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
@@ -247,9 +247,11 @@ var menu = function () {
     '  float e = length(vec2(sb.x / 23.0, sb.y / 12.5));',
     '  e += (fbm(vec3(sb * .11, 1.0)) - .5) * .75 + (fbm(vec3(sb * .6, 4.0)) - .5) * .2 + (ruido(vec3(sb * 2.4, 5.0)) - .5) * .05;',
     '  float pw = smoothstep(0.0, .9, uArm); pw = 1.0 - (1.0 - pw) * (1.0 - pw);',
-    // borde seco: la mancha termina en un solo píxel (sin veladura que se desvanezca) y no lleva línea de contorno
-    '  float fe = clamp(fwidth(e), 1e-4, .06), T = .915 * pw;',
-    '  float W = 1.0 - smoothstep(T - fe, T, e);',
+    // salida hacia Relatividad: la mancha se extiende hasta cubrir toda la pantalla
+    '  pw *= 1.0 + 5.5 * uEx;',
+    // borde con la mitad del suavizado original (antes la veladura ocupaba .065 en e; ahora .0325) y sin línea de contorno
+    '  float fe = clamp(fwidth(e), 1e-4, .06), T = .914 * pw;',
+    '  float W = 1.0 - smoothstep(T - .0325 - fe, T, e);',
     // núcleo de pigmento denso (índigo casi negro) y, hacia el borde, una veladura gris azulada que se deshilacha
     '  float nucleo = 1.0 - smoothstep(.5 * pw, .84 * pw, e + (fbm(vec3(sb * .25, 9.0)) - .5) * .35);',
     '  float n = fbm(d * 2.6 + vec3(1.3, 6.2, 2.9)), n3 = fbm(d * 6.0 + 3.0);',
@@ -274,7 +276,7 @@ var menu = function () {
     '  d = vec2(cr * d.x + sr * d.y, -sr * d.x + cr * d.y);',
     '  float bx = d.x, by = -d.y;',
     // fuera de la mancha y del disco no hay nada que pintar: se evita trazar el rayo (ahorra casi la mitad de los píxeles)
-    '  if (length(vec2(bx / 23.0, by / 12.5)) > 1.45 && length(vec2(bx, by)) > 24.0) { gl_FragColor = vec4(0.0); return; }',
+    '  if (length(vec2(bx / 23.0, by / 12.5)) > 1.45 * (1.0 + 5.5 * uEx) && length(vec2(bx, by)) > 24.0) { gl_FragColor = vec4(0.0); return; }',
     '  float ci = cos(uIncl), si = sin(uIncl);',
     '  vec3 cam = vec3(0.0, ci, -si) * 40.0, fw = -normalize(cam), up = vec3(0.0, si, ci), rt = vec3(-1.0, 0.0, 0.0);',
     '  vec3 p = cam + rt * bx + up * by, v = fw;',
@@ -302,7 +304,7 @@ var menu = function () {
     '  float ag = uT * .06, cg = cos(ag), sg = sin(ag); dg = vec3(cg * dg.x - sg * dg.z, dg.y, sg * dg.x + cg * dg.z);',
     // dentro de la sombra, marcas a escala (sin lente): singularidad, horizonte rₛ = 2 y esfera de fotones 1,5 rₛ = 3
     // sombra negra limpia; su borde (b = √27 M) se suaviza un píxel para que no se vea escalonado
-    '  float ab = fwidth(bb) + 1e-4, sA = cae ? 1.0 : 1.0 - smoothstep(5.196 - ab, 5.196 + ab, bb);',
+    '  float ab = fwidth(bb) + 1e-4, sA = (cae ? 1.0 : 1.0 - smoothstep(5.196 - ab, 5.196 + ab, bb)) * (1.0 - uSal);',
     '  vec4 tinta = sA < .999 ? aguada(vec2(bx, by), dg, px) : vec4(0.0); tinta.a *= uDim.y;',
     '  vec4 fondo = mix(tinta, vec4(.012, .014, .02, smoothstep(.05, .55, uArm) * (1.0 - .7 * uHk)), sA);',
     // radiación de Hawking: filo rojo finísimo justo fuera de la sombra, que chisporrotea; va en la capa del fondo,
@@ -312,8 +314,8 @@ var menu = function () {
     '  float filoH = (1.0 - smoothstep(ancho * .55, ancho * .55 + ab, abs(dr))) * smoothstep(.55, 1.3, uArm) * max(uDim.y, uHk);',
     '  float halo = exp(-max(dr, 0.0) / (ab * (3.0 + 3.0 * uHk))) * step(0.0, dr) * (.35 + .45 * uHk) * chis * max(uDim.y, uHk);',
     '  vec3 rojo = mix(mix(vec3(.62, .07, .05), vec3(.95, .25, .17), chis), mix(vec3(.9, .02, .02), vec3(1.0, .16, .08), chis), uHk);',
-    '  float mH = max(filoH, halo); fondo = vec4(mix(fondo.rgb, rojo, mH), max(fondo.a, mH));',
-    '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0); c1.a *= uDim.x; c2.a *= uDim.x;',
+    '  float mH = max(filoH, halo) * (1.0 - uSal); fondo = vec4(mix(fondo.rgb, rojo, mH), max(fondo.a, mH));',
+    '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0); c1.a *= uDim.x * (1.0 - uSal); c2.a *= uDim.x * (1.0 - uSal);',
     // el fondo (mancha, estrellas, filo de Hawking) va dos tonos más oscuro y rojizo; el disco lleva su propio tono,
     // amarillo dorado de gas caliente (blanco cálido adentro, ámbar afuera), apenas más oscuro que el original
     '  fondo.rgb *= vec3(.88, .73, .68); fondo.rgb = mix(fondo.rgb, fondo.rgb * fondo.rgb * 1.25, .15);',
@@ -345,11 +347,11 @@ var menu = function () {
       var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); gl.useProgram(pr);
       var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
       var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
-      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk', 'uEx', 'uSal'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
       listo = gl.getProgramParameter(pr, gl.LINK_STATUS);
     }
     if (!listo) fig.classList.add('bn-sin-gl');
-    var tiempo = 0, dim = [1, 1], dimMeta = [1, 1], hk = 0, hkMeta = 0;
+    var tiempo = 0, dim = [1, 1], dimMeta = [1, 1], hk = 0, hkMeta = 0, ex = 0, sal = 0, zoom = 1;
     // el disco gira en un bucle perfecto de 40 s (ver patron/disco en el shader)
     function tDisco(t) { return ((t % 40) + 40) % 40; }
     function pintar() {
@@ -360,7 +362,7 @@ var menu = function () {
       var vb = svg.viewBox.baseVal;
       gl.viewport(0, 0, W, H);
       gl.uniform2f(U.uRes, W, H); gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C[0], C[1]);
-      gl.uniform1f(U.uSC, SC); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL + (Math.sin(tiempo * .9) * .6 + Math.sin(tiempo * .37 + 1.3) * .4) * Math.PI / 180); /* tambaleo: menos de 1° */ gl.uniform1f(U.uPix, vb.width / W / SC); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
+      gl.uniform1f(U.uSC, SC * zoom); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uEx, ex); gl.uniform1f(U.uSal, sal); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL + (Math.sin(tiempo * .9) * .6 + Math.sin(tiempo * .37 + 1.3) * .4) * Math.PI / 180); /* tambaleo: menos de 1° */ gl.uniform1f(U.uPix, vb.width / W / (SC * zoom)); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
       dim[0] += (dimMeta[0] - dim[0]) * .14; dim[1] += (dimMeta[1] - dim[1]) * .14; gl.uniform2f(U.uDim, dim[0], dim[1]);
       hk += (hkMeta - hk) * .14; gl.uniform1f(U.uHk, hk); gl.uniform1f(U.uTD, tDisco(tiempo));
       gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -381,6 +383,33 @@ var menu = function () {
       previo = t;
     })(0);
     fig.bnT = function (t) { tiempo = t; };
+    // ── salida hacia la página de Relatividad: la mancha de tinta se extiende hasta cubrir la pantalla, la cámara
+    // avanza hacia el agujero (las estrellas se abren desde el centro), el disco y la sombra se disuelven y queda solo
+    // el espacio; entonces entra la hoja de carga. El menú y las capas SVG se apagan con opacity (CSS); el lienzo
+    // sigue a resolución completa. Solo en pantallas anchas, donde el lienzo ocupa toda la vista
+    fig.bnSalir = function (href) {
+      var mc = fig.closest('.mc'), t0 = performance.now(), DUR = 1700, fin = false;
+      if (!listo || !mc || window.matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)').matches) return false;
+      mc.classList.add('bn-sale');
+      if (window.fxPrecarga) window.fxPrecarga(href);
+      function suave(x) { x = Math.min(Math.max(x, 0), 1); return x * x * (3 - 2 * x); }
+      (function paso() {
+        var u = (performance.now() - t0) / DUR;
+        ex = suave(u / .8); ex = ex * ex * (3 - 2 * ex);          // la mancha: arranque lento, se acelera y se asienta
+        zoom = 1 + .9 * suave((u - .1) / .9) * suave((u - .1) / .9);   // la cámara avanza cada vez más rápido
+        sal = suave((u - .45) / .45);                                // el agujero se disuelve en la segunda mitad
+        if (u < 1) requestAnimationFrame(paso);
+        else if (!fin) { fin = true; if (window.fxIr) window.fxIr(href); else location.href = href; }
+      })();
+      return true;
+    };
+    var enlaceRel = document.querySelector('.mc-a[href="relatividad.html"]');
+    if (enlaceRel) enlaceRel.addEventListener('click', function (ev) {
+      if (ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || !fig.classList.contains('on')) return;
+      if (fig.bnSalir(enlaceRel.href)) ev.preventDefault();
+    });
+    // al volver con «atrás» desde la caché del navegador, la escena aparece como estaba
+    window.addEventListener('pageshow', function (e) { if (!e.persisted) return; ex = 0; sal = 0; zoom = 1; var mc = fig.closest('.mc'); if (mc) mc.classList.remove('bn-sale'); });
     fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
     var g = el('g', {}, svg);

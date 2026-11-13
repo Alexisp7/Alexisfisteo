@@ -73,6 +73,7 @@
     setTimeout(function () { location.href = u.href; }, 230);
   }
   window.fxIr = ir;
+  window.fxPrecarga = function (href) { precargar(href); };
 
   // precarga: al acercar el cursor (o tocar) un enlace interno, el navegador ya va pidiendo esa página y lo que necesita
   var precargadas = {};

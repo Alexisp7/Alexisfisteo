@@ -1613,6 +1613,9 @@
     .mc svg .bn-hawk.foco .bn-hq { r:1.5px; filter:drop-shadow(0 0 2.4px #FF1A0A) drop-shadow(0 0 1px #FF3B20); }
     .mc svg .bn-zona { pointer-events:all; }
     .mc-escena .bn-fondo { position:absolute; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
+    /* salida hacia Relatividad: todo lo que no es la mancha se apaga (solo opacity, en el compositor) mientras ella cubre la pantalla */
+    .mc.bn-sale .mc-menu, .mc.bn-sale .mc-velo, .mc.bn-sale .mc-lectura, .mc.bn-sale .mc-escena[data-i="0"] > svg, .mc.bn-sale .bn-fondo { opacity:0; transition:opacity .55s cubic-bezier(.4,0,.2,1); pointer-events:none; }
+    .mc.bn-sale .mc-menu { transform:translateX(-14px); transition:opacity .45s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1); }
     /* notas del agujero negro: guía en tinta con punta y medallón animado */
     .mc svg .nota-fuerte > path:not(.nota-punta) { stroke:#FBF5E8; stroke-width:1.6; filter:drop-shadow(0 0 .6px #2E2A33) drop-shadow(0 0 .6px #2E2A33); }
     .mc svg .nota-fuerte > circle { fill:#FBF5E8; stroke:#2E2A33; stroke-width:1; } .mc svg .nota-fuerte > circle:first-of-type { r:3.4px; }

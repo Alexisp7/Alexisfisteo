@@ -212,6 +212,9 @@ var menu = function () {
     '  float tr = P.x, n = P.y, flec = P.z, hueco = P.w;',
     '  vec3 tono = paleta(u + (n - .5) * .26 + tr * .12);',
     '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',
+    // corrimiento Doppler en el color: el lado que se acerca (g > 1) se ve más dorado y el que se aleja, más carmín
+    '  float dop = clamp((g - 1.0) * 3.0, -1.0, 1.0);',
+    '  col *= mix(vec3(1.0), dop > 0.0 ? vec3(1.08, 1.0, .82) : vec3(.95, .62, .52), abs(dop));',
     '  float ar = min(fr, .12) * .7 + 1e-4;',
     '  float afuera = 1.0 - smoothstep(15.0 + 2.5 * flec, 21.5 + 1.0 * flec, r);',
     '  float fundido = smoothstep(.3, 1.3, uArm);',
@@ -244,17 +247,23 @@ var menu = function () {
     '  float e = length(vec2(sb.x / 23.0, sb.y / 12.5));',
     '  e += (fbm(vec3(sb * .11, 1.0)) - .5) * .75 + (fbm(vec3(sb * .6, 4.0)) - .5) * .2 + (ruido(vec3(sb * 2.4, 5.0)) - .5) * .05;',
     '  float pw = smoothstep(0.0, .9, uArm); pw = 1.0 - (1.0 - pw) * (1.0 - pw);',
-    '  float W = 1.0 - smoothstep(.9 * pw - .035, .93 * pw, e);',
+    // borde seco: la mancha termina en un solo píxel (sin veladura que se desvanezca) y no lleva línea de contorno
+    '  float fe = clamp(fwidth(e), 1e-4, .06), T = .915 * pw;',
+    '  float W = 1.0 - smoothstep(T - fe, T, e);',
     // núcleo de pigmento denso (índigo casi negro) y, hacia el borde, una veladura gris azulada que se deshilacha
     '  float nucleo = 1.0 - smoothstep(.5 * pw, .84 * pw, e + (fbm(vec3(sb * .25, 9.0)) - .5) * .35);',
     '  float n = fbm(d * 2.6 + vec3(1.3, 6.2, 2.9)), n3 = fbm(d * 6.0 + 3.0);',
-    '  float filo = smoothstep(.72, .92, e) * W;',
+    '  float filo = smoothstep(.72, T, e) * W;',
     '  float grano = ruido(vec3(sb * 9.0, 7.0)) * (1.0 - smoothstep(.002, .004, px));',
     '  float dens = W * (.74 + .22 * n + .08 * grano) + .3 * filo;',
     '  dens = mix(dens, .9 + .1 * n, nucleo);',
     '  vec3 velo = mix(vec3(.05, .06, .11), vec3(.14, .16, .24), smoothstep(.3, .8, n3));',
     '  vec3 hondo = mix(vec3(.012, .016, .035), vec3(.05, .065, .12), smoothstep(.35, .9, n3) * .85 + grano * .12);',
     '  vec3 tinta = mix(velo, hondo, nucleo);',
+    // vetas de pigmento granate y carmín mezcladas con el índigo, como dos tintas que se tocan en el papel mojado
+    '  float vet = smoothstep(.56, .8, fbm(vec3(sb * .17, 21.0)) + (n - .5) * .3);',
+    '  tinta = mix(tinta, mix(vec3(.17, .03, .05), vec3(.07, .012, .025), nucleo), vet * .75);',
+    '  tinta = mix(tinta, vec3(.3, .06, .06), filo * .3 * (1.0 - nucleo));',
     '  vec3 est = estrellas(d, px) * vec3(1.0, .9, .7);',
     '  float aE = clamp(max(est.r, est.g) * 1.5, 0.0, 1.0) * smoothstep(.15, .5, W) * (.45 + .55 * nucleo);',
     '  vec3 col = mix(tinta, vec3(1.0, .9, .66), aE);',
@@ -308,6 +317,8 @@ var menu = function () {
     // composición «sobre» con alfa directo: el papel de la página se ve donde no hay tinta
     '  float a2 = c2.a + fondo.a * (1.0 - c2.a); vec3 k2 = (c2.rgb * c2.a + fondo.rgb * fondo.a * (1.0 - c2.a)) / max(a2, 1e-4);',
     '  float a1 = c1.a + a2 * (1.0 - c1.a); vec3 k1 = (c1.rgb * c1.a + k2 * a2 * (1.0 - c1.a)) / max(a1, 1e-4);',
+    // gradación de toda la escena: dos tonos más oscura y corrida hacia el rojo
+    '  k1 = k1 * vec3(.88, .73, .68); k1 = mix(k1, k1 * k1 * 1.25, .15);',
     '  gl_FragColor = vec4(k1, a1); }'
   ].join('\n');
 

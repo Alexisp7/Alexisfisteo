@@ -1670,24 +1670,19 @@ var menu = function () {
   }
   var pronto = items.map(function (it) { return it.classList.contains('mc-pronto'); });
   items.forEach(function (it, i) {
-    if (pronto[i]) {           // curso aún no disponible: no abre ni cambia la escena, solo se muestra en gris con «Próximamente»
-      var ver = function (si) { it.classList.toggle('ver', si); };
-      it.addEventListener('pointerenter', function () { ver(true); });
-      it.addEventListener('pointerleave', function () { ver(false); });
-      it.addEventListener('focusin', function () { ver(true); });
-      it.addEventListener('focusout', function () { ver(false); });
-      it.querySelector('.mc-a').addEventListener('click', function (ev) { ev.preventDefault(); ver(true); });
-      return;
-    }
     // en pantallas táctiles el primer toque solo selecciona; el segundo, sobre el título ya activo, abre el curso
     it.addEventListener('pointerenter', function (ev) { if (ev.pointerType !== 'mouse') it.estaba = i === activo; elegir(i); });
-    it.querySelector('.mc-a').addEventListener('click', function (ev) { if (it.estaba === false) ev.preventDefault(); it.estaba = undefined; });
+    it.querySelector('.mc-a').addEventListener('click', function (ev) {
+      if (it.estaba === false) ev.preventDefault();
+      else if (pronto[i]) { ev.preventDefault(); it.classList.add('gris'); }   // curso aún no disponible: al hacer clic no abre, se pone en gris
+      it.estaba = undefined;
+    });
+    if (pronto[i]) it.addEventListener('pointerleave', function () { it.classList.remove('gris'); });
     it.addEventListener('focus', function () { elegir(i); });
   });
   raiz.addEventListener('keydown', function (ev) {
     if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
-      ev.preventDefault(); var n = activo;
-      do n = (n + (ev.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length; while (pronto[n] && n !== activo);
+      ev.preventDefault(); var n = (activo + (ev.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
       items[n].querySelector('a').focus();
     }
   });
@@ -1696,7 +1691,7 @@ var menu = function () {
   // precalienta cada escena para que no empiece vacía
   // la escena visible se precalienta ya, bajo la hoja; las otras, a pedacitos cuando el navegador está libre
   // (si alguien pasa a una antes de que termine, se completa en ese momento)
-  var faltan = mods.map(function (m, w) { return pronto[w] ? 0 : w >= 2 ? 900 : 1600; });   // los cursos «próximamente» no se precalientan
+  var faltan = mods.map(function (m, w) { return w >= 2 ? 900 : 1600; });
   function calienta(w, n) { n = Math.min(n, faltan[w]); for (var k = 0; k < n; k++) mods[w].tick(1 / 60); faltan[w] -= n; }
   calienta(activo, Infinity);
   var ocioso = window.requestIdleCallback || function (fn) { return setTimeout(function () { fn({ timeRemaining: function () { return 8; } }); }, 30); };

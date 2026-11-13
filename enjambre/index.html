@@ -579,13 +579,15 @@ body.con-tejido .node .gl,body.con-tejido .node .tents,body.con-tejido .node .bo
 /* ============ maqueta de fondo ============ */
 #maqueta{position:relative;width:100%;aspect-ratio:1774/887;z-index:3;--s:.8;font-family:"Barlow Semi Condensed","Bahnschrift","Arial Narrow",sans-serif;color:#F3EAF8}
 #maqueta[hidden]{display:none}
-.mq-fondo{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;pointer-events:none;-webkit-mask:linear-gradient(#000 91%,rgba(0,0,0,.6) 95.5%,transparent);mask:linear-gradient(#000 91%,rgba(0,0,0,.6) 95.5%,transparent)}
+.mq-vivo{opacity:0;transition:opacity .6s}.mq-vivo.lista{opacity:1}
+.mq-fondo,#maqueta>.mq-vivo{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;pointer-events:none;-webkit-mask:linear-gradient(#000 91%,rgba(0,0,0,.6) 95.5%,transparent);mask:linear-gradient(#000 91%,rgba(0,0,0,.6) 95.5%,transparent)}
 body.con-maqueta:has(#v-hive.on) header{display:none}
 body.con-maqueta .swarm{height:auto;min-height:0;background:#100817}
 body.con-maqueta #swarm>:not(#maqueta):not(#mq-suelo):not(#side){display:none!important}
 #mq-suelo{position:relative;z-index:2;margin-top:calc(-80px*var(--s,.8));--s:.8;pointer-events:none}#mq-suelo .mq-huevos{pointer-events:auto}
 #mq-suelo[hidden]{display:none}
-#mq-suelo img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;-webkit-mask:linear-gradient(rgba(0,0,0,.7),#000 12%);mask:linear-gradient(rgba(0,0,0,.7),#000 12%);filter:hue-rotate(28deg) saturate(1.15) brightness(.86);user-select:none;pointer-events:none}
+#mq-suelo canvas{position:absolute;left:0;top:0;height:auto}
+#mq-suelo img,#mq-suelo canvas{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;-webkit-mask:linear-gradient(rgba(0,0,0,.7),#000 12%);mask:linear-gradient(rgba(0,0,0,.7),#000 12%);filter:hue-rotate(28deg) saturate(1.15) brightness(.86);user-select:none;pointer-events:none}
 #mq-suelo .mq-huevos{position:absolute;left:50%;top:calc(170px*var(--s));transform:translateX(-50%);width:min(92%,calc(1100px*var(--s)));justify-content:center;padding:calc(14px*var(--s)) calc(22px*var(--s));background:radial-gradient(closest-side,rgba(16,8,23,.85),rgba(16,8,23,.55) 70%,rgba(16,8,23,0));font-size:calc(17px*var(--s))}
 #mq-suelo .mq-huevos b{text-align:center;font-size:calc(12px*var(--s))}
 body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
@@ -1362,7 +1364,6 @@ function maquetaDraw(){
   for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
   // pulso de luz en los núcleos y conteos reales
   for(const [id,[x,y,ly]] of Object.entries(MQ.pos)){ const tp=T(id); if(!tp) continue; const [d,n]=cnt(id), r=48+((hashStr(id)%7)*2);
-    h+=`<i class="mq-pulso" style="left:${X(x)};top:${Y(y)};width:${X(r*2)};--d:${(-(hashStr(id)%30)/10).toFixed(1)}s"></i>`;
     h+=`<span class="mq-cnt" style="left:${X(x)};top:${Y(ly+21)}"><span>${d}/${n}</span></span>`;
     h+=`<button class="mq-hot mq-org" data-id="${id}" aria-label="${esc(tp.name)}: ${d} de ${n}" style="left:${X(x-r)};top:${Y(y-r)};width:${X(2*r)};height:${Y(2*r)}"></button>`; }
   // los temas que no salen en la maqueta: huevos latentes sobre el suelo
@@ -1383,9 +1384,88 @@ function maquetaDraw(){
   st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab); renderAll();});
   st.parentNode.querySelectorAll('.mq-org,.mq-huevos button').forEach(b=>b.onclick=()=>{selected=selected===b.dataset.id?null:b.dataset.id; applyFocus(); drawSide();});
   bindCommon(st);
+  vivoMaqueta(st,su);
   const fit=()=>{ const k=(st.clientWidth/MQ.W).toFixed(4); st.style.setProperty('--s',k); su.style.setProperty('--s',k); }; fit();
 }
 addEventListener('resize',()=>{ clearTimeout(MQ.rz); MQ.rz=setTimeout(maquetaDraw,180); });
+// ── la maqueta viva: se anima la propia pintura (respiración, remolino de los núcleos, líquido) ──
+const MQR={circ:55,cal:55,vrel:30,mcirc:50,elec:50,gauss:62,mag:55,ene:74,grav:30,ter1:55,din:68,tmp:50,cin:43,mom:43,rot:62,osc:28,ter2:55,flu:55,equi:55,ato:25};
+const VV={capas:[],raf:0,t0:performance.now()};
+const VV_VS='attribute vec2 a;varying vec2 v;void main(){v=vec2(a.x*.5+.5,.5-a.y*.5);gl_Position=vec4(a,0.,1.);}';
+const VV_FS=`precision highp float;
+uniform sampler2D T;uniform vec2 S;uniform float t;uniform int N;uniform vec4 O[20];uniform vec4 Q[20];varying vec2 v;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
+vec3 tx(vec2 p){return texture2D(T,clamp(p/S,vec2(.0005),vec2(.9995))).rgb;}
+mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,s,-s,c);}
+void main(){
+  vec2 p=v*S,q=p,c=vec2(0.);float rn=1.,om=0.,gl=0.,core=0.,br=0.;
+  for(int i=0;i<20;i++){ if(i>=N) break;
+    vec2 d=p-O[i].xy;float r=O[i].z,l=length(d);
+    float ph=t*Q[i].y+O[i].w;
+    float b=.5+.5*sin(ph)+.16*sin(2.*ph+1.3);
+    float w=1.-smoothstep(r*.3,r*1.6,l);
+    q-=d*Q[i].x*b*w;
+    if(l<r*.62){c=O[i].xy;rn=r*.62;om=Q[i].z;float k=1.-l/rn;core=k*k;gl=Q[i].w;br=b;}
+  }
+  vec3 o=tx(p);
+  float gr=clamp((o.g-max(o.r,o.b))*4.,0.,1.);
+  float vi=clamp(((o.r+o.b)*.5-o.g-.22)*2.2,0.,1.);
+  vec2 fl=vec2(n(p*.05+vec2(t*.45,0.)),n(p*.05+vec2(3.,t*.38)))-.5;
+  vec2 fl2=vec2(n(p*.11-vec2(0.,t*.7)),n(p*.11+vec2(t*.6,9.)))-.5;
+  q+=fl*(gr*4.+vi*1.6)+fl2*gr*1.6;
+  vec3 col;
+  if(core>0.){
+    float T1=fract(t*.2),T2=fract(t*.2+.5),w1=1.-abs(2.*T1-1.);
+    vec2 d=q-c;
+    col=mix(tx(c+rot((T2-.5)*om*core*2.6)*d),tx(c+rot((T1-.5)*om*core*2.6)*d),w1);
+    col*=1.+gl*core*(.18+.3*br);
+  } else col=tx(q);
+  float sh=n(p*.085+vec2(t*.55,-t*.42))*n(p*.05-vec2(t*.2,t*.3)+4.);
+  col+=vec3(.6,1.,.2)*gr*smoothstep(.25,.7,sh)*.45+vec3(.75,.4,1.)*vi*smoothstep(.3,.75,sh)*.22;
+  gl_FragColor=vec4(col,1.);
+}`;
+function vivoCapa(src,W,H){
+  const cv=document.createElement('canvas'); cv.className='mq-vivo'; cv.setAttribute('aria-hidden','true');
+  const gl=cv.getContext('webgl',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:false}); if(!gl) return null;
+  const sh=(ty,s)=>{const o=gl.createShader(ty); gl.shaderSource(o,s); gl.compileShader(o); if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(o); return o;};
+  let pr; try{ pr=gl.createProgram(); gl.attachShader(pr,sh(gl.VERTEX_SHADER,VV_VS)); gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,VV_FS)); gl.linkProgram(pr); if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) throw 0; }catch(e){ return null; }
+  gl.useProgram(pr); const b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const a=gl.getAttribLocation(pr,'a'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+  const U={}; for(const k of ['T','S','t','N','O','Q']) U[k]=gl.getUniformLocation(pr,k);
+  gl.uniform2f(U.S,W,H); gl.uniform1i(U.N,0);
+  const capa={cv,gl,U,ok:false,orgs:null};
+  const im=new Image(); im.decoding='async'; im.onload=()=>{ const tx=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tx);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im); capa.ok=true; vivoPinta(capa,(performance.now()-VV.t0)/1000); cv.classList.add('lista'); vivoArranca(); };
+  im.src=src; VV.capas.push(capa); return capa;
+}
+function vivoOrgs(capa,orgs){ // orgs: [x,y,r,fase,amp,vel,remolino,brillo]
+  const {gl,U}=capa, O=new Float32Array(80), Q=new Float32Array(80);
+  orgs.slice(0,20).forEach((o,i)=>{ O.set(o.slice(0,4),i*4); Q.set(o.slice(4,8),i*4); });
+  gl.uniform4fv(U.O,O); gl.uniform4fv(U.Q,Q); gl.uniform1i(U.N,Math.min(20,orgs.length));
+}
+function vivoPinta(capa,t){
+  const {cv,gl,U}=capa; if(!capa.ok||!cv.isConnected) return;
+  const dpr=Math.min(devicePixelRatio||1,2), w=Math.round(cv.clientWidth*dpr), h=Math.round(cv.clientHeight*dpr); if(!w||!h) return;
+  if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; gl.viewport(0,0,w,h); }
+  gl.uniform1f(U.t,t); gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+}
+function vivoActivo(){ return document.body.classList.contains('con-maqueta') && !document.hidden && document.getElementById('v-hive')?.classList.contains('on'); }
+function vivoArranca(){ if(!VV.raf && !RMs && vivoActivo()) VV.raf=requestAnimationFrame(vivoLoop); }
+function vivoLoop(){ VV.raf=0; if(!vivoActivo()) return; const t=(performance.now()-VV.t0)/1000; for(const c of VV.capas) vivoPinta(c,t); VV.raf=requestAnimationFrame(vivoLoop); }
+document.addEventListener('visibilitychange',vivoArranca);
+function vivoMaqueta(st,su){
+  if(!VV.fondo) VV.fondo=vivoCapa('maqueta/fondo.webp',MQ.W,MQ.H)||{};
+  if(!VV.suelo) VV.suelo=vivoCapa('maqueta/colonia.webp',1936,544)||{};
+  if(VV.fondo.cv){ st.insertBefore(VV.fondo.cv,st.firstChild.nextSibling); st.classList.toggle('vivo',VV.fondo.ok);
+    // cada célula según su avance real: más ejercicios resueltos = respiración más rápida y núcleo más encendido
+    vivoOrgs(VV.fondo,Object.entries(MQ.pos).filter(([id])=>T(id)).map(([id,[x,y]])=>{ const r=MQR[id]||45, m=mastery(id), p=Math.min(1,(m.p||0)*4), hs=hashStr(id), sel=1;
+      return [x,y,r,(hs%628)/100, (.03+.03*Math.min(1,r/70))*(1+p*.8)*sel, (.75+((hs>>3)%5)*.08+2.2*p)*(r<35?1.35:1), .55+1.6*p+((hs>>5)%3)*.12, .45+1.1*p]; })); }
+  if(VV.suelo.cv){ su.insertBefore(VV.suelo.cv,su.firstChild.nextSibling); su.classList.toggle('vivo',VV.suelo.ok); }
+  vivoArranca();
+}
 function cytoInit(){
   const cv=document.getElementById('cyto'), sw=document.getElementById('swarm'); if(!cv||!sw) return; paisaje();
   const W=sw.clientWidth, H=sw.clientHeight, k=.5;

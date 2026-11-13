@@ -298,7 +298,7 @@
     var PARTES = ['base', 'torre', 'piv', 'eje', 'rotor', 'L', 'orb', 'mg', 'd', 'tau', 'omega'];
     PARTES.forEach(function (k) { GI.dim[k] = 1; });
     // qué queda nítido al señalar cada pieza
-    var FOCO = { rotor: ['rotor', 'eje', 'mg', 'd'], torre: ['torre', 'piv', 'base', 'eje'], L: ['L', 'orb', 'rotor', 'eje'], omega: ['omega', 'piv', 'tau', 'orb', 'L', 'eje'], mg: ['mg'], tau: ['tau'] };
+    var FOCO = { rotor: ['rotor', 'eje', 'mg', 'd'], torre: ['torre', 'piv', 'base', 'eje'], L: ['L', 'orb', 'eje'], omega: ['omega', 'piv', 'tau', 'orb', 'L', 'eje'], mg: ['mg'], tau: ['tau'] };
     // ingreso: las piezas caen en orden (base, torre, eje, rotor) y después se trazan los vectores
     var ENTRA = { base: [0, -18], torre: [.07, -34], piv: [.07, -34], eje: [.17, -26], rotor: [.25, -40], orb: [.45, 0], tau: [.52, 0], mg: [.56, 0], d: [.58, 0], L: [.6, 0], omega: [.68, 0] };
     var FILTRO = 'filter' in ctx, desY = 0, SOLIDAS = ['base', 'torre', 'eje', 'rotor'];
@@ -581,8 +581,8 @@
         if (tapaC) { ctx.fillStyle = tapaC; ctx.beginPath(); ctx.ellipse(c1[0], c1[1], rx, ry, 0, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); }
       }
       var MADERA = ['#A8977E', '#D6CBB6', '#F5F0E6', '#FBF8F1', '#E2D8C4', '#B9AA92'], LATON = ['#7A5A2A', '#B48A45', '#E8CF95', '#F6E6BE', '#C39B55', '#80602C'];
-      // apoyo a juego con el rotor: casquillo y cojinete de latón ceñidos por aros de alambre dorado, columna de bronce
-      // oscuro con dos aros de acero, y tres aletas de alambre barridas que suben del casquillo al cojinete
+      // apoyo a juego con el rotor: casquillo y cojinete de latón ceñidos por aros de alambre dorado y columna de bronce
+      // oscuro con dos aros de acero
       var BRONCE = ['#3A2A14', '#6E5229', '#B89458', '#E3C98E', '#8E6C36', '#4A3519'];
       function aro3(zr, r, mitad) {   // un aro horizontal alrededor de la columna (mitad: 1 la de adelante, -1 la de atrás)
         var p3 = [], ax = dep([0, 0, zr]);
@@ -593,31 +593,14 @@
         if (out.length > 1 && (dep(p3[0]) - ax) * mitad >= -.001) { out[0] = out.pop().concat(out[0]); }
         return out;
       }
-      function aleta(k) {
-        var pts = [], p3 = [];
-        for (var i = 0; i <= 20; i++) {
-          var t = i / 20, a = k * 2 * Math.PI / 3 + .8 - 1.7 * t, r = 1.02 - .6 * Math.pow(t, .8) + .32 * Math.sin(Math.PI * t), zz = bz + .42 + (h - 1.05 - bz) * t;
-          var q = [r * Math.cos(a), r * Math.sin(a), zz]; p3.push(q); pts.push(P(q[0], q[1], q[2]));
-        }
-        return { pts: pts, z: dep(p3[10]) - dep([0, 0, p3[10][2]]) };
-      }
       objs.push({ z: dep(piv), k: 'torre', f: function () {
-        var aletas = [0, 1, 2].map(aleta), RW = .055 * cam.s, RA2 = .032 * cam.s;
+        var RW = .055 * cam.s, RA2 = .032 * cam.s;
         cilindro(bz, bz + .42, 1.12, LATON, '#E6CC92');
-        aletas.forEach(function (al) { if (al.z < 0) tubo(al.pts, RW, TO); });
         cilindro(bz + .42, h - .6, .3, BRONCE);
         [bz + 1.5, h - 1.25].forEach(function (zr) { aro3(zr, .33, 1).forEach(function (tr) { tubo(tr, RA2, ACERO, 'butt'); }); });
-        aletas.forEach(function (al) { if (al.z >= 0) tubo(al.pts, RW, TO); });
         aro3(bz + .42, 1.12, 1).forEach(function (tr) { tubo(tr, RW * 1.2, TL, 'butt'); });
         cilindro(h - .6, h - .15, .62, LATON, '#EAD39E');
         aro3(h - .15, .62, 1).forEach(function (tr) { tubo(tr, RA2 * 1.2, TL, 'butt'); });
-        // un cristal azul engastado al frente del casquillo: el mismo acento que el cubo del rotor
-        var cz = bz + .21, ca = Math.atan2(1, 0), best = null;
-        for (var i = 0; i < 36; i++) { var a = 2 * Math.PI * i / 36, q = [1.12 * Math.cos(a), 1.12 * Math.sin(a), cz]; if (!best || dep(q) > dep(best)) best = q; }
-        var g0 = P(best[0], best[1], cz), gl = ctx.createRadialGradient(g0[0], g0[1], 0, g0[0], g0[1], 8); gl.addColorStop(0, 'rgba(150,190,255,.5)'); gl.addColorStop(1, 'rgba(150,190,255,0)');
-        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(g0[0], g0[1], 8, 0, 7); ctx.fill();
-        [['#2B3A67', [0, -4.5], [3, 0]], ['#5E7FBF', [3, 0], [0, 4.5]], ['#3A4F8A', [0, 4.5], [-3, 0]], ['#8FB0E8', [-3, 0], [0, -4.5]]].forEach(function (f) { ctx.fillStyle = f[0]; ctx.beginPath(); ctx.moveTo(g0[0], g0[1]); ctx.lineTo(g0[0] + f[1][0], g0[1] + f[1][1]); ctx.lineTo(g0[0] + f[2][0], g0[1] + f[2][1]); ctx.closePath(); ctx.fill(); });
-        ctx.strokeStyle = TINTA + '.7)'; ctx.lineWidth = .5; ctx.beginPath(); ctx.moveTo(g0[0], g0[1] - 4.5); ctx.lineTo(g0[0] + 3, g0[1]); ctx.lineTo(g0[0], g0[1] + 4.5); ctx.lineTo(g0[0] - 3, g0[1]); ctx.closePath(); ctx.stroke();
       } });
       // ── eje en tres tramos ──
       function tramo(s0, s1) {
@@ -633,8 +616,8 @@
       var zBola = Math.max(zE0, zE1, zp + .002) + .001;
       if (dep(C) > zp + .01) zBola = Math.max(Math.min(zBola, dep(C) - .002), zp + .002);
       objs.push({ z: Math.min(zE0, zBola - .0005), k: 'eje', f: tramo(-1.1, 0) });
-      objs.push({ z: Math.min(zE1, zBola - .0005), k: 'eje', f: tramo(0, G.d - th / 2) });
-      objs.push({ z: dep(add(piv, U, G.d + th / 2 + .45)), k: 'eje', f: tramo(G.d + th / 2, G.d + 1.3) });
+      objs.push({ z: Math.min(zE1, zBola - .0005), k: 'eje', f: tramo(0, G.d - .3) });   // llega a la tapa del cubo, no lo cruza
+      objs.push({ z: dep(add(piv, U, G.d + .3 + .45)), k: 'eje', f: tramo(G.d + .3, G.d + 1.3) });
       var pv = Pp(piv);
       // la bola del pivote: el punto sobre el que gira todo. Esfera de acero pulido (sombra propia, reflejo de la luz
       // y luz rebotada del latón abajo); es una pieza propia que queda nítida al señalar la precesión o el apoyo.
@@ -654,7 +637,7 @@
       var atras = fr[0], frente = fr[1], fc = Pp(frente), cara = circulo3(frente, V, Z, G.Rr, 64), dorso = circulo3(atras, V, Z, G.Rr, 64);
       // ── rotor de alambre: un aro toroidal de latón que gira, y dentro una estructura propia de geometría cristalina:
       //    tres hojas en media luna barridas hacia atrás (se lee el sentido del giro por su forma), un anillo fino
-      //    junto al aro, un anillo interior, nodos de latón en las uniones y un cristal azul en el cubo. Todo de
+      //    junto al aro, un anillo interior, nodos de latón en las uniones y un cabujón azul en el cubo. Todo de
       //    sección circular; cada tramo se ordena por profundidad y por los huecos se ve lo que hay detrás ──
       var fase = GI.giro * 8.5, RS = G.Rr * cam.s, RT = .07, RH = .028, RA = .016, QH = .13;
       var rr = function (an, q, o) { return add(add(o || C, V, Math.cos(an) * G.Rr * q), Z, Math.sin(an) * G.Rr * q); };
@@ -696,7 +679,7 @@
       }
       anillo(1, RT, TL, dep(C) - 900, dep(C) + 900, trazos.gr);
       anillo(.86, RA, ACERO, dep(C) - 850, dep(C) + 850, trazos.fi);
-      anillo(.24, RA, ACERO, dep(C) - 1, dep(C) - 1, trazos.fi);
+      anillo(.24, RA, ACERO, dep(C) - .2 * G.Rr * Math.hypot(mira(V), mira(Z)), dep(C) + .2 * G.Rr * Math.hypot(mira(V), mira(Z)), trazos.fi);
       // tres hojas en media luna: dos alambres que nacen juntos en el cubo y se juntan en el aro, barridas hacia atrás
       var hojas = [];
       for (var hj = 0; hj < 3; hj++) (function (b) {
@@ -730,19 +713,20 @@
           ctx.stroke();
         }
       } });
-      // cubo: casquillo de acero a lo largo del eje y un cristal azul tallado que gira con la rueda
+      // cubo: casquillo de acero a lo largo del eje y un cabujón azul redondo
       var hF = add(C, U, fr[2] * .28), hB = add(C, U, -fr[2] * .28), hC = circulo3(hF, V, Z, G.Rr * QH, 28), hD = circulo3(hB, V, Z, G.Rr * QH, 28);
-      piezas.push({ z: dep(C) + .001, f: function () {
+      var sP = Math.hypot(mira(V), mira(Z));   // cuánto del plano de la rueda mira al lector
+      piezas.push({ z: dep(C) + G.Rr * QH * sP + .001, f: function () {
         for (var k = 0; k < 28; k++) { var an = 2 * Math.PI * (k + .5) / 28; if (mira([V[0] * Math.cos(an), V[1] * Math.cos(an), Math.sin(an)]) < -.02) continue; var lh = Math.round(110 + 80 * cl(.5 + .5 * Math.sin(an), 0, 1)); ctx.fillStyle = ctx.strokeStyle = 'rgb(' + lh + ',' + (lh - 4) + ',' + (lh - 12) + ')'; ctx.lineWidth = .6; camino([hD[k], hD[k + 1], hC[k + 1], hC[k]], true); ctx.fill(); ctx.stroke(); }
         var hp = Pp(hF), gh = ctx.createRadialGradient(hp[0] - 2, hp[1] - 2, .3, hp[0], hp[1], RS * QH * 1.2); gh.addColorStop(0, '#FFFFFF'); gh.addColorStop(.5, '#C9C4BA'); gh.addColorStop(1, '#6F6A61');
         poli(hC, gh, TINTA + '.85)', .7);
-        // cristal: rombo de cuatro facetas en el plano de la cara, con brillo propio
-        var cf = add(hF, U, fr[2] * .04), ap = [0, 1, 2, 3].map(function (i) { var a = fase + i * Math.PI / 2; return Pp(rr(a, i % 2 ? .07 : .11, cf)); }), cp = Pp(cf);
-        var gl = ctx.createRadialGradient(cp[0], cp[1], 0, cp[0], cp[1], 9); gl.addColorStop(0, 'rgba(150,190,255,.55)'); gl.addColorStop(1, 'rgba(150,190,255,0)');
-        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(cp[0], cp[1], 9, 0, 7); ctx.fill();
-        [['#2B3A67', 0, 1], ['#5E7FBF', 1, 2], ['#3A4F8A', 2, 3], ['#8FB0E8', 3, 0]].forEach(function (f) { ctx.fillStyle = f[0]; ctx.beginPath(); ctx.moveTo(cp[0], cp[1]); ctx.lineTo(ap[f[1]][0], ap[f[1]][1]); ctx.lineTo(ap[f[2]][0], ap[f[2]][1]); ctx.closePath(); ctx.fill(); });
-        ctx.strokeStyle = TINTA + '.85)'; ctx.lineWidth = .6; camino(ap, true); ctx.stroke();
-        ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.arc(cp[0] - .8, cp[1] - .9, .8, 0, 7); ctx.fill();
+        // cabujón azul redondo, engastado en el centro de la cara del cubo
+        var cf = add(hF, U, fr[2] * .03), cc = circulo3(cf, V, Z, .13, 24), cp = Pp(cf), gc = ctx.createRadialGradient(cp[0] - 1.6, cp[1] - 1.8, .2, cp[0], cp[1], 5);
+        gc.addColorStop(0, '#CFE0FF'); gc.addColorStop(.35, '#6F8FCB'); gc.addColorStop(.8, '#2B3A67'); gc.addColorStop(1, '#1A2444');
+        poli(cc, gc, TINTA + '.8)', .6);
+        ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.beginPath(); ctx.ellipse(cp[0] - 1.3, cp[1] - 1.5, 1.1, .7, -.6, 0, 7); ctx.fill();
+        // contorno del cubo: su silueta completa en tinta
+        ctx.strokeStyle = TINTA + '.75)'; ctx.lineWidth = .7; camino(casco(hC.concat(hD)), true); ctx.stroke();
       } });
       piezas.sort(function (a, b) { return a.z - b.z; });
       // silueta para el velo: cada grosor en un solo trazo (sin rellenar los huecos) y el cubo

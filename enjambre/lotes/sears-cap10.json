@@ -1,0 +1,819 @@
+{
+ "version": 1,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz10-p10-14",
+   "title": "Carrera en el plano: aro, cilindro, esferas",
+   "text": "",
+   "key": "a = g sinθ/(1 + I/MR²): gana quien tiene el menor I/MR²; M y R se cancelan.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, pregunta de análisis P10.14",
+   "notes": "",
+   "hints": [
+    "Escribe I = cMR² para cada cuerpo.",
+    "Con rodadura: a = g sinθ/(1 + c)."
+   ],
+   "sol": [
+    "c: esfera sólida 2/5, cilindro sólido 1/2, esfera hueca 2/3, aro 1",
+    "Menor c ⇒ mayor a ⇒ llega antes",
+    "c no depende de M ni de R"
+   ],
+   "ans": [
+    "Orden: esfera sólida, cilindro sólido, esfera hueca, aro",
+    "No importan M ni R, solo la forma"
+   ],
+   "img": "img/sz10-p10-14.png",
+   "num": "P10.14"
+  },
+  {
+   "id": "sz10-p10-22",
+   "title": "Patinador que encoge los brazos: ¿de dónde sale la energía?",
+   "text": "",
+   "key": "L se conserva, pero K = L²/2I sube al bajar I: la diferencia la pone el trabajo de sus músculos.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, pregunta de análisis P10.22",
+   "notes": "",
+   "hints": [
+    "K = L²/(2I). Si L es fija y baja I, ¿qué pasa con K?",
+    "Las fuerzas internas también hacen trabajo."
+   ],
+   "sol": [
+    "Sin torca externa L = Iω se conserva",
+    "K = L²/2I aumenta al reducir I",
+    "El profesor jala las mancuernas hacia adentro: hace trabajo con sus brazos"
+   ],
+   "ans": [
+    "La energía extra es el trabajo de las fuerzas internas (sus músculos)"
+   ],
+   "img": "img/sz10-p10-22.png",
+   "num": "P10.22"
+  },
+  {
+   "id": "sz10-p10-10",
+   "title": "Polea sólida vs aro: ¿qué cuerda tensa más?",
+   "text": "",
+   "key": "Más I ⇒ menor a ⇒ T = m(g − a) más grande.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, pregunta de análisis P10.10",
+   "notes": "",
+   "hints": [
+    "a = g/(1 + I/mR²).",
+    "T = m(g − a)."
+   ],
+   "sol": [
+    "El aro (I = MR²) tiene más I que el disco (½MR²)",
+    "La masa con el aro baja con menos aceleración",
+    "T = m(g − a) es mayor"
+   ],
+   "ans": [
+    "Mayor tensión con la polea de aro"
+   ],
+   "img": "img/sz10-p10-10.png",
+   "num": "P10.10"
+  },
+  {
+   "id": "sz10-p10-15",
+   "title": "Bola que sube: colina con fricción o lisa",
+   "text": "",
+   "key": "Con fricción la rotación también se convierte en altura; sin fricción la bola sigue girando arriba.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, pregunta de análisis P10.15",
+   "notes": "",
+   "hints": [
+    "Con rodadura K = (7/10)mv².",
+    "Sin fricción no hay torca: ω no cambia."
+   ],
+   "sol": [
+    "Con fricción: (7/10)mv² = mgh → h = 7v²/10g (la fricción estática no hace trabajo)",
+    "Lisa: solo ½mv² se convierte → h = v²/2g"
+   ],
+   "ans": [
+    "Llega más alto con fricción (7v²/10g contra v²/2g)"
+   ],
+   "img": "img/sz10-p10-15.png",
+   "num": "P10.15"
+  },
+  {
+   "id": "sz10-10-40",
+   "title": "Bloque en el orificio: L constante y W = ΔK",
+   "text": "",
+   "key": "La tensión es radial: L se conserva; el trabajo de jalar es el aumento de K.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.40",
+   "notes": "",
+   "hints": [
+    "mr²ω se conserva.",
+    "ΔK = ½m(r₂²ω₂² − r₁²ω₁²)."
+   ],
+   "sol": [
+    "a) Sí: la tensión apunta al orificio, no hace torca",
+    "b) ω₂ = 2.85·(0.300/0.150)² = 11.4 rad/s",
+    "c) ΔK = ½·0.025(0.15²·11.4² − 0.3²·2.85²) = 0.0274 J",
+    "d) W = ΔK = 0.0274 J"
+   ],
+   "ans": [
+    "a) sí",
+    "b) 11.4 rad/s",
+    "c) 0.0274 J",
+    "d) 0.0274 J"
+   ],
+   "img": "img/sz10-10-40.png",
+   "num": "10.40"
+  },
+  {
+   "id": "sz10-10-59",
+   "title": "Atwood con rueda masiva",
+   "text": "",
+   "key": "Cada cuerpo su ecuación: dos bloques con T distintas y la rueda con (T_A − T_B)R = Iα.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.59",
+   "notes": "",
+   "hints": [
+    "La rueda suma I/R² = 15.3 kg a la masa.",
+    "a = (m_A − m_B)g/(m_A + m_B + I/R²)."
+   ],
+   "sol": [
+    "a = 2·9.8/(6 + 15.28) = 0.921 m/s²",
+    "α = a/R = 7.68 rad/s²",
+    "T_A = 4(9.8 − 0.921) = 35.5 N",
+    "T_B = 2(9.8 + 0.921) = 21.4 N"
+   ],
+   "ans": [
+    "a = 0.921 m/s² (A baja, B sube)",
+    "α = 7.68 rad/s²",
+    "T_A = 35.5 N, T_B = 21.4 N"
+   ],
+   "img": "img/sz10-10-59.png",
+   "num": "10.59"
+  },
+  {
+   "id": "sz10-10-14",
+   "title": "Cubeta en el pozo: cilindro con inercia",
+   "text": "",
+   "key": "mg − T = ma y TR = ½MR²·a/R ⇒ a = mg/(m + M/2).",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.14",
+   "notes": "",
+   "hints": [
+    "T = ½Ma.",
+    "La fuerza del eje equilibra Mg + T."
+   ],
+   "sol": [
+    "a = 15·9.8/(15 + 6) = 7.00 m/s²",
+    "a) T = 6·7.00 = 42.0 N",
+    "b) v = √(2·7·10) = 11.8 m/s",
+    "c) t = v/a = 1.69 s",
+    "d) F_eje = 12·9.8 + 42 = 160 N hacia arriba"
+   ],
+   "ans": [
+    "a) 42.0 N",
+    "b) 11.8 m/s",
+    "c) 1.69 s",
+    "d) 160 N"
+   ],
+   "img": "img/sz10-10-14.png",
+   "num": "10.14"
+  },
+  {
+   "id": "sz10-10-45",
+   "title": "Paracaidista sobre la tornamesa",
+   "text": "",
+   "key": "Choque rotacional: se conserva L, no K.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.45",
+   "notes": "",
+   "hints": [
+    "I_disco = ½MR² = 240 kg·m²; el paracaidista suma mR².",
+    "K antes y después con ½Iω²."
+   ],
+   "sol": [
+    "a) ω = 240·3/(240 + 280) = 1.38 rad/s",
+    "b) K₁ = ½·240·9 = 1080 J; K₂ = ½·520·1.385² = 498 J",
+    "Choque totalmente inelástico: la energía se va a calor y deformación"
+   ],
+   "ans": [
+    "a) 1.38 rad/s",
+    "b) 1080 J → 498 J"
+   ],
+   "img": "img/sz10-10-45.png",
+   "num": "10.45"
+  },
+  {
+   "id": "sz10-10-68",
+   "title": "Esfera hueca en el rizo",
+   "text": "",
+   "key": "Energía con K = (5/6)mv² y la condición del punto alto v² = gR.",
+   "topics": [
+    "rot",
+    "ene",
+    "mcirc"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.68",
+   "notes": "",
+   "hints": [
+    "Esfera hueca: K = ½mv²(1 + 2/3).",
+    "En A (altura 2R) el mínimo es N = 0: v² = gR.",
+    "En B la normal es la centrípeta."
+   ],
+   "sol": [
+    "a) mgh₀ = 2mgR + (5/6)mgR → h₀ = 17R/6 = 2.83R",
+    "b) En B: v² = (6/5)g(h₀ − R) = 2.2gR → N = 2.2mg",
+    "c) Sin fricción no gira: v_A² = 2g(h₀ − 2R) = (5/3)gR > gR, sí da la vuelta",
+    "d) N_A = m(5/3)g − mg = (2/3)mg; en a) era 0"
+   ],
+   "ans": [
+    "a) h₀ = 17R/6",
+    "b) 2.2mg",
+    "c) sí",
+    "d) (2/3)mg; en a) cero"
+   ],
+   "img": "img/sz10-10-68.png",
+   "num": "10.68"
+  },
+  {
+   "id": "sz10-10-20",
+   "title": "Aro que se desenrolla (yoyo de aro)",
+   "text": "",
+   "key": "Aro: I = mR² ⇒ a = g/2, la mitad de la caída libre.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.20",
+   "notes": "",
+   "hints": [
+    "mg − T = ma y TR = mR²·a/R.",
+    "v² = 2ah, ω = v/R."
+   ],
+   "sol": [
+    "a = g/2 = 4.90 m/s²",
+    "b) v = √(2·4.9·0.75) = 2.71 m/s",
+    "a) ω = 2.71/0.0800 = 33.9 rad/s"
+   ],
+   "ans": [
+    "a) 33.9 rad/s",
+    "b) 2.71 m/s"
+   ],
+   "img": "img/sz10-10-20.png",
+   "num": "10.20"
+  },
+  {
+   "id": "sz10-10-22",
+   "title": "Esfera hueca en la pendiente: a, f y μ mínimo",
+   "text": "",
+   "key": "a = (3/5)g sinθ; la fricción hace la torca; μ_min = (2/5)tanθ.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.22",
+   "notes": "",
+   "hints": [
+    "Newton para el CM y τ = Iα con I = (2/3)mR².",
+    "De Newton: f = mg sinθ − ma."
+   ],
+   "sol": [
+    "a) a = (3/5)·9.8·sin38° = 3.62 m/s²",
+    "f = (2/5)mg sinθ = 4.83 N",
+    "μ_min = f/N = (2/5)tan38° = 0.313",
+    "b) Con 4.00 kg: a y μ igual, f se duplica (9.65 N)"
+   ],
+   "ans": [
+    "a) 3.62 m/s², 4.83 N, 0.313",
+    "b) a y μ igual; f = 9.65 N"
+   ],
+   "img": "img/sz10-10-22.png",
+   "num": "10.22"
+  },
+  {
+   "id": "sz10-10-16",
+   "title": "Caja, polea-disco y peso: tensiones distintas",
+   "text": "",
+   "key": "Con polea masiva las tensiones difieren: (T₂ − T₁)R = Iα.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.16",
+   "notes": "",
+   "hints": [
+    "Polea disco: I/R² = M/2 = 1.00 kg.",
+    "La fuerza del eje equilibra T₁ (horizontal) y T₂ + Mg (vertical)."
+   ],
+   "sol": [
+    "b) a = 5·9.8/(12 + 5 + 1) = 2.72 m/s²",
+    "a) T₁ = 12a = 32.7 N; T₂ = 5(g − a) = 35.4 N",
+    "c) Horizontal: 32.7 N, alejándose de la caja (equilibra T₁); vertical: 35.4 + 19.6 = 55.0 N hacia arriba"
+   ],
+   "ans": [
+    "a) 32.7 N y 35.4 N",
+    "b) 2.72 m/s²",
+    "c) 32.7 N horizontal, 55.0 N vertical"
+   ],
+   "img": "img/sz10-10-16.png",
+   "num": "10.16"
+  },
+  {
+   "id": "sz10-10-67",
+   "title": "El yoyo",
+   "text": "",
+   "key": "mg − T = ma, Tb = Iα con a = αb: el eje delgado frena mucho la caída.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.67",
+   "notes": "",
+   "hints": [
+    "Masa total 2m, I = 2·½mR² = mR².",
+    "a = αb (la cuerda sale del eje de radio b)."
+   ],
+   "sol": [
+    "2mg − T = 2ma; Tb = mR²(a/b²)·b",
+    "a = 2gb²/(2b² + R²)",
+    "α = a/b = 2gb/(2b² + R²)",
+    "T = 2mgR²/(2b² + R²)"
+   ],
+   "ans": [
+    "a = 2gb²/(2b² + R²)",
+    "α = 2gb/(2b² + R²)",
+    "T = 2mgR²/(2b² + R²)"
+   ],
+   "img": "img/sz10-10-67.png",
+   "num": "10.67"
+  },
+  {
+   "id": "sz10-10-79",
+   "title": "Bala que se incrusta en una varilla pivotada",
+   "text": "",
+   "key": "Se conserva L respecto del pivote, no p: el pivote ejerce fuerza.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.79",
+   "notes": "",
+   "hints": [
+    "L bala = m v (L/2).",
+    "I final = ML²/3 + m(L/2)², con m = M/4."
+   ],
+   "sol": [
+    "(M/4)v(L/2) = [ML²/3 + (M/4)(L²/4)]ω",
+    "ω = 6v/19L",
+    "K_f/K_i = 3/19 ≈ 0.158"
+   ],
+   "ans": [
+    "a) ω = 6v/(19L)",
+    "b) 3/19"
+   ],
+   "img": "img/sz10-10-79.png",
+   "num": "10.79"
+  },
+  {
+   "id": "sz10-10-49",
+   "title": "Pelota que rebota en una barra colgante",
+   "text": "",
+   "key": "L respecto del pivote: ΔL de la pelota = Iω de la barra.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.49",
+   "notes": "",
+   "hints": [
+    "ΔL pelota = m(v₁ + v₂)·d.",
+    "I barra = ML²/3 con M = 90/9.8."
+   ],
+   "sol": [
+    "ΔL = 3·(10 + 6)·1.50 = 72.0 kg·m²/s",
+    "I = 9.18·2²/3 = 12.2 kg·m²",
+    "a) ω = 72/12.2 = 5.88 rad/s",
+    "b) El pivote ejerce fuerza externa (cambia p) pero no torca respecto de sí mismo"
+   ],
+   "ans": [
+    "a) 5.88 rad/s",
+    "b) El pivote no hace torca respecto de su eje, pero sí es una fuerza externa"
+   ],
+   "img": "img/sz10-10-49.png",
+   "num": "10.49"
+  },
+  {
+   "id": "sz10-10-21",
+   "title": "Esfera que rueda por una ladera de 65°",
+   "text": "",
+   "key": "μ_min = (2/7)tanθ para la esfera sólida; la hueca necesita (2/5)tanθ.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.21",
+   "notes": "",
+   "hints": [
+    "f = (2/7)mg sinθ para esfera sólida.",
+    "N = mg cosθ."
+   ],
+   "sol": [
+    "a) μ_s = (2/7)tan65° = 0.613",
+    "b) Hueca: (2/5)tan65° = 0.858 > 0.613: resbalaría",
+    "c) El punto de contacto no se desliza: es fricción estática"
+   ],
+   "ans": [
+    "a) 0.613",
+    "b) no, necesita 0.858",
+    "c) no hay deslizamiento en el contacto"
+   ],
+   "img": "img/sz10-10-21.png",
+   "num": "10.21"
+  },
+  {
+   "id": "sz10-10-24",
+   "title": "Canica en un tazón mitad áspero, mitad liso",
+   "text": "",
+   "key": "En el lado liso la rotación no cambia: solo la parte traslacional sube.",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.24",
+   "notes": "",
+   "hints": [
+    "Abajo: K_tras = (5/7)mgh y K_rot = (2/7)mgh.",
+    "Sin fricción, ω se mantiene."
+   ],
+   "sol": [
+    "a) mgh′ = (5/7)mgh → h′ = 5h/7",
+    "b) Lado áspero: vuelve a h",
+    "c) La fricción estática devuelve la energía de rotación a traslación"
+   ],
+   "ans": [
+    "a) 5h/7",
+    "b) h",
+    "c) con fricción la rotación también se convierte en altura"
+   ],
+   "img": "img/sz10-10-24.png",
+   "num": "10.24"
+  },
+  {
+   "id": "sz10-10-51",
+   "title": "Giróscopo de juguete: precesión",
+   "text": "",
+   "key": "Ω = mgr/(Iω); el pivote sostiene todo el peso.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.51",
+   "notes": "",
+   "hints": [
+    "Fuerza del pivote = (m_rotor + m_marco)g.",
+    "Ω = 2π/2.20 s."
+   ],
+   "sol": [
+    "a) F = 0.165·9.8 = 1.62 N",
+    "Ω = 2.86 rad/s",
+    "b) ω = mgr/(IΩ) = 1.617·0.04/(1.2×10⁻⁴·2.86) = 189 rad/s = 1.80 × 10³ rpm"
+   ],
+   "ans": [
+    "a) 1.62 N",
+    "b) 1.80 × 10³ rev/min"
+   ],
+   "img": "img/sz10-10-51.png",
+   "num": "10.51"
+  },
+  {
+   "id": "sz10-10-57",
+   "title": "Barra que pierde una esfera",
+   "text": "",
+   "key": "Torca de la esfera que queda / I nuevo; luego energía hasta la vertical.",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.57",
+   "notes": "",
+   "hints": [
+    "I = ML²/12 + m(L/2)².",
+    "τ = mg(L/2) en horizontal; disminuye al girar."
+   ],
+   "sol": [
+    "I = 3.8·0.8²/12 + 2.5·0.4² = 0.603 kg·m²",
+    "a) α = 2.5·9.8·0.4/0.603 = 16.3 rad/s²",
+    "b) Disminuye: el brazo de palanca se acorta",
+    "c) mg(L/2) = ½Iω² → ω = 5.70 rad/s"
+   ],
+   "ans": [
+    "a) 16.3 rad/s²",
+    "b) disminuye",
+    "c) 5.70 rad/s"
+   ],
+   "img": "img/sz10-10-57.png",
+   "num": "10.57"
+  },
+  {
+   "id": "sz10-10-92",
+   "title": "Cilindro que patina hasta rodar",
+   "text": "",
+   "key": "La fricción cinética acelera el CM y frena el giro hasta v = Rω.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.92",
+   "notes": "",
+   "hints": [
+    "a_x = μk g hacia adelante; α = −2μk g/R.",
+    "Rueda cuando μk g t = R(ω₀ − 2μk g t/R)."
+   ],
+   "sol": [
+    "a) a_x = μk g, α_z = −2μk g/R",
+    "t = Rω₀/(3μk g)",
+    "b) d = ½μk g t² = R²ω₀²/(18μk g)",
+    "c) W = ΔK = −MR²ω₀²/6"
+   ],
+   "ans": [
+    "a) μk g y −2μk g/R",
+    "b) R²ω₀²/(18μk g)",
+    "c) −MR²ω₀²/6"
+   ],
+   "img": "img/sz10-10-92.png",
+   "num": "10.92"
+  },
+  {
+   "id": "sz10-10-17",
+   "title": "Aro que rueda: velocidades de cada punto",
+   "text": "",
+   "key": "v_punto = v_cm + ω × r: arriba 2v, abajo 0.",
+   "topics": [
+    "rot",
+    "vrel"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.17",
+   "notes": "",
+   "hints": [
+    "v_cm = ωR.",
+    "Aro: K = ½mv² + ½(mR²)ω² = mv²."
+   ],
+   "sol": [
+    "a) v = 2.60·0.600 = 1.56 m/s",
+    "b) K = mv² = 5.35 J",
+    "c) arriba 3.12 m/s →; abajo 0; lado derecho 1.56 → y 1.56 ↓ (2.21 m/s a 45° bajo la horizontal)",
+    "d) Desde el aro: arriba 1.56 →, abajo 1.56 ←, lado derecho 1.56 ↓"
+   ],
+   "ans": [
+    "a) 1.56 m/s",
+    "b) 5.35 J",
+    "c) 3.12 m/s, 0, 2.21 m/s",
+    "d) 1.56 m/s en las tres, tangentes"
+   ],
+   "img": "img/sz10-10-17.png",
+   "num": "10.17"
+  },
+  {
+   "id": "sz10-10-75",
+   "title": "Cilindro rodante, polea y bloque",
+   "text": "",
+   "key": "Tres cuerpos, tres ecuaciones; al sumarlas desaparecen T y f.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.75",
+   "notes": "",
+   "hints": [
+    "Cilindro: T₁ − f = Ma y f(2R) = ½M(2R)²·a/(2R).",
+    "Polea: (T₂ − T₁)R = ½MR²·a/R."
+   ],
+   "sol": [
+    "Cilindro: f = ½Ma ⇒ T₁ = (3/2)Ma",
+    "Polea: T₂ = T₁ + ½Ma = 2Ma",
+    "Bloque: Mg − 2Ma = Ma ⇒ a = g/3"
+   ],
+   "ans": [
+    "a = g/3"
+   ],
+   "img": "img/sz10-10-75.png",
+   "num": "10.75"
+  },
+  {
+   "id": "sz10-10-5",
+   "title": "Torca vectorial r × F",
+   "text": "",
+   "key": "τ = r × F; en el plano τ_z = xF_y − yF_x.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.5",
+   "notes": "",
+   "hints": [
+    "Solo hay componente z.",
+    "Regla de la mano derecha: r hacia −x y F con +y."
+   ],
+   "sol": [
+    "τ_z = (−0.450)(4.00) − (0.150)(−5.00) = −1.80 + 0.75",
+    "τ = −1.05 k N·m (hacia −z, sentido horario)"
+   ],
+   "ans": [
+    "τ = (−1.05 N·m) k̂"
+   ],
+   "img": "img/sz10-10-5.png",
+   "num": "10.5"
+  },
+  {
+   "id": "sz10-10-64",
+   "title": "Rodillo hueco jalado desde el eje",
+   "text": "",
+   "key": "Cilindro hueco: f = Ma ⇒ F = 2Ma.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.64",
+   "notes": "",
+   "hints": [
+    "F − f = Ma.",
+    "fR = MR²(a/R)."
+   ],
+   "sol": [
+    "f = Ma",
+    "F = 2Ma ⇒ a = F/2M",
+    "f = F/2 (hacia atrás)"
+   ],
+   "ans": [
+    "a = F/(2M)",
+    "f = F/2"
+   ],
+   "img": "img/sz10-10-64.png",
+   "num": "10.64"
+  },
+  {
+   "id": "sz10-10-41",
+   "title": "Estrella que colapsa: ω ∝ 1/R²",
+   "text": "",
+   "key": "I = (2/5)MR² y L constante: ω₂ = ω₁(R₁/R₂)².",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.41",
+   "notes": "",
+   "hints": [
+    "La masa no cambia.",
+    "ω₁ = 2π/(30 días)."
+   ],
+   "sol": [
+    "ω₁ = 2π/(30·86400) = 2.42 × 10⁻⁶ rad/s",
+    "(R₁/R₂)² = (7.0 × 10⁵/16)² = 1.91 × 10⁹",
+    "ω₂ = 4.6 × 10³ rad/s"
+   ],
+   "ans": [
+    "ω = 4.6 × 10³ rad/s"
+   ],
+   "img": "img/sz10-10-41.png",
+   "num": "10.41"
+  },
+  {
+   "id": "sz10-10-62",
+   "title": "Bloque en plano con fricción que mueve un volante",
+   "text": "",
+   "key": "El volante actúa como masa extra I/r²; la fricción resta.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 10, ej. 10.62",
+   "notes": "",
+   "hints": [
+    "I/r² = 0.500/0.200² = 12.5 kg.",
+    "Fuerza neta del bloque: mg sinθ − μk mg cosθ − T."
+   ],
+   "sol": [
+    "a) a = (29.4 − 9.8)/(5 + 12.5) = 1.12 m/s²",
+    "b) T = (I/r²)a = 14.0 N"
+   ],
+   "ans": [
+    "a) 1.12 m/s²",
+    "b) 14.0 N"
+   ],
+   "img": "img/sz10-10-62.png",
+   "num": "10.62"
+  }
+ ]
+}

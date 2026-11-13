@@ -1,0 +1,529 @@
+{
+ "version": 1,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz8-8-10",
+   "title": "Bate y pelota: fuerza media en 2D",
+   "text": "",
+   "key": "Impulso = Δp, componente por componente; F media = Δp/Δt.",
+   "topics": [
+    "mom"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.10",
+   "notes": "",
+   "hints": [
+    "Toma +x hacia la derecha: la velocidad inicial es +40.0 î.",
+    "La final va a la izquierda y hacia arriba: (−52 cos30°, +52 sin30°).",
+    "Divide cada Δp entre Δt = 1.75 ms."
+   ],
+   "sol": [
+    "Δpx = 0.145(−45.0 − 40.0) = −12.3 kg·m/s",
+    "Δpy = 0.145(26.0) = 3.77 kg·m/s",
+    "Fx = −12.3/0.00175 = −7.05 × 10³ N;  Fy = 3.77/0.00175 = 2.15 × 10³ N"
+   ],
+   "ans": [
+    "Fx = −7.05 × 10³ N",
+    "Fy = +2.15 × 10³ N"
+   ],
+   "img": "img/sz8-8-10.png",
+   "num": "8.10"
+  },
+  {
+   "id": "sz8-8-11",
+   "title": "Fuerza F = At² sobre un cohete",
+   "text": "",
+   "key": "Fuerza variable → impulso = ∫F dt; Δv = J/m.",
+   "topics": [
+    "mom"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.11",
+   "notes": "",
+   "hints": [
+    "Con el dato F(1.25 s) = 781.25 N despeja A.",
+    "El intervalo va de t = 2.00 s a t = 3.50 s."
+   ],
+   "sol": [
+    "a) A = 781.25/1.25² = 500 N/s²",
+    "b) J = ∫₂^3.5 500t² dt = (500/3)(3.5³ − 2³) = 5.81 × 10³ N·s",
+    "c) Δv = J/m = 5812/2150 = 2.70 m/s"
+   ],
+   "ans": [
+    "a) 500 N/s²",
+    "b) 5.81 × 10³ N·s",
+    "c) 2.70 m/s"
+   ],
+   "img": "img/sz8-8-11.png",
+   "num": "8.11"
+  },
+  {
+   "id": "sz8-8-20",
+   "title": "Atrapar o rebotar el balón",
+   "text": "",
+   "key": "Rebotar transfiere más momento que atrapar: el balón cambia más su p.",
+   "topics": [
+    "mom"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.20",
+   "notes": "",
+   "hints": [
+    "Sistema tú + balón: px se conserva (hielo sin fricción).",
+    "a) Choque totalmente inelástico.",
+    "b) El balón termina con −8.0 m/s."
+   ],
+   "sol": [
+    "a) 0.600·10.0 = 70.6 v → v = 0.0850 m/s",
+    "b) 0.600·10.0 = 70.0 v + 0.600(−8.0) → v = 0.154 m/s"
+   ],
+   "ans": [
+    "a) 0.0850 m/s",
+    "b) 0.154 m/s"
+   ],
+   "img": "img/sz8-8-20.png",
+   "num": "8.20"
+  },
+  {
+   "id": "sz8-8-26",
+   "title": "Fisión: el fragmento ligero se lleva más energía",
+   "text": "",
+   "key": "Momento inicial cero → p_A = p_B; con K = p²/2m sale K_A/K_B = m_B/m_A.",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.26",
+   "notes": "",
+   "hints": [
+    "0 = −m_A v_A + m_B v_B.",
+    "Escribe K = p²/(2m): ambos tienen el mismo p."
+   ],
+   "sol": [
+    "a) v_B = m_A v_A/m_B",
+    "b) K_A/K_B = (p²/2m_A)/(p²/2m_B) = m_B/m_A"
+   ],
+   "ans": [
+    "a) v_B = m_A v_A/m_B",
+    "b) K_A/K_B = m_B/m_A"
+   ],
+   "img": "img/sz8-8-26.png",
+   "num": "8.26"
+  },
+  {
+   "id": "sz8-8-31",
+   "title": "Choque oblicuo de asteroides",
+   "text": "",
+   "key": "Momento en x y en y por separado: dos ecuaciones, dos rapideces.",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.31",
+   "notes": "",
+   "hints": [
+    "Masas iguales: se cancelan.",
+    "x: v_A cos30° + v_B cos45° = 40.0.  y: v_A sin30° = v_B sin45°.",
+    "Fracción perdida = 1 − (v_A² + v_B²)/40²."
+   ],
+   "sol": [
+    "a) v_A = 40/(cos30° + sin30°) = 29.3 m/s",
+    "v_B = 29.3·sin30°/sin45° = 20.7 m/s",
+    "b) K_f/K_i = (29.3² + 20.7²)/1600 = 0.804 → se disipa el 19.6%"
+   ],
+   "ans": [
+    "a) v_A = 29.3 m/s, v_B = 20.7 m/s",
+    "b) 19.6%"
+   ],
+   "img": "img/sz8-8-31.png",
+   "num": "8.31"
+  },
+  {
+   "id": "sz8-8-42",
+   "title": "Bala que se incrusta en un bloque con fricción",
+   "text": "",
+   "key": "Dos etapas: choque (conserva p) y deslizamiento (trabajo de la fricción).",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.42",
+   "notes": "",
+   "hints": [
+    "Etapa 2: ½V² = μk g d → V del conjunto.",
+    "Etapa 1: m v₀ = (m + M)V."
+   ],
+   "sol": [
+    "V = √(2·0.20·9.8·0.310) = 1.10 m/s",
+    "v₀ = (1.205/0.005)·1.10 = 266 m/s"
+   ],
+   "ans": [
+    "v₀ = 266 m/s"
+   ],
+   "img": "img/sz8-8-42.png",
+   "num": "8.42"
+  },
+  {
+   "id": "sz8-8-43",
+   "title": "Péndulo balístico",
+   "text": "",
+   "key": "Choque inelástico (p) seguido de subida (energía). Nunca uses energía en el choque.",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.43",
+   "notes": "",
+   "hints": [
+    "m v = (m + M)V.",
+    "Después: ½V² = g h.",
+    "Compara K antes y después del choque."
+   ],
+   "sol": [
+    "V = 0.012·380/6.012 = 0.758 m/s",
+    "a) h = V²/2g = 0.0293 m = 2.93 cm",
+    "b) K_bala = ½·0.012·380² = 866 J",
+    "c) K después = ½·6.012·0.758² = 1.73 J (se pierde el 99.8%)"
+   ],
+   "ans": [
+    "a) 2.93 cm",
+    "b) 866 J",
+    "c) 1.73 J"
+   ],
+   "img": "img/sz8-8-43.png",
+   "num": "8.43"
+  },
+  {
+   "id": "sz8-8-45",
+   "title": "Tensión justo después de un choque",
+   "text": "",
+   "key": "Momento para la rapidez del conjunto, luego T − mg = mv²/L.",
+   "topics": [
+    "mom",
+    "ene",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.45",
+   "notes": "",
+   "hints": [
+    "Choque inelástico: 0.200·12.0 = 1.00·V.",
+    "Inmediatamente después sigue en el punto bajo de un círculo de radio 1.50 m."
+   ],
+   "sol": [
+    "V = 2.40 m/s",
+    "T = (1.00)(9.8) + (1.00)(2.40²)/1.50 = 13.6 N"
+   ],
+   "ans": [
+    "T = 13.6 N"
+   ],
+   "img": "img/sz8-8-45.png",
+   "num": "8.45"
+  },
+  {
+   "id": "sz8-8-47",
+   "title": "Choque elástico con resortes: energía máxima guardada",
+   "text": "",
+   "key": "La compresión es máxima cuando ambos bloques van a la misma velocidad.",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.47",
+   "notes": "",
+   "hints": [
+    "En la compresión máxima: v común = p_total/(m_A + m_B).",
+    "U_máx = K_inicial − K con v común.",
+    "b) Elástico 1D: v_A' = (m_A − m_B)/(m_A + m_B)·v_A, v_B' = 2m_A/(m_A + m_B)·v_A."
+   ],
+   "sol": [
+    "a) v = 2.00·2.00/8.00 = 0.500 m/s (ambos)",
+    "U_máx = 4.00 − ½·8·0.25 = 3.00 J",
+    "b) v_A' = −1.00 m/s (rebota);  v_B' = +1.00 m/s"
+   ],
+   "ans": [
+    "a) 3.00 J; ambos a 0.500 m/s",
+    "b) A: 1.00 m/s hacia atrás, B: 1.00 m/s hacia adelante"
+   ],
+   "img": "img/sz8-8-47.png",
+   "num": "8.47"
+  },
+  {
+   "id": "sz8-8-63",
+   "title": "Ecuación del cohete: fracción de masa útil",
+   "text": "",
+   "key": "v = v_rel ln(m₀/m): la masa final cae exponencialmente con la rapidez pedida.",
+   "topics": [
+    "mom"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.63",
+   "notes": "",
+   "hints": [
+    "m/m₀ = e^(−v/v_rel).",
+    "1.00 × 10⁻³c = 3.00 × 10⁵ m/s."
+   ],
+   "sol": [
+    "a) m/m₀ = e^(−3.00 × 10⁵/2000) = e^(−150) ≈ 7.2 × 10⁻⁶⁶ (imposible en la práctica)",
+    "b) m/m₀ = e^(−1.5) = 0.223"
+   ],
+   "ans": [
+    "a) ≈ 7 × 10⁻⁶⁶",
+    "b) 0.223"
+   ],
+   "img": "img/sz8-8-63.png",
+   "num": "8.63"
+  },
+  {
+   "id": "sz8-8-64",
+   "title": "Esfera que rebota: impulso y fuerza media",
+   "text": "",
+   "key": "Energía da las rapideces antes y después; el impulso suma ambas porque cambian de sentido.",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.64",
+   "notes": "",
+   "hints": [
+    "Antes: v₁ = √(2g·2.00) hacia abajo. Después: v₂ = √(2g·1.60) hacia arriba.",
+    "J = m(v₂ − (−v₁))."
+   ],
+   "sol": [
+    "v₁ = 6.26 m/s;  v₂ = 5.60 m/s",
+    "a) J = 0.040(5.60 + 6.26) = 0.474 N·s hacia arriba",
+    "b) F = J/Δt = 237 N (el peso, 0.39 N, es despreciable)"
+   ],
+   "ans": [
+    "a) 0.474 N·s hacia arriba",
+    "b) 237 N"
+   ],
+   "img": "img/sz8-8-64.png",
+   "num": "8.64"
+  },
+  {
+   "id": "sz8-8-78",
+   "title": "Masilla que cae sobre un bastidor con resorte",
+   "text": "",
+   "key": "Tres etapas: caída (energía), choque (momento), compresión (energía con resorte y gravedad).",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.78",
+   "notes": "",
+   "hints": [
+    "k = 0.150·9.8/0.040 = 36.75 N/m.",
+    "Masilla al llegar: v = √(2g·0.300); choque inelástico con el bastidor.",
+    "Desde el equilibrio inicial: ½(m+M)V² + (m+M)g d = ½k[(0.040 + d)² − 0.040²]."
+   ],
+   "sol": [
+    "v = 2.42 m/s → V = 0.200·2.42/0.350 = 1.39 m/s",
+    "18.4d² − 1.96d − 0.336 = 0",
+    "d = 0.199 m"
+   ],
+   "ans": [
+    "d ≈ 0.199 m (19.9 cm)"
+   ],
+   "img": "img/sz8-8-78.png",
+   "num": "8.78"
+  },
+  {
+   "id": "sz8-8-84",
+   "title": "Dardo y péndulo que da la vuelta completa",
+   "text": "",
+   "key": "Arriba del círculo con alambre: v² ≥ gL; abajo v² = 5gL; luego momento para el dardo.",
+   "topics": [
+    "mom",
+    "ene",
+    "mcirc"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.84",
+   "notes": "",
+   "hints": [
+    "Mínimo arriba: T = 0 → v_top² = gL.",
+    "Energía: V_abajo² = v_top² + 4gL = 5gL.",
+    "Choque inelástico: m v = (m + M)V."
+   ],
+   "sol": [
+    "V = √(5·9.8·2.80) = 11.7 m/s",
+    "v = (20.005/0.005)·11.7 = 4.69 × 10⁴ m/s"
+   ],
+   "ans": [
+    "v ≈ 4.69 × 10⁴ m/s"
+   ],
+   "img": "img/sz8-8-84.png",
+   "num": "8.84"
+  },
+  {
+   "id": "sz8-8-87",
+   "title": "Paquete que cae en un carrito",
+   "text": "",
+   "key": "En el choque solo se conserva p horizontal: el piso absorbe la componente vertical.",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.87",
+   "notes": "Se toma la dirección del paquete de la figura: sale hacia la derecha, contra el carrito.",
+   "hints": [
+    "El paquete sale a 3.00 m/s, 37° bajo la horizontal, alejándose de la rampa (hacia la derecha en la figura).",
+    "a) Energía: v² = 3.00² + 2g(4.00).",
+    "b) Horizontal: 50.0(−5.00) + 15.0(+3.00 cos37°) = 65.0 V."
+   ],
+   "sol": [
+    "a) v = √(9.00 + 78.4) = 9.35 m/s",
+    "b) 15·3.00 cos37° = 36.0 kg·m/s hacia la derecha",
+    "V = (−250 + 36.0)/65.0 = −3.29 m/s → 3.29 m/s hacia la izquierda"
+   ],
+   "ans": [
+    "a) 9.35 m/s",
+    "b) 3.29 m/s (hacia la izquierda)"
+   ],
+   "img": "img/sz8-8-87.png",
+   "num": "8.87"
+  },
+  {
+   "id": "sz8-8-92",
+   "title": "Mujer que camina en una canoa",
+   "text": "",
+   "key": "Sin fuerzas externas horizontales, el centro de masa no se mueve.",
+   "topics": [
+    "mom"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.92",
+   "notes": "",
+   "hints": [
+    "Ella se mueve 3.00 m RESPECTO a la canoa.",
+    "m_w Δx_w + m_c Δx_c = 0, con Δx_w = Δx_c + 3.00."
+   ],
+   "sol": [
+    "45(Δx_c + 3.00) + 60Δx_c = 0",
+    "Δx_c = −135/105 = −1.29 m"
+   ],
+   "ans": [
+    "La canoa se mueve 1.29 m en sentido contrario"
+   ],
+   "img": "img/sz8-8-92.png",
+   "num": "8.92"
+  },
+  {
+   "id": "sz8-8-96",
+   "title": "Proyectil que estalla en la cima",
+   "text": "",
+   "key": "En la explosión se conserva p (horizontal); el CM sigue la parábola.",
+   "topics": [
+    "mom",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.96",
+   "notes": "",
+   "hints": [
+    "En la cima: v = 80.0 cos60° = 40.0 m/s horizontal; t_subida = 80 sin60°/g.",
+    "Un fragmento queda con v = 0 → el otro con 80.0 m/s (masa mitad).",
+    "Energía liberada = K después − K antes."
+   ],
+   "sol": [
+    "t = 7.07 s; x_cima = 40.0·7.07 = 283 m",
+    "a) Otro fragmento: x = 283 + 80.0·7.07 = 848 m",
+    "b) ΔK = ½(10)(80²) − ½(20)(40²) = 32 000 − 16 000 = 1.60 × 10⁴ J"
+   ],
+   "ans": [
+    "a) 848 m",
+    "b) 1.60 × 10⁴ J"
+   ],
+   "img": "img/sz8-8-96.png",
+   "num": "8.96"
+  },
+  {
+   "id": "sz8-8-104",
+   "title": "Centro de masa por integración",
+   "text": "",
+   "key": "x_cm = (1/M)∫x dm con dm = ρA dx; si ρ varía, pesa más el lado denso.",
+   "topics": [
+    "mom"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 8, ej. 8.104",
+   "notes": "",
+   "hints": [
+    "dm = ρA dx.",
+    "a) ρ constante: x_cm = (∫x dx)/(∫dx).",
+    "b) ρ = αx: x_cm = ∫αx² dx / ∫αx dx."
+   ],
+   "sol": [
+    "a) x_cm = (L²/2)/L = L/2",
+    "b) M = αAL²/2;  x_cm = (αAL³/3)/(αAL²/2) = 2L/3"
+   ],
+   "ans": [
+    "a) L/2",
+    "b) 2L/3"
+   ],
+   "img": "img/sz8-8-104.png",
+   "num": "8.104"
+  }
+ ]
+}

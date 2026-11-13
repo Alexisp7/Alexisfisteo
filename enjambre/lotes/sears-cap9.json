@@ -1,0 +1,686 @@
+{
+ "version": 1,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz9-p9-1",
+   "title": "¿Qué fórmulas sobreviven si α no es constante?",
+   "text": "",
+   "key": "Las relaciones r-ω-α y K = ½Iω² son instantáneas; las de α constante no.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, pregunta de análisis P9.1",
+   "notes": "",
+   "hints": [
+    "Pregúntate: ¿la fórmula vale en cada instante, o sale de integrar con α constante?",
+    "ω = ω₀ + αt es la integral de α con α fija."
+   ],
+   "sol": [
+    "v = rω y a_tan = rα vienen de derivar s = rθ: valen siempre",
+    "K = ½Iω² es la definición de energía de rotación: vale siempre",
+    "ω = ω₀ + αt solo sirve con α constante",
+    "a_tan = rω² es falsa: rω² es la aceleración radial"
+   ],
+   "ans": [
+    "Válidas: a), b), e)",
+    "No válidas: c) (pide α constante) y d) (es a_rad)"
+   ],
+   "img": "img/sz9-p9-1.png",
+   "num": "P9.1"
+  },
+  {
+   "id": "sz9-p9-8",
+   "title": "Volante: ¿qué forma guarda más energía?",
+   "text": "",
+   "key": "Misma M y ω: K ∝ I, y gana quien tiene la masa más lejos del eje.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, pregunta de análisis P9.8",
+   "notes": "",
+   "hints": [
+    "Escribe cada I en términos de M y D (R = D/2).",
+    "Esfera 2/5·MR², cilindro sólido ½MR², hueco MR², barra ML²/12."
+   ],
+   "sol": [
+    "a) esfera: (2/5)M(D/2)² = 0.100 MD²",
+    "b) cilindro sólido: ½M(D/2)² = 0.125 MD²",
+    "c) cilindro hueco: M(D/2)² = 0.250 MD²",
+    "d) barra de largo D: MD²/12 = 0.083 MD²"
+   ],
+   "ans": [
+    "Mayor K: c) cilindro hueco",
+    "Menor K: d) barra"
+   ],
+   "img": "img/sz9-p9-8.png",
+   "num": "P9.8"
+  },
+  {
+   "id": "sz9-p9-17",
+   "title": "Dos poleas, misma caída: ¿quién lleva más energía?",
+   "text": "",
+   "key": "La energía mgd se reparte; la polea con más I se queda con más.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, pregunta de análisis P9.17",
+   "notes": "",
+   "hints": [
+    "Ambas pierden la misma energía potencial mgd.",
+    "Disco hueco: I = MR²; sólido: ½MR². ¿Cuál \"roba\" más energía?"
+   ],
+   "sol": [
+    "mgd = K_esfera + K_polea, y K_polea = ½(I/R²)v²",
+    "Con I mayor (disco hueco), la esfera B termina más lenta"
+   ],
+   "ans": [
+    "La esfera A (polea de disco sólido) tiene más energía cinética"
+   ],
+   "img": "img/sz9-p9-17.png",
+   "num": "P9.17"
+  },
+  {
+   "id": "sz9-p9-21",
+   "title": "Punto del borde vs punto a media distancia",
+   "text": "",
+   "key": "ω y α son del cuerpo entero; todo lo lineal escala con r.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, pregunta de análisis P9.21",
+   "notes": "",
+   "hints": [
+    "¿Qué cantidades no dependen de r?",
+    "v = rω, a_tan = rα, a_rad = ω²r."
+   ],
+   "sol": [
+    "ω y α: iguales para todo el cuerpo rígido",
+    "v, a_tan, a_rad ∝ r, y r_A = 2r_B"
+   ],
+   "ans": [
+    "a) igual, b) mayor en A (doble), c) igual",
+    "d) mayor en A (doble), e) mayor en A (doble)"
+   ],
+   "img": "img/sz9-p9-21.png",
+   "num": "P9.21"
+  },
+  {
+   "id": "sz9-9-71",
+   "title": "Metro que cae pivotado en un extremo",
+   "text": "",
+   "key": "Energía con el CM: baja L/2, y toda la energía va a ½Iω² con I = ML²/3.",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.71",
+   "notes": "",
+   "hints": [
+    "¿Cuánto baja el centro de masa?",
+    "I respecto del extremo: ML²/3.",
+    "Compara v del extremo con √(2g·1 m)."
+   ],
+   "sol": [
+    "a) ΔU = −mg(L/2) = −0.180·9.8·0.5 = −0.882 J",
+    "b) mgL/2 = ½(ML²/3)ω² → ω = √(3g/L) = 5.42 rad/s",
+    "c) v = ωL = 5.42 m/s",
+    "d) caída libre de 1 m: v = √(2g) = 4.43 m/s; el extremo va más rápido"
+   ],
+   "ans": [
+    "a) −0.882 J",
+    "b) 5.42 rad/s",
+    "c) 5.42 m/s",
+    "d) mayor que 4.43 m/s"
+   ],
+   "img": "img/sz9-9-71.png",
+   "num": "9.71"
+  },
+  {
+   "id": "sz9-9-23",
+   "title": "Volante que arranca: a_tan, a_rad y resultante",
+   "text": "",
+   "key": "a_tan = rα es fija; a_rad = ω²r = 2αθr crece con el ángulo.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.23",
+   "notes": "",
+   "hints": [
+    "a_tan no cambia: rα.",
+    "ω² = 2αθ con θ en radianes.",
+    "Resultante: √(a_tan² + a_rad²)."
+   ],
+   "sol": [
+    "a_tan = 0.300·0.600 = 0.180 m/s²",
+    "a) θ = 0: a_rad = 0, a = 0.180 m/s²",
+    "b) θ = π/3: a_rad = 2·0.6·1.047·0.3 = 0.377 m/s², a = 0.418 m/s²",
+    "c) θ = 2π/3: a_rad = 0.754 m/s², a = 0.775 m/s²"
+   ],
+   "ans": [
+    "a) 0.180; 0; 0.180 m/s²",
+    "b) 0.180; 0.377; 0.418 m/s²",
+    "c) 0.180; 0.754; 0.775 m/s²"
+   ],
+   "img": "img/sz9-9-23.png",
+   "num": "9.23"
+  },
+  {
+   "id": "sz9-9-75",
+   "title": "Bloque con fricción y polea con inercia",
+   "text": "",
+   "key": "Energía: pierdes m_Bgd y la fricción; ganas K de los dos bloques y ½Iω² con ω = v/R.",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.75",
+   "notes": "",
+   "hints": [
+    "Trabajo de la fricción: −μk m_A g d.",
+    "La polea aporta ½(I/R²)v²: actúa como una masa extra I/R²."
+   ],
+   "sol": [
+    "m_B g d − μk m_A g d = ½(m_A + m_B + I/R²)v²",
+    "v = √[2gd(m_B − μk m_A)/(m_A + m_B + I/R²)]"
+   ],
+   "ans": [
+    "v = √[2gd(m_B − μk m_A)/(m_A + m_B + I/R²)]"
+   ],
+   "img": "img/sz9-9-75.png",
+   "num": "9.75"
+  },
+  {
+   "id": "sz9-9-45",
+   "title": "Rueda con masa colgante: hallar M de la rueda",
+   "text": "",
+   "key": "Cinemática da a; Newton en la masa da T; τ = Iα en la rueda da M.",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.45",
+   "notes": "",
+   "hints": [
+    "d = ½at² → a.",
+    "mg − T = ma.",
+    "TR = (½MR²)(a/R) → T = ½Ma."
+   ],
+   "sol": [
+    "a = 2·3.00/2.00² = 1.50 m/s²",
+    "T = m(g − a) = 4.20·8.30 = 34.9 N",
+    "M = 2T/a = 46.5 kg"
+   ],
+   "ans": [
+    "M = 46.5 kg"
+   ],
+   "img": "img/sz9-9-45.png",
+   "num": "9.45"
+  },
+  {
+   "id": "sz9-9-31",
+   "title": "Barra con dos esferas: I en cuatro ejes",
+   "text": "",
+   "key": "Suma de partes: barra (ML²/12 o ML²/3) + masas puntuales mr².",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.31",
+   "notes": "",
+   "hints": [
+    "Barra respecto al centro ML²/12; respecto a un extremo ML²/3.",
+    "Eje a lo largo de la barra: todo está a r ≈ 0.",
+    "Eje paralelo a 0.500 m: todo a r = 0.5."
+   ],
+   "sol": [
+    "a) 4·2²/12 + 2·0.3·1² = 1.33 + 0.60 = 1.93 kg·m²",
+    "b) 4·2²/3 + 0.3·2² = 5.33 + 1.20 = 6.53 kg·m²",
+    "c) ≈ 0 (barra delgada, esferas puntuales)",
+    "d) (4.00 + 0.60)·0.500² = 1.15 kg·m²"
+   ],
+   "ans": [
+    "a) 1.93 kg·m²",
+    "b) 6.53 kg·m²",
+    "c) ≈ 0",
+    "d) 1.15 kg·m²"
+   ],
+   "img": "img/sz9-9-31.png",
+   "num": "9.31"
+  },
+  {
+   "id": "sz9-9-76",
+   "title": "Atwood con polea masiva (energía)",
+   "text": "",
+   "key": "Conservación: ΔU neta de los bloques = K de los bloques + ½(I/R²)v².",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.76",
+   "notes": "",
+   "hints": [
+    "El de 4 kg baja 5 m y el de 2 kg sube 5 m.",
+    "La polea suma I/R² = 0.380/0.160² a la masa."
+   ],
+   "sol": [
+    "(4 − 2)·9.8·5 = 98.0 J",
+    "98.0 = ½(6.00 + 14.8)v²",
+    "v = 3.07 m/s"
+   ],
+   "ans": [
+    "v = 3.07 m/s"
+   ],
+   "img": "img/sz9-9-76.png",
+   "num": "9.76"
+  },
+  {
+   "id": "sz9-9-16",
+   "title": "Rueda de molino: dos tramos con α constante",
+   "text": "",
+   "key": "Cada tramo con sus fórmulas; la ω final del primero es la inicial del segundo.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.16",
+   "notes": "",
+   "hints": [
+    "Tramo 1: θ₁ = ω₀t + ½αt², ω₁ = ω₀ + αt.",
+    "Tramo 2: 0 = ω₁² + 2α₂(432)."
+   ],
+   "sol": [
+    "θ₁ = 24·2 + ½·30·4 = 108 rad, ω₁ = 84.0 rad/s",
+    "a) θ total = 108 + 432 = 540 rad",
+    "b) t₂ = 2·432/84 = 10.3 s → t = 12.3 s",
+    "c) α₂ = −84²/(2·432) = −8.17 rad/s²"
+   ],
+   "ans": [
+    "a) 540 rad",
+    "b) 12.3 s",
+    "c) −8.17 rad/s²"
+   ],
+   "img": "img/sz9-9-16.png",
+   "num": "9.16"
+  },
+  {
+   "id": "sz9-9-43",
+   "title": "Polea-disco y piedra: ¿cuánto baja?",
+   "text": "",
+   "key": "K de la polea = ¼Mv²; de ahí v, luego energía total = mgh.",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.43",
+   "notes": "",
+   "hints": [
+    "K_polea = ½(½MR²)(v/R)² = ¼Mv².",
+    "mgh = ½mv² + K_polea."
+   ],
+   "sol": [
+    "4.50 = ¼·2.50·v² → v² = 7.20 m²/s²",
+    "h = (½·1.50·7.20 + 4.50)/(1.50·9.8) = 0.673 m",
+    "b) 4.50/(1.50·9.8·0.673) = 45.5 %"
+   ],
+   "ans": [
+    "a) 0.673 m",
+    "b) 45.5 %"
+   ],
+   "img": "img/sz9-9-43.png",
+   "num": "9.43"
+  },
+  {
+   "id": "sz9-9-70",
+   "title": "Disco con una masa en el borde que cae",
+   "text": "",
+   "key": "Energía: baja solo la masa puntual (R); I total = ½mR² + mR².",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.70",
+   "notes": "",
+   "hints": [
+    "El CM del disco no baja; la masa del borde baja R.",
+    "I = (3/2)mR²."
+   ],
+   "sol": [
+    "mgR = ½(3/2 mR²)ω²",
+    "ω = √(4g/3R)"
+   ],
+   "ans": [
+    "ω = √(4g/3R)"
+   ],
+   "img": "img/sz9-9-70.png",
+   "num": "9.70"
+  },
+  {
+   "id": "sz9-9-55",
+   "title": "Varilla con densidad lineal γx",
+   "text": "",
+   "key": "M e I por integración: dm = γx dx; el extremo pesado da más I.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.55",
+   "notes": "",
+   "hints": [
+    "M = ∫γx dx de 0 a L.",
+    "I = ∫x² dm; para el otro extremo usa (L − x)²."
+   ],
+   "sol": [
+    "a) M = γL²/2",
+    "b) I_izq = ∫γx³dx = γL⁴/4 = ML²/2 (uniforme: ML²/3)",
+    "c) I_der = ∫γx(L − x)²dx = γL⁴/12 = ML²/6"
+   ],
+   "ans": [
+    "a) M = γL²/2",
+    "b) ML²/2",
+    "c) ML²/6; mayor en b) porque la masa se acumula lejos del extremo izquierdo"
+   ],
+   "img": "img/sz9-9-55.png",
+   "num": "9.55"
+  },
+  {
+   "id": "sz9-9-69",
+   "title": "Medir I con una masa que cae",
+   "text": "",
+   "key": "a de la cinemática; I = mr²(g/a − 1).",
+   "topics": [
+    "rot",
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.69",
+   "notes": "",
+   "hints": [
+    "a = 2d/t².",
+    "mg − T = ma y TR = Ia/R."
+   ],
+   "sol": [
+    "a = 2·12/16 = 1.50 m/s²",
+    "I = mr²(g/a − 1) = 8.20·0.320²·(9.8/1.5 − 1)",
+    "I = 4.65 kg·m²"
+   ],
+   "ans": [
+    "I = 4.65 kg·m²"
+   ],
+   "img": "img/sz9-9-69.png",
+   "num": "9.69"
+  },
+  {
+   "id": "sz9-9-17",
+   "title": "Hoja que se detiene: ω² ∝ revoluciones",
+   "text": "",
+   "key": "Con α fija, θ = ω²/(2|α|): triplicar ω multiplica θ por 9.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.17",
+   "notes": "",
+   "hints": [
+    "0 = ω² − 2αθ.",
+    "θ ∝ ω²."
+   ],
+   "sol": [
+    "θ₃/θ₁ = (3ω₁/ω₁)² = 9"
+   ],
+   "ans": [
+    "9.00 revoluciones"
+   ],
+   "img": "img/sz9-9-17.png",
+   "num": "9.17"
+  },
+  {
+   "id": "sz9-9-57",
+   "title": "Pieza de sierra: rotación y luego tiro horizontal",
+   "text": "",
+   "key": "ω² = 2αθ da v del borde; después es un tiro horizontal.",
+   "topics": [
+    "rot",
+    "cin"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.57",
+   "notes": "",
+   "hints": [
+    "Pasa a radianes: α = 4π rad/s², θ = 310π rad.",
+    "v = ωr y t = √(2h/g)."
+   ],
+   "sol": [
+    "ω = √(2·4π·310π) = 156 rad/s",
+    "v = 156·0.120 = 18.8 m/s",
+    "t = √(2·0.820/9.8) = 0.409 s",
+    "x = 18.8·0.409 = 7.68 m"
+   ],
+   "ans": [
+    "x = 7.68 m"
+   ],
+   "img": "img/sz9-9-57.png",
+   "num": "9.57"
+  },
+  {
+   "id": "sz9-9-6",
+   "title": "Motor que invierte: θ(t) cúbico",
+   "text": "",
+   "key": "ω = dθ/dt, α = dω/dt; ω = 0 da el instante clave.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.6",
+   "notes": "",
+   "hints": [
+    "ω = 250 − 40t − 4.5t².",
+    "Revoluciones = θ(t)/2π."
+   ],
+   "sol": [
+    "a) 4.5t² + 40t − 250 = 0 → t = 4.23 s",
+    "b) α = −40 − 9t = −78.1 rad/s²",
+    "c) θ = 586 rad = 93.3 rev",
+    "d) ω(0) = 250 rad/s",
+    "e) ω_med = 586/4.23 = 138 rad/s"
+   ],
+   "ans": [
+    "a) 4.23 s",
+    "b) −78.1 rad/s²",
+    "c) 93.3 rev",
+    "d) 250 rad/s",
+    "e) 138 rad/s"
+   ],
+   "img": "img/sz9-9-6.png",
+   "num": "9.6"
+  },
+  {
+   "id": "sz9-9-85",
+   "title": "Esfera con densidad que decrece (tipo Tierra)",
+   "text": "",
+   "key": "dm = ρ·4πr²dr, dI = (2/3)r² dm por cascarones.",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.85",
+   "notes": "",
+   "hints": [
+    "M = ∫ρ(r)4πr²dr.",
+    "Cascarón: dI = (2/3)r²dm = (8π/3)ρr⁴dr."
+   ],
+   "sol": [
+    "M = 4π(3000R³/3 − 9000R⁴/4) = 55.3 kg",
+    "I = (8π/3)(3000R⁵/5 − 9000R⁶/6) = 0.804 kg·m²",
+    "I/MR² = 0.36 < 0.4: masa concentrada al centro, como la Tierra"
+   ],
+   "ans": [
+    "a) 55.3 kg",
+    "b) 0.804 kg·m²"
+   ],
+   "img": "img/sz9-9-85.png",
+   "num": "9.85"
+  },
+  {
+   "id": "sz9-9-80",
+   "title": "Cilindro + polea + caja (energía)",
+   "text": "",
+   "key": "Cada cuerpo que gira suma ½(I/R²)v²: disco ⇒ ½M.",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.80",
+   "notes": "",
+   "hints": [
+    "Para un disco, ½Iω² = ¼Mv².",
+    "mgh = ½v²(m + ½M_c + ½M_p)."
+   ],
+   "sol": [
+    "3·9.8·2.5 = ½v²(3.00 + 2.50 + 1.00)",
+    "v² = 73.5/3.25",
+    "v = 4.76 m/s"
+   ],
+   "ans": [
+    "v = 4.76 m/s"
+   ],
+   "img": "img/sz9-9-80.png",
+   "num": "9.80"
+  },
+  {
+   "id": "sz9-9-51",
+   "title": "Lámina rectangular, eje por una esquina",
+   "text": "",
+   "key": "Steiner: I_cm = M(a² + b²)/12 y d² = (a/2)² + (b/2)².",
+   "topics": [
+    "rot"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.51",
+   "notes": "",
+   "hints": [
+    "I_cm de la lámina para un eje perpendicular: M(a² + b²)/12.",
+    "Distancia del centro a la esquina: d² = (a² + b²)/4."
+   ],
+   "sol": [
+    "I = M(a² + b²)/12 + M(a² + b²)/4",
+    "I = M(a² + b²)/3"
+   ],
+   "ans": [
+    "I = M(a² + b²)/3"
+   ],
+   "img": "img/sz9-9-51.png",
+   "num": "9.51"
+  },
+  {
+   "id": "sz9-9-89",
+   "title": "Volante del Chevrolet: datos → I",
+   "text": "",
+   "key": "d = (1.65 m/s²)t² ⇒ a = 3.30 m/s² constante; luego energía o Newton da I.",
+   "topics": [
+    "rot",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 9, ej. 9.89",
+   "notes": "",
+   "hints": [
+    "Compara con d = ½at².",
+    "v² = 2ad.",
+    "I = mr²(g/a − 1); T = m(g − a)."
+   ],
+   "sol": [
+    "a) Sí: d ∝ t², a = 2·1.65 = 3.30 m/s²",
+    "b) v = √(2·3.30·1.50) = 3.15 m/s",
+    "c) I = 5.60·0.178²·(9.8/3.30 − 1) = 0.349 kg·m²",
+    "d) T = 5.60(9.8 − 3.30) = 36.4 N"
+   ],
+   "ans": [
+    "a) sí, a = 3.30 m/s²",
+    "b) 3.15 m/s",
+    "c) 0.349 kg·m²",
+    "d) 36.4 N"
+   ],
+   "img": "img/sz9-9-89.png",
+   "num": "9.89"
+  }
+ ]
+}

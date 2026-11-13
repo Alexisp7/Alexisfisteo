@@ -1,0 +1,785 @@
+{
+ "version": 19,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz22-p22-5",
+   "title": "Mover la carga dentro de la gaussiana",
+   "text": "",
+   "key": "El flujo solo depende de la carga encerrada; el campo en cada punto sí depende de dónde esté.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, pregunta de análisis P22.5",
+   "notes": "",
+   "hints": [
+    "¿Qué dice la ley de Gauss sobre el flujo total?",
+    "¿El campo en un punto de la superficie es el mismo si la carga se acerca a ese punto?"
+   ],
+   "sol": [
+    "Φ = q_enc/ε₀ no depende de la posición de la carga dentro de la superficie.",
+    "Al acercar la carga a una parte de la superficie, ahí E crece y en el lado opuesto disminuye: E sí cambia punto a punto.",
+    "El flujo total sigue siendo q/ε₀ mientras la carga siga adentro; si sale de la esfera, el flujo pasa a 0."
+   ],
+   "ans": [
+    "E en la superficie: sí cambia",
+    "Flujo total: no cambia (q/ε₀) mientras q esté adentro"
+   ],
+   "img": "img/sz22-p22-5.png",
+   "num": "P22.5"
+  },
+  {
+   "id": "sz22-p22-8",
+   "title": "¿Gauss con un campo 1/r³?",
+   "text": "",
+   "key": "Gauss funciona porque el área crece como r² y el campo cae como 1/r²: se cancelan.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, pregunta de análisis P22.8",
+   "notes": "",
+   "hints": [
+    "Calcula el flujo de un campo E = C/r³ a través de una esfera de radio r.",
+    "¿Ese flujo depende de r?"
+   ],
+   "sol": [
+    "Φ = E·4πr² = 4πC/r.",
+    "El flujo dependería del radio de la superficie aunque encierre la misma carga.",
+    "Entonces Φ = q/ε₀ ya no valdría: la ley de Gauss depende de que E ∝ 1/r²."
+   ],
+   "ans": [
+    "No: el flujo sería ∝ 1/r y dependería de la superficie elegida"
+   ],
+   "img": "img/sz22-p22-8.png",
+   "num": "P22.8"
+  },
+  {
+   "id": "sz22-p22-12",
+   "title": "Conductor con cavidad: ¿blindaje?",
+   "text": "",
+   "key": "Dentro del metal E = 0; una gaussiana dentro del metal te dice qué carga se induce en cada superficie.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, pregunta de análisis P22.12",
+   "notes": "",
+   "hints": [
+    "Toma una gaussiana dentro del metal que rodee la cavidad: ¿cuánta carga encierra?",
+    "Si dentro de la cavidad hay +q, ¿qué carga queda en la superficie externa?"
+   ],
+   "sol": [
+    "Con una carga q dentro de la cavidad, en la pared de la cavidad se induce −q y en la superficie exterior aparece +q (el conductor es neutro).",
+    "Esa +q exterior produce campo afuera: sí afecta el campo exterior (salvo que el conductor esté a tierra).",
+    "Una carga externa solo reacomoda la carga de la superficie exterior; dentro del metal y de la cavidad vacía E sigue siendo 0: no afecta (blindaje, jaula de Faraday)."
+   ],
+   "ans": [
+    "Carga en la cavidad: sí cambia el campo exterior",
+    "Carga afuera: no afecta el campo dentro de la cavidad"
+   ],
+   "img": "img/sz22-p22-12.png",
+   "num": "P22.12"
+  },
+  {
+   "id": "sz22-22-5",
+   "title": "Flujo por un hemisferio",
+   "text": "",
+   "key": "El flujo que entra por la base plana es el mismo que sale por el hemisferio (superficie cerrada sin carga).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.5",
+   "notes": "",
+   "hints": [
+    "Cierra el hemisferio con su base circular: ¿cuánta carga encierra?",
+    "El flujo por la base es E por el área del círculo."
+   ],
+   "sol": [
+    "La superficie cerrada (hemisferio + disco) no encierra carga: Φ_total = 0.",
+    "Por el disco plano: Φ = −E·πr² (entra).",
+    "Por el hemisferio: Φ = +πr²E."
+   ],
+   "ans": [
+    "Φ = πr²E"
+   ],
+   "img": "img/sz22-22-5.png",
+   "num": "22.5"
+  },
+  {
+   "id": "sz22-22-6",
+   "title": "Flujo por las caras de un cubo",
+   "text": "",
+   "key": "Solo las caras con normal que tenga componente a lo largo de E tienen flujo: Φ = E·n̂ A.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.6",
+   "notes": "",
+   "hints": [
+    "Descompón E en Ex = E cos 53.1° y Ey = E sin 53.1°.",
+    "Asigna a cada cara su normal hacia afuera (±x, ±y, ±z)."
+   ],
+   "sol": [
+    "Ex = 4000·0.600 = 2400 N/C, Ey = 4000·0.800 = 3200 N/C, Ez = 0. A = L² = 0.0100 m².",
+    "S₁ (normal −y): −Ey A = −32 N·m²/C; S₃ (+y): +32 N·m²/C.",
+    "S₅ (frente, +x): +24 N·m²/C; S₆ (posterior, −x): −24 N·m²/C; S₂ y S₄ (±z): 0.",
+    "Total: 0, porque el cubo no encierra carga."
+   ],
+   "ans": [
+    "S₁ −32, S₃ +32, S₅ +24, S₆ −24, S₂ = S₄ = 0 (N·m²/C)",
+    "Flujo total = 0"
+   ],
+   "img": "img/sz22-22-6.png",
+   "num": "22.6"
+  },
+  {
+   "id": "sz22-22-28",
+   "title": "Lámina cuadrada: cerca y lejos",
+   "text": "",
+   "key": "Muy cerca, la lámina parece infinita (σ/2ε₀); muy lejos, parece una carga puntual.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.28",
+   "notes": "",
+   "hints": [
+    "σ = Q/A con A = 0.800².",
+    "A 100 m la lámina mide menos de 1 m: ¿cómo se ve desde ahí?",
+    "En un conductor la carga se reparte en las dos caras."
+   ],
+   "sol": [
+    "σ = 4.50 nC / 0.640 m² = 7.03×10⁻⁹ C/m².",
+    "a) A 0.1 mm la lámina es \"infinita\": E = σ/2ε₀ = 397 N/C.",
+    "b) A 100 m es una carga puntual: E = kQ/r² = 4.05×10⁻³ N/C.",
+    "c) Conductor: σ/2 en cada cara; afuera E = (σ/2)/ε₀ = σ/2ε₀, el mismo valor. Lejos, la carga total es la misma. No cambian."
+   ],
+   "ans": [
+    "a) 397 N/C",
+    "b) 4.05×10⁻³ N/C",
+    "c) No, mismos resultados"
+   ],
+   "img": "img/sz22-22-28.png",
+   "num": "22.28"
+  },
+  {
+   "id": "sz22-22-30",
+   "title": "Cuatro superficies cargadas",
+   "text": "",
+   "key": "Cada superficie es una lámina infinita: E = σ/2ε₀ apuntando hacia afuera si σ > 0. Suma con signos según el lado.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.30",
+   "notes": "",
+   "hints": [
+    "Toma +x hacia la derecha. Una lámina con σ a tu izquierda te empuja a +x; a tu derecha, a −x.",
+    "En C estás dentro del plástico: las cargas están solo en las superficies, así que igual sumas las cuatro."
+   ],
+   "sol": [
+    "σ/2ε₀ para 1 μC/m² vale 5.65×10⁴ N/C.",
+    "A (a la izquierda de todo): E = −(σ₁+σ₂+σ₃+σ₄)/2ε₀ = −5 μC/m²/2ε₀ = −2.82×10⁵ N/C.",
+    "B (entre las láminas): E = (σ₁+σ₂−σ₃−σ₄)/2ε₀ = −7/2ε₀ → −3.95×10⁵ N/C.",
+    "C (dentro de la lámina derecha): E = (σ₁+σ₂+σ₃−σ₄)/2ε₀ = −3/2ε₀ → −1.69×10⁵ N/C."
+   ],
+   "ans": [
+    "a) 2.82×10⁵ N/C hacia la izquierda",
+    "b) 3.95×10⁵ N/C hacia la izquierda",
+    "c) 1.69×10⁵ N/C hacia la izquierda"
+   ],
+   "img": "img/sz22-22-30.png",
+   "num": "22.30"
+  },
+  {
+   "id": "sz22-22-31",
+   "title": "Protón junto a una lámina",
+   "text": "",
+   "key": "La lámina da un campo uniforme σ/2ε₀: aceleración constante perpendicular, como un tiro parabólico.",
+   "topics": [
+    "gauss",
+    "cin"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.31",
+   "notes": "",
+   "hints": [
+    "E = σ/2ε₀ no depende de la distancia.",
+    "La velocidad paralela no cambia; la perpendicular crece como a·t."
+   ],
+   "sol": [
+    "E = 2.34×10⁻⁹/(2ε₀) = 132 N/C.",
+    "a = eE/m_p = 1.27×10¹⁰ m/s² (alejándose de la lámina, ambos positivos).",
+    "v⊥ = a·t = 633 m/s; v∥ = 970 m/s.",
+    "v = √(970² + 633²) = 1.16×10³ m/s."
+   ],
+   "ans": [
+    "v ≈ 1.16×10³ m/s"
+   ],
+   "img": "img/sz22-22-31.png",
+   "num": "22.31"
+  },
+  {
+   "id": "sz22-22-33",
+   "title": "Esferita colgada junto a una lámina",
+   "text": "",
+   "key": "La lámina da una fuerza horizontal constante qσ/2ε₀; el ángulo sale de tan θ = F/mg.",
+   "topics": [
+    "gauss",
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.33",
+   "notes": "",
+   "hints": [
+    "E = |σ|/2ε₀.",
+    "Equilibrio: T cos θ = mg y T sin θ = qE."
+   ],
+   "sol": [
+    "E = 2.50×10⁻⁹/(2ε₀) = 141 N/C.",
+    "F = qE = 7.06×10⁻⁶ N (atracción: la lámina es negativa).",
+    "mg = 3.92×10⁻⁵ N.",
+    "tan θ = 0.180 → θ = 10.2° (hacia la lámina)."
+   ],
+   "ans": [
+    "θ ≈ 10.2°"
+   ],
+   "img": "img/sz22-22-33.png",
+   "num": "22.33"
+  },
+  {
+   "id": "sz22-22-34",
+   "title": "Cubo en un campo no uniforme",
+   "text": "",
+   "key": "Usa la misma orientación de caras que en la figura E22.6. En cada cara E·n̂ se evalúa en la posición de esa cara.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.34",
+   "notes": "",
+   "hints": [
+    "Eₓ depende de x: en la cara x = 0 vale 0 y en x = L vale −5L.",
+    "E_z depende de z: en z = 0 es 0 y en z = L es 3L."
+   ],
+   "sol": [
+    "S₁, S₃ (normales ±y): Ey = 0 → Φ = 0.",
+    "S₂ (arriba, z = L): Φ = 3.00·0.300·0.0900 = +0.081 N·m²/C; S₄ (z = 0): 0.",
+    "S₅ (frente, x = L): Φ = −5.00·0.300·0.0900 = −0.135 N·m²/C; S₆ (x = 0): 0.",
+    "Total Φ = −0.054 N·m²/C → Q = ε₀Φ = −4.78×10⁻¹³ C."
+   ],
+   "ans": [
+    "a) S₂ +0.081, S₅ −0.135, las demás 0 (N·m²/C)",
+    "b) Q = −4.78×10⁻¹³ C"
+   ],
+   "img": "img/sz22-22-34.png",
+   "num": "22.34"
+  },
+  {
+   "id": "sz22-22-38",
+   "title": "Línea + lámina: ¿dónde no hay fuerza?",
+   "text": "",
+   "key": "El campo de la lámina es uniforme y apunta hacia ella; busca dónde el de la línea apunta al revés y vale lo mismo.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.38",
+   "notes": "",
+   "hints": [
+    "Lámina: |σ|/2ε₀ hacia la lámina, en ambos lados.",
+    "Línea: λ/2πε₀r, radial hacia afuera.",
+    "Entre la línea y la lámina, ¿los dos apuntan igual o al revés?"
+   ],
+   "sol": [
+    "Entre línea y lámina ambos campos apuntan hacia la lámina: se suman.",
+    "Del lado de la línea opuesto a la lámina, se oponen. Igualando: λ/(2πε₀r) = |σ|/(2ε₀).",
+    "r = λ/(π|σ|) = 50/(π·100) m = 0.159 m."
+   ],
+   "ans": [
+    "Una recta paralela a 15.9 cm de la línea, del lado opuesto a la lámina (25.9 cm de la lámina)"
+   ],
+   "img": "img/sz22-22-38.png",
+   "num": "22.38"
+  },
+  {
+   "id": "sz22-22-39",
+   "title": "Cable coaxial",
+   "text": "",
+   "key": "Cilindro gaussiano: E·2πrl = λ_enc l/ε₀. El cilindro exterior conductor separa sus cargas.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.39",
+   "notes": "",
+   "hints": [
+    "Entre los cilindros solo encierras λ.",
+    "Afuera, el cilindro exterior es neutro: ¿cuánto encierras?",
+    "Dentro del metal E = 0: eso fija la carga de la superficie interior."
+   ],
+   "sol": [
+    "a) a < r < b: E = λ/(2πε₀r).",
+    "b) r > c: carga neta encerrada λ → E = λ/(2πε₀r).",
+    "c) E = 0 para r < a y para b < r < c.",
+    "d) Superficie interior del exterior: −λ; superficie exterior: +λ."
+   ],
+   "ans": [
+    "a), b) E = λ/2πε₀r",
+    "d) −λ en la superficie interna, +λ en la externa"
+   ],
+   "img": "img/sz22-22-39.png",
+   "num": "22.39"
+  },
+  {
+   "id": "sz22-22-41",
+   "title": "Cilindro macizo cargado",
+   "text": "",
+   "key": "Adentro solo cuenta la carga dentro del radio r: λ(r) = ρπr².",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.41",
+   "notes": "",
+   "hints": [
+    "Gaussiana cilíndrica de radio r < R y largo l.",
+    "Afuera, λ = ρπR²."
+   ],
+   "sol": [
+    "a) E·2πrl = ρπr²l/ε₀ → E = ρr/(2ε₀).",
+    "b) E = λ/(2πε₀r), con λ = ρπR².",
+    "c) En r = R ambos dan ρR/(2ε₀): E es continuo.",
+    "d) E crece linealmente hasta R y luego cae como 1/r."
+   ],
+   "ans": [
+    "E = ρr/2ε₀ (r<R)",
+    "E = λ/2πε₀r (r>R)"
+   ],
+   "img": "img/sz22-22-41.png",
+   "num": "22.41"
+  },
+  {
+   "id": "sz22-22-42",
+   "title": "Esfera dentro de otra esfera",
+   "text": "",
+   "key": "Gaussianas esféricas en cada región; dentro del metal E = 0.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.42",
+   "notes": "",
+   "hints": [
+    "¿Cuánta carga encierras en cada región?",
+    "La superficie interior del cascarón debe anular q para que E = 0 en el metal."
+   ],
+   "sol": [
+    "r < a: E = 0 (dentro del conductor).",
+    "a < r < b: E = q/(4πε₀r²).",
+    "b < r < c: E = 0.",
+    "r > c: E = q/(4πε₀r²).",
+    "Carga en la superficie interior: −q; en la exterior: +q."
+   ],
+   "ans": [
+    "E = kq/r² en a<r<b y r>c; 0 en el resto",
+    "c) −q",
+    "d) +q"
+   ],
+   "img": "img/sz22-22-42.png",
+   "num": "22.42"
+  },
+  {
+   "id": "sz22-22-44",
+   "title": "Carga en un cascarón con −3Q",
+   "text": "",
+   "key": "Carga inducida: la pared interior lleva −Q; el resto (−2Q) va a la cara exterior.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.44",
+   "notes": "",
+   "hints": [
+    "Gaussiana dentro del metal: E = 0 → q_enc = 0.",
+    "Carga total del cascarón = (interior) + (exterior)."
+   ],
+   "sol": [
+    "r < a: E = kQ/r² hacia afuera.",
+    "a < r < b: E = 0.",
+    "r > b: q_enc = −2Q → E = 2kQ/r² hacia adentro.",
+    "σ_int = −Q/(4πa²); σ_ext = −2Q/(4πb²) = −Q/(2πb²)."
+   ],
+   "ans": [
+    "a) kQ/r² (r<a), 0, 2kQ/r² hacia adentro (r>b)",
+    "b) σ = −Q/4πa²",
+    "c) σ = −Q/2πb²"
+   ],
+   "img": "img/sz22-22-44.png",
+   "num": "22.44"
+  },
+  {
+   "id": "sz22-22-45",
+   "title": "Cascarones esféricos concéntricos",
+   "text": "",
+   "key": "Cada superficie de conductor se carga para que E = 0 dentro del metal.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.45",
+   "notes": "",
+   "hints": [
+    "El cascarón pequeño no tiene nada adentro: ¿cuánto hay en su superficie interior?",
+    "El grande debe anular +2q en su cara interior."
+   ],
+   "sol": [
+    "i) r < a: 0. ii) a < r < b: 0 (metal).",
+    "iii) b < r < c: E = 2q/(4πε₀r²) hacia afuera.",
+    "iv) c < r < d: 0. v) r > d: E = 6q/(4πε₀r²).",
+    "Cargas: interior pequeño 0; exterior pequeño +2q; interior grande −2q; exterior grande +6q."
+   ],
+   "ans": [
+    "E = 2kq/r² (b<r<c), 6kq/r² (r>d), 0 en el resto",
+    "Cargas: 0, +2q, −2q, +6q"
+   ],
+   "img": "img/sz22-22-45.png",
+   "num": "22.45"
+  },
+  {
+   "id": "sz22-22-48",
+   "title": "Esfera conductora con cascarón aislante",
+   "text": "",
+   "key": "Elige ρ para que la carga total sea cero; luego la carga encerrada cambia de forma continua en el aislante.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.48",
+   "notes": "",
+   "hints": [
+    "Volumen del cascarón: (4/3)π(8R³ − R³).",
+    "Para R < r < 2R: q_enc = Q + ρ(4/3)π(r³ − R³)."
+   ],
+   "sol": [
+    "a) Q + ρ(4/3)π·7R³ = 0 → ρ = −3Q/(28πR³).",
+    "b) r < R: E = 0. R < r < 2R: E = kQ(8R³ − r³)/(7R³r²) hacia afuera. r > 2R: E = 0.",
+    "c) Solo en r = R hay una lámina de carga (la superficie del conductor): ahí salta de 0 a kQ/R². En r = 2R el campo es continuo (vale 0 de ambos lados)."
+   ],
+   "ans": [
+    "a) ρ = −3Q/28πR³",
+    "b) 0; kQ(8R³ − r³)/(7R³r²); 0"
+   ],
+   "img": "img/sz22-22-48.png",
+   "num": "22.48"
+  },
+  {
+   "id": "sz22-22-49",
+   "title": "Cascarón con ρ = α/r y carga central",
+   "text": "",
+   "key": "Integra ρ·4πr²dr: con ρ = α/r la carga encerrada crece como r².",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.49",
+   "notes": "",
+   "hints": [
+    "q(r) = ∫ₐʳ (α/r′)4πr′² dr′.",
+    "Con q en el centro, E = (q + 2πα(r² − a²))/(4πε₀r²): elige q para que no dependa de r."
+   ],
+   "sol": [
+    "q(r) = 2πα(r² − a²).",
+    "a) E = α(r² − a²)/(2ε₀r²).",
+    "b) Con q en el centro: E = [q − 2πα a² + 2παr²]/(4πε₀r²). Es constante si q = 2παa².",
+    "Entonces E = α/(2ε₀)."
+   ],
+   "ans": [
+    "a) E = α(r² − a²)/2ε₀r²",
+    "b) q = 2παa², E = α/2ε₀"
+   ],
+   "img": "img/sz22-22-49.png",
+   "num": "22.49"
+  },
+  {
+   "id": "sz22-22-50",
+   "title": "Modelo atómico de Thomson",
+   "text": "",
+   "key": "Dentro de una esfera uniforme E ∝ r: la fuerza sobre el electrón es lineal y restauradora → MAS.",
+   "topics": [
+    "gauss",
+    "osc"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.50",
+   "notes": "",
+   "hints": [
+    "Dentro de la esfera: E = ke r/R³.",
+    "F = −(ke²/R³)x, compárala con −kx de un resorte.",
+    "Despeja R de f = (1/2π)√(ke²/(mR³))."
+   ],
+   "sol": [
+    "a) En el centro E = 0 por simetría: ahí la fuerza es nula.",
+    "b) F = −(e²/(4πε₀R³))x → MAS con f = (1/2π)√(e²/(4πε₀mR³)).",
+    "c) R = [e²/(4πε₀m(2πf)²)]^(1/3) = 3.13×10⁻¹⁰ m, del orden de los átomos reales (10⁻¹⁰ m).",
+    "d) Fuera de R la fuerza va como 1/r²: sigue volviendo (oscila), pero no es armónico simple."
+   ],
+   "ans": [
+    "b) f = (1/2π)√(e²/4πε₀mR³)",
+    "c) R ≈ 3.1×10⁻¹⁰ m",
+    "d) Oscila, pero no es MAS"
+   ],
+   "img": "img/sz22-22-50.png",
+   "num": "22.50"
+  },
+  {
+   "id": "sz22-22-53",
+   "title": "Densidad ρ₀(1 − r/R)",
+   "text": "",
+   "key": "q(r) = ∫ρ4πr²dr; afuera se comporta como carga puntual. (Errata del libro: ρ₀ = 3Q/πR³, con R mayúscula.)",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.53",
+   "notes": "",
+   "hints": [
+    "q(r) = 4πρ₀(r³/3 − r⁴/4R).",
+    "Para el máximo, deriva E(r) e iguala a cero."
+   ],
+   "sol": [
+    "a) q(R) = πρ₀R³/3 = Q.",
+    "b) Afuera toda la carga Q está encerrada: E = kQ/r².",
+    "c) q(r) = Q(4r³/R³ − 3r⁴/R⁴) → E = kQ(4r/R³ − 3r²/R⁴).",
+    "e) dE/dr = 0 → r = 2R/3; E_max = 4kQ/(3R²) = Q/(3πε₀R²)."
+   ],
+   "ans": [
+    "c) E = kQ(4r/R³ − 3r²/R⁴)",
+    "e) r = 2R/3, E_max = Q/3πε₀R²"
+   ],
+   "img": "img/sz22-22-53.png",
+   "num": "22.53"
+  },
+  {
+   "id": "sz22-22-54",
+   "title": "Bloque uniformemente cargado",
+   "text": "",
+   "key": "Simetría plana: caja gaussiana centrada en x = 0, con tapas en ±x.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.54",
+   "notes": "",
+   "hints": [
+    "Por simetría, en x = 0 los campos de las dos mitades se cancelan.",
+    "Caja con tapas de área A en ±x: Φ = 2EA."
+   ],
+   "sol": [
+    "a) Cada mitad empuja hacia lados opuestos con igual intensidad: E(0) = 0.",
+    "b) |x| < d: 2EA = ρ(2|x|A)/ε₀ → E = ρ|x|/ε₀, alejándose del plano medio.",
+    "|x| > d: E = ρd/ε₀, también hacia afuera (uniforme)."
+   ],
+   "ans": [
+    "E = ρ|x|/ε₀ adentro, ρd/ε₀ afuera, apuntando lejos de x = 0"
+   ],
+   "img": "img/sz22-22-54.png",
+   "num": "22.54"
+  },
+  {
+   "id": "sz22-22-57",
+   "title": "Hueco esférico: campo uniforme",
+   "text": "",
+   "key": "Superposición: esfera llena (+ρ) más una esfera chica de −ρ donde está el hueco.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.57",
+   "notes": "",
+   "hints": [
+    "Dentro de una esfera uniforme E = ρ(r − centro)/3ε₀.",
+    "Suma ρ(r⃗)/3ε₀ y −ρ(r⃗ − b⃗)/3ε₀."
+   ],
+   "sol": [
+    "a) Gauss con centro en b⃗: E = ρ(r⃗ − b⃗)/3ε₀.",
+    "b) E = ρr⃗/3ε₀ − ρ(r⃗ − b⃗)/3ε₀ = ρb⃗/3ε₀.",
+    "No depende de r⃗: es uniforme, magnitud ρb/3ε₀, dirigido del centro de la esfera al centro del hueco."
+   ],
+   "ans": [
+    "E = ρb⃗/3ε₀, uniforme en todo el hueco"
+   ],
+   "img": "img/sz22-22-57.png",
+   "num": "22.57"
+  },
+  {
+   "id": "sz22-22-59",
+   "title": "Datos: ¿línea o esfera?",
+   "text": "",
+   "key": "Línea: E ∝ 1/r (Er constante). Esfera (afuera): E ∝ 1/r² (Er² constante).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.59",
+   "notes": "",
+   "hints": [
+    "Calcula Er y Er² para cada fila.",
+    "λ = 2πε₀(Er); Q = 4πε₀(Er²), ρ = Q/(4πR³/3)."
+   ],
+   "sol": [
+    "A: Er ≈ 2.70×10³ N·m/C constante → es la línea.",
+    "B: Er² ≈ 54.1 N·m²/C constante → es la esfera.",
+    "λ = 2πε₀·2.70×10³ = 1.50×10⁻⁷ C/m.",
+    "Q = 4πε₀·54.1 = 6.02×10⁻⁹ C → ρ = Q/(4π(0.008)³/3) = 2.81×10⁻³ C/m³."
+   ],
+   "ans": [
+    "a) A = línea, B = esfera",
+    "b) λ ≈ 1.50×10⁻⁷ C/m; ρ ≈ 2.8×10⁻³ C/m³"
+   ],
+   "img": "img/sz22-22-59.png",
+   "num": "22.59"
+  },
+  {
+   "id": "sz22-22-61",
+   "title": "Densidad por escalones",
+   "text": "",
+   "key": "Suma la carga de cada capa: q = Σ ρᵢ(4π/3)(r₂³ − r₁³).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.61",
+   "notes": "",
+   "hints": [
+    "Lee la gráfica: 10 μC/m³ hasta 2 mm, 4 hasta 4 mm, −2 hasta 6 mm.",
+    "E = kq_enc/r²."
+   ],
+   "sol": [
+    "i) r = 1 mm: E = ρr/3ε₀ = 376 N/C.",
+    "ii) q(3 mm) = 6.53×10⁻¹³ C → E = 653 N/C.",
+    "iii) q(5 mm) = 7.62×10⁻¹³ C → E = 274 N/C.",
+    "iv) La carga total da 0 (80 + 224 − 304 = 0 en unidades de 4π/3·10⁻¹⁵): E = 0 en r = 7 mm."
+   ],
+   "ans": [
+    "i) 376 N/C",
+    "ii) 653 N/C",
+    "iii) 274 N/C",
+    "iv) 0"
+   ],
+   "img": "img/sz22-22-61.png",
+   "num": "22.61"
+  },
+  {
+   "id": "sz22-22-62",
+   "title": "Distribución por tramos y oscilación",
+   "text": "",
+   "key": "Integra por tramos para hallar α; luego q(r) en cada región da E por Gauss.",
+   "topics": [
+    "gauss",
+    "osc"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 22, ej. 22.62",
+   "notes": "",
+   "hints": [
+    "∫₀^{R/2}(3αr/2R)4πr²dr = 3παR³/32.",
+    "∫_{R/2}^{R} α(1 − r²/R²)4πr²dr = 47παR³/120."
+   ],
+   "sol": [
+    "a) Q = 233παR³/480 → α = 480Q/(233πR³).",
+    "b) r ≤ R/2: E = 180Qr²/(233πε₀R⁴). R/2 ≤ r ≤ R: E = Q(640r³/R³ − 384r⁵/R⁵ − 23)/(233·4πε₀r²). r ≥ R: E = Q/(4πε₀r²).",
+    "c) Fracción en R/2–R: 188/233 = 0.807.",
+    "d) E(R/2) = 45Q/(233πε₀R²).",
+    "e) Siempre lo atrae al centro, así que oscila; pero F no es proporcional a r (adentro va como r²): no es MAS."
+   ],
+   "ans": [
+    "a) α = 480Q/233πR³",
+    "c) 0.807",
+    "d) 45Q/233πε₀R²",
+    "e) Oscila, no armónico simple"
+   ],
+   "img": "img/sz22-22-62.png",
+   "num": "22.62"
+  }
+ ]
+}

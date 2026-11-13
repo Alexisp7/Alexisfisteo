@@ -1,0 +1,852 @@
+{
+ "version": 20,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz23-p23-8",
+   "title": "¿V = 0 implica E = 0, y al revés?",
+   "text": "",
+   "key": "V y E no se anulan juntos: E es la pendiente de V, no su valor.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, pregunta de análisis P23.8",
+   "notes": "",
+   "hints": [
+    "Piensa en el punto medio entre +q y −q: ¿cuánto vale V?, ¿y E?",
+    "Ahora el punto medio entre dos cargas +q iguales."
+   ],
+   "sol": [
+    "E = −∇V depende de cómo cambia V, no de su valor en el punto.",
+    "a) No. En el punto medio entre +q y −q, V = kq/r − kq/r = 0, pero los dos campos apuntan hacia −q y se suman: E ≠ 0.",
+    "b) No. En el punto medio entre dos +q iguales los campos se cancelan (E = 0), pero V = 2kq/r ≠ 0. Lo mismo dentro de un conductor cargado: E = 0 y V = constante ≠ 0."
+   ],
+   "ans": [
+    "a) No (dipolo: V = 0, E ≠ 0)",
+    "b) No (dos cargas iguales o interior de un conductor: E = 0, V ≠ 0)"
+   ],
+   "img": "img/sz23-p23-8.png",
+   "num": "P23.8"
+  },
+  {
+   "id": "sz23-p23-9",
+   "title": "Circulación del campo electrostático",
+   "text": "",
+   "key": "El campo electrostático es conservativo: su integral en un camino cerrado es −ΔV = 0.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, pregunta de análisis P23.9",
+   "notes": "",
+   "hints": [
+    "¿Qué relación hay entre ∫E·dl de a a b y V_a − V_b?",
+    "En un camino cerrado, ¿cuál es el punto final?"
+   ],
+   "sol": [
+    "∫ₐᵇ E·dl = V_a − V_b para cualquier camino: el trabajo por unidad de carga no depende de la trayectoria.",
+    "En una trayectoria cerrada el punto final es el inicial, así que ∮E·dl = V_a − V_a = 0.",
+    "Eso vale sin importar dónde estén las cargas, porque el campo de cada carga puntual es central (radial) y la superposición conserva esa propiedad. (Solo falla si hay campos magnéticos variables, cap. 29.)"
+   ],
+   "ans": [
+    "∮E·dl = 0 porque E electrostático es conservativo (V es una función de un solo valor)"
+   ],
+   "img": "img/sz23-p23-9.png",
+   "num": "P23.9"
+  },
+  {
+   "id": "sz23-p23-22",
+   "title": "Carga frente a un plano conductor: carga imagen",
+   "text": "",
+   "key": "El plano conductor es equipotencial (V = 0); la carga imagen reproduce esa misma condición en la región de la carga real.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, pregunta de análisis P23.22",
+   "notes": "",
+   "hints": [
+    "¿Cuánto vale el potencial de +q y −q en todos los puntos del plano mediador?",
+    "¿Qué pasa con el campo detrás del plano en la situación real?"
+   ],
+   "sol": [
+    "Con +q y una −q en la posición espejo, todo punto del plano mediador está a la misma distancia de ambas: V = 0 en todo el plano.",
+    "En la situación real el plano conductor también es una superficie equipotencial (V = 0) y las líneas de campo llegan perpendiculares. Misma carga en la región y misma condición de frontera ⇒ mismo campo (unicidad).",
+    "Así que sí es correcto, pero solo del lado de la carga. Detrás del plano (dentro del metal y más allá) el campo real es cero, no el del dipolo."
+   ],
+   "ans": [
+    "Sí, del lado de la carga (método de imágenes); detrás del plano el campo real es cero"
+   ],
+   "img": "img/sz23-p23-22.png",
+   "num": "P23.22"
+  },
+  {
+   "id": "sz23-23-5",
+   "title": "Esfera proyectada contra otra: rapidez y acercamiento mínimo",
+   "text": "",
+   "key": "Conservación de energía: ½mv² + kq₁q₂/r = constante, con q₁ fija.",
+   "topics": [
+    "gauss",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.5",
+   "notes": "",
+   "hints": [
+    "Las dos cargas son negativas: U = kq₁q₂/r es positiva y crece al acercarse.",
+    "En el punto de máximo acercamiento v = 0."
+   ],
+   "sol": [
+    "U(r) = kq₁q₂/r con kq₁q₂ = (8.99×10⁹)(2.80×10⁻⁶)(7.80×10⁻⁶) = 0.196 J·m.",
+    "a) ½mv² = ½mv₀² − [U(0.400) − U(0.800)] = 0.363 − 0.245 ⇒ v = 12.5 m/s.",
+    "b) ½mv₀² = 0.363 J = kq₁q₂(1/r_min − 1/0.800) ⇒ 1/r_min = 1.25 + 0.363/0.196 = 3.10 m⁻¹ ⇒ r_min = 0.323 m."
+   ],
+   "ans": [
+    "a) 12.5 m/s",
+    "b) 0.323 m"
+   ],
+   "img": "img/sz23-23-5.png",
+   "num": "23.5"
+  },
+  {
+   "id": "sz23-23-21",
+   "title": "Potencial sobre el eje de q y −2q",
+   "text": "",
+   "key": "V es escalar: suma kq/|x| − 2kq/|x − a| con distancias en valor absoluto.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.21",
+   "notes": "",
+   "hints": [
+    "Escribe V(x) con |x| y |x − a|.",
+    "V = 0 cuando |x − a| = 2|x|: hay una solución entre las cargas y otra a la izquierda."
+   ],
+   "sol": [
+    "b) V(x) = kq[1/|x| − 2/|x − a|].",
+    "c) |x − a| = 2|x|: entre las cargas x = a/3; a la izquierda de q, x = −a.",
+    "d) V → +∞ en x = 0, V → −∞ en x = a; positivo cerca de q, negativo cerca de −2q, cruza cero en −a y a/3.",
+    "e) Para x ≫ a: V ≈ kq/x − 2kq/x = −kq/x: de lejos se ve una carga neta −q."
+   ],
+   "ans": [
+    "b) V = kq(1/|x| − 2/|x−a|)",
+    "c) x = a/3 y x = −a",
+    "e) V ≈ −kq/x (carga neta −q)"
+   ],
+   "img": "img/sz23-23-21.png",
+   "num": "23.21"
+  },
+  {
+   "id": "sz23-23-24",
+   "title": "¿Dónde V = 0 y dónde E = 0?",
+   "text": "",
+   "key": "V = 0 exige cargas de signo opuesto; E = 0 aparece entre cargas iguales o afuera, del lado de la carga menor, si son opuestas.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.24",
+   "notes": "",
+   "hints": [
+    "Con +Q y +2Q, ¿puede V anularse en algún punto finito?",
+    "Para E = 0 iguala kQ/x² con k2Q/(distancia a la otra)²."
+   ],
+   "sol": [
+    "a) +Q en 0 y +2Q en d: V nunca es cero (salvo en el infinito). E = 0 entre ellas: 1/x² = 2/(d − x)² ⇒ x = d/(1 + √2) = 0.414d desde +Q.",
+    "b) −Q en 0 y +2Q en d: V = 0 cuando |x − d| = 2|x| ⇒ x = d/3 y x = −d. E = 0 afuera, del lado de −Q: d + u = √2u ⇒ u = 2.41d a la izquierda de −Q.",
+    "c) No coinciden: V y E se anulan en lugares distintos."
+   ],
+   "ans": [
+    "a) V≠0; E = 0 en 0.414d desde +Q",
+    "b) V = 0 en d/3 y −d; E = 0 en 2.41d del lado de −Q",
+    "c) No"
+   ],
+   "img": "img/sz23-23-24.png",
+   "num": "23.24"
+  },
+  {
+   "id": "sz23-23-25",
+   "title": "Dos cascarones concéntricos",
+   "text": "",
+   "key": "Dentro de un cascarón su potencial es constante kq/R; afuera es kq/r.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.25",
+   "notes": "",
+   "hints": [
+    "Para cada cascarón: V = kq/R si estás dentro, kq/r si estás fuera.",
+    "La diferencia entre superficies solo depende del cascarón interior."
+   ],
+   "sol": [
+    "i) r = 0: V = k(q₁/R₁ + q₂/R₂) = 8.99×10⁹(2.00×10⁻⁷ − 1.80×10⁻⁷) = 180 V.",
+    "ii) r = 4 cm: V = k(q₁/0.04 + q₂/0.05) = −270 V.",
+    "iii) r = 6 cm: V = k(q₁ + q₂)/0.06 = −450 V.",
+    "b) V₁ − V₂ = kq₁(1/R₁ − 1/R₂) = 719 V: el interior está a mayor potencial."
+   ],
+   "ans": [
+    "a) 180 V; −270 V; −450 V",
+    "b) 719 V, mayor el interior"
+   ],
+   "img": "img/sz23-23-25.png",
+   "num": "23.25"
+  },
+  {
+   "id": "sz23-23-34",
+   "title": "Llevar una carga al centro de un anillo",
+   "text": "",
+   "key": "El trabajo solo depende de V en el centro: V = kQ/a, sin importar el camino.",
+   "topics": [
+    "gauss",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.34",
+   "notes": "",
+   "hints": [
+    "En el centro todos los puntos del anillo están a la misma distancia a = 4.00 cm.",
+    "El centro es equilibrio inestable a lo largo del eje."
+   ],
+   "sol": [
+    "a) W = qV_centro = kQq/a = (8.99×10⁹)(5.00×10⁻⁶)(3.00×10⁻⁶)/0.0400 = 3.37 J.",
+    "b) No: el campo es conservativo, cualquier trayectoria da el mismo trabajo.",
+    "c) Desplazada a lo largo del eje, la repulsión la expulsa (equilibrio inestable) y se aleja al infinito: ½mv² = 3.37 J ⇒ v_máx = 67.0 m/s."
+   ],
+   "ans": [
+    "a) 3.37 J",
+    "b) No",
+    "c) Sale disparada; v_máx = 67.0 m/s"
+   ],
+   "img": "img/sz23-23-34.png",
+   "num": "23.34"
+  },
+  {
+   "id": "sz23-23-41",
+   "title": "Esferas concéntricas: potencial y campo por regiones",
+   "text": "",
+   "key": "Suma los potenciales de cada esfera (constante adentro, kq/r afuera) y deriva para el campo.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.41",
+   "notes": "",
+   "hints": [
+    "La esfera exterior aporta −kq/r_b en todo su interior.",
+    "E = −dV/dr."
+   ],
+   "sol": [
+    "a) i) r < r_a: V = kq(1/r_a − 1/r_b). ii) r_a < r < r_b: V = kq(1/r − 1/r_b). iii) r > r_b: V = 0.",
+    "b) V_ab = V(r_a) − V(r_b) = kq(1/r_a − 1/r_b).",
+    "c) E = −dV/dr = kq/r² = V_ab/[(1/r_a − 1/r_b)r²].",
+    "d) Afuera la carga neta es cero ⇒ E = 0.",
+    "e) Con −Q afuera solo cambia un término constante en el interior: V_ab y E entre esferas no cambian; afuera E = k(q − Q)/r²."
+   ],
+   "ans": [
+    "a) kq(1/r_a − 1/r_b); kq(1/r − 1/r_b); 0",
+    "d) E = 0",
+    "e) afuera E = k(q − Q)/r²"
+   ],
+   "img": "img/sz23-23-41.png",
+   "num": "23.41"
+  },
+  {
+   "id": "sz23-23-43",
+   "title": "Campo a partir de V(x, y, z)",
+   "text": "",
+   "key": "E = −∇V componente a componente.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.43",
+   "notes": "",
+   "hints": [
+    "Deriva parcialmente respecto a x, y, z y cambia el signo.",
+    "Para E = 0 iguala cada componente a cero."
+   ],
+   "sol": [
+    "a) E_x = −∂V/∂x = −Ay + 2Bx; E_y = −∂V/∂y = −Ax − C; E_z = 0.",
+    "b) E_y = 0 ⇒ x = −C/A. E_x = 0 ⇒ y = 2Bx/A = −2BC/A².",
+    "E = 0 en la recta x = −C/A, y = −2BC/A², cualquier z."
+   ],
+   "ans": [
+    "a) Ex = 2Bx − Ay, Ey = −Ax − C, Ez = 0",
+    "b) x = −C/A, y = −2BC/A², z cualquiera"
+   ],
+   "img": "img/sz23-23-43.png",
+   "num": "23.43"
+  },
+  {
+   "id": "sz23-23-50",
+   "title": "Esfera que cae sobre una lámina cargada",
+   "text": "",
+   "key": "Energía con dos aportes: gravedad hacia abajo y repulsión eléctrica uniforme σ/2ε₀ hacia arriba.",
+   "topics": [
+    "gauss",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.50",
+   "notes": "Ojo: incluye la gravedad; mg supera a qE, así que la esfera cae.",
+   "hints": [
+    "Campo de la lámina: E = σ/2ε₀.",
+    "Compara mg con qE: ¿cuál gana?"
+   ],
+   "sol": [
+    "E = σ/2ε₀ = 8.00×10⁻¹²/(2·8.85×10⁻¹²) = 0.452 V/m; qE = 3.16×10⁻⁶ N hacia arriba.",
+    "mg = 4.90×10⁻⁶ N hacia abajo: la esfera cae con fuerza neta 1.74×10⁻⁶ N.",
+    "½mv² = (mg − qE)(0.300 m) ⇒ v = 1.45 m/s."
+   ],
+   "ans": [
+    "v ≈ 1.45 m/s"
+   ],
+   "img": "img/sz23-23-50.png",
+   "num": "23.50"
+  },
+  {
+   "id": "sz23-23-52",
+   "title": "Protón y alfa liberados: rapidez y aceleración máximas",
+   "text": "",
+   "key": "Dos cuerpos libres: momento total cero + energía conservada. La fuerza es máxima al inicio.",
+   "topics": [
+    "gauss",
+    "ene",
+    "mom"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.52",
+   "notes": "",
+   "hints": [
+    "p_protón = p_alfa en magnitud (parten del reposo).",
+    "La energía inicial U = k(e)(2e)/d se reparte en energía cinética al separarse mucho."
+   ],
+   "sol": [
+    "U = k·2e²/d = 2.05×10⁻¹⁸ J (d = 0.225 nm).",
+    "m_p v_p = 4m_p v_α y ½m_p v_p² + ½(4m_p)v_α² = U ⇒ v_p = 4.43×10⁴ m/s, v_α = 1.11×10⁴ m/s (después de mucho tiempo).",
+    "F = k·2e²/d² = 9.11×10⁻⁹ N al inicio ⇒ a_p = 5.46×10¹⁸ m/s², a_α = 1.36×10¹⁸ m/s² (justo al liberarlas)."
+   ],
+   "ans": [
+    "v_p = 4.43×10⁴ m/s, v_α = 1.11×10⁴ m/s (tiempo largo)",
+    "a_p = 5.46×10¹⁸, a_α = 1.36×10¹⁸ m/s² (al inicio)"
+   ],
+   "img": "img/sz23-23-52.png",
+   "num": "23.52"
+  },
+  {
+   "id": "sz23-23-57",
+   "title": "Cristal iónico cúbico",
+   "text": "",
+   "key": "Suma sobre los 28 pares: 12 aristas (signos opuestos), 12 diagonales de cara (iguales), 4 diagonales del cubo (opuestos).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.57",
+   "notes": "",
+   "hints": [
+    "¿Cuántos pares hay a distancia d, d√2 y d√3?",
+    "Los vecinos de arista tienen signo opuesto; los de diagonal de cara, el mismo."
+   ],
+   "sol": [
+    "U = (kq²/d)[−12 + 12/√2 − 4/√3] = −5.82 kq²/d.",
+    "En la forma 1/πε₀: U = −1.46 q²/(πε₀d).",
+    "b) U < 0: hace falta energía para separar los iones; el cristal es un estado ligado y estable."
+   ],
+   "ans": [
+    "a) U = −1.46 q²/(πε₀d)",
+    "b) U < 0 ⇒ sistema ligado (estable)"
+   ],
+   "img": "img/sz23-23-57.png",
+   "num": "23.57"
+  },
+  {
+   "id": "sz23-23-59",
+   "title": "Péndulo cargado entre placas",
+   "text": "",
+   "key": "Equilibrio: tan θ = qE/mg, y la diferencia de potencial es V = Ed.",
+   "topics": [
+    "gauss",
+    "equi"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.59",
+   "notes": "",
+   "hints": [
+    "Dibuja tensión, peso y fuerza eléctrica horizontal.",
+    "Entre placas paralelas el campo es uniforme."
+   ],
+   "sol": [
+    "tan 30° = qE/mg ⇒ E = mg tan 30°/q = (1.50×10⁻³)(9.80)(0.577)/(8.90×10⁻⁶) = 954 V/m.",
+    "V = Ed = 954 × 0.0500 = 47.7 V."
+   ],
+   "ans": [
+    "V = 47.7 V"
+   ],
+   "img": "img/sz23-23-59.png",
+   "num": "23.59"
+  },
+  {
+   "id": "sz23-23-61",
+   "title": "Cilindros coaxiales: potencial logarítmico",
+   "text": "",
+   "key": "Potencial de una línea: (λ/2πε₀) ln(r₀/r). Fuera de ambos la carga neta es cero.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.61",
+   "notes": "",
+   "hints": [
+    "Dentro del cilindro interior (metal) V es constante.",
+    "Toma V = 0 en r = b."
+   ],
+   "sol": [
+    "a) i) r < a: V = (λ/2πε₀) ln(b/a). ii) a < r < b: V = (λ/2πε₀) ln(b/r). iii) r > b: V = 0.",
+    "b) V_ab = (λ/2πε₀) ln(b/a).",
+    "c) E = −dV/dr = λ/(2πε₀r) = V_ab/[ln(b/a) r].",
+    "d) Igual: entre los cilindros solo influye la carga del interior, V_ab = (λ/2πε₀) ln(b/a)."
+   ],
+   "ans": [
+    "a) (λ/2πε₀)ln(b/a); (λ/2πε₀)ln(b/r); 0",
+    "c) E = V_ab/(r ln(b/a))",
+    "d) La misma V_ab"
+   ],
+   "img": "img/sz23-23-61.png",
+   "num": "23.61"
+  },
+  {
+   "id": "sz23-23-63",
+   "title": "Desviación de un electrón en un TRC",
+   "text": "",
+   "key": "Campo uniforme entre placas: movimiento de proyectil con a = eE/m y luego recta hasta la pantalla.",
+   "topics": [
+    "gauss",
+    "cin"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.63",
+   "notes": "",
+   "hints": [
+    "E = V/d con d = 2.0 cm; la placa inferior está a mayor potencial.",
+    "Tiempo entre placas t = L/v₀."
+   ],
+   "sol": [
+    "a) E = 22.0/0.020 = 1100 V/m; F = eE = 1.76×10⁻¹⁶ N hacia abajo (hacia la placa de mayor potencial).",
+    "b) a = F/m = 1.93×10¹⁴ m/s² hacia abajo.",
+    "c) t = 0.060/6.50×10⁶ = 9.23×10⁻⁹ s; y = ½at² = 0.824 cm.",
+    "d) v_y = at = 1.78×10⁶ m/s ⇒ θ = arctan(v_y/v₀) = 15.4° bajo el eje.",
+    "e) y_total = 0.824 + 12.0·tan 15.4° = 4.12 cm bajo el eje."
+   ],
+   "ans": [
+    "a) 1.76×10⁻¹⁶ N hacia abajo",
+    "b) 1.93×10¹⁴ m/s²",
+    "c) 0.824 cm",
+    "d) 15.4°",
+    "e) 4.12 cm"
+   ],
+   "img": "img/sz23-23-63.png",
+   "num": "23.63"
+  },
+  {
+   "id": "sz23-23-66",
+   "title": "Potencial en el eje de un disco",
+   "text": "",
+   "key": "Suma anillos de radio r y ancho dr: dV = k(σ2πr dr)/√(x² + r²).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.66",
+   "notes": "",
+   "hints": [
+    "Usa V_anillo = kQ/√(x² + a²) con dQ = σ2πr dr.",
+    "La integral de r/√(x² + r²) es √(x² + r²)."
+   ],
+   "sol": [
+    "a) V = (σ/2ε₀)[√(x² + R²) − x] (x > 0).",
+    "b) E_x = −∂V/∂x = (σ/2ε₀)[1 − x/√(x² + R²)], igual al resultado del ejemplo 21.11.",
+    "Límites: x ≫ R ⇒ V ≈ kQ/x; R → ∞ ⇒ E = σ/2ε₀ (plano)."
+   ],
+   "ans": [
+    "a) V = (σ/2ε₀)(√(x²+R²) − x)",
+    "b) Ex = (σ/2ε₀)(1 − x/√(x²+R²))"
+   ],
+   "img": "img/sz23-23-66.png",
+   "num": "23.66"
+  },
+  {
+   "id": "sz23-23-67",
+   "title": "Autoenergía de una esfera cargada",
+   "text": "",
+   "key": "Construye la esfera capa por capa: dU = V(r) dq con V(r) = kq(r)/r.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.67",
+   "notes": "",
+   "hints": [
+    "Con densidad uniforme, q(r) = Q r³/R³.",
+    "dq = 3Qr²dr/R³; integra de 0 a R."
+   ],
+   "sol": [
+    "Al tener la esfera de radio r, su potencial en la superficie es kq(r)/r = kQr²/R³.",
+    "dU = (kQr²/R³)(3Qr²dr/R³) = 3kQ²r⁴dr/R⁶.",
+    "U = 3kQ²/R⁶ · R⁵/5 = (3/5)kQ²/R = 3Q²/(20πε₀R)."
+   ],
+   "ans": [
+    "U = 3Q²/(20πε₀R) = (3/5)kQ²/R"
+   ],
+   "img": "img/sz23-23-67.png",
+   "num": "23.67"
+  },
+  {
+   "id": "sz23-23-69",
+   "title": "Diferencia de potencial centro–superficie",
+   "text": "",
+   "key": "Integra el campo interior E = kQr/R³ de 0 a R.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.69",
+   "notes": "",
+   "hints": [
+    "Dentro de una esfera uniforme E = kQr/R³.",
+    "V_centro − V_sup = ∫₀ᴿ E dr."
+   ],
+   "sol": [
+    "V_c − V_s = ∫₀ᴿ kQr/R³ dr = kQ/(2R).",
+    "= (8.99×10⁹)(4.00×10⁻⁶)/(2·0.0500) = 3.60×10⁵ V (el centro está a mayor potencial)."
+   ],
+   "ans": [
+    "3.60×10⁵ V"
+   ],
+   "img": "img/sz23-23-69.png",
+   "num": "23.69"
+  },
+  {
+   "id": "sz23-23-72",
+   "title": "Gotas de lluvia cargadas que se unen",
+   "text": "",
+   "key": "Al fusionarse se conserva volumen y carga: R′ = 2^{1/3}R y Q′ = 2Q.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.72",
+   "notes": "",
+   "hints": [
+    "V en la superficie de una esfera cargada: kQ/R.",
+    "Dos volúmenes iguales: R′³ = 2R³."
+   ],
+   "sol": [
+    "a) V = kq/R = (8.99×10⁹)(−3.60×10⁻¹²)/(0.650×10⁻³) = −49.8 V.",
+    "b) R′ = 2^{1/3}(0.650 mm) = 0.819 mm.",
+    "V′ = k(2q)/R′ = 2^{2/3}V = −79.0 V."
+   ],
+   "ans": [
+    "a) −49.8 V",
+    "b) R = 0.819 mm, V = −79.0 V"
+   ],
+   "img": "img/sz23-23-72.png",
+   "num": "23.72"
+  },
+  {
+   "id": "sz23-23-73",
+   "title": "Potencial de una varilla en dos puntos",
+   "text": "",
+   "key": "Integra dq = (Q/a)dx sobre la varilla con la distancia correcta a cada punto.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.73",
+   "notes": "",
+   "hints": [
+    "Para P: distancia x + s desde un elemento a la distancia s del extremo.",
+    "Para R: distancia √(s² + y²)."
+   ],
+   "sol": [
+    "a) V_P = (kQ/a) ∫₀ᵃ ds/(x + s) = (kQ/a) ln[(x + a)/x].",
+    "b) V_R = (kQ/a) ∫₀ᵃ ds/√(s² + y²) = (kQ/a) ln[(a + √(a² + y²))/y].",
+    "c) Para x ≫ a: ln(1 + a/x) ≈ a/x ⇒ V_P → kQ/x. Para y ≫ a: V_R → kQ/y (carga puntual)."
+   ],
+   "ans": [
+    "a) (kQ/a)ln((x+a)/x)",
+    "b) (kQ/a)ln((a+√(a²+y²))/y)",
+    "c) kQ/x y kQ/y"
+   ],
+   "img": "img/sz23-23-73.png",
+   "num": "23.73"
+  },
+  {
+   "id": "sz23-23-76",
+   "title": "Esferas conectadas por un alambre",
+   "text": "",
+   "key": "Conectadas quedan al mismo potencial: Q₁′/R₁ = Q₂′/R₂ con Q₁′ + Q₂′ = Q₁.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.76",
+   "notes": "",
+   "hints": [
+    "Antes: E = kQ₁/R₁², V = kQ₁/R₁.",
+    "Después: igual potencial y carga total conservada."
+   ],
+   "sol": [
+    "a) E = kQ₁/R₁²; V = kQ₁/R₁.",
+    "b) Q₁′ = Q₁R₁/(R₁ + R₂); Q₂′ = Q₁R₂/(R₁ + R₂).",
+    "c) V₁ = V₂ = kQ₁/(R₁ + R₂).",
+    "d) E₁ = kQ₁/[R₁(R₁ + R₂)], E₂ = kQ₁/[R₂(R₁ + R₂)]: la esfera más pequeña tiene el campo mayor (efecto de las puntas)."
+   ],
+   "ans": [
+    "b) Q₁R₁/(R₁+R₂), Q₁R₂/(R₁+R₂)",
+    "c) kQ₁/(R₁+R₂)",
+    "d) E ∝ 1/R: mayor en la pequeña"
+   ],
+   "img": "img/sz23-23-76.png",
+   "num": "23.76"
+  },
+  {
+   "id": "sz23-23-77",
+   "title": "Fusión nuclear en el Sol",
+   "text": "",
+   "key": "La energía cinética inicial debe igualar la repulsión coulombiana al contacto; luego compara con (3/2)kT.",
+   "topics": [
+    "gauss",
+    "ene",
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.77",
+   "notes": "",
+   "hints": [
+    "Contacto de protones: separación 2r = 2.4×10⁻¹⁵ m.",
+    "Cada partícula lleva la mitad de la energía: ½mv² = ½·U."
+   ],
+   "sol": [
+    "a) 2·½m_pv² = ke²/(2.4×10⁻¹⁵) ⇒ v = 7.6×10⁶ m/s.",
+    "b) Helio: 2·½(2.99m_p)v² = k(2e)²/(3.5×10⁻¹⁵) ⇒ v = 7.3×10⁶ m/s.",
+    "c) (3/2)k_BT = ½mv² ⇒ T = 2.3×10⁹ K (protones) y 6.4×10⁹ K (helio).",
+    "d) El núcleo del Sol (1.5×10⁷ K) está muy por debajo: las reacciones ocurren gracias a la cola de alta energía de la distribución de Maxwell (y al efecto túnel cuántico)."
+   ],
+   "ans": [
+    "a) 7.6×10⁶ m/s",
+    "b) 7.3×10⁶ m/s",
+    "c) 2.3×10⁹ K y 6.4×10⁹ K",
+    "d) Mucho menor: cola de Maxwell (y túnel)"
+   ],
+   "img": "img/sz23-23-77.png",
+   "num": "23.77"
+  },
+  {
+   "id": "sz23-23-78",
+   "title": "Campo de V = A(x² − 3y² + z²)",
+   "text": "",
+   "key": "E = −∇V; el trabajo del campo es q(V_inicial − V_final).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.78",
+   "notes": "",
+   "hints": [
+    "Gradiente componente por componente.",
+    "En un plano y = cte, V = cte da x² + z² = cte."
+   ],
+   "sol": [
+    "a) E = −A(2x î − 6y ĵ + 2z k̂).",
+    "b) W = q[V(0,0,0.25) − V(0)] = qA(0.0625) ⇒ A = 6.00×10⁻⁵/(1.50×10⁻⁶·0.0625) = 640 V/m².",
+    "c) En (0, 0, 0.250): E = −2Az k̂ = −320 V/m k̂.",
+    "d) Con y fija: x² + z² = V/A + 3y², una circunferencia.",
+    "e) r² = 1280/640 + 3·4 = 14 ⇒ r = 3.74 m."
+   ],
+   "ans": [
+    "b) A = 640 V/m²",
+    "c) 320 V/m en −z",
+    "e) r = 3.74 m"
+   ],
+   "img": "img/sz23-23-78.png",
+   "num": "23.78"
+  },
+  {
+   "id": "sz23-23-80",
+   "title": "Carga de una esfera desde la gráfica v² vs 1/x",
+   "text": "",
+   "key": "Energía: v² = v₀² − (2kQq/m)(1/x); la pendiente da Q y la ordenada v₀².",
+   "topics": [
+    "gauss",
+    "ene"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.80",
+   "notes": "",
+   "hints": [
+    "Escribe ½mv² + kQq/x = ½mv₀².",
+    "Distancia mínima: v = 0."
+   ],
+   "sol": [
+    "a) v² = v₀² − (2kQq/m)(1/x): lineal en 1/x.",
+    "b) v₀² = 400 m²/s² ⇒ v₀ = 20.0 m/s.",
+    "c) 2kQq/m = 15.75 ⇒ Q = 15.75(4.00×10⁻⁴)/(2·8.99×10⁹·5.00×10⁻⁴) = 7.01×10⁻¹⁰ C.",
+    "d) 0 = 400 − 15.75/x ⇒ x_min = 0.0394 m."
+   ],
+   "ans": [
+    "b) 20.0 m/s",
+    "c) 7.01×10⁻¹⁰ C",
+    "d) 0.0394 m"
+   ],
+   "img": "img/sz23-23-80.png",
+   "num": "23.80"
+  },
+  {
+   "id": "sz23-23-81",
+   "title": "Gota de aceite de Millikan",
+   "text": "",
+   "key": "Equilibrio qV/d = mg da q; la rapidez terminal (Stokes) da r sin medirlo.",
+   "topics": [
+    "gauss",
+    "flu"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.81",
+   "notes": "",
+   "hints": [
+    "En reposo: qE = mg con E = V/d y m = ρ(4/3)πr³.",
+    "Caída libre terminal: 6πηrv_t = mg ⇒ r = √(9ηv_t/2ρg)."
+   ],
+   "sol": [
+    "a) q V/d = (4/3)πr³ρg ⇒ q = (4π/3)ρr³gd/V.",
+    "b) Sustituyendo r = √(9ηv_t/2ρg): q = 18π(d/V)√(η³v_t³/2ρg).",
+    "c) q₁ = 4.79×10⁻¹⁹, q₂ = 1.59×10⁻¹⁹, q₃ = 8.09×10⁻¹⁹, q₄ = 3.23×10⁻¹⁹ C.",
+    "d) n = 3, 1, 5, 2.",
+    "e) q/n = 1.596, 1.593, 1.618, 1.617 (×10⁻¹⁹) ⇒ e ≈ 1.61×10⁻¹⁹ C."
+   ],
+   "ans": [
+    "c) 4.79, 1.59, 8.09, 3.23 ×10⁻¹⁹ C",
+    "d) n = 3, 1, 5, 2",
+    "e) e ≈ 1.61×10⁻¹⁹ C"
+   ],
+   "img": "img/sz23-23-81.png",
+   "num": "23.81"
+  },
+  {
+   "id": "sz23-23-83",
+   "title": "Alfa con parámetro de impacto: máxima aproximación",
+   "text": "",
+   "key": "Conserva energía y momento angular: K(1 − d₀/r) = K b²/r², con d₀ la distancia del choque frontal.",
+   "topics": [
+    "gauss",
+    "ene",
+    "mom"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 23, ej. 23.83",
+   "notes": "Usa los datos del ejercicio 23.74 (incluido arriba en la imagen): alfa de 9.50 MeV contra plomo (Z = 82).",
+   "hints": [
+    "Primero el choque frontal (23.74): d₀ = k(2e)(82e)/K con K = 9.50 MeV.",
+    "En el punto más cercano la velocidad es perpendicular al radio: L = mvr = p₀b."
+   ],
+   "sol": [
+    "d₀ = k·164e²/K = 2.49×10⁻¹⁴ m.",
+    "Energía: K = ½mv² + Kd₀/r; momento angular: v = v₀b/r ⇒ r² − d₀r − b² = 0.",
+    "r = [d₀ + √(d₀² + 4b²)]/2.",
+    "b = 10⁻¹² m: r = 1.01×10⁻¹² m. b = 10⁻¹³ m: r = 1.13×10⁻¹³ m. b = 10⁻¹⁴ m: r = 2.84×10⁻¹⁴ m."
+   ],
+   "ans": [
+    "b = 10⁻¹²: 1.01×10⁻¹² m",
+    "b = 10⁻¹³: 1.13×10⁻¹³ m",
+    "b = 10⁻¹⁴: 2.84×10⁻¹⁴ m"
+   ],
+   "img": "img/sz23-23-83.png",
+   "num": "23.83"
+  }
+ ]
+}

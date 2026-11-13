@@ -1,0 +1,380 @@
+{
+ "version": 1,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz4-4-2",
+   "title": "Tres cuerdas sacan una camioneta del lodo",
+   "text": "",
+   "key": "Toda la dinámica empieza aquí: descomponer cada fuerza en ejes y sumar componentes, nunca módulos.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.2",
+   "notes": "",
+   "hints": [
+    "Mide cada ángulo desde un eje concreto y decide si usas seno o coseno según ese eje.",
+    "788 N forma 32° con +y (hacia −x); 985 N, 31° sobre +x; 411 N, 53° bajo −x.",
+    "Suma todas las x y todas las y por separado; luego R = √(Rx² + Ry²) y θ = arctan(Ry/Rx)."
+   ],
+   "sol": [
+    "985 N: (985 cos31°, 985 sen31°) = (844, 507) N",
+    "788 N: (−788 sen32°, 788 cos32°) = (−418, 668) N",
+    "411 N: (−411 cos53°, −411 sen53°) = (−247, −328) N",
+    "Rx = 844 − 418 − 247 = 179 N;  Ry = 507 + 668 − 328 = 847 N",
+    "R = √(179² + 847²) = 866 N;  θ = arctan(847/179) = 78.0° sobre +x"
+   ],
+   "ans": [
+    "R = 866 N a 78.0° sobre el eje +x"
+   ],
+   "img": "img/sz4-4-2.png",
+   "num": "4.2"
+  },
+  {
+   "id": "sz4-4-8",
+   "title": "Báscula dentro de un elevador",
+   "text": "",
+   "key": "El peso aparente es la normal: N − mg = ma. La báscula mide N, no mg.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.8",
+   "notes": "",
+   "hints": [
+    "Dibuja el DCL: tu peso hacia abajo y la normal de la báscula hacia arriba.",
+    "Saca la masa del peso normal: m = 625/9.8.",
+    "Para el paquete es igual, cambiando la normal por la tensión de la cuerda."
+   ],
+   "sol": [
+    "m = 625 / 9.8 = 63.8 kg",
+    "a) N − mg = ma → N = m(g + a) = 63.8·(9.8 + 2.50) = 784 N",
+    "b) T − m_p g = m_p a → T = 3.85·(9.8 + 2.50) = 47.4 N"
+   ],
+   "ans": [
+    "a) La báscula marca 784 N",
+    "b) T = 47.4 N"
+   ],
+   "img": "img/sz4-4-8.png",
+   "num": "4.8"
+  },
+  {
+   "id": "sz4-4-14",
+   "title": "Gato: de la gráfica v(t) a la fuerza",
+   "text": "",
+   "key": "La pendiente de v(t) es la aceleración; F = ma convierte cada tramo de la gráfica en una fuerza.",
+   "topics": [
+    "din",
+    "cin"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.14",
+   "notes": "",
+   "hints": [
+    "Divide la gráfica en tramos rectos y calcula la pendiente de cada uno.",
+    "Donde la pendiente es mayor, la fuerza neta es máxima. Donde v es constante, la fuerza neta es cero.",
+    "En t = 8.5 s estás en el último tramo: de 6 s a 10 s la velocidad sube de 8 a 12 m/s."
+   ],
+   "sol": [
+    "0–2 s: a = 8.0/2.0 = 4.0 m/s² → F = 2.75·4.0 = 11.0 N (máxima)",
+    "2–6 s: v constante → a = 0 → F = 0",
+    "6–10 s: a = (12 − 8)/4 = 1.0 m/s² → en 8.5 s, F = 2.75·1.0 = 2.75 N"
+   ],
+   "ans": [
+    "a) 11.0 N, entre 0 y 2 s",
+    "b) Entre 2 s y 6 s",
+    "c) 2.75 N"
+   ],
+   "img": "img/sz4-4-14.png",
+   "num": "4.14"
+  },
+  {
+   "id": "sz4-4-15",
+   "title": "Cohete con empuje F = A + Bt²",
+   "text": "",
+   "key": "Con una fuerza que cambia en el tiempo, la segunda ley se aplica instante a instante; sin gravedad, la fuerza neta es todo el empuje.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.15",
+   "notes": "",
+   "hints": [
+    "Con t = 0 sacas A directamente; con t = 2 s, B.",
+    "La fuerza neta es el empuje menos el peso: F − mg.",
+    "Lejos de toda gravedad no hay peso: la fuerza neta es solo el empuje."
+   ],
+   "sol": [
+    "A = 100 N;  150 = 100 + B·4 → B = 12.5 N/s²",
+    "i) t = 0⁺: F_neta = 100 − 8.00·9.8 = 21.6 N → a = 2.70 m/s²",
+    "ii) t = 3 s: F = 100 + 12.5·9 = 212.5 N → F_neta = 134 N → a = 16.8 m/s²",
+    "c) Sin gravedad: a = 212.5/8.00 = 26.6 m/s²"
+   ],
+   "ans": [
+    "a) A = 100 N, B = 12.5 N/s²",
+    "b) i) 21.6 N, 2.70 m/s²   ii) 134 N, 16.8 m/s²",
+    "c) 26.6 m/s²"
+   ],
+   "img": "img/sz4-4-15.png",
+   "num": "4.15"
+  },
+  {
+   "id": "sz4-4-23",
+   "title": "Dos cajas en contacto: fuerza entre ellas",
+   "text": "",
+   "key": "Primero el sistema completo para la aceleración; luego aísla un cuerpo para la fuerza interna.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.23",
+   "notes": "",
+   "hints": [
+    "Las dos cajas se mueven juntas: misma aceleración.",
+    "Toma A + B como un solo cuerpo para hallar a.",
+    "Aísla B: la única fuerza horizontal sobre B es la que le hace A."
+   ],
+   "sol": [
+    "a = 250 / (20.0 + 5.0) = 10.0 m/s²",
+    "Sobre B: F_AB = m_B·a = 5.0·10.0 = 50 N",
+    "Comprueba con A: 250 − 50 = 20.0·10.0 ✓"
+   ],
+   "ans": [
+    "F_AB = 50 N"
+   ],
+   "img": "img/sz4-4-23.png",
+   "num": "4.23"
+  },
+  {
+   "id": "sz4-4-24",
+   "title": "La Tierra también acelera hacia ti",
+   "text": "",
+   "key": "Tercera ley: la fuerza es la misma en los dos cuerpos; la aceleración no, porque depende de la masa.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.24",
+   "notes": "",
+   "hints": [
+    "La fuerza que la Tierra hace sobre ella es su peso: mg.",
+    "Por la tercera ley, ella tira de la Tierra con la misma fuerza.",
+    "Divide esa fuerza entre la masa de la Tierra."
+   ],
+   "sol": [
+    "F = m g = 45·9.8 = 441 N",
+    "a_Tierra = F / M_Tierra = 441 / 6.0×10²⁴ = 7.4×10⁻²³ m/s²"
+   ],
+   "ans": [
+    "a ≈ 7.4×10⁻²³ m/s² hacia ella"
+   ],
+   "img": "img/sz4-4-24.png",
+   "num": "4.24"
+  },
+  {
+   "id": "sz4-4-29",
+   "title": "Silla empujada hacia abajo en ángulo",
+   "text": "",
+   "key": "La normal no siempre vale mg: una fuerza inclinada hacia abajo la aumenta.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.29",
+   "notes": "",
+   "hints": [
+    "Dibuja: peso, normal, rozamiento y F inclinada 37° bajo la horizontal.",
+    "Descompón F: la parte vertical apunta hacia abajo y se suma al peso.",
+    "En vertical no hay aceleración: ΣFy = 0."
+   ],
+   "sol": [
+    "F se descompone en Fx = 40.0 cos37° = 31.9 N y Fy = 40.0 sen37° = 24.1 N (hacia abajo)",
+    "ΣFy = 0: N − mg − Fy = 0",
+    "N = 12.0·9.8 + 24.1 = 142 N"
+   ],
+   "ans": [
+    "N = 142 N (mayor que mg = 118 N)"
+   ],
+   "img": "img/sz4-4-29.png",
+   "num": "4.29"
+  },
+  {
+   "id": "sz4-4-30",
+   "title": "Caja que resbala en la camioneta",
+   "text": "",
+   "key": "Sin rozamiento, nada empuja la caja hacia delante: se queda quieta respecto al suelo y es la camioneta la que avanza bajo ella.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.30",
+   "notes": "",
+   "hints": [
+    "Pregúntate qué fuerzas horizontales actúan sobre la caja si la plataforma no tiene fricción.",
+    "Si la fuerza horizontal neta sobre la caja es cero, ¿qué hace la caja respecto al suelo?",
+    "Un par acción-reacción actúa sobre cuerpos distintos: busca parejas entre caja, camioneta y Tierra."
+   ],
+   "sol": [
+    "Caja: peso (Tierra sobre caja) hacia abajo y normal (plataforma sobre caja) hacia arriba. Nada horizontal",
+    "Por eso la caja no acelera respecto al suelo; la camioneta acelera hacia delante y la caja parece ir hacia atrás",
+    "Camioneta: peso, normal del suelo, fuerza de la caja sobre la plataforma (hacia abajo) y la fuerza del suelo sobre las ruedas (hacia delante)",
+    "Pares: normal plataforma→caja ↔ caja→plataforma; peso de la caja ↔ caja atrae a la Tierra; ruedas empujan el suelo hacia atrás ↔ suelo empuja las ruedas hacia delante"
+   ],
+   "ans": [
+    "La caja se queda quieta respecto al suelo; la camioneta acelera bajo ella"
+   ],
+   "img": "img/sz4-4-30.png",
+   "num": "4.30"
+  },
+  {
+   "id": "sz4-4-32",
+   "title": "Pesar una pelota en el planeta X",
+   "text": "",
+   "key": "Medir g con una caída libre: es la idea básica de la gravimetría. Luego el peso es m·g del lugar.",
+   "topics": [
+    "din",
+    "grav"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.32",
+   "notes": "",
+   "hints": [
+    "Cae desde el reposo: h = ½ g t².",
+    "Despeja g_X con h = 10.0 m y t = 3.40 s.",
+    "El peso es la masa por la g del planeta X, no por 9.8."
+   ],
+   "sol": [
+    "g_X = 2h/t² = 2·10.0/3.40² = 1.73 m/s²",
+    "w = m g_X = 0.100·1.73 = 0.173 N"
+   ],
+   "ans": [
+    "w = 0.173 N"
+   ],
+   "img": "img/sz4-4-32.png",
+   "num": "4.32"
+  },
+  {
+   "id": "sz4-4-40",
+   "title": "Dos bloques unidos: tensión y masa",
+   "text": "",
+   "key": "Combinar cinemática y dinámica: la cinemática te da a; la segunda ley en cada bloque te da T y la masa desconocida.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.40",
+   "notes": "",
+   "hints": [
+    "Parte del reposo con aceleración constante: x = ½ a t².",
+    "Aísla A: sobre él actúan F hacia delante y T hacia atrás.",
+    "Aísla B: la única fuerza horizontal es T."
+   ],
+   "sol": [
+    "a = 2x/t² = 2·18.0/5.00² = 1.44 m/s²",
+    "Bloque A: F − T = m_A a → T = 60.0 − 15.0·1.44 = 38.4 N",
+    "Bloque B: T = m a → m = 38.4/1.44 = 26.7 kg"
+   ],
+   "ans": [
+    "a) T = 38.4 N",
+    "b) m_B = 26.7 kg"
+   ],
+   "img": "img/sz4-4-40.png",
+   "num": "4.40"
+  },
+  {
+   "id": "sz4-4-48",
+   "title": "Bloques colgados de una cuerda con masa",
+   "text": "",
+   "key": "Si la cuerda tiene masa, la tensión cambia a lo largo de ella: en cada punto sostiene y acelera todo lo que cuelga debajo.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.48",
+   "notes": "",
+   "hints": [
+    "Primero todo el sistema (6 + 4 + 5 kg) para hallar la aceleración.",
+    "Para la tensión en un punto de la cuerda, aísla todo lo que queda por debajo de ese punto.",
+    "En la mitad de la cuerda, debajo cuelgan la mitad de la cuerda (2 kg) y el bloque de 5 kg."
+   ],
+   "sol": [
+    "a = (200 − 15.0·9.8)/15.0 = 3.53 m/s² hacia arriba",
+    "Arriba de la cuerda: T = (4.00 + 5.00)(g + a) = 9.00·13.3 = 120 N",
+    "En la mitad: T = (2.00 + 5.00)(g + a) = 7.00·13.3 = 93.3 N"
+   ],
+   "ans": [
+    "b) 3.53 m/s² hacia arriba",
+    "c) 120 N",
+    "d) 93.3 N"
+   ],
+   "img": "img/sz4-4-48.png",
+   "num": "4.48"
+  },
+  {
+   "id": "sz4-4-51",
+   "title": "Fuerza que crece con el tiempo: F = 16.8t",
+   "text": "",
+   "key": "Fuerza variable: a(t) = F(t)/m y luego integras dos veces, con v(0) = 0 y x(0) = 0.",
+   "topics": [
+    "din",
+    "cin"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 4, ej. 4.51",
+   "notes": "",
+   "hints": [
+    "Escribe a(t) = F(t)/m: también crece con t.",
+    "Integra una vez para v(t) y otra para x(t). Parte del reposo.",
+    "No uses x = ½at²: esa fórmula solo vale para a constante."
+   ],
+   "sol": [
+    "a(t) = 16.8t/45.0 = 0.373·t  (m/s²)",
+    "v(t) = 0.373·t²/2 = 0.187·t²",
+    "x(t) = 0.187·t³/3 = 0.0622·t³",
+    "x(5.00) = 0.0622·125 = 7.78 m"
+   ],
+   "ans": [
+    "x = 7.78 m"
+   ],
+   "img": "img/sz4-4-51.png",
+   "num": "4.51"
+  }
+ ]
+}

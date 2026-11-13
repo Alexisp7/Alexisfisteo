@@ -1,0 +1,904 @@
+{
+ "version": 21,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz24-p24-10",
+   "title": "¿Serie o paralelo para guardar más energía?",
+   "text": "",
+   "key": "Con la misma fuente, U = ½C_eq V²: gana la conexión con mayor C_eq.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, pregunta de análisis P24.10",
+   "notes": "",
+   "hints": [
+    "¿Qué combinación da la capacitancia equivalente más grande?"
+   ],
+   "sol": [
+    "Con V fijo, U = ½C_eq V².",
+    "En paralelo C_eq = C₁ + C₂, mayor que cualquiera; en serie C_eq es menor que la más pequeña.",
+    "Conviene conectarlos en paralelo."
+   ],
+   "ans": [
+    "En paralelo"
+   ],
+   "img": "img/sz24-p24-10.png",
+   "num": "P24.10"
+  },
+  {
+   "id": "sz24-p24-18",
+   "title": "Dieléctrico con la fuente conectada y desconectada",
+   "text": "",
+   "key": "Conectado: V fijo, todo lo demás se ajusta. Desconectado: Q fija. C sube a KC₀ en ambos casos.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, pregunta de análisis P24.18",
+   "notes": "",
+   "hints": [
+    "¿Qué cantidad se conserva en cada situación: V o Q?",
+    "Usa E = V/d, Q = CV y U = ½CV² = Q²/2C."
+   ],
+   "sol": [
+    "a) Conectado (V fijo): E = V/d no cambia; Q = KC₀V aumenta K veces; U = ½KC₀V² aumenta K veces (la fuente entrega carga).",
+    "b) Desconectado (Q fija): E baja a E₀/K; Q no cambia; U = Q²/(2KC₀) baja K veces (el dieléctrico es atraído hacia adentro y el campo hace trabajo)."
+   ],
+   "ans": [
+    "Conectado: E igual, Q ×K, U ×K",
+    "Desconectado: E ÷K, Q igual, U ÷K"
+   ],
+   "img": "img/sz24-p24-18.png",
+   "num": "P24.18"
+  },
+  {
+   "id": "sz24-p24-20",
+   "title": "Conductor como dieléctrico perfecto",
+   "text": "",
+   "key": "Dentro de un conductor E = 0, y en un dieléctrico E = E₀/K.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, pregunta de análisis P24.20",
+   "notes": "",
+   "hints": [
+    "¿Cuánto vale E dentro de un conductor en equilibrio?",
+    "Iguala E₀/K a ese valor."
+   ],
+   "sol": [
+    "Las cargas inducidas en un conductor cancelan por completo el campo interior: E = 0.",
+    "E = E₀/K = 0 solo si K → ∞."
+   ],
+   "ans": [
+    "K → ∞"
+   ],
+   "img": "img/sz24-p24-20.png",
+   "num": "P24.20"
+  },
+  {
+   "id": "sz24-24-5",
+   "title": "Carga al duplicar separación o radio",
+   "text": "",
+   "key": "Conectado a la batería: V fijo, Q = CV con C = ε₀A/d.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.5",
+   "notes": "",
+   "hints": [
+    "Duplicar d divide C entre 2.",
+    "Duplicar el radio multiplica A por 4."
+   ],
+   "sol": [
+    "a) Q = CV = (10.0 μF)(12.0 V) = 120 μC.",
+    "b) d × 2 ⇒ C ÷ 2 ⇒ Q = 60 μC.",
+    "c) r × 2 ⇒ A × 4 ⇒ C × 4 ⇒ Q = 480 μC."
+   ],
+   "ans": [
+    "a) 120 μC",
+    "b) 60 μC",
+    "c) 480 μC"
+   ],
+   "img": "img/sz24-24-5.png",
+   "num": "24.5"
+  },
+  {
+   "id": "sz24-24-6",
+   "title": "Voltímetro con Q fija al cambiar la geometría",
+   "text": "",
+   "key": "Desconectado: Q fija, V = Q/C cambia al revés que C.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.6",
+   "notes": "",
+   "hints": [
+    "¿Qué pasa con C si d se duplica? ¿y si el radio se duplica?"
+   ],
+   "sol": [
+    "a) Q = 60 μC y la lectura es 12.0 V.",
+    "b) i. d × 2 ⇒ C ÷ 2 ⇒ V = 24.0 V. ii. r × 2 ⇒ C × 4 ⇒ V = 3.00 V."
+   ],
+   "ans": [
+    "a) 12.0 V",
+    "b) i. 24.0 V; ii. 3.00 V"
+   ],
+   "img": "img/sz24-24-6.png",
+   "num": "24.6"
+  },
+  {
+   "id": "sz24-24-11",
+   "title": "Capacitor esférico: C, radio interior y campo",
+   "text": "",
+   "key": "C = Q/V y C = 4πε₀r_a r_b/(r_b − r_a); E en la superficie interior = kQ/r_a².",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.11",
+   "notes": "",
+   "hints": [
+    "Primero C = Q/V.",
+    "Despeja r_a de 1/r_a − 1/r_b = 4πε₀/C."
+   ],
+   "sol": [
+    "a) C = 3.30 nC/220 V = 15.0 pF.",
+    "b) 1/r_a = 1/0.0400 + 4πε₀/C ⇒ r_a = 3.08 cm.",
+    "c) E = kQ/r_a² = 3.12×10⁴ N/C."
+   ],
+   "ans": [
+    "a) 15.0 pF",
+    "b) 3.08 cm",
+    "c) 3.12×10⁴ N/C"
+   ],
+   "img": "img/sz24-24-11.png",
+   "num": "24.11"
+  },
+  {
+   "id": "sz24-24-14",
+   "title": "Red de cuatro capacitores",
+   "text": "",
+   "key": "Reduce: paralelo suma, serie suma inversos. En serie todos llevan la misma carga.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.14",
+   "notes": "",
+   "hints": [
+    "5.0 y 8.0 μF están en paralelo.",
+    "Ese bloque queda en serie con 10.0 y 9.0 μF."
+   ],
+   "sol": [
+    "5.0 ∥ 8.0 = 13.0 μF.",
+    "1/C_eq = 1/10 + 1/13 + 1/9 ⇒ C_eq = 3.47 μF.",
+    "b) Q = C_eq V = 3.47 × 50.0 = 174 μC.",
+    "c) Los de 10.0 y 9.0 μF están en serie con todo: cada uno lleva 174 μC."
+   ],
+   "ans": [
+    "a) 3.47 μF",
+    "b) 174 μC",
+    "c) 174 μC en cada uno"
+   ],
+   "img": "img/sz24-24-14.png",
+   "num": "24.14"
+  },
+  {
+   "id": "sz24-24-17",
+   "title": "Red de cuatro capacitores iguales",
+   "text": "",
+   "key": "Reduce paso a paso y luego regresa: Q en serie, V en paralelo.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.17",
+   "notes": "",
+   "hints": [
+    "C₁ y C₂ en serie dan 2 μF, en paralelo con C₃ dan 6 μF.",
+    "Ese bloque está en serie con C₄."
+   ],
+   "sol": [
+    "C_eq = (6 × 4)/(6 + 4) = 2.40 μF; Q = 2.40 × 28.0 = 67.2 μC.",
+    "C₄: Q₄ = 67.2 μC, V₄ = 16.8 V. Bloque: V = 11.2 V.",
+    "C₃: Q₃ = 44.8 μC, V₃ = 11.2 V. C₁ y C₂: Q = 22.4 μC, V = 5.60 V cada uno.",
+    "c) V_ad = 11.2 V."
+   ],
+   "ans": [
+    "Q₁ = Q₂ = 22.4 μC, Q₃ = 44.8 μC, Q₄ = 67.2 μC",
+    "V₁ = V₂ = 5.60 V, V₃ = 11.2 V, V₄ = 16.8 V",
+    "V_ad = 11.2 V"
+   ],
+   "img": "img/sz24-24-17.png",
+   "num": "24.17"
+  },
+  {
+   "id": "sz24-24-20",
+   "title": "Red al revés: de una carga al voltaje",
+   "text": "",
+   "key": "C₁ y C₂ en paralelo comparten V; C₃ en serie lleva la suma de sus cargas.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.20",
+   "notes": "",
+   "hints": [
+    "V en C₂ = Q₂/C₂.",
+    "Q₃ = Q₁ + Q₂."
+   ],
+   "sol": [
+    "V₁₂ = 30.0/3.00 = 10.0 V ⇒ Q₁ = 6.00 × 10.0 = 60.0 μC.",
+    "Q₃ = 60 + 30 = 90.0 μC ⇒ V₃ = 18.0 V.",
+    "V_ab = 10.0 + 18.0 = 28.0 V."
+   ],
+   "ans": [
+    "a) Q₁ = 60.0 μC, Q₃ = 90.0 μC",
+    "b) 28.0 V"
+   ],
+   "img": "img/sz24-24-20.png",
+   "num": "24.20"
+  },
+  {
+   "id": "sz24-24-24",
+   "title": "Trabajo para separar placas con Q fija",
+   "text": "",
+   "key": "Q fija: V ∝ d y el trabajo es el aumento de energía.",
+   "topics": [
+    "gauss",
+    "ene"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.24",
+   "notes": "",
+   "hints": [
+    "V = Q/C.",
+    "W = U_f − U_i con U = ½QV."
+   ],
+   "sol": [
+    "a) V = 3.90 μC/920 pF = 4.24 kV.",
+    "b) d × 2 ⇒ C ÷ 2 ⇒ V = 8.48 kV.",
+    "c) W = ½Q(8.48 − 4.24) kV = 8.27 mJ."
+   ],
+   "ans": [
+    "a) 4.24 kV",
+    "b) 8.48 kV",
+    "c) 8.27 mJ"
+   ],
+   "img": "img/sz24-24-24.png",
+   "num": "24.24"
+  },
+  {
+   "id": "sz24-24-26",
+   "title": "Energía al acercar placas: Q fija vs V fijo",
+   "text": "",
+   "key": "U = Q²d/2ε₀A con Q fija; U = ε₀AV²/2d con V fijo.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.26",
+   "notes": "",
+   "hints": [
+    "d se reduce a la mitad.",
+    "¿U es proporcional a d o a 1/d en cada caso?"
+   ],
+   "sol": [
+    "a) Desconectado: U ∝ d ⇒ U = 8.38/2 = 4.19 J.",
+    "b) Conectado: U ∝ 1/d ⇒ U = 2 × 8.38 = 16.8 J."
+   ],
+   "ans": [
+    "a) 4.19 J",
+    "b) 16.8 J"
+   ],
+   "img": "img/sz24-24-26.png",
+   "num": "24.26"
+  },
+  {
+   "id": "sz24-24-27",
+   "title": "Dos capacitores: serie vs paralelo",
+   "text": "",
+   "key": "Serie: C/2 y cada uno con V/2. Paralelo: 2C y cada uno con V.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.27",
+   "notes": "",
+   "hints": [
+    "C_serie = C/2, C_paralelo = 2C.",
+    "El campo en cada capacitor es V_cap/d."
+   ],
+   "sol": [
+    "a) U_s/U_p = (C/2)/(2C) = 1/4.",
+    "b) Q_s/Q_p = (CV/2)/(2CV) = 1/4.",
+    "c) E_s/E_p = (V/2)/V = 1/2."
+   ],
+   "ans": [
+    "a) 1/4",
+    "b) 1/4",
+    "c) 1/2"
+   ],
+   "img": "img/sz24-24-27.png",
+   "num": "24.27"
+  },
+  {
+   "id": "sz24-24-32",
+   "title": "Densidad de energía en un capacitor esférico",
+   "text": "",
+   "key": "u = ½ε₀E² con E = kQ/r²: no es uniforme, cae como 1/r⁴.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.32",
+   "notes": "",
+   "hints": [
+    "Q = CV con C = 4πε₀r_a r_b/(r_b − r_a).",
+    "Evalúa E en cada radio."
+   ],
+   "sol": [
+    "C = 4πε₀(0.125)(0.148)/(0.023) = 89.5 pF; Q = 10.7 nC.",
+    "a) r = 12.6 cm: u = 1.64×10⁻⁴ J/m³.",
+    "b) r = 14.7 cm: u = 8.83×10⁻⁵ J/m³.",
+    "c) No: u ∝ 1/r⁴, es mayor cerca de la esfera interior."
+   ],
+   "ans": [
+    "a) 1.64×10⁻⁴ J/m³",
+    "b) 8.83×10⁻⁵ J/m³",
+    "c) No, u ∝ 1/r⁴"
+   ],
+   "img": "img/sz24-24-32.png",
+   "num": "24.32"
+  },
+  {
+   "id": "sz24-24-33",
+   "title": "Energía al insertar un dieléctrico con V fijo",
+   "text": "",
+   "key": "V fijo: U = ½CV² y C pasa a KC.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.33",
+   "notes": "",
+   "hints": [
+    "U₀ = ½CV².",
+    "Con dieléctrico C → KC."
+   ],
+   "sol": [
+    "a) U₀ = ½(12.5 μF)(24.0)² = 3.60 mJ; U = 3.75 U₀ = 13.5 mJ.",
+    "b) ΔU = +9.9 mJ: aumenta (lo aporta la batería)."
+   ],
+   "ans": [
+    "a) 3.60 mJ y 13.5 mJ",
+    "b) aumenta 9.9 mJ"
+   ],
+   "img": "img/sz24-24-33.png",
+   "num": "24.33"
+  },
+  {
+   "id": "sz24-24-34",
+   "title": "Carga máxima con y sin dieléctrico",
+   "text": "",
+   "key": "E = V/d limita V; Q = CV con C = KC₀.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.34",
+   "notes": "",
+   "hints": [
+    "V_máx = E_máx d.",
+    "Con dieléctrico, para el mismo E la carga es K veces mayor."
+   ],
+   "sol": [
+    "a) V_máx = (3.00×10⁴)(1.50×10⁻³) = 45.0 V ⇒ Q = C₀V = 3.60×10⁻¹⁰ C.",
+    "b) Q = KC₀V = 2.70 × 3.60×10⁻¹⁰ = 9.72×10⁻¹⁰ C."
+   ],
+   "ans": [
+    "a) 3.60×10⁻¹⁰ C",
+    "b) 9.72×10⁻¹⁰ C"
+   ],
+   "img": "img/sz24-24-34.png",
+   "num": "24.34"
+  },
+  {
+   "id": "sz24-24-35",
+   "title": "Carga inducida en el dieléctrico",
+   "text": "",
+   "key": "K = E₀/E y σᵢ = ε₀(E₀ − E).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.35",
+   "notes": "",
+   "hints": [
+    "El campo baja porque la carga inducida se opone a la libre."
+   ],
+   "sol": [
+    "a) σᵢ = ε₀(E₀ − E) = 8.85×10⁻¹²(0.70×10⁵) = 6.20×10⁻⁷ C/m².",
+    "b) K = 3.20/2.50 = 1.28."
+   ],
+   "ans": [
+    "a) 6.20×10⁻⁷ C/m²",
+    "b) K = 1.28"
+   ],
+   "img": "img/sz24-24-35.png",
+   "num": "24.35"
+  },
+  {
+   "id": "sz24-24-37",
+   "title": "Área mínima con rigidez dieléctrica",
+   "text": "",
+   "key": "La rigidez fija d mínima = V/E_máx; luego A = Cd/(Kε₀).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.37",
+   "notes": "",
+   "hints": [
+    "d_mín = V_máx/E_máx."
+   ],
+   "sol": [
+    "d = 5500/1.60×10⁷ = 3.44×10⁻⁴ m.",
+    "A = Cd/(Kε₀) = (1.25×10⁻⁹)(3.44×10⁻⁴)/(3.60 · 8.85×10⁻¹²) = 1.35×10⁻² m²."
+   ],
+   "ans": [
+    "A = 1.35×10⁻² m²"
+   ],
+   "img": "img/sz24-24-37.png",
+   "num": "24.37"
+  },
+  {
+   "id": "sz24-24-39",
+   "title": "Lámina de PET con V fijo",
+   "text": "",
+   "key": "V fijo: ΔQ = (K − 1)C₀V, y esa misma carga aparece inducida en las caras del dieléctrico.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.39",
+   "notes": "K del PET = 3.3 (tabla 24.1 del libro).",
+   "hints": [
+    "Q pasa de C₀V a KC₀V.",
+    "La carga inducida es Q(1 − 1/K)."
+   ],
+   "sol": [
+    "a) Con K(PET) = 3.3: ΔQ = (2.3)(0.25 μF)(12 V) = 6.9 μC.",
+    "b) Qᵢ = KC₀V(1 − 1/K) = (K − 1)C₀V = 6.9 μC en cada cara.",
+    "c) E no cambia (V y d fijos): la carga extra en las placas compensa justo la carga inducida."
+   ],
+   "ans": [
+    "a) 6.9 μC (con K = 3.3)",
+    "b) 6.9 μC",
+    "c) E no cambia"
+   ],
+   "img": "img/sz24-24-39.png",
+   "num": "24.39"
+  },
+  {
+   "id": "sz24-24-41",
+   "title": "Voltaje y K desde energías",
+   "text": "",
+   "key": "U = ½CV² da V; con V fijo, U ∝ C da K.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.41",
+   "notes": "",
+   "hints": [
+    "V = √(2U/C).",
+    "K = U_final/U_inicial."
+   ],
+   "sol": [
+    "a) V = √(2 × 1.85×10⁻⁵/360×10⁻⁹) = 10.1 V.",
+    "b) K = 2.32/1.85 = 1.25."
+   ],
+   "ans": [
+    "a) 10.1 V",
+    "b) K = 1.25"
+   ],
+   "img": "img/sz24-24-41.png",
+   "num": "24.41"
+  },
+  {
+   "id": "sz24-24-42",
+   "title": "Dieléctrico con batería: K, V y E",
+   "text": "",
+   "key": "Batería conectada: V no cambia, Q sube K veces, E = V/d no cambia.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.42",
+   "notes": "",
+   "hints": [
+    "K = Q_f/Q_i.",
+    "d = ε₀A/C."
+   ],
+   "sol": [
+    "a) K = 45.0/25.0 = 1.80.",
+    "b) V = Q/C = 25.0 pC/12.5 pF = 2.00 V antes y después.",
+    "c) d = ε₀πR²/C = 2.00 mm ⇒ E = V/d = 1000 V/m antes y después."
+   ],
+   "ans": [
+    "a) 1.80",
+    "b) 2.00 V",
+    "c) 1.00×10³ V/m (no cambia)"
+   ],
+   "img": "img/sz24-24-42.png",
+   "num": "24.42"
+  },
+  {
+   "id": "sz24-24-43",
+   "title": "Ley de Gauss con dieléctrico",
+   "text": "",
+   "key": "Gauss con K: ∮KE·dA = Q_libre/ε₀.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.43",
+   "notes": "",
+   "hints": [
+    "Caja gaussiana con una cara dentro del dieléctrico."
+   ],
+   "sol": [
+    "a) KEA = Q/ε₀ ⇒ E = Q/(Kε₀A).",
+    "b) V = Ed = Qd/(Kε₀A).",
+    "c) C = Q/V = Kε₀A/d = KC₀, igual que la ec. (24.12)."
+   ],
+   "ans": [
+    "E = Q/Kε₀A",
+    "V = Qd/Kε₀A",
+    "C = Kε₀A/d"
+   ],
+   "img": "img/sz24-24-43.png",
+   "num": "24.43"
+  },
+  {
+   "id": "sz24-24-61",
+   "title": "Constante dieléctrica con el voltímetro",
+   "text": "",
+   "key": "Q fija ⇒ V ∝ 1/C. Dieléctrico en parte del área = capacitores en paralelo.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.61",
+   "notes": "\"Tercera parte del espacio\" se tomó como 1/3 del área; por espesor saldría 33.8 V.",
+   "hints": [
+    "K = V₀/V.",
+    "Si el dieléctrico ocupa 1/3 del área: C = C₀(2/3 + K/3)."
+   ],
+   "sol": [
+    "a) K = 45.0/11.5 = 3.91.",
+    "b) Leyendo \"tercera parte\" como 1/3 del área: C = C₀(2 + K)/3 = 1.97C₀ ⇒ V = 45.0/1.97 = 22.8 V.",
+    "(Si fuera 1/3 del espesor sería serie: V = 45.0(2/3 + 1/3K) = 33.8 V.)"
+   ],
+   "ans": [
+    "a) K = 3.91",
+    "b) 22.8 V"
+   ],
+   "img": "img/sz24-24-61.png",
+   "num": "24.61"
+  },
+  {
+   "id": "sz24-24-62",
+   "title": "Bloque metálico entre placas",
+   "text": "",
+   "key": "El metal no tiene campo dentro: equivale a reducir la separación a d − a.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.62",
+   "notes": "",
+   "hints": [
+    "Son dos capacitores en serie con separaciones que suman d − a."
+   ],
+   "sol": [
+    "a) C = ε₀A/(d − a).",
+    "b) C = C₀ d/(d − a).",
+    "c) a → 0: C → C₀; a → d: C → ∞ (las placas casi se tocan)."
+   ],
+   "ans": [
+    "a) ε₀A/(d − a)",
+    "b) C₀d/(d − a)",
+    "c) C₀ y ∞"
+   ],
+   "img": "img/sz24-24-62.png",
+   "num": "24.62"
+  },
+  {
+   "id": "sz24-24-65",
+   "title": "Dos dieléctricos apilados",
+   "text": "",
+   "key": "Capas apiladas = capacitores en serie.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.65",
+   "notes": "K del pyrex = 4.70 y del poliestireno = 2.60 (tabla 24.1).",
+   "hints": [
+    "K(pyrex) = 4.70, K(poliestireno) = 2.60 (tabla 24.1).",
+    "C = Kε₀A/d de cada capa."
+   ],
+   "sol": [
+    "C₁ = 4.70ε₀A/1.90 mm = 140 pF; C₂ = 2.60ε₀A/1.90 mm = 77.5 pF.",
+    "Serie: C = 49.9 pF.",
+    "U = ½CV² = ½(49.9 pF)(86.0)² = 1.85×10⁻⁷ J."
+   ],
+   "ans": [
+    "U = 1.85×10⁻⁷ J"
+   ],
+   "img": "img/sz24-24-65.png",
+   "num": "24.65"
+  },
+  {
+   "id": "sz24-24-66",
+   "title": "Mitad plexiglás, mitad aire",
+   "text": "",
+   "key": "Dieléctrico lado a lado = capacitores en paralelo: C = ε₀A(1 + K)/2d.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.66",
+   "notes": "",
+   "hints": [
+    "Cada mitad tiene área A/2 y la misma d."
+   ],
+   "sol": [
+    "a) C = ε₀(0.0144)(4.40)/(2 · 4.50×10⁻³) = 62.3 pF.",
+    "b) U = ½CV² = 1.01×10⁻⁸ J.",
+    "c) Sin plexiglás C₀ = 28.3 pF ⇒ U = 4.59×10⁻⁹ J."
+   ],
+   "ans": [
+    "a) 62.3 pF",
+    "b) 1.01×10⁻⁸ J",
+    "c) 4.59×10⁻⁹ J"
+   ],
+   "img": "img/sz24-24-66.png",
+   "num": "24.66"
+  },
+  {
+   "id": "sz24-24-67",
+   "title": "Tres placas: capacitores en paralelo",
+   "text": "",
+   "key": "La placa central con las dos exteriores forma dos capacitores en paralelo.",
+   "topics": [
+    "gauss",
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.67",
+   "notes": "",
+   "hints": [
+    "Cada hueco de papel es un capacitor de C = Kε₀A/d.",
+    "B tiene + en ambas caras; A y C tienen − en las caras internas."
+   ],
+   "sol": [
+    "a) B (punto a) lleva +Q/2 en cada cara; las caras internas de A y C llevan −Q/2.",
+    "b) C = 2Kε₀A/d = 2(4.2)(8.85×10⁻¹²)(0.0144)/(0.45×10⁻³) = 2.38 nF."
+   ],
+   "ans": [
+    "b) 2.38 nF"
+   ],
+   "img": "img/sz24-24-67.png",
+   "num": "24.67"
+  },
+  {
+   "id": "sz24-24-68",
+   "title": "Medidor de combustible capacitivo",
+   "text": "",
+   "key": "Combustible y aire lado a lado: paralelo, K_ef = 1 + (K − 1)h/L.",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.68",
+   "notes": "",
+   "hints": [
+    "Parte de altura h tiene K, el resto aire."
+   ],
+   "sol": [
+    "a) K_ef = [Kh + (L − h)]/L = 1 + (K − 1)h/L.",
+    "b) Gasolina (K = 1.95): 1.24, 1.48, 1.71.",
+    "c) Metanol (K = 33.0): 9.0, 17.0, 25.0.",
+    "d) Metanol: el cambio de K_ef es mucho mayor, así que la medida es más sensible."
+   ],
+   "ans": [
+    "a) 1 + (K − 1)h/L",
+    "b) 1.24, 1.48, 1.71",
+    "c) 9.0, 17.0, 25.0",
+    "d) Metanol"
+   ],
+   "img": "img/sz24-24-68.png",
+   "num": "24.68"
+  },
+  {
+   "id": "sz24-24-69",
+   "title": "C₁ y C₂ desde energías en serie y paralelo",
+   "text": "",
+   "key": "U = ½C_eq V² da C₁ + C₂ y C₁C₂/(C₁ + C₂): resuelve la cuadrática.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.69",
+   "notes": "",
+   "hints": [
+    "C_p = 2U_p/V², C_s = 2U_s/V².",
+    "C₁C₂ = C_s C_p y C₁ + C₂ = C_p."
+   ],
+   "sol": [
+    "C_p = 2(0.180)/200² = 9.00 μF; C_s = 2(0.0400)/200² = 2.00 μF.",
+    "C₁ + C₂ = 9, C₁C₂ = 18 ⇒ C₁ = 6.00 μF, C₂ = 3.00 μF.",
+    "b) Serie: misma Q; U = Q²/2C ⇒ C₂ guarda más energía.",
+    "c) Paralelo: mismo V; C₁ guarda más carga y más energía."
+   ],
+   "ans": [
+    "a) C₁ = 6.00 μF, C₂ = 3.00 μF",
+    "b) Serie: Q igual, más U en C₂",
+    "c) Paralelo: más Q y U en C₁"
+   ],
+   "img": "img/sz24-24-69.png",
+   "num": "24.69"
+  },
+  {
+   "id": "sz24-24-71",
+   "title": "Energía vs 1/d: ¿batería conectada?",
+   "text": "",
+   "key": "Conectado: U = ε₀AV²/2d (lineal en 1/d). Desconectado: U = Q²d/2ε₀A (lineal en d).",
+   "topics": [
+    "gauss"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.71",
+   "notes": "",
+   "hints": [
+    "¿Cuál de las dos expresiones es una recta contra 1/d?",
+    "La pendiente vale ε₀AV²/2."
+   ],
+   "sol": [
+    "a) Primer experimento (batería conectada): solo así U ∝ 1/d.",
+    "b) Pendiente ≈ (73 − 9)×10⁻⁹ J/(17.5 cm⁻¹) = 3.66×10⁻¹¹ J·m ⇒ A = 2(pend.)/(ε₀V²) ≈ 0.0143 m².",
+    "c) Desconectado a d = 0.400 cm: Q fija desde d₀ = 0.0500 cm y U = ε₀AV²d/(2d₀²), 64 veces mayor que conectado."
+   ],
+   "ans": [
+    "a) Batería conectada",
+    "b) A ≈ 1.4×10⁻² m²",
+    "c) Más energía con la batería desconectada"
+   ],
+   "img": "img/sz24-24-71.png",
+   "num": "24.71"
+  },
+  {
+   "id": "sz24-24-73",
+   "title": "Moles de Na⁺ en la membrana del huevo",
+   "text": "",
+   "key": "Q/A = (C/A)ΔV y luego divide entre el Faraday.",
+   "topics": [
+    "circ"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 24, ej. 24.73",
+   "notes": "Problema de transición: respuesta de opción múltiple.",
+   "hints": [
+    "ΔV = 100 mV.",
+    "1 mol de iones monovalentes = 10⁵ C."
+   ],
+   "sol": [
+    "Q/A = (1 μF/cm²)(0.100 V) = 1×10⁻⁷ C/cm².",
+    "n/A = 10⁻⁷/10⁵ = 10⁻¹² mol/cm²."
+   ],
+   "ans": [
+    "c) 10⁻¹² mol/cm²"
+   ],
+   "img": "img/sz24-24-73.png",
+   "num": "24.73"
+  }
+ ]
+}

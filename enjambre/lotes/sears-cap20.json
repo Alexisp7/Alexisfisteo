@@ -1,0 +1,913 @@
+{
+ "version": 17,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz20-p20-6",
+   "title": "Trabajo → calor y calor → trabajo",
+   "text": "",
+   "key": "La segunda ley prohíbe convertir calor en trabajo al 100 % en un ciclo; lo contrario sí es posible.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, pregunta de análisis P20.6",
+   "notes": "",
+   "hints": [
+    "Piensa en la fricción: ¿convierte todo el trabajo en calor?",
+    "Enunciado de Kelvin–Planck: ninguna máquina cíclica convierte todo el calor en trabajo."
+   ],
+   "sol": [
+    "Trabajo → calor al 100 %: sí, la fricción lo hace siempre; no viola nada.",
+    "Calor → trabajo al 100 % en un ciclo: imposible (Kelvin–Planck); siempre se cede algo de calor a un foco frío.",
+    "En un solo proceso (expansión isotérmica) Q = W, pero el gas no vuelve a su estado inicial."
+   ],
+   "ans": [
+    "Mecánica → calor: permitido",
+    "Calor → trabajo total en un ciclo: viola la segunda ley"
+   ],
+   "img": "img/sz20-p20-6.png",
+   "num": "P20.6"
+  },
+  {
+   "id": "sz20-p20-12",
+   "title": "Carnot con T_H = T_C o T_C = 0",
+   "text": "",
+   "key": "e = 1 − T_C/T_H: sin diferencia de temperatura no hay trabajo; e = 1 exigiría T_C = 0 K, inalcanzable.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, pregunta de análisis P20.12",
+   "notes": "",
+   "hints": [
+    "Usa e_Carnot = 1 − T_C/T_H.",
+    "La tercera ley dice que 0 K no se alcanza."
+   ],
+   "sol": [
+    "T_H = T_C → e = 0: sin diferencia de temperatura no hay flujo neto ni trabajo.",
+    "T_C = 0 K → e = 1, pero ningún foco puede estar a 0 K: es un límite ideal."
+   ],
+   "ans": [
+    "e = 0",
+    "e = 1 (imposible en la práctica)"
+   ],
+   "img": "img/sz20-p20-12.png",
+   "num": "P20.12"
+  },
+  {
+   "id": "sz20-p20-16",
+   "title": "Conducción de caliente a frío",
+   "text": "",
+   "key": "El mismo Q divide entre una T menor en el frío: ΔS = Q/T_C − Q/T_H > 0.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, pregunta de análisis P20.16",
+   "notes": "",
+   "hints": [
+    "ΔS de un foco = ±Q/T.",
+    "T_C < T_H."
+   ],
+   "sol": [
+    "ΔS_caliente = −Q/T_H; ΔS_frío = +Q/T_C",
+    "Como T_C < T_H, Q/T_C > Q/T_H → ΔS_total > 0"
+   ],
+   "ans": [
+    "ΔS = Q(1/T_C − 1/T_H) > 0"
+   ],
+   "img": "img/sz20-p20-16.png",
+   "num": "P20.16"
+  },
+  {
+   "id": "sz20-p20-18",
+   "title": "Entropía de la expansión libre",
+   "text": "",
+   "key": "ΔS = ∫dQ/T solo vale por un camino reversible; S es función de estado.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, pregunta de análisis P20.18",
+   "notes": "",
+   "hints": [
+    "La expansión libre es irreversible.",
+    "Busca un camino reversible entre los mismos estados (isotérmico)."
+   ],
+   "sol": [
+    "La ecuación 20.19 integra dQ/T sobre un camino reversible; la expansión libre no lo es.",
+    "S es función de estado: usa una expansión isotérmica reversible con la misma T inicial y final.",
+    "ΔS = nR ln(V₂/V₁) > 0"
+   ],
+   "ans": [
+    "No es reversible; ΔS = nR ln(V₂/V₁) > 0"
+   ],
+   "img": "img/sz20-p20-18.png",
+   "num": "P20.18"
+  },
+  {
+   "id": "sz20-20-3",
+   "title": "Motor de gasolina",
+   "text": "",
+   "key": "e = W/Q_H; el calor cedido es Q_H − W.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.3",
+   "notes": "",
+   "hints": [
+    "Q_C = Q_H − W.",
+    "Potencia = W por ciclo × ciclos por segundo; 1 hp = 746 W."
+   ],
+   "sol": [
+    "e = 3700/16100 = 0.230",
+    "Q_C = 12 400 J",
+    "m = 16100/(4.60×10⁴) = 0.350 g",
+    "P = 3700·60 = 2.22×10⁵ W ≈ 298 hp"
+   ],
+   "ans": [
+    "a) 23.0 %",
+    "b) 1.24×10⁴ J",
+    "c) 0.350 g",
+    "d) 222 kW ≈ 298 hp"
+   ],
+   "img": "img/sz20-20-3.png",
+   "num": "20.3"
+  },
+  {
+   "id": "sz20-20-5",
+   "title": "Ciclo con tramo adiabático",
+   "text": "",
+   "key": "Calor entra en el isocórico (ca), sale en el isobárico (bc); W = Q_entra − |Q_sale|.",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.5",
+   "notes": "",
+   "hints": [
+    "ab adiabático: p_aV_a^γ = p_bV_b^γ.",
+    "Q_V = (C_V/R)VΔp con C_V = 5R/2; Q_p = (C_p/R)pΔV con C_p = 7R/2."
+   ],
+   "sol": [
+    "p_a = 1.5·(0.0090/0.0020)^1.4 ≈ 12.3 atm",
+    "Q_ca = 2.5(p_a − p_c)V = 5.48×10³ J (entra)",
+    "Q_bc = 3.5·p(V_c − V_b) = −3.72×10³ J (sale)",
+    "W = 5.48×10³ − 3.72×10³ ≈ 1.76×10³ J; e = 32 %"
+   ],
+   "ans": [
+    "a) 12.3 atm",
+    "b) 5.48×10³ J en ca",
+    "c) 3.72×10³ J en bc",
+    "d) 1.76×10³ J",
+    "e) 32 %"
+   ],
+   "img": "img/sz20-20-5.png",
+   "num": "20.5"
+  },
+  {
+   "id": "sz20-20-6",
+   "title": "Eficiencia del ciclo Otto",
+   "text": "",
+   "key": "e_Otto = 1 − 1/r^(γ−1).",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.6",
+   "notes": "",
+   "hints": [
+    "Solo depende de r y γ.",
+    "Q_C = Q_H(1 − e)."
+   ],
+   "sol": [
+    "e = 1 − 9.50^(−0.40) ≈ 0.594",
+    "Q_C = 10 000·(1 − 0.594) ≈ 4.06×10³ J"
+   ],
+   "ans": [
+    "a) 59.4 %",
+    "b) 4.06×10³ J"
+   ],
+   "img": "img/sz20-20-6.png",
+   "num": "20.6"
+  },
+  {
+   "id": "sz20-20-10",
+   "title": "Congelador que hace hielo",
+   "text": "",
+   "key": "K = Q_C/W; el calor al cuarto es Q_C + W.",
+   "topics": [
+    "ter2",
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.10",
+   "notes": "",
+   "hints": [
+    "Q_C = m(c_agua·25 + L_f + c_hielo·5) con c_agua = 4190, L_f = 3.34×10⁵, c_hielo = 2100.",
+    "W = Q_C/K."
+   ],
+   "sol": [
+    "Q_C = 1.80(4190·25 + 3.34×10⁵ + 2100·5) ≈ 8.09×10⁵ J",
+    "W = 8.09×10⁵/2.40 ≈ 3.37×10⁵ J",
+    "Q_H = 8.09×10⁵ + 3.37×10⁵ ≈ 1.15×10⁶ J"
+   ],
+   "ans": [
+    "a) 8.09×10⁵ J",
+    "b) 3.37×10⁵ J",
+    "c) 1.15×10⁶ J"
+   ],
+   "img": "img/sz20-20-10.png",
+   "num": "20.10"
+  },
+  {
+   "id": "sz20-20-12",
+   "title": "Carnot entre 520 K y 300 K",
+   "text": "",
+   "key": "En Carnot Q_C/Q_H = T_C/T_H.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.12",
+   "notes": "",
+   "hints": [
+    "Q_C = Q_H·T_C/T_H.",
+    "e = 1 − T_C/T_H."
+   ],
+   "sol": [
+    "Q_C = 6450·300/520 ≈ 3.72×10³ J",
+    "W = 6450 − 3721 ≈ 2.73×10³ J",
+    "e = 1 − 300/520 ≈ 42.3 %"
+   ],
+   "ans": [
+    "a) 3.72 kJ",
+    "b) 2.73 kJ",
+    "c) 42.3 %"
+   ],
+   "img": "img/sz20-20-12.png",
+   "num": "20.12"
+  },
+  {
+   "id": "sz20-20-14",
+   "title": "Máquina de hielo de Carnot",
+   "text": "",
+   "key": "Refrigerador de Carnot: Q_H/Q_C = T_H/T_C.",
+   "topics": [
+    "ter2",
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.14",
+   "notes": "",
+   "hints": [
+    "Q_C = mL_f.",
+    "W = Q_H − Q_C."
+   ],
+   "sol": [
+    "Q_C = 85.0·3.34×10⁵ = 2.84×10⁷ J",
+    "Q_H = 2.84×10⁷·297.15/273.15 ≈ 3.09×10⁷ J",
+    "W = 3.09×10⁷ − 2.84×10⁷ ≈ 2.49×10⁶ J"
+   ],
+   "ans": [
+    "a) 3.09×10⁷ J",
+    "b) 2.49×10⁶ J"
+   ],
+   "img": "img/sz20-20-14.png",
+   "num": "20.14"
+  },
+  {
+   "id": "sz20-20-20",
+   "title": "Hielo que se funde en el océano",
+   "text": "",
+   "key": "El océano es un foco: ΔS = Q/273.15 − Q/276.65 > 0.",
+   "topics": [
+    "ter2",
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.20",
+   "notes": "",
+   "hints": [
+    "El océano no cambia de T: ΔS_océano = −Q/T_océano.",
+    "Q = mL_f."
+   ],
+   "sol": [
+    "Q = 4.50·3.34×10⁵ = 1.50×10⁶ J",
+    "ΔS = Q/273.15 − Q/276.65 ≈ +69.6 J/K"
+   ],
+   "ans": [
+    "Aumenta ≈ 69.6 J/K"
+   ],
+   "img": "img/sz20-20-20.png",
+   "num": "20.20"
+  },
+  {
+   "id": "sz20-20-22",
+   "title": "Agua hirviendo en la tina",
+   "text": "",
+   "key": "Mezcla irreversible: ΔS = Σ mc ln(T_f/T_i) > 0.",
+   "topics": [
+    "ter2",
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.22",
+   "notes": "",
+   "hints": [
+    "Primero T_f con calorimetría.",
+    "Usa T en kelvin dentro del logaritmo."
+   ],
+   "sol": [
+    "Irreversible: el calor fluye de caliente a frío espontáneamente.",
+    "T_f = (195·30 + 5·100)/200 = 31.75 °C",
+    "ΔS = 195·4190 ln(304.9/303.15) + 5·4190 ln(304.9/373.15) ≈ +471 J/K"
+   ],
+   "ans": [
+    "a) irreversible",
+    "b) 31.8 °C",
+    "c) ΔS ≈ +471 J/K"
+   ],
+   "img": "img/sz20-20-22.png",
+   "num": "20.22"
+  },
+  {
+   "id": "sz20-20-24",
+   "title": "Té que se enfría",
+   "text": "",
+   "key": "El agua pierde entropía (ln), el aire la gana como foco (Q/T); la suma es positiva.",
+   "topics": [
+    "ter2",
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.24",
+   "notes": "",
+   "hints": [
+    "ΔS_agua = mc ln(T_f/T_i).",
+    "ΔS_aire = Q/T_aire con Q = mcΔT."
+   ],
+   "sol": [
+    "ΔS_agua = 0.250·4190 ln(293.15/358.15) ≈ −210 J/K",
+    "ΔS_aire = 0.250·4190·65/293.15 ≈ +232 J/K",
+    "ΔS_total ≈ +22 J/K"
+   ],
+   "ans": [
+    "a) −210 J/K",
+    "b) +232 J/K, total +22 J/K"
+   ],
+   "img": "img/sz20-20-24.png",
+   "num": "20.24"
+  },
+  {
+   "id": "sz20-20-29",
+   "title": "Entropía micro y macro",
+   "text": "",
+   "key": "S = k ln w y ΔS = ∫dQ/T dan lo mismo: nR ln(V₂/V₁).",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.29",
+   "notes": "",
+   "hints": [
+    "Isotérmico: la distribución de rapideces solo depende de T.",
+    "Cada molécula tiene 3 veces más lugar: w₂/w₁ = 3^N."
+   ],
+   "sol": [
+    "a) No cambia: T es la misma.",
+    "b) ΔS = k ln(3^N) = Nk ln 3 = nR ln 3",
+    "c) ΔS = Q/T = nR ln 3",
+    "ΔS = 2·8.314·ln 3 ≈ 18.3 J/K"
+   ],
+   "ans": [
+    "a) no",
+    "b) y c) ΔS ≈ 18.3 J/K"
+   ],
+   "img": "img/sz20-20-29.png",
+   "num": "20.29"
+  },
+  {
+   "id": "sz20-20-31",
+   "title": "Globo que estalla en el vacío",
+   "text": "",
+   "key": "Expansión libre: ΔS = nR ln(V₂/V₁) por un camino isotérmico reversible.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.31",
+   "notes": "",
+   "hints": [
+    "Expansión libre: T no cambia.",
+    "Usa el camino reversible isotérmico."
+   ],
+   "sol": [
+    "ΔS = 0.100·8.314·ln(425/0.00240) ≈ 10.0 J/K"
+   ],
+   "ans": [
+    "ΔS ≈ +10.0 J/K"
+   ],
+   "img": "img/sz20-20-31.png",
+   "num": "20.31"
+  },
+  {
+   "id": "sz20-20-36",
+   "title": "Ciclo diatómico: isocórico, adiabático, isobárico",
+   "text": "",
+   "key": "Cada tramo con su fórmula; e real comparada con e_Carnot entre T mín y máx.",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.36",
+   "notes": "",
+   "hints": [
+    "Diatómico: C_V = 5R/2, C_p = 7R/2.",
+    "V₁ = nRT₁/p₁; en 1→2 p se duplica (T se duplica)."
+   ],
+   "sol": [
+    "1: 1 atm, 8.62 L · 2: 2 atm, 8.62 L · 3: 1 atm, 14.1 L",
+    "1→2: Q = ΔU = 2182 J, W = 0",
+    "2→3: Q = 0, W = 786 J, ΔU = −786 J",
+    "3→1: Q = −1955 J, W = −559 J, ΔU = −1397 J",
+    "W = Q_neto = 227 J; e = 227/2182 = 10.4 % (Carnot 50 %)"
+   ],
+   "ans": [
+    "a) ver estados",
+    "c) W = 227 J",
+    "d) Q = 227 J",
+    "e) 10.4 % frente a 50 %"
+   ],
+   "img": "img/sz20-20-36.png",
+   "num": "20.36"
+  },
+  {
+   "id": "sz20-20-38",
+   "title": "Ciclo rectangular de un gas diatómico",
+   "text": "",
+   "key": "e = W/Q_entra; entra calor en 1→2 y 2→3.",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.38",
+   "notes": "",
+   "hints": [
+    "T₁ = T₀, T₂ = 2T₀, T₃ = 4T₀, T₄ = 2T₀ (pV/nR).",
+    "W = área = p₀V₀."
+   ],
+   "sol": [
+    "Q₁₂ = (5/2)(2p₀V₀ − p₀V₀) = 2.5 p₀V₀",
+    "Q₂₃ = (7/2)·2p₀V₀ = 7 p₀V₀",
+    "e = p₀V₀/(9.5 p₀V₀) ≈ 10.5 %"
+   ],
+   "ans": [
+    "e = 2/19 ≈ 10.5 %"
+   ],
+   "img": "img/sz20-20-38.png",
+   "num": "20.38"
+  },
+  {
+   "id": "sz20-20-39",
+   "title": "Ciclo con compresión isotérmica",
+   "text": "",
+   "key": "pV igual en a y b ⇒ isotérmico; e = W/Q_entra.",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.39",
+   "notes": "",
+   "hints": [
+    "p_aV_a = p_bV_b = 2000 J.",
+    "Diatómico: C_p = 7R/2, C_V = 5R/2."
+   ],
+   "sol": [
+    "T_a = T_b = 2000/R ≈ 241 K; T_c = 4000/R ≈ 481 K",
+    "ab: Q = RT ln(1/2) ≈ −1386 J (sale)",
+    "bc: Q = 3.5R·240.6 = 7000 J (entra); ca: Q = −5000 J (sale)",
+    "Q = W ≈ 614 J; e = 614/7000 ≈ 8.8 %"
+   ],
+   "ans": [
+    "b) entra en bc, sale en ab y ca",
+    "c) 241 K, 241 K, 481 K",
+    "d) 614 J",
+    "e) 8.8 %"
+   ],
+   "img": "img/sz20-20-39.png",
+   "num": "20.39"
+  },
+  {
+   "id": "sz20-20-41",
+   "title": "Ciclo de helio con isoterma",
+   "text": "",
+   "key": "Isocórico y isoterma reciben calor; el isobárico lo cede.",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.41",
+   "notes": "",
+   "hints": [
+    "T_b = T_c = 600 K; T_a = T_b/3 = 200 K.",
+    "Monoatómico: C_V = 3R/2, C_p = 5R/2."
+   ],
+   "sol": [
+    "Q_ab = 1.5nR·400 ≈ 9.98×10³ J; Q_bc = nRT ln 3 ≈ 1.10×10⁴ J",
+    "Q_ca = 2.5nR(−400) ≈ −1.66×10⁴ J",
+    "W = 2.09×10⁴ − 1.66×10⁴ ≈ 4.31×10³ J; e ≈ 20.6 %",
+    "e_Carnot = 1 − 200/600 = 66.7 %"
+   ],
+   "ans": [
+    "a) entra 2.09×10⁴ J, sale 1.66×10⁴ J",
+    "b) 4.31×10³ J, 20.6 %",
+    "c) Carnot 66.7 %"
+   ],
+   "img": "img/sz20-20-41.png",
+   "num": "20.41"
+  },
+  {
+   "id": "sz20-20-43",
+   "title": "Planta térmica oceánica",
+   "text": "",
+   "key": "Con solo 21 K de diferencia la eficiencia de Carnot es muy baja: hay que mover mucha agua.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.43",
+   "notes": "",
+   "hints": [
+    "e = 1 − 279.15/300.15.",
+    "Q_C/t = Q_H/t − P; el agua fría sube de 6 a 10 °C."
+   ],
+   "sol": [
+    "e ≈ 7.0 %",
+    "Q_H/t = 210 kW/0.070 ≈ 3.0 MW; Q_C/t ≈ 2.79 MW",
+    "ṁ = 2.79×10⁶/(4190·4) ≈ 167 kg/s ≈ 6.0×10⁵ kg/h"
+   ],
+   "ans": [
+    "a) 7.0 %",
+    "b) 3.0 MW y 2.79 MW",
+    "c) 6.0×10⁵ kg/h ≈ 6.0×10⁵ L/h"
+   ],
+   "img": "img/sz20-20-43.png",
+   "num": "20.43"
+  },
+  {
+   "id": "sz20-20-45",
+   "title": "Ciclo de oxígeno en cuatro pasos",
+   "text": "",
+   "key": "Calcula estado por estado con pV = nRT; e muy por debajo de Carnot.",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.45",
+   "notes": "",
+   "hints": [
+    "n = pV/RT ≈ 0.325 mol; tabla 19.1: O₂ C_V = 21.10, C_p = 29.38 J/mol·K.",
+    "Isotérmico iii: Q = W = nRT ln(V₄/V₃)."
+   ],
+   "sol": [
+    "1: 2.00 atm, 4.00 L · 2: 2.00 atm, 6.00 L · 3: 1.11 atm, 6.00 L · 4: 1.67 atm, 4.00 L",
+    "i: Q = 1432 J, W = 405 J · ii: Q = −1371 J, W = 0",
+    "iii: Q = W = −274 J · iv: Q = 343 J, W = 0",
+    "W = 131 J; e = 131/1775 ≈ 7.4 % (Carnot 44 %)"
+   ],
+   "ans": [
+    "c) 131 J",
+    "d) 7.4 % frente a 44 %"
+   ],
+   "img": "img/sz20-20-45.png",
+   "num": "20.45"
+  },
+  {
+   "id": "sz20-20-47",
+   "title": "Dos Carnot en serie",
+   "text": "",
+   "key": "En serie la eficiencia total es la de una sola Carnot entre T_H y T_C.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.47",
+   "notes": "",
+   "hints": [
+    "e₁ = 1 − T′/T_H, e₂ = 1 − T_C/T′.",
+    "e = (W₁ + W₂)/Q_H."
+   ],
+   "sol": [
+    "W₁ = Q_H(1 − T′/T_H); Q₂ = Q_H T′/T_H",
+    "W₂ = Q₂(1 − T_C/T′) = Q_H(T′ − T_C)/T_H",
+    "e = 1 − T_C/T_H"
+   ],
+   "ans": [
+    "e = 1 − T_C/T_H: igual que la original"
+   ],
+   "img": "img/sz20-20-47.png",
+   "num": "20.47"
+  },
+  {
+   "id": "sz20-20-48",
+   "title": "Planta de carbón y su río",
+   "text": "",
+   "key": "Q_H = P/e; el calor de desecho calienta el río y aumenta su entropía.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.48",
+   "notes": "",
+   "hints": [
+    "Q_C/t = Q_H/t − P.",
+    "Flujo del río: Q_C/t = ṁ c ΔT con ΔT = 0.5 K."
+   ],
+   "sol": [
+    "Q_H/t = 1000/0.40 = 2500 MW",
+    "Carbón/día = 2.5×10⁹·86400/2.65×10⁷ ≈ 8.15×10⁶ kg",
+    "Q_C/t = 1500 MW; ṁ = 1.5×10⁹/(4190·0.5) ≈ 7.16×10⁵ kg/s ≈ 716 m³/s",
+    "ΔS/t = ṁc ln(291.65/291.15) ≈ 5.15×10⁶ J/K·s"
+   ],
+   "ans": [
+    "a) 2.50×10⁹ W",
+    "b) 8.15×10⁶ kg/día",
+    "c) 1.50×10⁹ W",
+    "d) 716 m³/s",
+    "e) 5.15×10⁶ J/K por segundo"
+   ],
+   "img": "img/sz20-20-48.png",
+   "num": "20.48"
+  },
+  {
+   "id": "sz20-20-49",
+   "title": "Motor Otto de un Passat",
+   "text": "",
+   "key": "Ciclo Otto completo: geometría → volúmenes, adiabáticas → T y p, e = 1 − r^(1−γ).",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.49",
+   "notes": "",
+   "hints": [
+    "Volumen barrido = πR²·carrera = V_a − V_b, con V_a = rV_b.",
+    "Otto: a→b adiabática, b→c calor a V cte, c→d adiabática, d→a enfriamiento a V cte."
+   ],
+   "sol": [
+    "e = 1 − 10.6^(−0.4) ≈ 61.1 % → W ≈ 122 J, Q_C ≈ 78 J",
+    "V_s = 4.62×10⁻⁴ m³ → V_a = 5.10×10⁻⁴ m³, V_b = 4.81×10⁻⁵ m³; n = 0.0174 mol",
+    "b: 2.32×10⁶ Pa, 771 K · c: 4.00×10⁶ Pa, 1333 K · d: 1.47×10⁵ Pa, 518 K",
+    "e_Carnot = 1 − 300/1333 ≈ 77.5 %"
+   ],
+   "ans": [
+    "a) 122 J, 78 J",
+    "b) 5.10×10⁻⁴ m³",
+    "c) b 771 K, c 1333 K, d 518 K",
+    "d) 61 % frente a 77.5 %"
+   ],
+   "img": "img/sz20-20-49.png",
+   "num": "20.49"
+  },
+  {
+   "id": "sz20-20-50",
+   "title": "Aire acondicionado y entropía",
+   "text": "",
+   "key": "K = Q_C/W; la habitación pierde Q_C/T_int y el exterior gana Q_H/T_ext.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.50",
+   "notes": "",
+   "hints": [
+    "Q_C/t = K·P; Q_H/t = Q_C/t + P.",
+    "Usa una hora (3600 s)."
+   ],
+   "sol": [
+    "Q_C/t = 2.80·800 = 2240 W",
+    "Q_H/t = 3040 W",
+    "ΔS_hab = −2240·3600/294.15 ≈ −2.74×10⁴ J/K; ΔS_ext = 3040·3600/308.15 ≈ +3.55×10⁴ J/K",
+    "ΔS_neto ≈ +8.1×10³ J/K"
+   ],
+   "ans": [
+    "a) 2240 W",
+    "b) 3040 W",
+    "c) −2.74×10⁴ J/K y +3.55×10⁴ J/K",
+    "d) +8.1×10³ J/K"
+   ],
+   "img": "img/sz20-20-50.png",
+   "num": "20.50"
+  },
+  {
+   "id": "sz20-20-51",
+   "title": "Refrigerador de hidrógeno",
+   "text": "",
+   "key": "K = Q_absorbido/|W|: el gas absorbe en ab (isoterma) y bc (isocórico).",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.51",
+   "notes": "",
+   "hints": [
+    "T_a = T_b = pV/nR ≈ 301 K; T_c = T_a·(0.100/0.0300).",
+    "W_neto = nRT ln(V_b/V_a) + p(V_a − V_c); usa C_V = 5R/2."
+   ],
+   "sol": [
+    "Q_ab = nRT ln(10/3) ≈ 2.56×10³ J",
+    "Q_bc = nC_V(T_c − T_b) ≈ 1.24×10⁴ J",
+    "W_neto = 2562 − 4965 ≈ −2.40×10³ J",
+    "K = (2562 + 12413)/2403 ≈ 6.2"
+   ],
+   "ans": [
+    "K ≈ 6.2"
+   ],
+   "img": "img/sz20-20-51.png",
+   "num": "20.51"
+  },
+  {
+   "id": "sz20-20-53",
+   "title": "La entropía es máxima en el equilibrio",
+   "text": "",
+   "key": "ΔS(T) con la condición de energía: dΔS/dT = 0 ⇒ T = T′.",
+   "topics": [
+    "ter2",
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.53",
+   "notes": "",
+   "hints": [
+    "dS = mc dT/T para cada cuerpo.",
+    "De la energía: dT′/dT = −m₁c₁/(m₂c₂)."
+   ],
+   "sol": [
+    "ΔS = m₁c₁ ln(T/T₁) + m₂c₂ ln(T′/T₂)",
+    "dΔS/dT = m₁c₁/T + (m₂c₂/T′)(dT′/dT) = m₁c₁(1/T − 1/T′)",
+    "= 0 ⇒ T = T′; la segunda derivada es negativa (máximo)"
+   ],
+   "ans": [
+    "ΔS máximo cuando T = T′ (equilibrio)"
+   ],
+   "img": "img/sz20-20-53.png",
+   "num": "20.53"
+  },
+  {
+   "id": "sz20-20-55",
+   "title": "Inventos imposibles",
+   "text": "",
+   "key": "Ninguna máquina supera a Carnot: e_max = 1 − T_C/T_H en kelvin.",
+   "topics": [
+    "ter2"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.55",
+   "notes": "",
+   "hints": [
+    "Convierte a kelvin. En C, T_H = 247 °C.",
+    "Compara e supuesta con e_max."
+   ],
+   "sol": [
+    "e_max: A 28.9 %, B 38.3 %, C 53.8 %, D 24.4 %",
+    "C (56 %) supera a Carnot: imposible",
+    "e/e_max: B 0.91, D 0.82, A 0.73"
+   ],
+   "ans": [
+    "a) 28.9, 38.3, 53.8, 24.4 %",
+    "b) C es imposible",
+    "c) B > D > A"
+   ],
+   "img": "img/sz20-20-55.png",
+   "num": "20.55"
+  },
+  {
+   "id": "sz20-20-58",
+   "title": "Eficiencia del ciclo Diesel",
+   "text": "",
+   "key": "Calor entra a p constante (bc) y sale a V constante (da): e = 1 − Q_sale/Q_entra.",
+   "topics": [
+    "ter2",
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 20, ej. 20.58",
+   "notes": "",
+   "hints": [
+    "T_b = T_a r^(γ−1); como c→d y a→b son adiabáticas, T_d/T_a = (T_c/T_b)^γ.",
+    "Q_bc = nC_p(T_c − T_b), Q_da = nC_V(T_a − T_d)."
+   ],
+   "sol": [
+    "e = 1 − T_a[(T_c/T_b)^γ − 1] / [γ(T_c − T_b)], con T_b = T_a r^(γ−1)",
+    "Con los datos: T_b = 300·21^0.4 ≈ 1014 K",
+    "e ≈ 0.708",
+    "Ojo: con r = 21 sale T_b > T_c, así que el tramo bc no sería un calentamiento; la fórmula da 70.8 %, pero los datos del libro no son físicamente coherentes."
+   ],
+   "ans": [
+    "a) e = 1 − T_a[(T_c/T_b)^γ − 1]/[γ(T_c − T_b)]",
+    "b) e ≈ 70.8 % (datos del libro incoherentes)"
+   ],
+   "img": "img/sz20-20-58.png",
+   "num": "20.58"
+  }
+ ]
+}

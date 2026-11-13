@@ -1,0 +1,928 @@
+{
+ "version": 16,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz19-p19-13",
+   "title": "Agitar un líquido aislado",
+   "text": "",
+   "key": "Agitar es trabajo, no calor: W < 0 sobre el sistema y ΔU > 0 con Q = 0.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, pregunta de análisis P19.13",
+   "notes": "",
+   "hints": [
+    "Recipiente bien aislado: ¿puede entrar calor?",
+    "El agitador empuja el líquido: eso es trabajo hecho sobre el sistema."
+   ],
+   "sol": [
+    "Q = 0 (aislado).",
+    "W < 0: el entorno hace trabajo sobre el líquido.",
+    "ΔU = Q − W = −W > 0, por eso sube la T.",
+    "Agitación irregular: el movimiento ordenado se vuelve desordenado (energía interna); si todo girara como un bloque solo ganaría energía cinética."
+   ],
+   "ans": [
+    "Q = 0; sí hubo trabajo (W < 0); ΔU > 0"
+   ],
+   "img": "img/sz19-p19-13.png",
+   "num": "P19.13"
+  },
+  {
+   "id": "sz19-p19-17",
+   "title": "Vientos que se enfrían al subir",
+   "text": "",
+   "key": "Aire que sube: menos presión, se expande casi adiabáticamente y se enfría.",
+   "topics": [
+    "ter1",
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, pregunta de análisis P19.17",
+   "notes": "",
+   "hints": [
+    "Al subir la presión del aire alrededor baja.",
+    "El aire es mal conductor y sube rápido: casi no intercambia calor."
+   ],
+   "sol": [
+    "El aire que sube se expande contra un entorno de menor presión: W > 0.",
+    "Q ≈ 0 → ΔU = −W < 0 → baja la temperatura.",
+    "Al enfriarse por debajo del punto de rocío el vapor se condensa y llueve."
+   ],
+   "ans": [
+    "Expansión adiabática al subir (ΔU = −W < 0)"
+   ],
+   "img": "img/sz19-p19-17.png",
+   "num": "P19.17"
+  },
+  {
+   "id": "sz19-p19-23",
+   "title": "Tres caminos de a a b",
+   "text": "",
+   "key": "W = área bajo la curva; ΔU no depende del camino; Q = ΔU + W.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, pregunta de análisis P19.23",
+   "notes": "",
+   "hints": [
+    "Compara el área bajo cada curva en el diagrama pV.",
+    "U_b − U_a es igual para los tres caminos."
+   ],
+   "sol": [
+    "W₁ > W₂ > W₃ (la curva 1 tiene más área debajo).",
+    "Q = ΔU + W con ΔU > 0 igual en todos → Q mayor por el camino 1.",
+    "Q₁ > 0: el sistema absorbe calor."
+   ],
+   "ans": [
+    "W mayor por 1, menor por 3",
+    "|Q| mayor por 1, calor absorbido"
+   ],
+   "img": "img/sz19-p19-23.png",
+   "num": "P19.23"
+  },
+  {
+   "id": "sz19-p19-24",
+   "title": "Ciclo en forma de ocho",
+   "text": "",
+   "key": "En un ciclo ΔU = 0 y Q = W; horario da W > 0, antihorario W < 0.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, pregunta de análisis P19.24",
+   "notes": "",
+   "hints": [
+    "Mira el sentido de recorrido de cada bucle.",
+    "El trabajo neto de un bucle es ± su área."
+   ],
+   "sol": [
+    "Bucle I horario → W_I > 0; bucle II antihorario → W_II < 0.",
+    "Área I > área II → W neto > 0.",
+    "En el ciclo ΔU = 0 → Q = W > 0: entra calor.",
+    "Bucle I: Q > 0 (entra); bucle II: Q < 0 (sale)."
+   ],
+   "ans": [
+    "a) W > 0",
+    "b) I positivo, II negativo",
+    "c) entra calor",
+    "d) I entra, II sale"
+   ],
+   "img": "img/sz19-p19-24.png",
+   "num": "P19.24"
+  },
+  {
+   "id": "sz19-19-7",
+   "title": "Trabajo en un ciclo rectangular",
+   "text": "",
+   "key": "En un ciclo el trabajo neto es el área encerrada; invertir el sentido cambia el signo.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.7",
+   "notes": "",
+   "hints": [
+    "Solo los tramos a presión constante hacen trabajo.",
+    "1→3 expande a p₁; 2→4 comprime a p₂."
+   ],
+   "sol": [
+    "W₁₃ = p₁(V₂ − V₁), W₃₂ = 0",
+    "W₂₄ = −p₂(V₂ − V₁), W₄₁ = 0",
+    "W = (p₁ − p₂)(V₂ − V₁) = área del rectángulo",
+    "Sentido opuesto: mismos tramos con signo cambiado."
+   ],
+   "ans": [
+    "a) W = (p₁ − p₂)(V₂ − V₁) > 0",
+    "b) W = −(p₁ − p₂)(V₂ − V₁)"
+   ],
+   "img": "img/sz19-19-7.png",
+   "num": "19.7"
+  },
+  {
+   "id": "sz19-19-8",
+   "title": "Compresión isobárica a T/4",
+   "text": "",
+   "key": "A p constante V ∝ T; el gas comprimido y enfriado pierde energía y cede calor.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.8",
+   "notes": "",
+   "hints": [
+    "p constante: V_b/V_a = T_b/T_a.",
+    "W = pΔV con p en Pa y V en m³."
+   ],
+   "sol": [
+    "V_b = 0.500/4 = 0.125 L",
+    "W = (1.50·1.013×10⁵)(0.125 − 0.500)×10⁻³ ≈ −57.0 J",
+    "T baja → U disminuye",
+    "Q = ΔU + W < 0 → sale calor"
+   ],
+   "ans": [
+    "a) 0.125 L",
+    "b) W ≈ −57.0 J (sobre el gas)",
+    "c) U disminuye",
+    "d) el calor sale"
+   ],
+   "img": "img/sz19-19-8.png",
+   "num": "19.8"
+  },
+  {
+   "id": "sz19-19-14",
+   "title": "Ebullición a 2 atm",
+   "text": "",
+   "key": "El calor latente se reparte: una parte empuja la atmósfera (pΔV) y el resto es ΔU.",
+   "topics": [
+    "ter1",
+    "cal"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.14",
+   "notes": "",
+   "hints": [
+    "Hervir ocurre a presión constante: W = pΔV.",
+    "Q = mL_v y ΔU = Q − W."
+   ],
+   "sol": [
+    "W = (2.00·1.013×10⁵)(0.824 − 0.001) ≈ 1.67×10⁵ J",
+    "Q = 2.20×10⁶ J",
+    "ΔU = 2.20×10⁶ − 1.67×10⁵ ≈ 2.03×10⁶ J"
+   ],
+   "ans": [
+    "a) W ≈ 1.67×10⁵ J",
+    "b) ΔU ≈ 2.03×10⁶ J"
+   ],
+   "img": "img/sz19-19-14.png",
+   "num": "19.14"
+  },
+  {
+   "id": "sz19-19-17",
+   "title": "CO₂ calentado a presión constante",
+   "text": "",
+   "key": "Isobárico: W = nRΔT, ΔU = nC_VΔT, Q = nC_pΔT.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.17",
+   "notes": "",
+   "hints": [
+    "Tabla 19.1: CO₂ tiene C_V = 28.46 y C_p = 36.94 J/mol·K.",
+    "ΔT = 100 K; W = pΔV = nRΔT."
+   ],
+   "sol": [
+    "W = 0.250·8.314·100 ≈ 208 J (sobre el pistón)",
+    "ΔU = 0.250·28.46·100 ≈ 712 J",
+    "Q = 0.250·36.94·100 ≈ 924 J",
+    "f) W = nRΔT no depende de p → 208 J"
+   ],
+   "ans": [
+    "b) 208 J",
+    "c) sobre el pistón / el entorno",
+    "d) 712 J",
+    "e) 924 J",
+    "f) 208 J"
+   ],
+   "img": "img/sz19-19-17.png",
+   "num": "19.17"
+  },
+  {
+   "id": "sz19-19-18",
+   "title": "Helio: calentar a V o a p constante",
+   "text": "",
+   "key": "Mismo ΔT → mismo ΔU; a p constante hace falta más calor porque además hay trabajo.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.18",
+   "notes": "",
+   "hints": [
+    "Monoatómico: C_V = 3R/2, C_p = 5R/2.",
+    "U de un gas ideal solo depende de T."
+   ],
+   "sol": [
+    "Q_V = 0.0100·(3/2)(8.314)(40) ≈ 4.99 J",
+    "Q_p = 0.0100·(5/2)(8.314)(40) ≈ 8.31 J",
+    "El extra (3.33 J) es el trabajo de expansión",
+    "ΔU = 4.99 J en ambos casos"
+   ],
+   "ans": [
+    "a) 4.99 J",
+    "b) 8.31 J",
+    "c) a p constante: el extra se va en trabajo",
+    "d) ΔU = 4.99 J en los dos"
+   ],
+   "img": "img/sz19-19-18.png",
+   "num": "19.18"
+  },
+  {
+   "id": "sz19-19-21",
+   "title": "Fracción del calor que se vuelve trabajo",
+   "text": "",
+   "key": "Isobárico monoatómico: W/Q = nRΔT / (5/2 nRΔT) = 2/5.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.21",
+   "notes": "",
+   "hints": [
+    "W = pΔV = nRΔT.",
+    "Q = nC_pΔT con C_p = 5R/2."
+   ],
+   "sol": [
+    "W/Q = R / (5R/2) = 2/5"
+   ],
+   "ans": [
+    "W/Q = 0.40 (40 %)"
+   ],
+   "img": "img/sz19-19-21.png",
+   "num": "19.21"
+  },
+  {
+   "id": "sz19-19-28",
+   "title": "Compresión en un motor Ferrari",
+   "text": "",
+   "key": "Adiabático: TV^(γ−1) y pV^γ constantes.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.28",
+   "notes": "",
+   "hints": [
+    "V₂/V₁ = 0.0900.",
+    "Usa T en kelvin."
+   ],
+   "sol": [
+    "T₂ = 293.15·(1/0.0900)^0.40 ≈ 768 K",
+    "p₂ = 1.00·(1/0.0900)^1.40 ≈ 29.1 atm"
+   ],
+   "ans": [
+    "T₂ ≈ 768 K (≈ 495 °C)",
+    "p₂ ≈ 29.1 atm"
+   ],
+   "img": "img/sz19-19-28.png",
+   "num": "19.28"
+  },
+  {
+   "id": "sz19-19-31",
+   "title": "Gradiente adiabático seco",
+   "text": "",
+   "key": "Aire que sube rápido: adiabático, T·p^((1−γ)/γ) constante.",
+   "topics": [
+    "ter1",
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.31",
+   "notes": "",
+   "hints": [
+    "El aire conduce mal el calor y la masa es grande: Q ≈ 0.",
+    "Combina pV^γ = cte con pV = nRT."
+   ],
+   "sol": [
+    "T₂ = T₁(p₂/p₁)^((γ−1)/γ)",
+    "T₂ = 299.15·(0.850/1.01)^(0.4/1.4) ≈ 284.8 K"
+   ],
+   "ans": [
+    "T₂ ≈ 285 K ≈ 11.6 °C"
+   ],
+   "img": "img/sz19-19-31.png",
+   "num": "19.31"
+  },
+  {
+   "id": "sz19-19-32",
+   "title": "Duplicar el volumen de tres maneras",
+   "text": "",
+   "key": "Isotérmico, isobárico y adiabático desde el mismo estado: compara T y p finales.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.32",
+   "notes": "",
+   "hints": [
+    "T₁ = pV/nR.",
+    "Adiabático monoatómico: γ = 5/3."
+   ],
+   "sol": [
+    "T₁ = 1.00×10⁵·2.50×10⁻³/(0.100·8.314) ≈ 301 K",
+    "i. T = 301 K, p = 0.500×10⁵ Pa",
+    "ii. T = 601 K, p = 1.00×10⁵ Pa",
+    "iii. T = 301·2^(−2/3) ≈ 189 K, p = 10⁵·2^(−5/3) ≈ 0.315×10⁵ Pa"
+   ],
+   "ans": [
+    "a) 301 K",
+    "i. 301 K, 5.00×10⁴ Pa",
+    "ii. 601 K, 1.00×10⁵ Pa",
+    "iii. 189 K, 3.15×10⁴ Pa"
+   ],
+   "img": "img/sz19-19-32.png",
+   "num": "19.32"
+  },
+  {
+   "id": "sz19-19-36",
+   "title": "Ciclo de helio con tramo isotérmico",
+   "text": "",
+   "key": "En cada tramo usa la fórmula de su proceso; en ca isotérmico ΔU = 0 y Q = W.",
+   "topics": [
+    "ter1",
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.36",
+   "notes": "",
+   "hints": [
+    "ca isotérmico: p_aV_a = p_cV_c.",
+    "ab isobárico: Q = nC_pΔT; bc isocórico: Q = nC_VΔT."
+   ],
+   "sol": [
+    "p_a = 2.0×10⁵·0.040/0.010 = 8.0×10⁵ Pa",
+    "T_a = T_c = pV/nR ≈ 296 K; T_b ≈ 1184 K",
+    "Q_ab = 6.0×10⁴ J (entra); Q_bc = −3.6×10⁴ J (sale)",
+    "Q_ca = nRT ln(V_a/V_c) ≈ −1.11×10⁴ J (sale)",
+    "ΔU_ab = +3.6×10⁴ J, ΔU_bc = −3.6×10⁴ J, ΔU_ca = 0"
+   ],
+   "ans": [
+    "a) 8.0×10⁵ Pa",
+    "b) T_a = T_c ≈ 296 K, T_b ≈ 1184 K",
+    "c) ab +6.0×10⁴ J, bc −3.6×10⁴ J, ca −1.11×10⁴ J",
+    "d) ab +3.6×10⁴ J, bc −3.6×10⁴ J, ca 0"
+   ],
+   "img": "img/sz19-19-36.png",
+   "num": "19.36"
+  },
+  {
+   "id": "sz19-19-37",
+   "title": "Caminos acb, adb y la curva",
+   "text": "",
+   "key": "ΔU es el mismo por cualquier camino; Q = ΔU + W en cada uno.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.37",
+   "notes": "",
+   "hints": [
+    "Por acb: ΔU = 90 − 60 = 30 J.",
+    "En db el volumen no cambia: todo el trabajo de adb está en ad."
+   ],
+   "sol": [
+    "adb: Q = 30 + 15 = 45 J",
+    "b→a: Q = −30 − 35 = −65 J (desprende)",
+    "ad: Q = (8 − 0) + 15 = 23 J",
+    "db: Q = (30 − 8) + 0 = 22 J"
+   ],
+   "ans": [
+    "a) 45 J",
+    "b) desprende 65 J",
+    "c) Q_ad = 23 J, Q_db = 22 J"
+   ],
+   "img": "img/sz19-19-37.png",
+   "num": "19.37"
+  },
+  {
+   "id": "sz19-19-42",
+   "title": "Ciclo con tramo adiabático",
+   "text": "",
+   "key": "Trabajo total = suma por tramos; en el adiabático W = −ΔU.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.42",
+   "notes": "",
+   "hints": [
+    "C_V = C_p − R = 20.79 J/mol·K.",
+    "ba es isocórico: W = 0."
+   ],
+   "sol": [
+    "W_ac = nR(T_c − T_a) = 3·8.314·192 ≈ 4789 J",
+    "W_cb = −nC_V(T_b − T_c) = −3·20.79·108 ≈ −6735 J",
+    "W = 4789 − 6735 ≈ −1946 J"
+   ],
+   "ans": [
+    "W ≈ −1.95×10³ J (el ciclo es antihorario)"
+   ],
+   "img": "img/sz19-19-42.png",
+   "num": "19.42"
+  },
+  {
+   "id": "sz19-19-43",
+   "title": "Hidrógeno: isocórico, isotérmico, isobárico",
+   "text": "",
+   "key": "T sale de pV = nRT; cada tramo con su Q y ΔU.",
+   "topics": [
+    "ter1",
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.43",
+   "notes": "",
+   "hints": [
+    "bc isotérmico: p_bV_b = p_cV_c.",
+    "Tabla 19.1, H₂: C_V = 20.42, C_p = 28.82 J/mol·K."
+   ],
+   "sol": [
+    "V_c = 2.0·0.20/0.50 = 0.80 L",
+    "T_a = pV/nR ≈ 305 K; T_b = T_c ≈ 1219 K",
+    "Q_ab = nC_VΔT ≈ +74.7 J; Q_bc = nRT ln 4 ≈ +56.2 J; Q_ca = nC_pΔT ≈ −105 J",
+    "ΔU_ab ≈ +74.7 J, ΔU_bc = 0, ΔU_ca ≈ −74.7 J"
+   ],
+   "ans": [
+    "a) 0.80 L",
+    "b) 305 K, 1219 K, 1219 K",
+    "c) ab +74.7 J, bc +56.2 J, ca −105 J",
+    "d) +74.7 J, 0, −74.7 J"
+   ],
+   "img": "img/sz19-19-43.png",
+   "num": "19.43"
+  },
+  {
+   "id": "sz19-19-44",
+   "title": "Camino quebrado contra camino recto",
+   "text": "",
+   "key": "Mismos extremos → mismo ΔU; distinto trabajo → distinto Q.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.44",
+   "notes": "",
+   "hints": [
+    "W = área bajo la línea (dos trapecios).",
+    "He: ΔU = (3/2)(p_cV_c − p_aV_a)."
+   ],
+   "sol": [
+    "W_abc = 900 + 900 = 1800 J",
+    "ΔU = 1.5·1×10⁵·0.008 = 1200 J",
+    "Q_abc = 3000 J",
+    "Directo ac: W = 800 J, Q = 2000 J"
+   ],
+   "ans": [
+    "a) 3.0×10³ J (entra)",
+    "b) 2.0×10³ J (entra)",
+    "c) es menor porque el trabajo es menor"
+   ],
+   "img": "img/sz19-19-44.png",
+   "num": "19.44"
+  },
+  {
+   "id": "sz19-19-45",
+   "title": "Nitrógeno: calentar y luego expandir",
+   "text": "",
+   "key": "Primero isocórico (solo ΔU), luego isobárico al doble de V (T se duplica).",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.45",
+   "notes": "",
+   "hints": [
+    "Tabla 19.1, N₂: C_V = 20.76, C_p = 29.07 J/mol·K.",
+    "En el tramo isobárico V se duplica → T se duplica."
+   ],
+   "sol": [
+    "T₂ = 293.15 + 13600/(2.50·20.76) ≈ 555 K",
+    "T₃ = 2T₂ ≈ 1110 K",
+    "W = nR(T₃ − T₂) ≈ 1.15×10⁴ J",
+    "Q_exp = nC_p(T₃ − T₂) ≈ 4.03×10⁴ J",
+    "ΔU = nC_V(T₃ − T₁) ≈ 4.24×10⁴ J"
+   ],
+   "ans": [
+    "a) ≈ 1110 K (837 °C)",
+    "b) 1.15×10⁴ J",
+    "c) 4.03×10⁴ J",
+    "d) 4.24×10⁴ J"
+   ],
+   "img": "img/sz19-19-45.png",
+   "num": "19.45"
+  },
+  {
+   "id": "sz19-19-48",
+   "title": "Cubo de cobre que se calienta",
+   "text": "",
+   "key": "En un sólido pΔV es diminuto: Q ≈ ΔU y c_p ≈ c_V.",
+   "topics": [
+    "ter1",
+    "cal"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.48",
+   "notes": "",
+   "hints": [
+    "Datos del cobre: ρ = 8.9×10³ kg/m³, β = 5.1×10⁻⁵ K⁻¹, c = 390 J/kg·K.",
+    "ΔV = βVΔT con V = 8.00×10⁻⁶ m³."
+   ],
+   "sol": [
+    "ΔV = 5.1×10⁻⁵·8.00×10⁻⁶·70 ≈ 2.86×10⁻⁸ m³",
+    "W = pΔV ≈ 2.9×10⁻³ J",
+    "Q = mcΔT = 0.0712·390·70 ≈ 1.94×10³ J",
+    "ΔU = Q − W ≈ 1.94×10³ J"
+   ],
+   "ans": [
+    "a) 2.9×10⁻⁸ m³",
+    "b) 2.9×10⁻³ J",
+    "c) 1.9×10³ J",
+    "d) ≈ 1.9×10³ J",
+    "e) no: c_p ≈ c_V en sólidos"
+   ],
+   "img": "img/sz19-19-48.png",
+   "num": "19.48"
+  },
+  {
+   "id": "sz19-19-49",
+   "title": "Viento chinook",
+   "text": "",
+   "key": "Aire que baja rápido se comprime adiabáticamente y se calienta.",
+   "topics": [
+    "ter1",
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.49",
+   "notes": "",
+   "hints": [
+    "Viento rápido: no hay tiempo de intercambiar calor.",
+    "T₂ = T₁(p₂/p₁)^((γ−1)/γ), γ = 1.40."
+   ],
+   "sol": [
+    "T₂ = 258.15·(8.12/5.60)^(0.4/1.4) ≈ 287.1 K ≈ 13.9 °C",
+    "Subida en Denver: 13.9 − 2.0 ≈ 11.9 °C"
+   ],
+   "ans": [
+    "a) compresión adiabática al bajar",
+    "b) sube ≈ 12 °C"
+   ],
+   "img": "img/sz19-19-49.png",
+   "num": "19.49"
+  },
+  {
+   "id": "sz19-19-50",
+   "title": "Globo de helio a gran altura",
+   "text": "",
+   "key": "El globo sube rápido: expansión adiabática del helio (γ = 5/3).",
+   "topics": [
+    "ter1",
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.50",
+   "notes": "",
+   "hints": [
+    "Ojo: la traducción dice \"mucho intercambio de calor\"; el original dice que sube tan rápido que casi no lo hay → adiabático.",
+    "pV^γ = cte y T p^((1−γ)/γ) = cte."
+   ],
+   "sol": [
+    "V₂ = 2000·(1.00/0.900)^(3/5) ≈ 2.13×10³ m³",
+    "T₂ = 288.15·(0.900)^(2/5) ≈ 276 K ≈ 3.1 °C",
+    "ΔU = (3/2)(p₂V₂ − p₁V₁) ≈ −1.25×10⁷ J"
+   ],
+   "ans": [
+    "a) 2.13×10³ m³",
+    "b) ≈ 276 K (3.1 °C)",
+    "c) ΔU ≈ −1.25×10⁷ J"
+   ],
+   "img": "img/sz19-19-50.png",
+   "num": "19.50"
+  },
+  {
+   "id": "sz19-19-51",
+   "title": "Bomba de aire hacia un tanque",
+   "text": "",
+   "key": "El aire fluye cuando su presión absoluta iguala la del tanque (manométrica + atmosférica).",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.51",
+   "notes": "",
+   "hints": [
+    "p del tanque = 3.80×10⁵ + 1.01×10⁵ = 4.81×10⁵ Pa.",
+    "γ = (C_V + R)/C_V ≈ 1.40."
+   ],
+   "sol": [
+    "L₂ = 0.250·(1.01/4.81)^(1/γ) ≈ 0.082 m → recorrido ≈ 0.168 m",
+    "T₂ = 300.15·(4.81/1.01)^((γ−1)/γ) ≈ 469 K",
+    "W = nC_VΔT = 20.0·20.8·168.6 ≈ 7.0×10⁴ J"
+   ],
+   "ans": [
+    "a) ≈ 0.168 m",
+    "b) ≈ 469 K (196 °C)",
+    "c) ≈ 7.0×10⁴ J"
+   ],
+   "img": "img/sz19-19-51.png",
+   "num": "19.51"
+  },
+  {
+   "id": "sz19-19-52",
+   "title": "Isobárico y luego adiabático",
+   "text": "",
+   "key": "Encadenar procesos: T se duplica a p constante y luego baja con TV^(γ−1) = cte.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.52",
+   "notes": "",
+   "hints": [
+    "n = p₀V₀/(RT₀); γ = (C_V + R)/C_V.",
+    "En el tramo adiabático W = nC_V(T_inicial − T_final)."
+   ],
+   "sol": [
+    "Isobárico: W₁ = p₀V₀, T₁ = 2T₀",
+    "Adiabático: T_f = 2T₀·2^(1−γ) = 2^(2−γ) T₀",
+    "W₂ = (C_V/R)p₀V₀·2(1 − 2^(1−γ))",
+    "Q total = Q₁ = (C_V + R)p₀V₀/R, entra"
+   ],
+   "ans": [
+    "b) W = p₀V₀[1 + 2(C_V/R)(1 − 2^(1−γ))]",
+    "c) T_f = 2^(2−γ) T₀",
+    "d) |Q| = (C_V + R)p₀V₀/R, entra al gas"
+   ],
+   "img": "img/sz19-19-52.png",
+   "num": "19.52"
+  },
+  {
+   "id": "sz19-19-53",
+   "title": "450 J de trabajo de tres maneras",
+   "text": "",
+   "key": "Mismo W: isotérmico Q = W, adiabático ΔU = −W, isobárico Q = (5/2)W.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.53",
+   "notes": "",
+   "hints": [
+    "Isotérmico: ΔU = 0.",
+    "Isobárico monoatómico: W = nRΔT y ΔU = (3/2)nRΔT."
+   ],
+   "sol": [
+    "a) Q = 450 J, ΔU = 0",
+    "b) Q = 0, ΔU = −450 J",
+    "c) ΔU = 1.5·450 = 675 J, Q = 1125 J"
+   ],
+   "ans": [
+    "a) Q = 450 J, ΔU = 0",
+    "b) Q = 0, ΔU = −450 J",
+    "c) Q = 1125 J, ΔU = 675 J"
+   ],
+   "img": "img/sz19-19-53.png",
+   "num": "19.53"
+  },
+  {
+   "id": "sz19-19-58",
+   "title": "Triplicar el volumen: tres procesos",
+   "text": "",
+   "key": "Compara W, Q y ΔU de isotérmico, adiabático e isobárico desde el mismo estado.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.58",
+   "notes": "",
+   "hints": [
+    "Isotérmico: W = nRT ln 3. Adiabático: W = nC_V(T₁ − T₂).",
+    "Isobárico: W = p(3V − V) = 2nRT."
+   ],
+   "sol": [
+    "W_T = 1.20·8.314·300·ln 3 ≈ 3.29×10³ J",
+    "T₂ adiab = 300·3^(−2/3) ≈ 144 K → W ≈ 2.33×10³ J",
+    "W_p = 2nRT ≈ 5.99×10³ J",
+    "|Q|: isobárico máx (1.50×10⁴ J), adiabático mín (0)",
+    "|ΔU|: isobárico máx (8.98×10³ J), isotérmico mín (0)"
+   ],
+   "ans": [
+    "a) 3.29×10³ J",
+    "b) 2.33×10³ J",
+    "c) 5.99×10³ J",
+    "d) |W| máx isobárico, mín adiabático",
+    "e) |Q| máx isobárico, mín adiabático",
+    "f) |ΔU| máx isobárico, mín isotérmico"
+   ],
+   "img": "img/sz19-19-58.png",
+   "num": "19.58"
+  },
+  {
+   "id": "sz19-19-59",
+   "title": "Identificar procesos por su calor",
+   "text": "",
+   "key": "Q ≈ 0 es adiabático; para el mismo ΔT, Q_p > Q_V y su cociente es γ.",
+   "topics": [
+    "ter1"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.59",
+   "notes": "",
+   "hints": [
+    "a ≈ 0 J, b = 30 J, c = 50 J.",
+    "Q_p/Q_V = C_p/C_V = 50/30 = 5/3 → monoatómico."
+   ],
+   "sol": [
+    "a adiabático, b isocórico, c isobárico",
+    "ΔT = 30/(0.300·1.5·8.314) ≈ 8.0 K → T₂ ≈ 28.0 °C",
+    "W: a = −30 J, b = 0, c = nRΔT = 20 J",
+    "ΔV/V: c +2.7 %, a ≈ −4.0 % (mayor)"
+   ],
+   "ans": [
+    "a) a adiabático, b isocórico, c isobárico",
+    "b) T₂ ≈ 28.0 °C",
+    "c) −30 J, 0, +20 J",
+    "d) el adiabático",
+    "e) a disminuye, b constante, c aumenta"
+   ],
+   "img": "img/sz19-19-59.png",
+   "num": "19.59"
+  },
+  {
+   "id": "sz19-19-60",
+   "title": "γ con la gráfica log p – log V",
+   "text": "",
+   "key": "pV^γ = cte ⇒ log p = −γ log V + cte: la pendiente es −γ.",
+   "topics": [
+    "ter1",
+    "tmp"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.60",
+   "notes": "",
+   "hints": [
+    "Convierte a Pa y m³ antes del logaritmo.",
+    "T = T₁·pV/(p₁V₁)."
+   ],
+   "sol": [
+    "Ajuste lineal: pendiente ≈ −1.39 → γ ≈ 1.39 ≈ 1.40",
+    "Gas diatómico",
+    "T ≈ 22.0, 55, 76, 153, 283 °C"
+   ],
+   "ans": [
+    "b) γ ≈ 1.40, diatómico",
+    "c) T ≈ 295, 328, 350, 426, 556 K: aumenta"
+   ],
+   "img": "img/sz19-19-60.png",
+   "num": "19.60"
+  },
+  {
+   "id": "sz19-19-62",
+   "title": "Turbocargador e interenfriador",
+   "text": "",
+   "key": "Más masa en el mismo volumen: ρ ∝ p/T; enfriar a p constante aumenta la densidad.",
+   "topics": [
+    "ter1",
+    "tmp"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 19, ej. 19.62",
+   "notes": "",
+   "hints": [
+    "Con interenfriador: misma T que al inicio → ρ₂ = ρ₁(p₂/p₁).",
+    "Sin él (adiabático): ρ₂ = ρ₁(p₂/p₁)^(1/γ)."
+   ],
+   "sol": [
+    "b) m = 1.23·(1.45/1.01)·575×10⁻⁶ ≈ 1.02×10⁻³ kg → +43.6 %",
+    "c) T = 288.15·(1.4356)^(0.286) ≈ 320 K",
+    "m = 1.23·(1.4356)^(1/1.4)·575×10⁻⁶ ≈ 9.16×10⁻⁴ kg → +29.5 %"
+   ],
+   "ans": [
+    "b) 1.02×10⁻³ kg, +44 %",
+    "c) 9.16×10⁻⁴ kg, +29 %"
+   ],
+   "img": "img/sz19-19-62.png",
+   "num": "19.62"
+  }
+ ]
+}

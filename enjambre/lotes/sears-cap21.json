@@ -1,0 +1,878 @@
+{
+ "version": 18,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz21-p21-5",
+   "title": "Esfera atraída y luego repelida",
+   "text": "",
+   "key": "Primero inducción (polarización), luego conducción al tocar: queda con carga del mismo signo.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, pregunta de análisis P21.5",
+   "notes": "",
+   "hints": [
+    "La esfera es neutra pero conductora: sus electrones pueden moverse.",
+    "Al tocar, ¿qué carga pasa entre la varilla y la esfera?"
+   ],
+   "sol": [
+    "La varilla + atrae electrones al lado cercano: la cara cercana queda − y la lejana +.",
+    "La carga − está más cerca, así que la atracción gana (F ∝ 1/r²).",
+    "Al tocar, la esfera cede electrones a la varilla y queda +: ahora se repelen."
+   ],
+   "ans": [
+    "Polarización → atracción; contacto → misma carga → repulsión"
+   ],
+   "img": "img/sz21-p21-5.png",
+   "num": "P21.5"
+  },
+  {
+   "id": "sz21-p21-7",
+   "title": "Signos por las líneas de campo",
+   "text": "",
+   "key": "Las líneas salen de las cargas + y entran a las −; E es pequeño donde las líneas se separan.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, pregunta de análisis P21.7",
+   "notes": "",
+   "hints": [
+    "Mira hacia dónde apuntan las flechas cerca de cada carga.",
+    "Busca la zona sin líneas a los lados de la carga central."
+   ],
+   "sol": [
+    "Arriba y abajo: las líneas salen → positivas. Centro: las líneas entran → negativa.",
+    "A los lados de la carga central, los empujes de las dos + hacia afuera compiten con el tirón de la − hacia adentro.",
+    "Se anulan en la horizontal de la carga central, a ≈ 1.3d de ella (d = separación entre cargas)."
+   ],
+   "ans": [
+    "a) +, −, + (de arriba abajo)",
+    "b) a los lados de la carga central, donde E ≈ 0"
+   ],
+   "img": "img/sz21-p21-7.png",
+   "num": "P21.7"
+  },
+  {
+   "id": "sz21-p21-9",
+   "title": "¿Sigue la partícula la línea de campo?",
+   "text": "",
+   "key": "La fuerza es tangente a la línea, pero la velocidad no tiene por qué serlo: con líneas curvas la inercia la saca de ellas.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, pregunta de análisis P21.9",
+   "notes": "",
+   "hints": [
+    "F = qE es tangente a la línea, no la velocidad.",
+    "Con una sola carga las líneas son rectas."
+   ],
+   "sol": [
+    "Carga aislada: líneas radiales rectas; parte del reposo y F siempre en la misma recta → sigue la línea.",
+    "Dipolo: líneas curvas; la partícula gana velocidad y por inercia no gira tan rápido como la línea → se separa de ella."
+   ],
+   "ans": [
+    "a) sí (líneas rectas)",
+    "b) no (líneas curvas)"
+   ],
+   "img": "img/sz21-p21-9.png",
+   "num": "P21.9"
+  },
+  {
+   "id": "sz21-p21-15",
+   "title": "Q y 2Q con la misma masa",
+   "text": "",
+   "key": "Tercera ley: las dos fuerzas son iguales; con masas iguales, las aceleraciones también.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, pregunta de análisis P21.15",
+   "notes": "",
+   "hints": [
+    "¿La fuerza que Q ejerce sobre 2Q es mayor que la que 2Q ejerce sobre Q?",
+    "a = F/m."
+   ],
+   "sol": [
+    "F = k·Q·2Q/r² sobre cada una (acción y reacción).",
+    "Misma masa → misma aceleración."
+   ],
+   "ans": [
+    "a₀"
+   ],
+   "img": "img/sz21-p21-15.png",
+   "num": "P21.15"
+  },
+  {
+   "id": "sz21-21-28",
+   "title": "Campo eléctrico de la Tierra",
+   "text": "",
+   "key": "Levitar exige qE = mg con E = 150 N/C hacia abajo: q negativa y enorme.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.28",
+   "notes": "",
+   "hints": [
+    "E apunta al centro: para empujar hacia arriba la carga debe ser negativa.",
+    "F = kq²/r² entre dos personas."
+   ],
+   "sol": [
+    "|q| = mg/E = 60·9.8/150 ≈ 3.9 C (negativa)",
+    "F = 8.99×10⁹·3.92²/100² ≈ 1.4×10⁷ N",
+    "Repulsión gigantesca e imposible de acumular: no sirve para volar."
+   ],
+   "ans": [
+    "a) q ≈ −3.9 C",
+    "b) ≈ 1.4×10⁷ N; no es factible"
+   ],
+   "img": "img/sz21-21-28.png",
+   "num": "21.28"
+  },
+  {
+   "id": "sz21-21-29",
+   "title": "Electrón entre placas paralelas",
+   "text": "",
+   "key": "Como un tiro horizontal: x = v₀t uniforme, y = ½at² con a = eE/m.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.29",
+   "notes": "",
+   "hints": [
+    "t = 2.00 cm / v₀; debe subir 0.500 cm.",
+    "El protón tiene la misma |F| pero 1836 veces más masa."
+   ],
+   "sol": [
+    "t = 1.25×10⁻⁸ s; a = 2(0.005)/t² = 6.4×10¹³ m/s²",
+    "E = m_e a/e ≈ 364 N/C",
+    "Protón: a = eE/m_p ≈ 3.5×10¹⁰ m/s² → y ≈ 2.7×10⁻⁶ m hacia abajo",
+    "La gravedad (9.8 m/s²) es despreciable frente a estas aceleraciones"
+   ],
+   "ans": [
+    "a) 364 N/C",
+    "b) no golpea; baja ≈ 2.7 μm",
+    "c) el protón casi no se desvía y va al revés",
+    "d) sí, g es despreciable"
+   ],
+   "img": "img/sz21-21-29.png",
+   "num": "21.29"
+  },
+  {
+   "id": "sz21-21-42",
+   "title": "Campo en el centro de un cuadrado ±q",
+   "text": "",
+   "key": "Suma vectorial: las componentes horizontales se cancelan y las verticales se suman.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.42",
+   "notes": "",
+   "hints": [
+    "Cada carga está a a/√2 del centro: E = 2kq/a².",
+    "Las + empujan alejándose de ellas, las − atraen."
+   ],
+   "sol": [
+    "Las cuatro componentes verticales apuntan hacia el lado de las cargas negativas",
+    "E = 4·(2kq/a²)·cos 45° = 4√2 kq/a²"
+   ],
+   "ans": [
+    "E = 4√2 kq/a² ≈ 5.66 kq/a², hacia el lado negativo"
+   ],
+   "img": "img/sz21-21-42.png",
+   "num": "21.42"
+  },
+  {
+   "id": "sz21-21-44",
+   "title": "Campo de dos cargas en vectores unitarios",
+   "text": "",
+   "key": "Escribe cada E con su vector unitario de la carga al punto y suma componentes.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.44",
+   "notes": "",
+   "hints": [
+    "q₁ negativa: su campo apunta hacia ella.",
+    "Distancia de q₂ a P: 5.00 cm, unitario (−0.6, 0.8)."
+   ],
+   "sol": [
+    "E₁ = k·5.00×10⁻⁹/0.04² = 2.81×10⁴ N/C → E₁ = −2.81×10⁴ ĵ",
+    "E₂ = k·3.00×10⁻⁹/0.05² = 1.08×10⁴ N/C → (−6.47×10³ î + 8.63×10³ ĵ)",
+    "E = −6.47×10³ î − 1.95×10⁴ ĵ N/C"
+   ],
+   "ans": [
+    "a) E₁ = −2.81×10⁴ ĵ; E₂ = −6.47×10³ î + 8.63×10³ ĵ (N/C)",
+    "b) E = −6.47×10³ î − 1.95×10⁴ ĵ N/C"
+   ],
+   "img": "img/sz21-21-44.png",
+   "num": "21.44"
+  },
+  {
+   "id": "sz21-21-47",
+   "title": "Dos cargas iguales: campo en cuatro puntos",
+   "text": "",
+   "key": "Superposición y simetría: en el origen se anula; en el eje y solo queda la componente y.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.47",
+   "notes": "",
+   "hints": [
+    "Usa simetría antes de calcular.",
+    "En c) una carga está justo encima: su campo es solo vertical."
+   ],
+   "sol": [
+    "a) E = 0",
+    "b) E = kq(1/0.150² + 1/0.450²) ≈ 2.66×10³ N/C, +x",
+    "c) E = (129, −510) N/C → 526 N/C, 75.7° bajo +x",
+    "d) E = 2·(kq/0.25²)·0.8 ≈ 1.38×10³ N/C, +y"
+   ],
+   "ans": [
+    "a) 0",
+    "b) 2.66×10³ N/C (+x)",
+    "c) 526 N/C a 75.7° bajo +x",
+    "d) 1.38×10³ N/C (+y)"
+   ],
+   "img": "img/sz21-21-47.png",
+   "num": "21.47"
+  },
+  {
+   "id": "sz21-21-49",
+   "title": "Disco, anillo y carga puntual",
+   "text": "",
+   "key": "La misma carga da distinto E según cuán lejos esté repartida del punto.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.49",
+   "notes": "",
+   "hints": [
+    "Disco: E = (σ/2ε₀)[1 − x/√(x² + R²)].",
+    "Anillo: E = kQx/(x² + R²)^(3/2); puntual: kQ/x²."
+   ],
+   "sol": [
+    "σ = Q/πR² → E_disco ≈ 1.14×10⁵ N/C",
+    "E_anillo ≈ 8.91×10⁴ N/C",
+    "E_puntual ≈ 1.46×10⁵ N/C",
+    "Carga negativa: E apunta hacia el disco. Más carga cerca de P → más campo"
+   ],
+   "ans": [
+    "a) 1.14×10⁵ N/C hacia el disco",
+    "b) 8.91×10⁴ N/C",
+    "c) 1.46×10⁵ N/C",
+    "d) la carga está más lejos en b) y más cerca en c)"
+   ],
+   "img": "img/sz21-21-49.png",
+   "num": "21.49"
+  },
+  {
+   "id": "sz21-21-52",
+   "title": "Alambre recto y luego en anillo",
+   "text": "",
+   "key": "Misma carga total con otra forma: usa la fórmula de varilla finita y la de anillo.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.52",
+   "notes": "",
+   "hints": [
+    "Varilla finita (en su mediatriz): E = kQ/(y√(y² + a²)), a = L/2.",
+    "Anillo: radio R = L/2π."
+   ],
+   "sol": [
+    "Q = 175 nC/m · 0.0850 m = 14.9 nC",
+    "Recto: E ≈ 3.03×10⁴ N/C, hacia arriba",
+    "Anillo (R = 1.35 cm): E = kQy/(y² + R²)^(3/2) ≈ 3.45×10⁴ N/C, hacia arriba"
+   ],
+   "ans": [
+    "a) 3.03×10⁴ N/C",
+    "b) 3.45×10⁴ N/C"
+   ],
+   "img": "img/sz21-21-52.png",
+   "num": "21.52"
+  },
+  {
+   "id": "sz21-21-54",
+   "title": "Dipolo del amoniaco contra la agitación térmica",
+   "text": "",
+   "key": "U = −pE cos φ; comparar con (3/2)kT da la temperatura donde el orden se pierde.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.54",
+   "notes": "",
+   "hints": [
+    "Paralelo: U = −pE; perpendicular: U = 0.",
+    "(3/2)kT = ΔU."
+   ],
+   "sol": [
+    "ΔU = pE = 5.0×10⁻³⁰·1.6×10⁶ = 8.0×10⁻²⁴ J",
+    "T = 2ΔU/(3k) ≈ 0.39 K"
+   ],
+   "ans": [
+    "a) 8.0×10⁻²⁴ J",
+    "b) ≈ 0.39 K"
+   ],
+   "img": "img/sz21-21-54.png",
+   "num": "21.54"
+  },
+  {
+   "id": "sz21-21-55",
+   "title": "Equilibrio de un dipolo",
+   "text": "",
+   "key": "τ = pE sen φ = 0 en φ = 0 (estable) y φ = π (inestable).",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.55",
+   "notes": "",
+   "hints": [
+    "τ = p × E.",
+    "Gira un poco el dipolo y mira si el torque lo devuelve."
+   ],
+   "sol": [
+    "τ = 0 si p ∥ E (φ = 0) o p antiparalelo (φ = π)",
+    "φ = 0: el torque lo regresa → estable; φ = π: lo aleja → inestable",
+    "Entre sus cargas el campo propio va de + a −, opuesto a p y por tanto al E externo"
+   ],
+   "ans": [
+    "a) φ = 0 y φ = π",
+    "b) 0 estable, π inestable",
+    "c) el campo propio se opone al externo"
+   ],
+   "img": "img/sz21-21-55.png",
+   "num": "21.55"
+  },
+  {
+   "id": "sz21-21-58",
+   "title": "Campo del dipolo en su mediatriz",
+   "text": "",
+   "key": "En la mediatriz las componentes a lo largo del eje x se cancelan y E ∝ p/x³ lejos.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.58",
+   "notes": "",
+   "hints": [
+    "Dipolo del ejemplo 21.14: +q en y = +d/2, −q en y = −d/2 (p hacia +y).",
+    "Cada carga está a √(x² + d²/4) del punto."
+   ],
+   "sol": [
+    "Las componentes x se cancelan; las y se suman hacia −y",
+    "E = kqd/(x² + d²/4)^(3/2), opuesto a p",
+    "x ≫ d: E ≈ p/(4πε₀x³)"
+   ],
+   "ans": [
+    "a) E = kqd/(x² + d²/4)^(3/2), dirección −y (opuesta a p)",
+    "b) E ∝ 1/x³"
+   ],
+   "img": "img/sz21-21-58.png",
+   "num": "21.58"
+  },
+  {
+   "id": "sz21-21-59",
+   "title": "Cuatro cargas en un cuadrado",
+   "text": "",
+   "key": "Dos vecinas a L y una en la diagonal a L√2: suma vectorial a lo largo de la diagonal.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.59",
+   "notes": "",
+   "hints": [
+    "Las dos vecinas dan componentes perpendiculares iguales.",
+    "La diagonal da kQ²/2L²."
+   ],
+   "sol": [
+    "Vecinas: √2·kQ²/L² a lo largo de la diagonal",
+    "Opuesta: kQ²/(2L²)",
+    "F = (kQ²/L²)(√2 + 1/2) ≈ 1.91 kQ²/L²"
+   ],
+   "ans": [
+    "F ≈ 1.91 kQ²/L², hacia afuera por la diagonal"
+   ],
+   "img": "img/sz21-21-59.png",
+   "num": "21.59"
+  },
+  {
+   "id": "sz21-21-62",
+   "title": "Péndulos cargados con ángulo pequeño",
+   "text": "",
+   "key": "Equilibrio: F_e = mg tan θ y tan θ ≈ sen θ = d/2L.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.62",
+   "notes": "",
+   "hints": [
+    "Diagrama de cuerpo libre: T, mg y kq²/d².",
+    "tan θ = F_e/mg."
+   ],
+   "sol": [
+    "kq²/d² = mg·(d/2L)",
+    "d³ = 2kq²L/(mg) = q²L/(2πε₀mg)"
+   ],
+   "ans": [
+    "d = (q²L/2πε₀mg)^(1/3)"
+   ],
+   "img": "img/sz21-21-62.png",
+   "num": "21.62"
+  },
+  {
+   "id": "sz21-21-64",
+   "title": "Péndulos con cargas distintas",
+   "text": "",
+   "key": "Las fuerzas son iguales por la tercera ley; al unirlas se reparte la carga total.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.64",
+   "notes": "",
+   "hints": [
+    "F = mg tan θ; d = 2L sen θ.",
+    "Antes: q₁q₂ = Fd²/k. Después: q′ = (q₁ + q₂)/2."
+   ],
+   "sol": [
+    "F = 0.0784·tan 20° ≈ 0.0285 N; T = mg/cos 20° ≈ 0.0834 N",
+    "No se puede saber cada carga: solo su producto",
+    "Después: q′ = √(F′d′²/k) = 1.12 μC, con F′ = mg tan 30° y d′ = 0.500 m",
+    "q₁q₂ = 3.71×10⁻¹³ C² y q₁ + q₂ = 2.24 μC → 2.06 μC y 0.18 μC"
+   ],
+   "ans": [
+    "b) F ≈ 0.0285 N, T ≈ 0.0834 N",
+    "c) solo se conoce q₁q₂",
+    "d) ≈ 2.06 μC y 0.18 μC"
+   ],
+   "img": "img/sz21-21-64.png",
+   "num": "21.64"
+  },
+  {
+   "id": "sz21-21-69",
+   "title": "Tres cargas en equilibrio",
+   "text": "",
+   "key": "La tercera carga va entre las dos, más cerca de la menor, y con signo opuesto.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.69",
+   "notes": "",
+   "hints": [
+    "Para q: kQq/x² = k·4Qq/(d − x)².",
+    "Para Q: la fuerza de q debe anular la de 4Q."
+   ],
+   "sol": [
+    "d − x = 2x → x = d/3",
+    "kqQ/(d/3)² = k·4Q²/d² → |q| = 4Q/9",
+    "Debe ser negativa"
+   ],
+   "ans": [
+    "q = −4Q/9 en x = d/3"
+   ],
+   "img": "img/sz21-21-69.png",
+   "num": "21.69"
+  },
+  {
+   "id": "sz21-21-74",
+   "title": "Esferas ±q en un campo horizontal",
+   "text": "",
+   "key": "Cada esfera: qE = mg tan θ + kq²/d² (se atraen entre sí).",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.74",
+   "notes": "",
+   "hints": [
+    "E hacia la izquierda empuja la + a la izquierda.",
+    "θ = 29.0° para cada cuerda; d = 2L sen 29°."
+   ],
+   "sol": [
+    "La esfera izquierda es la positiva",
+    "d = 0.514 m; mg tan θ = 3.69×10⁻⁵ N; kq²/d² = 1.76×10⁻⁴ N",
+    "E = (3.69×10⁻⁵ + 1.76×10⁻⁴)/72.0×10⁻⁹ ≈ 2.96×10³ N/C"
+   ],
+   "ans": [
+    "a) la de la izquierda",
+    "b) E ≈ 2.96×10³ N/C"
+   ],
+   "img": "img/sz21-21-74.png",
+   "num": "21.74"
+  },
+  {
+   "id": "sz21-21-75",
+   "title": "Electrón en la órbita de Bohr",
+   "text": "",
+   "key": "La fuerza de Coulomb es la fuerza centrípeta.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.75",
+   "notes": "",
+   "hints": [
+    "ke²/r² = mv²/r.",
+    "m_e = 9.11×10⁻³¹ kg."
+   ],
+   "sol": [
+    "v = √(ke²/(m_e r))",
+    "v ≈ 2.19×10⁶ m/s"
+   ],
+   "ans": [
+    "v ≈ 2.19×10⁶ m/s"
+   ],
+   "img": "img/sz21-21-75.png",
+   "num": "21.75"
+  },
+  {
+   "id": "sz21-21-76",
+   "title": "Gota de lluvia suspendida",
+   "text": "",
+   "key": "qE = mg con E hacia abajo: la gota debe tener carga negativa.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.76",
+   "notes": "",
+   "hints": [
+    "m = ρ(4/3)πr³ con r = 0.010 mm y ρ = 1000 kg/m³.",
+    "N = q/e."
+   ],
+   "sol": [
+    "m = 4.19×10⁻¹² kg",
+    "q = mg/E = 2.74×10⁻¹³ C",
+    "N = q/e ≈ 1.7×10⁶ electrones"
+   ],
+   "ans": [
+    "≈ 1.7×10⁶ electrones"
+   ],
+   "img": "img/sz21-21-76.png",
+   "num": "21.76"
+  },
+  {
+   "id": "sz21-21-77",
+   "title": "Protón en tiro parabólico eléctrico",
+   "text": "",
+   "key": "Igual que un proyectil, con a = eE/m hacia arriba.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.77",
+   "notes": "",
+   "hints": [
+    "a = eE/m_p hacia arriba; v₀ apunta α bajo la horizontal.",
+    "h = (v₀ sen α)²/2a; d = v₀² sen 2α/a."
+   ],
+   "sol": [
+    "a = 1.602×10⁻¹⁹·500/1.673×10⁻²⁷ ≈ 4.79×10¹⁰ m/s²",
+    "h_máx = (2.0×10⁵)²/(2a) ≈ 0.418 m",
+    "d = (4.0×10⁵)² sen 60°/a ≈ 2.89 m"
+   ],
+   "ans": [
+    "a) h = v₀² sen²α/(2eE/m)",
+    "b) d = v₀² sen 2α/(eE/m)",
+    "d) h ≈ 0.418 m, d ≈ 2.89 m"
+   ],
+   "img": "img/sz21-21-77.png",
+   "num": "21.77"
+  },
+  {
+   "id": "sz21-21-78",
+   "title": "Medir q/m con la desviación",
+   "text": "",
+   "key": "Desviación dentro (parábola) + desviación fuera (recta con la velocidad de salida).",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.78",
+   "notes": "",
+   "hints": [
+    "Las placas miden 26.0 cm (el \"26.0 m\" es errata, ver figura).",
+    "d = a·t₁(t₁/2 + t₂), t₁ = 0.260/v₀, t₂ = 0.560/v₀."
+   ],
+   "sol": [
+    "d = a(0.260)(0.130 + 0.560)/v₀²",
+    "a = 0.0125·(5.00×10³)²/0.1794 ≈ 1.74×10⁶ m/s²",
+    "q/m = a/E ≈ 2.18×10³ C/kg (positiva: baja con E hacia abajo)"
+   ],
+   "ans": [
+    "q/m ≈ 2.18×10³ C/kg"
+   ],
+   "img": "img/sz21-21-78.png",
+   "num": "21.78"
+  },
+  {
+   "id": "sz21-21-79",
+   "title": "Campo de una varilla en su eje",
+   "text": "",
+   "key": "Integra dE = k dq/(x − s)²; lejos se ve como una carga puntual.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.79",
+   "notes": "",
+   "hints": [
+    "dq = (Q/a) ds.",
+    "∫₀ᵃ ds/(x − s)² = 1/(x − a) − 1/x."
+   ],
+   "sol": [
+    "E_x = kQ/[x(x − a)], E_y = 0",
+    "F = kQq/[r(a + r)] hacia +x",
+    "r ≫ a: F ≈ kQq/r²"
+   ],
+   "ans": [
+    "a) E_x = kQ/[x(x − a)], E_y = 0",
+    "b) F = Qq/[4πε₀ r(a + r)], +x",
+    "c) → Qq/(4πε₀r²)"
+   ],
+   "img": "img/sz21-21-79.png",
+   "num": "21.79"
+  },
+  {
+   "id": "sz21-21-93",
+   "title": "Medir dos cargas con una de prueba",
+   "text": "",
+   "key": "Dos mediciones de fuerza dan dos ecuaciones para q₁ y q₂.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.93",
+   "notes": "",
+   "hints": [
+    "En x = 0.200: k q₃(q₁ − q₂)/0.200² = 4.50 N.",
+    "En x = 0.600: k q₃(q₁/0.600² + q₂/0.200²) = 3.50 N."
+   ],
+   "sol": [
+    "q₁ − q₂ = 5.01 μC y q₁/0.36 + q₂/0.04 = 97.4 μC/m²",
+    "q₁ ≈ 8.0 μC, q₂ ≈ 3.0 μC",
+    "x = −0.200: F ≈ 7.5 N hacia −x",
+    "F = 0 donde q₁/x² = q₂/(0.4 − x)² → x ≈ 0.248 m"
+   ],
+   "ans": [
+    "a) q₁ ≈ 8.0 μC, q₂ ≈ 3.0 μC",
+    "b) 7.5 N, −x",
+    "c) x ≈ 0.248 m"
+   ],
+   "img": "img/sz21-21-93.png",
+   "num": "21.93"
+  },
+  {
+   "id": "sz21-21-94",
+   "title": "Anillo: carga y radio desde los datos",
+   "text": "",
+   "key": "Lejos E ≈ kQ/x² (Ex² constante); cerca E ≈ kQx/a³ (E/x constante).",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.94",
+   "notes": "",
+   "hints": [
+    "Lee la meseta de Ex² ≈ 44.5 N·m²/C.",
+    "Lee E/x cuando x → 0 ≈ 705 N/C·m."
+   ],
+   "sol": [
+    "kQ = 44.5 → Q ≈ 4.95×10⁻⁹ C",
+    "kQ/a³ = 705 → a³ = 44.5/705",
+    "a ≈ 0.40 m"
+   ],
+   "ans": [
+    "a) Q ≈ 4.9 nC",
+    "b) a ≈ 0.40 m"
+   ],
+   "img": "img/sz21-21-94.png",
+   "num": "21.94"
+  },
+  {
+   "id": "sz21-21-95",
+   "title": "Signos de las cargas por la fuerza",
+   "text": "",
+   "key": "Que no haya componente y fija la razón entre F₁ y F₂ y obliga a signos opuestos.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.95",
+   "notes": "",
+   "hints": [
+    "q₃ está a 4.00 cm de q₁ y 3.00 cm de q₂, con ángulo recto en q₃.",
+    "Unitarios hacia q₃: desde q₁ (0.8, 0.6), desde q₂ (−0.6, 0.8)."
+   ],
+   "sol": [
+    "F_y = 0 exige fuerzas de distinto tipo; para que F_x < 0: q₁ atrae (negativa) y q₂ repele (positiva)",
+    "|F₁| = k(2.00 μC)(4.00 μC)/0.04² = 44.9 N",
+    "0.6·44.9 = 0.8 F₂ → F₂ = 33.7 N → q₂ ≈ 0.844 μC",
+    "F = 0.8·44.9 + 0.6·33.7 ≈ 56.2 N"
+   ],
+   "ans": [
+    "b) q₁ negativa, q₂ positiva",
+    "c) |q₂| ≈ 0.844 μC",
+    "d) F ≈ 56.2 N"
+   ],
+   "img": "img/sz21-21-95.png",
+   "num": "21.95"
+  },
+  {
+   "id": "sz21-21-97",
+   "title": "Fuerza entre dos varillas cargadas",
+   "text": "",
+   "key": "Campo de una varilla en su eje, luego integra λE sobre la otra.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.97",
+   "notes": "",
+   "hints": [
+    "E de la varilla 2 en x > 0: kQ/L·[1/(x + a/2) − 1/(x + a/2 + L)].",
+    "Integra de x = a/2 a a/2 + L con dq = (Q/L)dx."
+   ],
+   "sol": [
+    "F = (kQ²/L²)∫[1/(x + a/2) − 1/(x + a/2 + L)]dx",
+    "= (kQ²/L²) ln[(a + L)²/(a(a + 2L))]",
+    "a ≫ L: el logaritmo ≈ L²/a² → F ≈ kQ²/a²"
+   ],
+   "ans": [
+    "b) F = (Q²/4πε₀L²) ln[(a + L)²/(a(a + 2L))]",
+    "c) F → Q²/(4πε₀a²): como dos cargas puntuales"
+   ],
+   "img": "img/sz21-21-97.png",
+   "num": "21.97"
+  },
+  {
+   "id": "sz21-21-99",
+   "title": "Abejas eléctricas",
+   "text": "",
+   "key": "Un conductor neutro se polariza ante una carga cercana; dos cargas positivas tienen líneas que se repelen.",
+   "topics": [
+    "elec"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 21, ej. 21.99 + 21.100",
+   "notes": "",
+   "hints": [
+    "Antes de tocar no hubo contacto: ¿qué puede mover la carga dentro del tallo?",
+    "Entre dos cargas del mismo signo las líneas no se conectan: salen de ambas y se desvían."
+   ],
+   "sol": [
+    "21.99: la abeja + atrae electrones del tallo hacia la flor y deja el tallo +: polarización.",
+    "21.100: abeja y flor son positivas: las líneas salen de ambas y se apartan entre sí, el diagrama c)."
+   ],
+   "ans": [
+    "21.99: c)",
+    "21.100: c)"
+   ],
+   "img": "img/sz21-21-99.png",
+   "num": "21.99 + 21.100"
+  }
+ ]
+}

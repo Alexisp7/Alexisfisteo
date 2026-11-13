@@ -1,0 +1,853 @@
+{
+ "version": 1,
+ "topics": [],
+ "exercises": [
+  {
+   "id": "sz5-p5-1",
+   "title": "Hombre que se sube a sí mismo con una polea",
+   "text": "",
+   "key": "Elige bien el sistema: hombre + silla cuelgan de DOS tramos de la misma cuerda.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, pregunta de análisis P5.1",
+   "notes": "",
+   "hints": [
+    "Si el hombre está en reposo (o sube con v constante), la suma de fuerzas sobre hombre + silla es cero.",
+    "¿Cuántos tramos de cuerda tiran hacia arriba del sistema hombre + silla? Cada uno con la misma T.",
+    "Para la fuerza de la silla, haz el DCL solo del hombre: cuerda (T hacia arriba), peso y normal de la silla."
+   ],
+   "sol": [
+    "Sistema hombre + silla: 2T = w_h + w_s  →  T = (w_h + w_s)/2",
+    "Solo el hombre: T + N = w_h  →  N = w_h − T = (w_h − w_s)/2",
+    "Por eso se puede levantar con la mitad de su peso: la polea \"duplica\" su tirón."
+   ],
+   "ans": [
+    "T = (w_hombre + w_silla)/2",
+    "Silla sobre el hombre: N = (w_hombre − w_silla)/2 hacia arriba"
+   ],
+   "img": "img/sz5-p5-1.png",
+   "num": "P5.1"
+  },
+  {
+   "id": "sz5-p5-10",
+   "title": "¿Jalar o empujar en ángulo? La normal manda",
+   "text": "",
+   "key": "La fricción cinética es μk·N, y N cambia con la componente vertical de tu fuerza.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, pregunta de análisis P5.10",
+   "notes": "",
+   "hints": [
+    "Escribe ΣFy = 0 en ambos casos: ¿la componente vertical de F suma o resta a la normal?",
+    "Menos normal significa menos fricción."
+   ],
+   "sol": [
+    "Jalando hacia arriba: N = mg − F sinθ (la normal baja) → fricción menor",
+    "Empujando hacia abajo: N = mg + F sinθ (la normal sube) → fricción mayor",
+    "Por eso jalar requiere menos fuerza para v constante."
+   ],
+   "ans": [
+    "Jalar hacia arriba reduce N y con ella la fricción; empujar hacia abajo la aumenta."
+   ],
+   "img": "img/sz5-p5-10.png",
+   "num": "P5.10"
+  },
+  {
+   "id": "sz5-p5-13",
+   "title": "Empujar una caja dentro de un ascensor",
+   "text": "",
+   "key": "En un ascensor acelerado la normal es m(g + a): cambia la fricción.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, pregunta de análisis P5.13",
+   "notes": "",
+   "hints": [
+    "¿Cuánto vale N sobre la caja si el ascensor acelera hacia arriba con a? ¿Y hacia abajo?",
+    "La fuerza mínima para moverla es la fricción estática máxima μs·N."
+   ],
+   "sol": [
+    "Subiendo acelerado: N = m(g + a) → fricción máxima → fuerza máxima",
+    "Bajando acelerado (o subiendo y frenando): N = m(g − a) → fuerza mínima",
+    "Con v constante: N = mg, caso intermedio."
+   ],
+   "ans": [
+    "Máxima: acelerando hacia arriba",
+    "Mínima: acelerando hacia abajo",
+    "Intermedia: v constante"
+   ],
+   "img": "img/sz5-p5-13.png",
+   "num": "P5.13"
+  },
+  {
+   "id": "sz5-p5-17",
+   "title": "¿La cuerda del péndulo cónico puede ser horizontal?",
+   "text": "",
+   "key": "Algo tiene que equilibrar el peso: solo la componente vertical de la tensión puede.",
+   "topics": [
+    "din",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, pregunta de análisis P5.17",
+   "notes": "",
+   "hints": [
+    "Haz el DCL de la pelota: solo hay peso y tensión.",
+    "En la vertical no hay aceleración: ΣFy = 0."
+   ],
+   "sol": [
+    "T cosβ = mg exige que la cuerda tenga componente vertical (β < 90° respecto a la vertical)",
+    "Si fuera horizontal, nada sostendría el peso",
+    "T sinβ da la fuerza centrípeta; la pelota queda por DEBAJO de la mano."
+   ],
+   "ans": [
+    "No puede ser horizontal; queda por debajo de la horizontal."
+   ],
+   "img": "img/sz5-p5-17.png",
+   "num": "P5.17"
+  },
+  {
+   "id": "sz5-5-7",
+   "title": "Tensiones en dos cuerdas que sostienen una lámpara",
+   "text": "",
+   "key": "Equilibrio del nudo: ΣFx = 0 y ΣFy = 0 con las tres cuerdas.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.7",
+   "notes": "",
+   "hints": [
+    "Primero: la cuerda C sostiene sola a la lámpara, así que T_C = w.",
+    "Haz el DCL del nudo donde se juntan A, B y C y descompón cada tensión.",
+    "En b) ojo: el 60° es respecto a la pared vertical, así que A forma 30° con la horizontal y tira hacia ABAJO del nudo."
+   ],
+   "sol": [
+    "a) x: T_A cos30° = T_B cos45°;  y: T_A sin30° + T_B sin45° = w",
+    "a) T_A = w/(sin30° + cos30°) = 0.732w;  T_B = 0.897w;  T_C = w",
+    "b) x: T_A cos30° = T_B cos45°;  y: T_B sin45° = w + T_A sin30°",
+    "b) T_A = w/(cos30° − sin30°) = 2.73w;  T_B = 3.35w;  T_C = w"
+   ],
+   "ans": [
+    "a) T_A = 0.732w, T_B = 0.897w, T_C = w",
+    "b) T_A = 2.73w, T_B = 3.35w, T_C = w"
+   ],
+   "img": "img/sz5-5-7.png",
+   "num": "5.7"
+  },
+  {
+   "id": "sz5-5-8",
+   "title": "Auto sostenido por un cable en rampa sin fricción",
+   "text": "",
+   "key": "Ejes paralelo y perpendicular a la rampa; el cable va a 31° de la rampa, no de la horizontal.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.8",
+   "notes": "",
+   "hints": [
+    "Pon el eje x a lo largo de la rampa: el peso se reparte en mg sin25° y mg cos25°.",
+    "La tensión tiene componente T cos31° a lo largo de la rampa y T sin31° perpendicular (separa el auto)."
+   ],
+   "sol": [
+    "x: T cos31° = mg sin25°  →  T = 1130·9.8·sin25°/cos31° = 5.46 kN",
+    "y: N + T sin31° = mg cos25°  →  N = 10 036 − 2 812 = 7.22 kN"
+   ],
+   "ans": [
+    "b) T = 5.46 × 10³ N",
+    "c) N = 7.22 × 10³ N"
+   ],
+   "img": "img/sz5-5-8.png",
+   "num": "5.8"
+  },
+  {
+   "id": "sz5-5-9",
+   "title": "Empujar un piano rampa abajo con v constante",
+   "text": "",
+   "key": "v constante → ΣF = 0. Cambiar la dirección de F cambia cuánto \"gasta\" en la normal.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.9",
+   "notes": "",
+   "hints": [
+    "Sin fricción, lo único que acelera el piano rampa abajo es mg sinθ.",
+    "En b) solo la componente de F paralela a la rampa (F cosθ) frena al piano."
+   ],
+   "sol": [
+    "a) F = mg sin19° = 180·9.8·0.326 = 574 N",
+    "b) F cos19° = mg sin19°  →  F = mg tan19° = 607 N"
+   ],
+   "ans": [
+    "a) 574 N",
+    "b) 607 N"
+   ],
+   "img": "img/sz5-5-9.png",
+   "num": "5.9"
+  },
+  {
+   "id": "sz5-5-15",
+   "title": "Máquina de Atwood: ladrillos y contrapeso",
+   "text": "",
+   "key": "Dos cuerpos, una cuerda: misma |a| y misma T. Un DCL por cuerpo.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.15",
+   "notes": "",
+   "hints": [
+    "El contrapeso (28 kg) baja y los ladrillos (15 kg) suben con la misma aceleración.",
+    "Escribe T − m₁g = m₁a y m₂g − T = m₂a; súmalas para eliminar T.",
+    "T debe quedar entre los dos pesos: más que 147 N y menos que 274 N."
+   ],
+   "sol": [
+    "a = (m₂ − m₁)g/(m₁ + m₂) = 13·9.8/43 = 2.96 m/s²",
+    "T = m₁(g + a) = 15·12.76 = 191 N  (= 2m₁m₂g/(m₁+m₂))",
+    "Compara: w_ladrillos = 147 N < T = 191 N < w_contrapeso = 274 N"
+   ],
+   "ans": [
+    "b) a = 2.96 m/s² hacia arriba",
+    "c) T = 191 N, entre 147 N y 274 N"
+   ],
+   "img": "img/sz5-5-15.png",
+   "num": "5.15"
+  },
+  {
+   "id": "sz5-5-20",
+   "title": "Peso aparente en un ascensor",
+   "text": "",
+   "key": "La báscula mide la normal: N − mg = ma.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.20",
+   "notes": "",
+   "hints": [
+    "Masa del estudiante: m = 550/9.8 = 56.1 kg.",
+    "Si la báscula marca menos que el peso, la aceleración es hacia abajo.",
+    "Para la tensión usa la masa total de 850 kg con la misma aceleración."
+   ],
+   "sol": [
+    "a) a = (450 − 550)/56.1 = −1.78 m/s² → 1.78 m/s² hacia abajo",
+    "b) a = (670 − 550)/56.1 = +2.14 m/s² hacia arriba",
+    "c) N = 0 → a = g hacia abajo: caída libre, ¡el cable se rompió!",
+    "d) T = M(g + a): en a) 850(9.8 − 1.78) = 6.82 kN; en c) T = 0"
+   ],
+   "ans": [
+    "a) 1.78 m/s² hacia abajo",
+    "b) 2.14 m/s² hacia arriba",
+    "c) Sí: caída libre",
+    "d) 6.82 × 10³ N y 0"
+   ],
+   "img": "img/sz5-5-20.png",
+   "num": "5.20"
+  },
+  {
+   "id": "sz5-5-36",
+   "title": "Ángulo crítico de deslizamiento en una rampa",
+   "text": "",
+   "key": "Justo antes de resbalar: tanα = μs. Ya moviéndose, la fricción pasa a μk.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.36",
+   "notes": "",
+   "hints": [
+    "En el límite, mg sinα = μs·mg cosα. La masa se cancela.",
+    "Una vez en movimiento: a = g(sinα − μk cosα).",
+    "Para la rapidez después de 5 m usa v² = 2a·d."
+   ],
+   "sol": [
+    "a) tanα = 0.35 → α = 19.3°",
+    "b) a = 9.8(sin19.3° − 0.25 cos19.3°) = 0.92 m/s²",
+    "c) v = √(2·0.925·5.0) = 3.0 m/s"
+   ],
+   "ans": [
+    "a) 19.3°",
+    "b) 0.92 m/s²",
+    "c) 3.0 m/s"
+   ],
+   "img": "img/sz5-5-36.png",
+   "num": "5.36"
+  },
+  {
+   "id": "sz5-5-38",
+   "title": "Arrastrar con una cuerda inclinada a v constante",
+   "text": "",
+   "key": "Jalar hacia arriba reduce la normal: N = mg − F sinθ.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.38",
+   "notes": "",
+   "hints": [
+    "ΣFy = 0: N = mg − F sinθ.",
+    "ΣFx = 0: F cosθ = μk N. Sustituye N y despeja F."
+   ],
+   "sol": [
+    "F cosθ = μk(mg − F sinθ)  →  F = μk mg/(cosθ + μk sinθ)",
+    "b) F = 0.35·90·9.8/(cos25° + 0.35 sin25°) = 293 N"
+   ],
+   "ans": [
+    "a) F = μk mg/(cosθ + μk sinθ)",
+    "b) 293 N"
+   ],
+   "img": "img/sz5-5-38.png",
+   "num": "5.38"
+  },
+  {
+   "id": "sz5-5-39",
+   "title": "Bloque en mesa con fricción unido a bloque colgante",
+   "text": "",
+   "key": "Sistema conectado: (fuerza que impulsa − fricción) = (masa total)·a.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.39",
+   "notes": "",
+   "hints": [
+    "B tira con m_B g; la fricción sobre A frena con μk m_A g.",
+    "Con a constante, v² = 2a·d con d = 0.0300 m.",
+    "La tensión sale del DCL de B: m_B g − T = m_B a."
+   ],
+   "sol": [
+    "a = (1.30 − 0.450·2.25)·9.8/3.55 = 0.794 m/s²",
+    "a) v = √(2·0.794·0.0300) = 0.218 m/s",
+    "b) T = 1.30(9.8 − 0.794) = 11.7 N"
+   ],
+   "ans": [
+    "a) 0.218 m/s",
+    "b) 11.7 N"
+   ],
+   "img": "img/sz5-5-39.png",
+   "num": "5.39"
+  },
+  {
+   "id": "sz5-5-41",
+   "title": "Empujar hacia abajo en ángulo: el valor crítico de μs",
+   "text": "",
+   "key": "Empujar hacia abajo AUMENTA la normal; si μs es grande, F nunca alcanza.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.41",
+   "notes": "",
+   "hints": [
+    "ΣFy: N = mg + F sinθ.",
+    "ΣFx a v constante: F cosθ = μk N.",
+    "Para b) pide F cosθ > μs(mg + F sinθ) con F → ∞: ¿qué condición queda?"
+   ],
+   "sol": [
+    "a) F cosθ = μk(mg + F sinθ)  →  F = μk mg/(cosθ − μk sinθ)",
+    "b) Para arrancar: F(cosθ − μs sinθ) > μs mg. Si cosθ − μs sinθ ≤ 0, ninguna F sirve",
+    "μs crítico = cosθ/sinθ = cotθ"
+   ],
+   "ans": [
+    "a) F = μk mg/(cosθ − μk sinθ)",
+    "b) μs > 1/tanθ"
+   ],
+   "img": "img/sz5-5-41.png",
+   "num": "5.41"
+  },
+  {
+   "id": "sz5-5-49",
+   "title": "Peralte ideal de una curva",
+   "text": "",
+   "key": "Sin fricción, la componente horizontal de N da la fuerza centrípeta: tanβ = v²/(gR).",
+   "topics": [
+    "din",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.49",
+   "notes": "",
+   "hints": [
+    "Convierte 65.0 mi/h a m/s (1 mi = 1609 m).",
+    "N cosβ = mg y N sinβ = mv²/R. Divide una entre otra.",
+    "La masa se cancela en tanβ: camión y auto pueden ir igual de rápido."
+   ],
+   "sol": [
+    "v = 65.0 mi/h = 29.1 m/s",
+    "a) tanβ = 29.1²/(9.8·225) = 0.383 → β = 20.9°; no depende de la masa",
+    "b) N = mg/cosβ: auto 1125·9.8/cos20.9° = 1.18 × 10⁴ N; camión 2.36 × 10⁴ N"
+   ],
+   "ans": [
+    "a) β = 20.9°; el camión no necesita ir más lento",
+    "b) N_auto = 1.18 × 10⁴ N, N_camión = 2.36 × 10⁴ N"
+   ],
+   "img": "img/sz5-5-49.png",
+   "num": "5.49"
+  },
+  {
+   "id": "sz5-5-50",
+   "title": "Columpio gigante: péndulo cónico",
+   "text": "",
+   "key": "tanθ = v²/(gr), con r = radio REAL del círculo (brazo + parte del cable).",
+   "topics": [
+    "din",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.50",
+   "notes": "",
+   "hints": [
+    "El asiento gira en un círculo de radio r = 3.00 + 5.00 sin30° m.",
+    "T cos30° = mg y T sin30° = mv²/r.",
+    "Período: T = 2πr/v."
+   ],
+   "sol": [
+    "r = 3.00 + 2.50 = 5.50 m",
+    "v² = g r tan30° → v = 5.58 m/s",
+    "a) T = 2π·5.50/5.58 = 6.19 s",
+    "b) m se cancela: el ángulo no depende del peso"
+   ],
+   "ans": [
+    "a) 6.19 s",
+    "b) No"
+   ],
+   "img": "img/sz5-5-50.png",
+   "num": "5.50"
+  },
+  {
+   "id": "sz5-5-54",
+   "title": "Rueda de la fortuna: peso aparente arriba y abajo",
+   "text": "",
+   "key": "En el punto alto la normal y el peso apuntan distinto: N = m(g ∓ v²/R).",
+   "topics": [
+    "din",
+    "mcirc"
+   ],
+   "prio": "clave",
+   "dif": "facil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.54",
+   "notes": "",
+   "hints": [
+    "R = 50 m, una vuelta en 60 s: v = 2πR/T.",
+    "Arriba: mg − N = mv²/R. Abajo: N − mg = mv²/R.",
+    "Peso aparente cero arriba significa v² = gR."
+   ],
+   "sol": [
+    "a) v = 2π·50/60 = 5.24 m/s",
+    "b) v²/(gR) = 0.056 → arriba 882(1 − 0.056) = 833 N; abajo 931 N",
+    "c) v = √(gR) = 22.1 m/s → T = 2πR/v = 14.2 s",
+    "d) Abajo: N = m(g + g) = 2·882 = 1764 N"
+   ],
+   "ans": [
+    "a) 5.24 m/s",
+    "b) 833 N arriba, 931 N abajo",
+    "c) 14.2 s",
+    "d) 1764 N"
+   ],
+   "img": "img/sz5-5-54.png",
+   "num": "5.54"
+  },
+  {
+   "id": "sz5-5-69",
+   "title": "Tensión que crece con el tiempo: T = 36t",
+   "text": "",
+   "key": "Fuerza variable: a(t) = (T(t) − mg)/m; integra para v(t) e y(t).",
+   "topics": [
+    "din",
+    "cin"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.69",
+   "notes": "",
+   "hints": [
+    "a(t) = (36t − 29.4)/3 = 12t − 9.8 (hacia arriba positivo). Al inicio a < 0: ¡la caja baja!",
+    "Integra desde v(0) = 0, y(0) = 0.",
+    "La máxima bajada ocurre cuando v = 0 (por segunda vez)."
+   ],
+   "sol": [
+    "v(t) = 6t² − 9.8t;  y(t) = 2t³ − 4.9t²",
+    "a) v(1.00) = −3.80 m/s (baja);  v(3.00) = 24.6 m/s (sube)",
+    "b) v = 0 en t = 1.63 s → y = −4.36 m",
+    "c) y = 0 → 2t = 4.9 → t = 2.45 s"
+   ],
+   "ans": [
+    "a) i. 3.80 m/s hacia abajo; ii. 24.6 m/s hacia arriba",
+    "b) 4.36 m",
+    "c) 2.45 s"
+   ],
+   "img": "img/sz5-5-69.png",
+   "num": "5.69"
+  },
+  {
+   "id": "sz5-5-71",
+   "title": "Dos cajas con cuerda y fuerza inclinada",
+   "text": "",
+   "key": "La fuerza inclinada cambia la normal SOLO de la caja donde actúa.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.71",
+   "notes": "",
+   "hints": [
+    "DCL de B: F cos53.1° − T − μk N_B = m_B a, con N_B = m_B g − F sin53.1°.",
+    "DCL de A: T − μk m g = m a. Despeja m."
+   ],
+   "sol": [
+    "N_B = 49.0 − 32.0 = 17.0 N → fricción 5.10 N",
+    "a) T = 24.0 − 5.10 − 5.00·1.50 = 11.4 N",
+    "b) m = T/(a + μk g) = 11.4/(1.50 + 2.94) = 2.57 kg"
+   ],
+   "ans": [
+    "a) T = 11.4 N",
+    "b) m = 2.57 kg"
+   ],
+   "img": "img/sz5-5-71.png",
+   "num": "5.71"
+  },
+  {
+   "id": "sz5-5-74",
+   "title": "Bloque en plano inclinado unido a bloque colgante",
+   "text": "",
+   "key": "Cinemática te da a; Newton en cada bloque te da m₂.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.74",
+   "notes": "",
+   "hints": [
+    "Desde el reposo: d = ½at² → a = 2·12.0/3.00².",
+    "m₁ sube por la rampa: la fricción apunta rampa abajo.",
+    "Bloque 2: m₂g − T = m₂a. Bloque 1: T − m₁g sinα − μk m₁g cosα = m₁a."
+   ],
+   "sol": [
+    "a = 24/9 = 2.67 m/s²",
+    "Suma: m₂(g − a) = m₁(a + g sinα + μk g cosα)",
+    "m₂ = 20.0(2.67 + 7.84 + 2.35)/(9.8 − 2.67) = 36.0 kg"
+   ],
+   "ans": [
+    "m₂ = 36.0 kg"
+   ],
+   "img": "img/sz5-5-74.png",
+   "num": "5.74"
+  },
+  {
+   "id": "sz5-5-77",
+   "title": "Plano inclinado con polea: rango de equilibrio",
+   "text": "",
+   "key": "La fricción cambia de sentido según hacia dónde tiende a moverse m₁.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.77",
+   "notes": "",
+   "hints": [
+    "v constante → ΣF = 0 en cada bloque y T = m₂g.",
+    "Si m₁ sube, la fricción va rampa abajo; si baja, rampa arriba.",
+    "En reposo usa μs: la fricción puede valer cualquier cosa hasta μs N."
+   ],
+   "sol": [
+    "a) m₂g = m₁g(sinα + μk cosα) → m₂ = m₁(sinα + μk cosα)",
+    "b) m₂ = m₁(sinα − μk cosα)",
+    "c) m₁(sinα − μs cosα) ≤ m₂ ≤ m₁(sinα + μs cosα)"
+   ],
+   "ans": [
+    "a) m₁(sinα + μk cosα)",
+    "b) m₁(sinα − μk cosα)",
+    "c) entre m₁(sinα − μs cosα) y m₁(sinα + μs cosα)"
+   ],
+   "img": "img/sz5-5-77.png",
+   "num": "5.77"
+  },
+  {
+   "id": "sz5-5-79",
+   "title": "Bloque sobre bloque: fricción en dos superficies",
+   "text": "",
+   "key": "Cuenta cada superficie con su propia normal; si A está atado, también frena a B.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.79",
+   "notes": "",
+   "hints": [
+    "a) A va con B: solo hay fricción con el piso, con N = w_A + w_B.",
+    "b) A quieto: B siente fricción del piso (N = 4.80 N) y de A (N = 1.20 N)."
+   ],
+   "sol": [
+    "a) F = 0.300·(1.20 + 3.60) = 1.44 N",
+    "b) F = 0.300·1.20 + 0.300·4.80 = 0.36 + 1.44 = 1.80 N"
+   ],
+   "ans": [
+    "a) 1.44 N",
+    "b) 1.80 N"
+   ],
+   "img": "img/sz5-5-79.png",
+   "num": "5.79"
+  },
+  {
+   "id": "sz5-5-87",
+   "title": "Bloques unidos por polea: tres fricciones",
+   "text": "",
+   "key": "Si B va a la izquierda, A va a la derecha: la fricción entre ellos frena a ambos.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.87",
+   "notes": "",
+   "hints": [
+    "DCL de A: T a la derecha, fricción de B sobre A a la izquierda (0.30·1.90 N).",
+    "DCL de B: F a la izquierda; a la derecha T, la fricción de A y la del piso con N = 1.90 + 4.20."
+   ],
+   "sol": [
+    "A: T = μk w_A = 0.57 N",
+    "B: F = T + μk w_A + μk(w_A + w_B) = 0.57 + 0.57 + 1.83",
+    "F = 2.97 N"
+   ],
+   "ans": [
+    "F = 2.97 N"
+   ],
+   "img": "img/sz5-5-87.png",
+   "num": "5.87"
+  },
+  {
+   "id": "sz5-5-92",
+   "title": "Masa máxima colgante sin que el bloque de arriba resbale",
+   "text": "",
+   "key": "La fricción estática es lo único que acelera a B: a_max = μs g.",
+   "topics": [
+    "din"
+   ],
+   "prio": "fundamental",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.92",
+   "notes": "",
+   "hints": [
+    "B solo recibe fricción de A: m_B a ≤ μs m_B g.",
+    "Todo el sistema (A + B + C) se mueve con esa a: m_C g = (m_A + m_B + m_C)a."
+   ],
+   "sol": [
+    "a_max = 0.750·9.8 = 7.35 m/s²",
+    "m_C = (m_A + m_B)a/(g − a) = 13.0·7.35/2.45 = 39.0 kg"
+   ],
+   "ans": [
+    "m_C máx = 39.0 kg"
+   ],
+   "img": "img/sz5-5-92.png",
+   "num": "5.92"
+  },
+  {
+   "id": "sz5-5-105",
+   "title": "El Rotor: fricción contra la pared",
+   "text": "",
+   "key": "La normal de la pared es la fuerza centrípeta; la fricción sostiene el peso.",
+   "topics": [
+    "din",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.105",
+   "notes": "",
+   "hints": [
+    "ω = 2π·0.60 rad/s; N = mω²R.",
+    "Para no resbalar: mg ≤ μs N."
+   ],
+   "sol": [
+    "ω = 3.77 rad/s → N = m(3.77²)(2.5) = 35.5m",
+    "b) μs ≥ g/(ω²R) = 9.8/35.5 = 0.28",
+    "c) m se cancela: no depende de la masa"
+   ],
+   "ans": [
+    "b) μs mín ≈ 0.28",
+    "c) No"
+   ],
+   "img": "img/sz5-5-105.png",
+   "num": "5.105"
+  },
+  {
+   "id": "sz5-5-107",
+   "title": "Cuenta en un aro que gira",
+   "text": "",
+   "key": "N es radial al aro; su componente vertical sostiene el peso y la horizontal da la centrípeta con r = R sinβ.",
+   "topics": [
+    "din",
+    "mcirc"
+   ],
+   "prio": "fundamental",
+   "dif": "intermedio",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.107",
+   "notes": "",
+   "hints": [
+    "El radio del círculo que describe la cuenta es R sinβ, no R.",
+    "N cosβ = mg y N sinβ = mω²R sinβ → cosβ = g/(ω²R).",
+    "Si g/(ω²R) > 1 no hay solución con β ≠ 0."
+   ],
+   "sol": [
+    "ω = 2π·4.00 = 25.1 rad/s; cosβ = 9.8/(25.1²·0.100) = 0.155",
+    "a) β = 81.1°",
+    "b) β = 90° exigiría cosβ = 0, es decir ω infinita: no",
+    "c) Con 1 rev/s: ω²R = 3.95 < g → solo β = 0 (en el fondo)"
+   ],
+   "ans": [
+    "a) 81.1°",
+    "b) No",
+    "c) Se queda en el fondo, β = 0"
+   ],
+   "img": "img/sz5-5-107.png",
+   "num": "5.107"
+  },
+  {
+   "id": "sz5-5-112",
+   "title": "Movimiento de la cuña",
+   "text": "",
+   "key": "La cuña retrocede: el bloque NO baja por un plano fijo. Usa el marco de la cuña para la ligadura.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.112",
+   "notes": "",
+   "hints": [
+    "Cuña: N sinα = M A (la normal del bloque la empuja horizontalmente).",
+    "Bloque relativo a la cuña: su aceleración es A (de la cuña) más una a′ a lo largo del plano.",
+    "Perpendicular al plano en el marco de la cuña: N = m(g cosα − A sinα)."
+   ],
+   "sol": [
+    "A = m g sinα cosα/(M + m sin²α)",
+    "Bloque: a_x = M g sinα cosα/(M + m sin²α);  a_y = −(M + m) g sin²α/(M + m sin²α)",
+    "b) M → ∞: A → 0, a_x → g sinα cosα, a_y → −g sin²α (plano fijo) ✓",
+    "c) Recta: a constante desde el reposo; más empinada que el plano: tanφ = (1 + m/M)tanα"
+   ],
+   "ans": [
+    "a) A = mg sinα cosα/(M + m sin²α); a_x = Mg sinα cosα/(M + m sin²α); a_y = −(M+m)g sin²α/(M + m sin²α)",
+    "b) Sí",
+    "c) Línea recta"
+   ],
+   "img": "img/sz5-5-112.png",
+   "num": "5.112"
+  },
+  {
+   "id": "sz5-5-114",
+   "title": "Máquina de Atwood doble",
+   "text": "",
+   "key": "Polea sin masa → T_C = 2T_A. La ligadura une a₁, a₂ con la aceleración de la polea B.",
+   "topics": [
+    "din"
+   ],
+   "prio": "clave",
+   "dif": "dificil",
+   "pillar": false,
+   "state": 0,
+   "source": "Sears-Zemansky, cap. 5, ej. 5.114",
+   "notes": "",
+   "hints": [
+    "Polea B ideal: la cuerda C tira con 2T, donde T es la tensión de A.",
+    "Si m₃ baja con a₃, la polea B sube con a₃. m₁ y m₂ se mueven respecto a B con ±r.",
+    "Tres ecuaciones (m₁, m₂, m₃) para T, a₃ y r. Sea D = m₃(m₁+m₂) + 4m₁m₂."
+   ],
+   "sol": [
+    "T_A = 4g m₁m₂m₃/D;  T_C = 8g m₁m₂m₃/D",
+    "a₃ (hacia abajo) = g[m₃(m₁+m₂) − 4m₁m₂]/D;  a_B = a₃ hacia arriba",
+    "a₁ (hacia abajo) = g[4m₁m₂ + m₃(m₁ − 3m₂)]/D",
+    "a₂ (hacia abajo) = g[4m₁m₂ + m₃(m₂ − 3m₁)]/D",
+    "g) m₁ = m₂ = m, m₃ = 2m: todas las aceleraciones son 0 y T_A = mg. Lógico: equilibrio."
+   ],
+   "ans": [
+    "a) a₃ = g[m₃(m₁+m₂) − 4m₁m₂]/D",
+    "b) a_B = −a₃",
+    "c) a₁ = g[4m₁m₂ + m₃(m₁−3m₂)]/D",
+    "d) a₂ = g[4m₁m₂ + m₃(m₂−3m₁)]/D",
+    "e) T_A = 4gm₁m₂m₃/D",
+    "f) T_C = 8gm₁m₂m₃/D",
+    "g) Todo en equilibrio"
+   ],
+   "img": "img/sz5-5-114.png",
+   "num": "5.114"
+  }
+ ]
+}

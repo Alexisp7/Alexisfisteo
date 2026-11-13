@@ -298,14 +298,15 @@
     var PARTES = ['base', 'torre', 'eje', 'rotor', 'L', 'orb', 'mg', 'd', 'tau', 'omega'];
     PARTES.forEach(function (k) { GI.dim[k] = 1; });
     // qué queda nítido al señalar cada pieza
-    var FOCO = { rotor: ['rotor', 'eje'], torre: ['torre', 'base', 'eje'], L: ['L', 'orb', 'rotor', 'eje'], mg: ['mg', 'd', 'eje', 'rotor'], tau: ['tau', 'L', 'mg', 'd'], omega: ['omega', 'orb', 'L'] };
+    var FOCO = { rotor: ['rotor', 'eje', 'mg', 'd'], torre: ['torre', 'base', 'eje'], L: ['L', 'orb', 'rotor', 'eje'], omega: ['omega', 'tau', 'orb', 'L', 'eje'], mg: ['mg'], tau: ['tau'] };
     // ingreso: las piezas caen en orden (base, torre, eje, rotor) y después se trazan los vectores
     var ENTRA = { base: [0, -18], torre: [.07, -34], eje: [.17, -26], rotor: [.25, -40], orb: [.45, 0], tau: [.52, 0], mg: [.56, 0], d: [.58, 0], L: [.6, 0], omega: [.68, 0] };
     var FILTRO = 'filter' in ctx, desY = 0, SOLIDAS = ['base', 'torre', 'eje', 'rotor'];
     function rebote(x) { x = cl(x, 0, 1); var c1 = 1.1, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
     function entrada(k) {
       if (!SOLO || quieto) return { a: 1, oy: 0, len: 1 };
-      var e = ENTRA[k], u = (GI.arm - e[0]) / .38;
+      var e = ENTRA[k]; if (!e) return { a: 1, oy: 0, len: 1 };
+      var u = (GI.arm - e[0]) / .38;
       if (e[1]) return { a: suave(u * 1.8), oy: (1 - rebote(u)) * e[1], len: 1 };
       var l = suave((GI.arm - e[0]) / .4); return { a: l > 0 ? 1 : 0, oy: 0, len: l };
     }
@@ -462,12 +463,28 @@
       if (!ver || lav < .01) { cola.forEach(function (c) { parte(c.k, 1, c.f); }); return; }
       // lo no seleccionado, tenue (solo transparencia: sin filtros, capas ni velos, que en pantallas densas dan tirones)
       var a = 1 - .7 * lav;
-      cola.forEach(function (c) { parte(c.k, ver.indexOf(c.k) < 0 ? a : 1, c.f); });
+      cola.forEach(function (c) {
+        if (ver.indexOf(c.k) >= 0 || c.k === '_zona') { parte(c.k, 1, c.f); return; }
+        if (MACIZAS.indexOf(c.k) < 0) { parte(c.k, a, c.f); return; }
+        parte(c.k, 1, c.f); velo(c.k, .7 * lav, c.f);   // maciza: opaca y tapada con su silueta en papel
+      });
+    }
+    var MACIZAS = ['rotor', 'torre', 'eje'];
+    // vuelve a trazar la pieza con todos los colores forzados a papel: la tapa entera, sin transparentar su interior
+    function velo(k, al, fn) {
+      var pr = CanvasRenderingContext2D.prototype, papel = 'rgba(244,238,227,' + al.toFixed(3) + ')';
+      ['fillStyle', 'strokeStyle'].forEach(function (q) {
+        var d = Object.getOwnPropertyDescriptor(pr, q);
+        d.set.call(ctx, papel);
+        Object.defineProperty(ctx, q, { configurable: true, get: function () { return papel; }, set: function () { d.set.call(ctx, papel); } });
+      });
+      try { parte(k, 1, fn); } finally { delete ctx.fillStyle; delete ctx.strokeStyle; }
     }
     function dibujaGiro() {
       var mov = W <= 900;
       cam.el = .6; cam.az = -.62; cam.s = mov ? 30 : 30; cam.x = 985; cam.y = 640;
       if (mov) { var vb0 = svg.viewBox.baseVal; cam.x = vb0.x + vb0.width / 2; cam.y = vb0.y + vb0.height - 205; }
+      GI.camG = { x: cam.x, y: cam.y, s: cam.s, el: cam.el };
       var se = Math.sin(cam.el), psi = GI.psi, U = [Math.cos(psi), Math.sin(psi), 0], V = [-U[1], U[0], 0], Z = [0, 0, 1], h = G.h;
       function add(p, q, s) { return [p[0] + q[0] * s, p[1] + q[1] * s, p[2] + q[2] * s]; }
       function Pp(q) { return P(q[0], q[1], q[2]); }
@@ -512,6 +529,14 @@
           ctx.restore();
         }
       } });
+      // ── zona activa: anillo tenue en el plano del pivote (las zonas son fijas, por radio) ──
+      var zAct = null; ZONAS.forEach(function (zz) { if (zz[0] === GI.focoVis) zAct = zz; });
+      if (zAct && GI.lav > .01) cola.push({ k: '_zona', f: function () {
+        var c0 = P(0, 0, h), r0 = zAct[1] * cam.s, r1 = zAct[2] * cam.s;
+        ctx.save(); ctx.globalAlpha *= GI.lav; ctx.beginPath(); ctx.ellipse(c0[0], c0[1], r1, r1 * se, 0, 0, 2 * Math.PI);
+        if (r0 > 0) { ctx.moveTo(c0[0] + r0, c0[1]); ctx.ellipse(c0[0], c0[1], r0, r0 * se, 0, 0, 2 * Math.PI, true); }
+        ctx.fillStyle = 'rgba(176,122,40,.07)'; ctx.fill('evenodd'); ctx.setLineDash([1.5, 3]); ctx.strokeStyle = 'rgba(176,122,40,.5)'; ctx.lineWidth = .7; ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+      } });
       // ── trayectorias punteadas por tramos (cada tramo con su profundidad) ──
       [[rt, 72, VINO, .45], [G.d, 48, TINTA, .28]].forEach(function (o) {
         var pts = []; for (var k = 0; k <= o[1]; k++) { var an = 2 * Math.PI * k / o[1]; pts.push([o[0] * Math.cos(an), o[0] * Math.sin(an), h]); }
@@ -549,11 +574,16 @@
           ctx.strokeStyle = '#8E8478'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(A0[0], A0[1] - .4); ctx.lineTo(A1[0], A1[1] - .4); ctx.stroke();
         };
       }
-      objs.push({ z: dep(add(piv, U, -.55)), k: 'eje', f: tramo(-1.1, 0) });
-      objs.push({ z: dep(add(piv, U, G.d / 2)), k: 'eje', f: tramo(0, G.d - th / 2) });
+      // el eje va apoyado sobre el cojinete (nunca detrás de la columna), la bola del pivote lo abraza (va después
+      // de los dos tramos que la tocan) y Ω sale de la bola: el centro ya no cambia de orden de golpe.
+      var zp = dep(piv), zE0 = Math.max(dep(add(piv, U, -.55)), zp + .001), zE1 = Math.max(dep(add(piv, U, G.d / 2)), zp + .001);
+      var zBola = Math.max(zE0, zE1, zp + .002) + .001;
+      if (dep(C) > zp + .01) zBola = Math.max(Math.min(zBola, dep(C) - .002), zp + .002);
+      objs.push({ z: Math.min(zE0, zBola - .0005), k: 'eje', f: tramo(-1.1, 0) });
+      objs.push({ z: Math.min(zE1, zBola - .0005), k: 'eje', f: tramo(0, G.d - th / 2) });
       objs.push({ z: dep(add(piv, U, G.d + th / 2 + .45)), k: 'eje', f: tramo(G.d + th / 2, G.d + 1.3) });
       var pv = Pp(piv);
-      objs.push({ z: dep(piv) + .002, k: 'torre', f: function () {
+      objs.push({ z: zBola, k: 'torre', f: function () {
         ctx.fillStyle = '#F5F0E6'; ctx.strokeStyle = TINTA + '.9)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(pv[0], pv[1], 4.6, 0, 7); ctx.fill(); ctx.stroke();
         ctx.fillStyle = '#1E1A16'; ctx.beginPath(); ctx.arc(pv[0], pv[1], 1.4, 0, 7); ctx.fill();
       } });
@@ -594,7 +624,7 @@
       var tz = Pp(piv), tq = Pp(add(piv, V, 3.6));
       objs.push({ z: dep(add(piv, V, 1.8)), k: 'tau', f: vec(tz, tq, ORO, .95, 1.6, 9) });
       var om = Pp(add(piv, Z, 3.4));
-      objs.push({ z: dep(piv) + .003, k: 'omega', f: vec([tz[0], tz[1] - 7], om, AZUL, .85, 1.3, 8) });
+      objs.push({ z: zBola + .0004, k: 'omega', f: vec([tz[0], tz[1] - 7], om, AZUL, .85, 1.3, 8) });
       objs.sort(function (p, q) { return p.z - q.z; }).forEach(function (o) { cola.push(o); });
       // ── rótulos ──
       var dm = Pp(add(piv, U, G.d * .45));
@@ -619,6 +649,16 @@
     }
     function dentro(p, poli) { var c = false; for (var i = 0, j = poli.length - 1; i < poli.length; j = i++) { var a = poli[i], b = poli[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
     function aSegmento(p, a, b) { var dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy, s = l ? cl(((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l, 0, 1) : 0; return Math.hypot(p[0] - a[0] - s * dx, p[1] - a[1] - s * dy); }
+    // zonas fijas por radio, medido en el plano horizontal del pivote: no hay que perseguir piezas que se mueven
+    var ZONAS = [['omega', 0, 1.6], ['rotor', 1.6, 6.6], ['L', 6.6, 11.2]];
+    function piezaG(p) {
+      var z = GI.hit, c = GI.camG; if (!z || !c) return null;
+      if (dentro(p, z.base) || (z.caras && z.caras.some(function (q) { return dentro(p, q); }))) return 'torre';
+      var r = z.torre; if (p[0] >= r[0] && p[0] <= r[0] + r[2] && p[1] >= r[1] + 14 && p[1] <= r[1] + r[3]) return 'torre';
+      var x = (p[0] - c.x) / c.s, y = ((c.y - p[1]) / c.s - G.h * Math.cos(c.el)) / Math.sin(c.el), rr = Math.hypot(x, y);
+      for (var i = 0; i < ZONAS.length; i++) if (rr >= ZONAS[i][1] && rr < ZONAS[i][2]) return ZONAS[i][0];
+      return null;
+    }
     function pieza(p) {   // qué pieza está bajo el puntero
       var z = GI.hit; if (!z) return null;
       var mejor = null, dmin = 11;
@@ -812,18 +852,14 @@
     // solo-giróscopo: una nota por pieza, en el mismo lugar arriba; aparece solo al señalar la pieza
     var ARRG = { tx: 1118, ty: 112, ancho: 272, lado: 1, recta: true, caja: true }, NG = {};
     if (SOLO) {
-      NG.rotor = en(ARRG, { k: 'Rotor', tit: 'L = I ω',
-        d: ['Disco de 150 g y radio 3 cm: I = ½ m R²', '≈ 6,75 × 10⁻⁵ kg·m². A 40 vueltas/s,', 'ω ≈ 251 rad/s y L = I ω ≈ 0,017 kg·m²/s,', 'dirigido a lo largo del eje.'] });
-      NG.torre = en(ARRG, { k: 'Pivote', tit: 'Un apoyo sin torque',
+      NG.torre = en(ARRG, { k: 'Zona 1 · Base y apoyo', tit: 'Un apoyo sin torque',
         d: ['La fuerza del soporte actúa en el pivote,', 'así que no hace torque respecto de él.', 'Solo el peso lo hace. Si el rotor no', 'girara (L = 0), ese torque lo haría caer.'] });
-      NG.L = en(ARRG, { k: 'Momento angular', tit: 'dL = τ dt',
+      NG.omega = en(ARRG, { k: 'Zona 2 · Centro: precesión', tit: 'Ω = m g d / (I ω)',
+        d: ['El torque del peso, τ = dL/dt, es', 'horizontal y perpendicular a L: gira L', 'sin cambiar su tamaño. Con I ω ≈ 0,017', 'kg·m²/s y τ ≈ 0,059 N·m, Ω ≈ 3,5 rad/s:', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
+      NG.rotor = en(ARRG, { k: 'Zona 3 · Rotor', tit: 'L = I ω',
+        d: ['Disco de 150 g y radio 3 cm: I = ½ m R²', '≈ 6,75 × 10⁻⁵ kg·m². A 40 vueltas/s,', 'L = I ω ≈ 0,017 kg·m²/s. Su peso actúa', 'a d = 4 cm del pivote: m g d ≈ 0,059 N·m.'] });
+      NG.L = en(ARRG, { k: 'Zona 4 · Momento angular', tit: 'dL = τ dt',
         d: ['L apunta a lo largo del eje. En cada dt', 'cambia en dL = τ dt, horizontal y', 'perpendicular a L: la punta recorre el', 'círculo punteado y |L| no cambia.'] });
-      NG.mg = en(ARRG, { k: 'Peso', tit: 'τ = r × m g',
-        d: ['Actúa en el centro del rotor, a d = 4 cm', 'del pivote. Su torque respecto del pivote', 'es horizontal y vale m g d ≈ 0,059 N·m', '(m = 150 g, g = 9,81 m/s²).'] });
-      NG.tau = en(ARRG, { k: 'Torque', tit: 'τ = dL/dt',
-        d: ['El peso, aplicado a d del pivote, da un', 'torque horizontal y perpendicular a L.', 'Cambia la dirección de L, no su tamaño:', 'el eje gira alrededor del pivote, no cae.'] });
-      NG.omega = en(ARRG, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
-        d: ['Rotor de 150 g, R = 3 cm, d = 4 cm y', '40 vueltas/s: I ω ≈ 0,017 kg·m²/s y', 'τ ≈ 0,059 N·m, así que Ω ≈ 3,5 rad/s,', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
     }
     var AGENDA = SOLO ? [] : [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [nS1, TS + 1, TS + 5.6], [DES.cab, TS + 6, TC - .3], [DES.p[0], TS + 6, TC - .3], [DES.p[1], TS + 8.6, TC - .3], [DES.p[2], TS + 11.2, TC - .3], [nS2, TS + 13.4, TC - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
 
@@ -866,7 +902,7 @@
     // señalar una pieza del giróscopo: el puntero se lleva a coordenadas del viewBox y se busca la pieza
     if (SOLO) {
       var aVB = function (ev) { var r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal; return [vb.x + (ev.clientX - r.left) / r.width * vb.width, vb.y + (ev.clientY - r.top) / r.height * vb.height]; };
-      var senala = function (ev) { if (!fig.classList.contains('on')) return; GI.foco = GI.arm > .7 ? pieza(aVB(ev)) : null; fig.style.cursor = GI.foco ? 'help' : ''; };
+      var senala = function (ev) { if (!fig.classList.contains('on')) return; GI.foco = GI.arm > .7 ? piezaG(aVB(ev)) : null; fig.style.cursor = GI.foco ? 'help' : ''; };
       fig.addEventListener('pointermove', senala); fig.addEventListener('pointerdown', senala);
       fig.addEventListener('pointerleave', function () { GI.foco = null; fig.style.cursor = ''; });
     }

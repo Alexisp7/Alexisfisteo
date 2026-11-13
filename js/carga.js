@@ -11,11 +11,12 @@
     'mecanica-cuantica.html': 'Mecánica Cuántica', 'problemas.html': 'Problemas de física', 'bitacora.html': 'Bitácora', 'cementerio.html': 'Bitácora' };
   // lo que cada página pesada pide al cargar: se precarga junto con la página al acercar el cursor a su enlace
   var RECURSOS = {
-    'cursos.html': ['js/fision-nube.js', 'js/fision.js', 'js/canon.js', 'js/momento.js', 'js/cursos-escenas.js', 'css/fision.css', 'css/momento.css'],
+    'cursos.html': ['js/fision-nube.js', 'js/fision.js', 'js/canon.js', 'js/momento.js', 'js/agujero-glsl.js', 'js/cursos-escenas.js', 'css/fision.css', 'css/momento.css'],
     'index.html': ['js/qubits.js?v=20261105d'], '': ['js/qubits.js?v=20261105d'],
     'quantumquipu.html': ['js/orcopampa-iconos.js', 'js/red-orcopampa.js', 'img/quantumquipu/titulo.webp', 'img/quantumquipu/qubo.webp'],
     'contacto.html': ['img/alexis-perfil.webp'],
-    'blackscholes.html': ['img/Black sholes/circuitos.webp', 'img/Black sholes/titulo.webp']
+    'blackscholes.html': ['img/Black sholes/circuitos.webp', 'img/Black sholes/titulo.webp'],
+    'relatividad.html': ['js/agujero-glsl.js', 'js/relatividad.js']
   };
   function archivo(url) { return url.pathname.split('/').pop(); }
   function nombreDe(url) { return SECCION[archivo(url)] || (d.title.split('—')[0] || '').trim(); }
@@ -30,30 +31,41 @@
     d.body.appendChild(h); return h;
   }
 
+  // velo de espacio: en vez de la hoja de papel, un fondo de noche con solo el nombre del curso al centro.
+  // Lo usa la salida de Cursos hacia Relatividad (la mancha cubre la pantalla y el nombre aparece sobre el espacio)
+  function espacio(titulo, clase) {
+    var h = d.createElement('div'); h.className = 'fx-espacio ' + (clase || ''); h.setAttribute('aria-hidden', 'true');
+    h.innerHTML = '<div class="fx-esp-c"><span class="fx-esp-t"></span><span class="fx-esp-r"><i></i></span></div>';
+    h.querySelector('.fx-esp-t').textContent = titulo;
+    d.body.appendChild(h); return h;
+  }
+
   var esperas = [], revelar, yaRevelado = false;
   window.fxRevelado = new Promise(function (ok) { revelar = ok; });
   window.fxEspera = function (p) { esperas.push(p); };
 
-  var guardado = null, fase = 0;
-  try { guardado = sessionStorage.getItem('fx-hoja'); fase = +sessionStorage.getItem('fx-fase') || 0; sessionStorage.removeItem('fx-hoja'); } catch (e) {}
+  var guardado = null, fase = 0, modo = null;
+  try { guardado = sessionStorage.getItem('fx-hoja'); fase = +sessionStorage.getItem('fx-fase') || 0; modo = sessionStorage.getItem('fx-modo'); sessionStorage.removeItem('fx-hoja'); sessionStorage.removeItem('fx-modo'); } catch (e) {}
   if (!quieto) {
     // la hoja cubre la pantalla mientras cargan imágenes, fuentes y escenas; al estar todo listo se retira a la izquierda
     var t0 = performance.now(), fuera = false;
-    var h0 = hoja(guardado || nombreDe(location), 'fx-quieta fx-cargando', guardado ? fase : 0);
+    var enEspacio = modo === 'espacio' && guardado;
+    var h0 = enEspacio ? espacio(guardado, 'fx-quieta') : hoja(guardado || nombreDe(location), 'fx-quieta fx-cargando', guardado ? fase : 0);
+    if (enEspacio) raiz.classList.add('fx-llega-espacio');
     raiz.classList.add('fx-espera'); raiz.classList.remove('fx-llega');
     var retirar = function () {
       if (fuera) return; fuera = true;
       requestAnimationFrame(function () { requestAnimationFrame(function () {
-        h0.className = 'fx-hoja fx-sale'; raiz.classList.remove('fx-espera');
+        h0.className = enEspacio ? 'fx-espacio fx-sale' : 'fx-hoja fx-sale'; raiz.classList.remove('fx-espera');
         yaRevelado = true; revelar();
-        setTimeout(function () { h0.remove(); }, 480);
+        setTimeout(function () { h0.remove(); raiz.classList.remove('fx-llega-espacio'); }, enEspacio ? 1400 : 480);
       }); });
     };
     var cargada = new Promise(function (ok) { if (d.readyState === 'complete') ok(); else addEventListener('load', ok, { once: true }); });
     // las fuentes rara vez tardan, pero si tardan no retienen la página más de 1,2 s
     var fuentes = d.fonts && d.fonts.ready ? Promise.race([d.fonts.ready, new Promise(function (ok) { setTimeout(ok, 1200); })]) : Promise.resolve();
     // al cambiar de sección, la hoja se queda 1,5 s más una vez que todo está listo, para que el péndulo se luzca
-    var extra = guardado ? 1500 : 0;
+    var extra = enEspacio ? 500 : (guardado ? 1500 : 0);
     var pausa = function () { return new Promise(function (ok) { setTimeout(ok, extra); }); };
     cargada.then(function () { return Promise.all([fuentes].concat(esperas)); }).then(pausa, pausa).then(retirar);
     // tope de seguridad: una página con escenas puede esperar más; ninguna se queda tapada
@@ -73,6 +85,17 @@
     setTimeout(function () { location.href = u.href; }, 230);
   }
   window.fxIr = ir;
+  // salida hacia una página con fondo de espacio: el nombre aparece al centro sobre lo que ya hay en pantalla
+  // (la mancha extendida) y el fondo se cierra en noche; la página nueva arranca con ese mismo velo
+  window.fxIrEspacio = function (href, titulo) {
+    if (quieto || yendo) { location.href = href; return; }
+    yendo = true;
+    var u = new URL(href, location.href), h = espacio(titulo || nombreDe(u), '');
+    try { sessionStorage.setItem('fx-hoja', titulo || nombreDe(u)); sessionStorage.setItem('fx-modo', 'espacio'); } catch (e) {}
+    requestAnimationFrame(function () { requestAnimationFrame(function () { h.classList.add('fx-entra'); }); });
+    precargar(u.href);
+    setTimeout(function () { location.href = u.href; }, 1250);
+  };
   window.fxPrecarga = function (href) { precargar(href); };
 
   // precarga: al acercar el cursor (o tocar) un enlace interno, el navegador ya va pidiendo esa página y lo que necesita
@@ -107,7 +130,7 @@
   // al volver con "atrás" desde la caché del navegador, ninguna hoja debe quedar encima
   window.addEventListener('pageshow', function (e) {
     if (!e.persisted) return;
-    yendo = false; Array.prototype.forEach.call(d.querySelectorAll('.fx-hoja'), function (n) { n.remove(); });
+    yendo = false; Array.prototype.forEach.call(d.querySelectorAll('.fx-hoja, .fx-espacio'), function (n) { n.remove(); });
     raiz.classList.remove('fx-llega', 'fx-espera');
   });
 })();

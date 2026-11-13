@@ -737,9 +737,14 @@
       piezas.push({ z: dep(C) + G.Rr * QH * sP + .001, f: function () {
         // costado del casquillo: un cilindro de acero sombreado a lo ancho (perpendicular a su eje), como la columna
         var a0 = Pp(hB), a1 = Pp(hF), ax = a1[0] - a0[0], ay = a1[1] - a0[1], al = Math.hypot(ax, ay) || 1, nx = -ay / al, ny = ax / al, cm = [(a0[0] + a1[0]) / 2, (a0[1] + a1[1]) / 2], wr = RS * QH;
-        if (nx * LZ[0] + ny * LZ[1] < 0) { nx = -nx; ny = -ny; }
+        // el sombreado depende de forma continua de cuánto mira cada lado a la luz (sin elegir un lado de golpe): así no
+        // cambia de un cuadro a otro; la tapa pasa de un extremo al otro solo cuando la rueda está de canto
+        var dl = nx * LZ[0] + ny * LZ[1], L1 = .5 + .42 * dl, L2 = .5 - .42 * dl, tH = .5 - .32 * dl;
         var gs = ctx.createLinearGradient(cm[0] + nx * wr, cm[1] + ny * wr, cm[0] - nx * wr, cm[1] - ny * wr);
-        [[0, '#F2EFE8'], [.22, '#C9C4BA'], [.55, '#8E8981'], [.85, '#5E5A53'], [1, '#77726A']].forEach(function (c) { gs.addColorStop(c[0], c[1]); });
+        [0, .15, .3, .45, .6, .75, .9, 1].forEach(function (t) {
+          var lu = cl(L1 + (L2 - L1) * t + .32 * Math.exp(-(t - tH) * (t - tH) / .015) - .12 * (Math.abs(t - .5) > .45 ? 1 : 0), 0, 1), v = Math.round(78 + 168 * lu);
+          gs.addColorStop(t, 'rgb(' + v + ',' + (v - 4) + ',' + (v - 11) + ')');
+        });
         poli(casco(hC.concat(hD)), gs, null);
         var hp = Pp(hF), gh = ctx.createRadialGradient(hp[0] - 2, hp[1] - 2, .3, hp[0], hp[1], RS * QH * 1.2); gh.addColorStop(0, '#E9E6DF'); gh.addColorStop(.5, '#B4AFA5'); gh.addColorStop(1, '#6F6A61');
         poli(hC, gh, TINTA + '.7)', .6);

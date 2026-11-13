@@ -602,8 +602,18 @@
         var RW = .055 * cam.s, RA2 = .032 * cam.s;
         cilindro(bz, bz + .42, 1.12, LATON, '#E6CC92');
         aro3(bz + .42, 1.12, -1).forEach(function (tr) { tubo(tr, RW * 1.2, TL, 'butt'); });   // mitad de atrás del aro, antes que la columna
+        // dos abrazaderas en la columna: un aro dorado entre dos hilos de acero, ceñidos al cilindro. La mitad de atrás
+        // va antes que la columna y la de adelante después, así cada aro la rodea entero, sin puntas sueltas
+        var ABR = [bz + 1.5, h - 1.25], abraza = function (m) {
+          ABR.forEach(function (zr) {
+            [[zr - .085, .318, RA2 * .55, ACERO], [zr + .085, .318, RA2 * .55, ACERO], [zr, .335, RA2 * 1.15, TL]].forEach(function (a) {
+              aro3(a[0], a[1], m).forEach(function (tr) { tubo(tr, a[2], a[3], 'butt'); });
+            });
+          });
+        };
+        abraza(-1);
         cilindro(bz + .42, h - .6, .3, BRONCE);
-        [bz + 1.5, h - 1.25].forEach(function (zr) { aro3(zr, .33, 1).forEach(function (tr) { tubo(tr, RA2, ACERO, 'butt'); }); });
+        abraza(1);
         aro3(bz + .42, 1.12, 1).forEach(function (tr) { tubo(tr, RW * 1.2, TL, 'butt'); });
         cilindro(h - .6, h - .15, .62, LATON, '#EAD39E');
         [-1, 1].forEach(function (m) { aro3(h - .15, .62, m).forEach(function (tr) { tubo(tr, RA2 * 1.2, TL, 'butt'); }); });

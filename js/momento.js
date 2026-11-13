@@ -581,10 +581,43 @@
         if (tapaC) { ctx.fillStyle = tapaC; ctx.beginPath(); ctx.ellipse(c1[0], c1[1], rx, ry, 0, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); }
       }
       var MADERA = ['#A8977E', '#D6CBB6', '#F5F0E6', '#FBF8F1', '#E2D8C4', '#B9AA92'], LATON = ['#7A5A2A', '#B48A45', '#E8CF95', '#F6E6BE', '#C39B55', '#80602C'];
+      // apoyo a juego con el rotor: casquillo y cojinete de latón ceñidos por aros de alambre dorado, columna de bronce
+      // oscuro con dos aros de acero, y tres aletas de alambre barridas que suben del casquillo al cojinete
+      var BRONCE = ['#3A2A14', '#6E5229', '#B89458', '#E3C98E', '#8E6C36', '#4A3519'];
+      function aro3(zr, r, mitad) {   // un aro horizontal alrededor de la columna (mitad: 1 la de adelante, -1 la de atrás)
+        var p3 = [], ax = dep([0, 0, zr]);
+        for (var i = 0; i <= 48; i++) { var a = 2 * Math.PI * i / 48, q = [r * Math.cos(a), r * Math.sin(a), zr]; p3.push(q); }
+        var tr = [], out = [];
+        p3.forEach(function (q) { if ((dep(q) - ax) * mitad >= -.001) tr.push(P(q[0], q[1], q[2])); else if (tr.length) { out.push(tr); tr = []; } });
+        if (tr.length) out.push(tr);
+        if (out.length > 1 && (dep(p3[0]) - ax) * mitad >= -.001) { out[0] = out.pop().concat(out[0]); }
+        return out;
+      }
+      function aleta(k) {
+        var pts = [], p3 = [];
+        for (var i = 0; i <= 20; i++) {
+          var t = i / 20, a = k * 2 * Math.PI / 3 + .8 - 1.7 * t, r = 1.02 - .6 * Math.pow(t, .8) + .32 * Math.sin(Math.PI * t), zz = bz + .42 + (h - 1.05 - bz) * t;
+          var q = [r * Math.cos(a), r * Math.sin(a), zz]; p3.push(q); pts.push(P(q[0], q[1], q[2]));
+        }
+        return { pts: pts, z: dep(p3[10]) - dep([0, 0, p3[10][2]]) };
+      }
       objs.push({ z: dep(piv), k: 'torre', f: function () {
-        cilindro(bz, bz + .5, 1.15, LATON, '#E6CC92');
-        cilindro(bz + .5, h - .6, .42, MADERA);
-        cilindro(h - .6, h - .15, .66, LATON, '#EAD39E');
+        var aletas = [0, 1, 2].map(aleta), RW = .055 * cam.s, RA2 = .032 * cam.s;
+        cilindro(bz, bz + .42, 1.12, LATON, '#E6CC92');
+        aletas.forEach(function (al) { if (al.z < 0) tubo(al.pts, RW, TO); });
+        cilindro(bz + .42, h - .6, .3, BRONCE);
+        [bz + 1.5, h - 1.25].forEach(function (zr) { aro3(zr, .33, 1).forEach(function (tr) { tubo(tr, RA2, ACERO, 'butt'); }); });
+        aletas.forEach(function (al) { if (al.z >= 0) tubo(al.pts, RW, TO); });
+        aro3(bz + .42, 1.12, 1).forEach(function (tr) { tubo(tr, RW * 1.2, TL, 'butt'); });
+        cilindro(h - .6, h - .15, .62, LATON, '#EAD39E');
+        aro3(h - .15, .62, 1).forEach(function (tr) { tubo(tr, RA2 * 1.2, TL, 'butt'); });
+        // un cristal azul engastado al frente del casquillo: el mismo acento que el cubo del rotor
+        var cz = bz + .21, ca = Math.atan2(1, 0), best = null;
+        for (var i = 0; i < 36; i++) { var a = 2 * Math.PI * i / 36, q = [1.12 * Math.cos(a), 1.12 * Math.sin(a), cz]; if (!best || dep(q) > dep(best)) best = q; }
+        var g0 = P(best[0], best[1], cz), gl = ctx.createRadialGradient(g0[0], g0[1], 0, g0[0], g0[1], 8); gl.addColorStop(0, 'rgba(150,190,255,.5)'); gl.addColorStop(1, 'rgba(150,190,255,0)');
+        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(g0[0], g0[1], 8, 0, 7); ctx.fill();
+        [['#2B3A67', [0, -4.5], [3, 0]], ['#5E7FBF', [3, 0], [0, 4.5]], ['#3A4F8A', [0, 4.5], [-3, 0]], ['#8FB0E8', [-3, 0], [0, -4.5]]].forEach(function (f) { ctx.fillStyle = f[0]; ctx.beginPath(); ctx.moveTo(g0[0], g0[1]); ctx.lineTo(g0[0] + f[1][0], g0[1] + f[1][1]); ctx.lineTo(g0[0] + f[2][0], g0[1] + f[2][1]); ctx.closePath(); ctx.fill(); });
+        ctx.strokeStyle = TINTA + '.7)'; ctx.lineWidth = .5; ctx.beginPath(); ctx.moveTo(g0[0], g0[1] - 4.5); ctx.lineTo(g0[0] + 3, g0[1]); ctx.lineTo(g0[0], g0[1] + 4.5); ctx.lineTo(g0[0] - 3, g0[1]); ctx.closePath(); ctx.stroke();
       } });
       // ── eje en tres tramos ──
       function tramo(s0, s1) {
@@ -640,7 +673,7 @@
         n = n || normales(pts);
         var capa = function (w, col, off) { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); pts.forEach(function (p, i) { var x = p[0] + n[i][0] * off, y = p[1] + n[i][1] * off; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }); ctx.stroke(); };
         ctx.lineCap = cabo || 'round'; ctx.lineJoin = 'round';
-        capa(2 * r + 1.1, TINTA + '.85)', 0); capa(2 * r, pal[0], 0); capa(1.5 * r, pal[1], .2 * r); capa(.75 * r, pal[2], .42 * r); capa(.28 * r, pal[3], .55 * r);
+        capa(2 * r + .55, TINTA + '.5)', 0); capa(2 * r, pal[0], 0); capa(1.5 * r, pal[1], .2 * r); capa(.75 * r, pal[2], .42 * r); capa(.28 * r, pal[3], .55 * r);
       }
       // una curva en el plano de la rueda, partida en tramos: cada tramo entra al orden de profundidad por su cuenta
       function curva(fp, nP, nT, r, pal, extra) {

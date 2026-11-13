@@ -580,7 +580,7 @@ body.con-tejido .node .gl,body.con-tejido .node .tents,body.con-tejido .node .bo
 #maqueta{position:relative;width:100%;aspect-ratio:1774/887;z-index:3;--s:.8;font-family:"Barlow Semi Condensed","Bahnschrift","Arial Narrow",sans-serif;color:#F3EAF8}
 #maqueta[hidden]{display:none}
 .mq-vivo{opacity:0;transition:opacity .6s}.mq-vivo.lista{opacity:1}
-.mq-fondo,#maqueta>.mq-vivo{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;pointer-events:none;-webkit-mask:linear-gradient(#000 91%,rgba(0,0,0,.6) 95.5%,transparent);mask:linear-gradient(#000 91%,rgba(0,0,0,.6) 95.5%,transparent)}
+.mq-fondo,#maqueta>.mq-vivo{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;pointer-events:none;-webkit-mask:linear-gradient(#000 93.5%,rgba(0,0,0,.6) 97%,transparent);mask:linear-gradient(#000 93.5%,rgba(0,0,0,.6) 97%,transparent)}
 body.con-maqueta:has(#v-hive.on) header{display:none}
 body.con-maqueta .swarm{height:auto;min-height:0;background:#100817}
 body.con-maqueta #swarm>:not(#maqueta):not(#mq-suelo):not(#side){display:none!important}
@@ -1393,21 +1393,24 @@ const MQR={circ:55,cal:55,vrel:30,mcirc:50,elec:50,gauss:62,mag:55,ene:74,grav:3
 const VV={capas:[],raf:0,t0:performance.now()};
 const VV_VS='attribute vec2 a;varying vec2 v;void main(){v=vec2(a.x*.5+.5,.5-a.y*.5);gl_Position=vec4(a,0.,1.);}';
 const VV_FS=`precision highp float;
-uniform sampler2D T;uniform vec2 S;uniform float t;uniform int N;uniform vec4 O[20];uniform vec4 Q[20];varying vec2 v;
+uniform sampler2D T;uniform vec2 S;uniform float t;uniform int N;uniform vec4 O[24];uniform vec4 Q[24];varying vec2 v;
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
 vec3 tx(vec2 p){return texture2D(T,clamp(p/S,vec2(.0005),vec2(.9995))).rgb;}
 mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,s,-s,c);}
 void main(){
-  vec2 p=v*S,q=p,c=vec2(0.);float rn=1.,om=0.,gl=0.,core=0.,br=0.;
-  for(int i=0;i<20;i++){ if(i>=N) break;
+  vec2 p=v*S,q=p,c=vec2(0.);float rn=1.,om=0.,gl=0.,core=0.,br=0.,an=1.;
+  for(int i=0;i<24;i++){ if(i>=N) break;
     vec2 d=p-O[i].xy;float r=O[i].z,l=length(d);
     float ph=t*Q[i].y+O[i].w;
     float b=.5+.5*sin(ph)+.16*sin(2.*ph+1.3);
     float w=1.-smoothstep(r*.3,r*1.6,l);
-    q-=d*Q[i].x*b*w;
+    q-=d*Q[i].x*b*w; an*=smoothstep(r*.7,r*2.6,l);
     if(l<r*.62){c=O[i].xy;rn=r*.62;om=Q[i].z;float k=1.-l/rn;core=k*k;gl=Q[i].w;br=b;}
   }
+  // los tentáculos oscilan un poco: onda lenta anclada en cada célula
+  float zn=S.x>1800.?.6:smoothstep(380.,540.,p.x)*smoothstep(40.,95.,p.y)*(1.-smoothstep(690.,790.,p.y));
+  q+=vec2(sin(p.y*.017+p.x*.006+t*.9)+.5*sin(p.x*.031-t*1.3),cos(p.x*.015-p.y*.008+t*.75)+.5*sin(p.y*.027+t*1.1))*3.2*an*zn;
   vec3 o=tx(p);
   float gr=clamp((o.g-max(o.r,o.b))*4.,0.,1.);
   float vi=clamp(((o.r+o.b)*.5-o.g-.22)*2.2,0.,1.);
@@ -1442,9 +1445,9 @@ function vivoCapa(src,W,H){
   im.src=src; VV.capas.push(capa); return capa;
 }
 function vivoOrgs(capa,orgs){ // orgs: [x,y,r,fase,amp,vel,remolino,brillo]
-  const {gl,U}=capa, O=new Float32Array(80), Q=new Float32Array(80);
-  orgs.slice(0,20).forEach((o,i)=>{ O.set(o.slice(0,4),i*4); Q.set(o.slice(4,8),i*4); });
-  gl.uniform4fv(U.O,O); gl.uniform4fv(U.Q,Q); gl.uniform1i(U.N,Math.min(20,orgs.length));
+  const {gl,U}=capa, O=new Float32Array(96), Q=new Float32Array(96);
+  orgs.slice(0,24).forEach((o,i)=>{ O.set(o.slice(0,4),i*4); Q.set(o.slice(4,8),i*4); });
+  gl.uniform4fv(U.O,O); gl.uniform4fv(U.Q,Q); gl.uniform1i(U.N,Math.min(24,orgs.length));
 }
 function vivoPinta(capa,t){
   const {cv,gl,U}=capa; if(!capa.ok||!cv.isConnected) return;
@@ -1462,7 +1465,9 @@ function vivoMaqueta(st,su){
   if(VV.fondo.cv){ st.insertBefore(VV.fondo.cv,st.firstChild.nextSibling); st.classList.toggle('vivo',VV.fondo.ok);
     // cada célula según su avance real: más ejercicios resueltos = respiración más rápida y núcleo más encendido
     vivoOrgs(VV.fondo,Object.entries(MQ.pos).filter(([id])=>T(id)).map(([id,[x,y]])=>{ const r=MQR[id]||45, m=mastery(id), p=Math.min(1,(m.p||0)*4), hs=hashStr(id), sel=1;
-      return [x,y,r,(hs%628)/100, (.03+.03*Math.min(1,r/70))*(1+p*.8)*sel, (.75+((hs>>3)%5)*.08+2.2*p)*(r<35?1.35:1), .55+1.6*p+((hs>>5)%3)*.12, .45+1.1*p]; })); }
+      return [x,y,r,(hs%628)/100, (.03+.03*Math.min(1,r/70))*(1+p*.8)*sel, (.75+((hs>>3)%5)*.08+2.2*p)*(r<35?1.35:1), .55+1.6*p+((hs>>5)%3)*.12, .45+1.1*p]; })
+      // los huevos verdes de abajo a la derecha: laten y su líquido gira
+      .concat([[1552,827,30,0,.07,1.5,1.4,.9],[1615,795,35,2.1,.06,1.2,-1.2,.9],[1670,815,34,4.2,.07,1.7,1.3,.9]])); }
   if(VV.suelo.cv){ su.insertBefore(VV.suelo.cv,su.firstChild.nextSibling); su.classList.toggle('vivo',VV.suelo.ok); }
   vivoArranca();
 }

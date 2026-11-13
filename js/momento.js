@@ -627,7 +627,7 @@
       var Lb = Pp(add(C, U, th / 2)), Lt = Pp(add(C, U, LL)), dl = Pp(add(add(C, U, LL), V, 1.6));
       objs.push({ z: dep(add(C, U, (th / 2 + LL) / 2)), k: 'L', f: vec(Lb, Lt, VINO, .95, 2.1, 11) });
       objs.push({ z: dep(add(C, U, LL)) + .001, k: 'L', f: function (len) { if (len > .6) vec(Lt, dl, ORO, .95, 1.2, 7)((len - .6) / .4); } });
-      var mg0 = Pp(add(C, Z, -G.Rr - .2)), mg1 = Pp(add(C, Z, -G.Rr - 3.2));
+      var mg0 = Pp(C), mg1 = Pp(add(C, Z, -G.Rr - 2.6));   // nace en el centro de masa del rotor
       objs.push({ z: dep(C) + .001, k: 'mg', f: vec(mg0, mg1, TINTA, .85, 1.3, 8) });
       var tz = Pp(piv), tq = Pp(add(piv, V, 3.6));
       objs.push({ z: dep(add(piv, V, 1.8)), k: 'tau', f: vec(tz, tq, ORO, .95, 1.6, 9) });
@@ -663,6 +663,7 @@
     function piezaG(p) {
       var z = GI.hit, c = GI.camG; if (!z || !c) return null;
       if (dentro(p, z.base) || (z.caras && z.caras.some(function (q) { return dentro(p, q); }))) return 'torre';
+      var o = z.ancla.omega, pv0 = z.piv; if (p[0] > pv0[0] - 10 && p[0] < pv0[0] + 24 && p[1] <= pv0[1] + 4 && p[1] >= o[1] - 26) return 'omega';   // la línea de Ω y su rótulo
       var r = z.torre; if (p[0] >= r[0] && p[0] <= r[0] + r[2] && p[1] >= r[1] + 14 && p[1] <= r[1] + r[3]) return 'torre';
       var x = (p[0] - c.x) / c.s, y = ((c.y - p[1]) / c.s - G.h * Math.cos(c.el)) / Math.sin(c.el), rr = Math.hypot(x, y);
       for (var i = 0; i < ZONAS.length; i++) if (rr >= ZONAS[i][1] && rr < ZONAS[i][2]) return ZONAS[i][0];

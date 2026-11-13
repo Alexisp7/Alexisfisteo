@@ -352,48 +352,28 @@ var menu = function () {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
-    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, fijo = false, medido = false, inicio = performance.now(), armT = null;
+    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, tPinta = 0, respiro = 0, inicio = performance.now(), armT = null;
     // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
-      if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
-      // hasta medir la GPU no se pinta nada: con una GPU lenta los cuadros se encolarían y la medición los esperaría
-      if (!medido && performance.now() - inicio < 4000) return;
+      if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; tPinta = 0; return; }
       // la resolución casi no baja: si la GPU va lenta se ajusta poco y se salta un cuadro
-      if (fijo) {   // GPU sin aceleración: un cuadro quieto, ya dibujado, que solo se repinta si cambia el foco de las notas
-        var firma = dimMeta.join() + hkMeta + lienzo.getBoundingClientRect().width;
-        if (firma === fijo) return;
-        fijo = firma; dim[0] = dimMeta[0]; dim[1] = dimMeta[1]; hk = hkMeta; armT = 9; pintar(); return;
-      }
+      // con una GPU muy lenta (o sin aceleración) cada cuadro cuesta cientos de ms: entonces se deja al navegador
+      // al menos otro tanto libre entre cuadro y cuadro. El dibujo sigue moviéndose y a resolución completa;
+      // solo baja la cadencia, y con una GPU normal esto nunca actúa
+      if (tPinta && respiro && t - tPinta < respiro) return;
+      if (tPinta && t - tPinta > 60) respiro = 2 * (t - tPinta); else if (tPinta) respiro = 0;
       if (++cuadro % salto) return;
-      pintar();
+      pintar(); tPinta = t;
       // si va lento se pinta un cuadro de cada dos; la resolución no cambia nunca (si bajara, se pixelaría a mitad de la escena)
       if (previo) { var d = (t - previo) / salto; lentos = d > 30 ? lentos + 1 : Math.max(0, lentos - 1);
         if (lentos > 25) { lentos = 0; if (salto < 2) salto = 2; } }
       previo = t;
     })(0);
-    // medición de la GPU (bajo la hoja de carga): solo distingue un navegador sin aceleración gráfica; la resolución
-    // del trazado nunca se reduce.
-    fig.bnMedir = function () {
-      medido = true;
-      if (!listo) return;
-      var r = lienzo.getBoundingClientRect(); if (!r.width) return;
-      // se mide con el lienzo reducido (1/8 y 1/4 de lado): así, aunque la GPU sea lentísima o no haya aceleración,
-      // la medición dura milésimas y no congela el navegador; el costo por píxel se extrapola al tamaño real
-      var px = new Uint8Array(4), q0 = calidad;
-      function cuadro(q) { calidad = q; pintar(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); }
-      function mide(q) { var a = performance.now(); cuadro(q); var d1 = performance.now() - a; a = performance.now(); cuadro(q); return [Math.min(d1, performance.now() - a), lienzo.width * lienzo.height]; }
-      cuadro(.125);   // el primero compila el sombreador: no cuenta
-      var A = mide(.125), B = mide(.25);
-      calidad = q0;
-      // la resolución nunca se toca: el agujero negro se ve siempre con su nitidez completa. La medición solo detecta
-      // un navegador sin aceleración gráfica (un cuadro de 1/4 de lado ya tarda decenas de ms); ahí se deja un cuadro
-      // quieto, porque animarlo congelaría la página. Si la GPU va justa, el bucle pasa solo a 30 fps (ver bucleGL).
-      var m = B[0] * 16;
-      if (B[0] > 40) fijo = 'pendiente';
-      fig.bnMedida = { ms: +m.toFixed(1), chico: +A[0].toFixed(1), medio: +B[0].toFixed(1), salto: salto, calidad: calidad, fijo: !!fijo };
-    };
+    // precarga: un primer cuadro a resolución completa, todavía bajo la hoja de carga, para que la compilación del
+    // trazador de rayos y la primera subida a la GPU no ocurran a la vista
+    fig.bnPrecarga = function () { if (listo && lienzo.getBoundingClientRect().width) pintar(); };
     // la entrada de la escena (la mancha que se extiende, el disco que aparece) empieza cuando la hoja se retira
     if (window.fxRevelado) window.fxRevelado.then(function () { inicio = performance.now(); });
     fig.bnT = function (t) { tiempo = t; };
@@ -1581,7 +1561,16 @@ var menu = function () {
   var lect1 = raiz.querySelector('[data-lect="1"]'), lect2 = raiz.querySelector('[data-lect="2"]');
   var activo = 0;
   function salida(i) { return function (a, b) { if (i === activo) { lect1.textContent = a; lect2.textContent = b; } }; }
-  var mods = [escenaRelatividad, escenaSternGerlach, window.escenaMomento || escenaProblemas, window.escenaFision || escenaProblemas].map(function (fn, i) { var sv = escenas[i].querySelector('svg'), m = fn(sv, salida(i)); if (m.notas) m.notas(); return m; });
+  // las cuatro escenas se arman por partes, una por tarea: entre una y otra el navegador respira y la hoja sigue animada
+  var fabricas = [escenaRelatividad, escenaSternGerlach, window.escenaMomento || escenaProblemas, window.escenaFision || escenaProblemas], mods = [];
+  return new Promise(function (fin) {
+    (function parte(i) {
+      if (i === fabricas.length) { fin(resto()); return; }
+      var sv = escenas[i].querySelector('svg'), m = fabricas[i](sv, salida(i)); if (m.notas) m.notas(); mods.push(m);
+      setTimeout(function () { parte(i + 1); }, 0);
+    })(0);
+  });
+  function resto() {
   // Stern–Gerlach: al pasar por Fz la escena se apaga y aparece el cálculo completo, de Schrödinger a las dos manchas
   (function () {
     var ec = raiz.querySelector('.mc-ec[data-ec="1"]'); if (!ec) return;
@@ -1715,11 +1704,15 @@ var menu = function () {
     mods[activo].tick(dt);
   }
   requestAnimationFrame(bucle);
-  // la GPU se mide ahora, con la hoja encima: así la calidad del agujero negro queda fija antes de que se vea
+  // el agujero negro hace su primer cuadro ahora, con la hoja encima
   var fig0 = escenas[0];
-  if (fig0.bnMedir) fig0.bnMedir();
   // dos cuadros más para que todo lo que se compila o decodifica al primer dibujo ocurra todavía bajo la hoja
-  return new Promise(function (ok) { requestAnimationFrame(function () { requestAnimationFrame(ok); }); });
+  // el primer cuadro del agujero negro va en su propia tarea; luego dos cuadros más bajo la hoja
+  return new Promise(function (ok) { setTimeout(function () {
+    if (fig0.bnPrecarga) fig0.bnPrecarga();
+    requestAnimationFrame(function () { requestAnimationFrame(ok); });
+  }, 0); });
+  }
 };
 requestAnimationFrame(function () { setTimeout(function () {
   var r; try { r = menu(); } catch (e) { avisar(); throw e; }

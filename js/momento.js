@@ -642,7 +642,10 @@
       var mg0 = Pp(C), mg1 = Pp(add(C, Z, -G.Rr - 2.6));   // nace en el centro de masa del rotor
       objs.push({ z: dep(C) + .001, k: 'mg', f: vec(mg0, mg1, TINTA, .85, 1.3, 8) });
       var tz = Pp(piv), tq = Pp(add(piv, V, 3.6));
-      objs.push({ z: dep(add(piv, V, 1.8)), k: 'tau', f: vec(tz, tq, ORO, .95, 1.6, 9) });
+      // τ nace en el pivote y es perpendicular al eje: va delante o detrás según el lado de V que mira a la cámara,
+      // nunca por comparar puntos medios. Su raíz queda siempre bajo la bola, así el cambio de lado no salta.
+      var dV = dep(add(piv, V, 1)) - zp, zT = dV >= 0 ? zBola - .0002 : Math.min(dep(add(piv, V, 1.8)), zp - .0003);
+      objs.push({ z: zT, k: 'tau', f: vec(tz, tq, ORO, .95, 1.6, 9) });
       var om = Pp(add(piv, Z, 3.4));
       objs.push({ z: zBola + .0004, k: 'omega', f: vec([tz[0], tz[1] - 7], om, AZUL, .85, 1.3, 8) });
       // ── rótulos: cada uno con la profundidad de su pieza, así una pieza que pasa por delante lo tapa ──
@@ -653,7 +656,7 @@
        ['tau', 'τ', tq[0] + 6, tq[1] + 4, { px: 20, it: true, c: '#8A5A16', a: 1, halo: true }],
        ['omega', 'Ω', om[0] + 7, om[1] + 6, { px: 19, it: true, c: '#2B3A67', a: 1, halo: true }],
        ['d', 'd', dm[0], dm[1] - 9, { px: 17, it: true, c: '#1E1A16', a: .9, al: 'center', halo: true }]].forEach(function (r, i) {
-        var zr = [dep(add(C, U, LL)) + .0012, dep(add(C, U, LL)) + .0013, dep(C) + .0015, dep(add(piv, V, 3.6)) + .001, zBola + .0006, Math.min(dep(add(piv, U, G.d * .45)), zBola - .0002) + .0001][i];
+        var zr = [dep(add(C, U, LL)) + .0012, dep(add(C, U, LL)) + .0013, dep(C) + .0015, zT + .0001, zBola + .0006, Math.min(dep(add(piv, U, G.d * .45)), zBola - .0002) + .0001][i];
         objs.push({ z: zr, k: r[0], f: function (len) { if (len > .7) { var o = {}; for (var q in r[4]) o[q] = r[4][q]; o.a *= (len - .7) / .3; txt(r[1], r[2], r[3], o); } } });
       });
       objs.sort(function (p, q) { return p.z - q.z; }).forEach(function (o) { cola.push(o); });

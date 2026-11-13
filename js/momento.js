@@ -733,9 +733,14 @@
       var hF = add(C, U, fr[2] * .28), hB = add(C, U, -fr[2] * .28), hC = circulo3(hF, V, Z, G.Rr * QH, 28), hD = circulo3(hB, V, Z, G.Rr * QH, 28);
       var sP = Math.hypot(mira(V), mira(Z));   // cuánto del plano de la rueda mira al lector
       piezas.push({ z: dep(C) + G.Rr * QH * sP + .001, f: function () {
-        for (var k = 0; k < 28; k++) { var an = 2 * Math.PI * (k + .5) / 28; if (mira([V[0] * Math.cos(an), V[1] * Math.cos(an), Math.sin(an)]) < -.02) continue; var lh = Math.round(110 + 80 * cl(.5 + .5 * Math.sin(an), 0, 1)); ctx.fillStyle = ctx.strokeStyle = 'rgb(' + lh + ',' + (lh - 4) + ',' + (lh - 12) + ')'; ctx.lineWidth = .6; camino([hD[k], hD[k + 1], hC[k + 1], hC[k]], true); ctx.fill(); ctx.stroke(); }
-        var hp = Pp(hF), gh = ctx.createRadialGradient(hp[0] - 2, hp[1] - 2, .3, hp[0], hp[1], RS * QH * 1.2); gh.addColorStop(0, '#FFFFFF'); gh.addColorStop(.5, '#C9C4BA'); gh.addColorStop(1, '#6F6A61');
-        poli(hC, gh, TINTA + '.85)', .7);
+        // costado del casquillo: un cilindro de acero sombreado a lo ancho (perpendicular a su eje), como la columna
+        var a0 = Pp(hB), a1 = Pp(hF), ax = a1[0] - a0[0], ay = a1[1] - a0[1], al = Math.hypot(ax, ay) || 1, nx = -ay / al, ny = ax / al, cm = [(a0[0] + a1[0]) / 2, (a0[1] + a1[1]) / 2], wr = RS * QH;
+        if (nx * LZ[0] + ny * LZ[1] < 0) { nx = -nx; ny = -ny; }
+        var gs = ctx.createLinearGradient(cm[0] + nx * wr, cm[1] + ny * wr, cm[0] - nx * wr, cm[1] - ny * wr);
+        [[0, '#F2EFE8'], [.22, '#C9C4BA'], [.55, '#8E8981'], [.85, '#5E5A53'], [1, '#77726A']].forEach(function (c) { gs.addColorStop(c[0], c[1]); });
+        poli(casco(hC.concat(hD)), gs, null);
+        var hp = Pp(hF), gh = ctx.createRadialGradient(hp[0] - 2, hp[1] - 2, .3, hp[0], hp[1], RS * QH * 1.2); gh.addColorStop(0, '#E9E6DF'); gh.addColorStop(.5, '#B4AFA5'); gh.addColorStop(1, '#6F6A61');
+        poli(hC, gh, TINTA + '.7)', .6);
         // cabujón azul redondo, engastado en el centro de la cara del cubo
         var cf = add(hF, U, fr[2] * .03), cc = circulo3(cf, V, Z, .13, 24), cp = Pp(cf), gc = ctx.createRadialGradient(cp[0] - 1.6, cp[1] - 1.8, .2, cp[0], cp[1], 5);
         gc.addColorStop(0, '#CFE0FF'); gc.addColorStop(.35, '#6F8FCB'); gc.addColorStop(.8, '#2B3A67'); gc.addColorStop(1, '#1A2444');
@@ -744,6 +749,21 @@
         // contorno del cubo: su silueta completa en tinta
         ctx.strokeStyle = TINTA + '.75)'; ctx.lineWidth = .7; camino(casco(hC.concat(hD)), true); ctx.stroke();
       } });
+      // flecha de giro, como en un diagrama de cuerpo libre: un arco sobre el aro, en el plano de la rueda (precesa con
+      // ella pero no gira), que apunta en el sentido del giro propio (de V hacia Z, alrededor de +U, como L)
+      var arA = Math.PI / 2 + .75, arB = Math.PI / 2 - .55, arR = 1.2, arc3 = [], arcP = [];
+      for (var ia = 0; ia <= 30; ia++) { var aa = arB + (arA - arB) * ia / 30; arc3.push(rr(aa, arR)); arcP.push(Pp(arc3[ia])); }
+      piezas.push({ z: dep(C) + (dep(rr(Math.PI / 2, arR)) >= dep(C) ? 950 : -950), f: function () {
+        var n = arcP.length - 1, e = arcP[n], pr = arcP[n - 3], tx = e[0] - pr[0], ty = e[1] - pr[1], tl = Math.hypot(tx, ty) || 1; tx /= tl; ty /= tl;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.strokeStyle = 'rgba(244,238,227,.9)'; ctx.lineWidth = 4; camino(arcP.slice(0, n - 1)); ctx.stroke();
+        ctx.strokeStyle = 'rgba(84,56,22,.95)'; ctx.lineWidth = 1.6; camino(arcP.slice(0, n - 1)); ctx.stroke();
+        var hb = 9, hw = 4.2;
+        ctx.fillStyle = 'rgba(84,56,22,.95)'; ctx.beginPath(); ctx.moveTo(e[0] + tx * 2, e[1] + ty * 2); ctx.lineTo(e[0] - tx * hb + ty * hw, e[1] - ty * hb - tx * hw); ctx.lineTo(e[0] - tx * hb - ty * hw, e[1] - ty * hb + tx * hw); ctx.closePath(); ctx.fill();
+        var mo = Pp(rr(Math.PI / 2 + .1, arR + .2));
+        txt('ω', mo[0], mo[1], { px: 18, it: true, c: '#54381A', a: 1, al: 'center', halo: true });
+      } });
+      trazos.fi.push(arcP);
       piezas.sort(function (a, b) { return a.z - b.z; });
       // silueta para el velo: cada grosor en un solo trazo (sin rellenar los huecos) y el cubo
       function silueta() {

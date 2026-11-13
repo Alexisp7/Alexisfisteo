@@ -244,13 +244,11 @@ var menu = function () {
     '  float e = length(vec2(sb.x / 23.0, sb.y / 12.5));',
     '  e += (fbm(vec3(sb * .11, 1.0)) - .5) * .75 + (fbm(vec3(sb * .6, 4.0)) - .5) * .2 + (ruido(vec3(sb * 2.4, 5.0)) - .5) * .05;',
     '  float pw = smoothstep(0.0, .9, uArm); pw = 1.0 - (1.0 - pw) * (1.0 - pw);',
-    // el borde de la mancha termina en seco donde pasa el contorno (antes se desvanecía y la línea quedaba separada por un halo claro)
-    '  float fe = clamp(fwidth(e), 1e-4, .06), T = .918 * pw;',
-    '  float W = 1.0 - smoothstep(T - fe, T, e);',
+    '  float W = 1.0 - smoothstep(.9 * pw - .035, .93 * pw, e);',
     // núcleo de pigmento denso (índigo casi negro) y, hacia el borde, una veladura gris azulada que se deshilacha
     '  float nucleo = 1.0 - smoothstep(.5 * pw, .84 * pw, e + (fbm(vec3(sb * .25, 9.0)) - .5) * .35);',
     '  float n = fbm(d * 2.6 + vec3(1.3, 6.2, 2.9)), n3 = fbm(d * 6.0 + 3.0);',
-    '  float filo = smoothstep(.72, T, e) * W;',
+    '  float filo = smoothstep(.72, .92, e) * W;',
     '  float grano = ruido(vec3(sb * 9.0, 7.0)) * (1.0 - smoothstep(.002, .004, px));',
     '  float dens = W * (.74 + .22 * n + .08 * grano) + .3 * filo;',
     '  dens = mix(dens, .9 + .1 * n, nucleo);',
@@ -260,12 +258,7 @@ var menu = function () {
     '  vec3 est = estrellas(d, px) * vec3(1.0, .9, .7);',
     '  float aE = clamp(max(est.r, est.g) * 1.5, 0.0, 1.0) * smoothstep(.15, .5, W) * (.45 + .55 * nucleo);',
     '  vec3 col = mix(tinta, vec3(1.0, .9, .66), aE);',
-    // contorno a tinta: una línea de plumilla que sigue el filo de la mancha (la misma curva de nivel que la recorta,
-    // así nunca se separa de ella); su grosor se mide en píxeles con fwidth y varía un poco, como el trazo de una pluma
-    '  float pl = .7 + .9 * ruido(vec3(sb * .35, 11.0)) + .3 * ruido(vec3(sb * 1.7, 13.0));',
-    '  float lin = (1.0 - smoothstep(fe * .45 * pl, fe * (.45 * pl + 1.0), abs(e - T))) * smoothstep(.04, .3, uArm);',
-    '  col = mix(col, vec3(.035, .04, .075), lin);',
-    '  return vec4(col, clamp(max(max(dens * .97, aE), lin * .92), 0.0, 1.0)); }',
+    '  return vec4(col, clamp(max(dens * .97, aE), 0.0, 1.0)); }',
     'void main() {',
     '  vec2 q = vec2(gl_FragCoord.x / uRes.x, 1.0 - gl_FragCoord.y / uRes.y);',
     '  vec2 d = (uVB.xy + q * uVB.zw - uC) / uSC; float cr = cos(uRoll), sr = sin(uRoll);',
@@ -290,12 +283,13 @@ var menu = function () {
     '      float rq = length(q.xz); if (rq > 5.85 && rq < 22.5) { if (n == 0) { hA = q; vA = vn; } else { hB = q; vB = vn; } n++; if (n > 1) break; } }',
     '    p = pn; v = vn;',
     '  }',
-    // dirección hacia el fondo: la de una cámara estenopeica más la desviación que sufrió el rayo; el cielo gira despacio
+    // dirección hacia el fondo: la de una cámara estenopeica
     '  float F = 16.0, px = uPix / F;',
-    // la desviación pesa entera cerca de la sombra y se apaga lejos: allí las estrellas conservan su forma
-    '  float bb = length(vec2(bx, by)), pesoL = 1.0 / (1.0 + pow(bb / 9.5, 4.0));',
-    '  vec3 dg = normalize(normalize(fw + (rt * bx + up * by) / F) + (normalize(v) - fw) * pesoL);',
-    // el cielo gira despacio: al pasar junto a la sombra las estrellas se estiran y doblan (lente gravitacional)
+    // el espacio de fondo se ve sin lente (Andreé quitó la ampliación de las estrellas a los costados de la sombra):
+    // solo el disco conserva la desviación de la luz
+    '  float bb = length(vec2(bx, by));',
+    '  vec3 dg = normalize(fw + (rt * bx + up * by) / F);',
+    // el cielo gira despacio, sin deformarse
     '  float ag = uT * .06, cg = cos(ag), sg = sin(ag); dg = vec3(cg * dg.x - sg * dg.z, dg.y, sg * dg.x + cg * dg.z);',
     // dentro de la sombra, marcas a escala (sin lente): singularidad, horizonte rₛ = 2 y esfera de fotones 1,5 rₛ = 3
     // sombra negra limpia; su borde (b = √27 M) se suaviza un píxel para que no se vea escalonado

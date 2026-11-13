@@ -214,7 +214,7 @@ var menu = function () {
     '  vec3 col = mix(tono * vec3(.72, .46, .34), min(tono * 1.1, vec3(1.0)), clamp(.62 + tr * .95, 0.0, 1.0));',
     // corrimiento Doppler en el color: el lado que se acerca (g > 1) se ve más dorado y el que se aleja, más carmín
     '  float dop = clamp((g - 1.0) * 3.0, -1.0, 1.0);',
-    '  col *= mix(vec3(1.0), dop > 0.0 ? vec3(1.08, 1.0, .82) : vec3(.95, .62, .52), abs(dop));',
+    '  col *= mix(vec3(1.0), dop > 0.0 ? vec3(1.08, 1.0, .82) : vec3(.97, .8, .66), abs(dop));',
     '  float ar = min(fr, .12) * .7 + 1e-4;',
     '  float afuera = 1.0 - smoothstep(15.0 + 2.5 * flec, 21.5 + 1.0 * flec, r);',
     '  float fundido = smoothstep(.3, 1.3, uArm);',
@@ -313,12 +313,14 @@ var menu = function () {
     '  float halo = exp(-max(dr, 0.0) / (ab * (3.0 + 3.0 * uHk))) * step(0.0, dr) * (.35 + .45 * uHk) * chis * max(uDim.y, uHk);',
     '  vec3 rojo = mix(mix(vec3(.62, .07, .05), vec3(.95, .25, .17), chis), mix(vec3(.9, .02, .02), vec3(1.0, .16, .08), chis), uHk);',
     '  float mH = max(filoH, halo); fondo = vec4(mix(fondo.rgb, rojo, mH), max(fondo.a, mH));',
-    '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0); c1.a *= uDim.x; c2.a *= uDim.x;',   // foco de las notas: lo demás se vuelve transparente
+    '  vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0); c1.a *= uDim.x; c2.a *= uDim.x;',
+    // el fondo (mancha, estrellas, filo de Hawking) va dos tonos más oscuro y rojizo; el disco lleva su propio tono,
+    // amarillo dorado de gas caliente (blanco cálido adentro, ámbar afuera), apenas más oscuro que el original
+    '  fondo.rgb *= vec3(.88, .73, .68); fondo.rgb = mix(fondo.rgb, fondo.rgb * fondo.rgb * 1.25, .15);',
+    '  c1.rgb *= vec3(.97, .93, .7); c2.rgb *= vec3(.97, .93, .7);',   // foco de las notas: lo demás se vuelve transparente
     // composición «sobre» con alfa directo: el papel de la página se ve donde no hay tinta
     '  float a2 = c2.a + fondo.a * (1.0 - c2.a); vec3 k2 = (c2.rgb * c2.a + fondo.rgb * fondo.a * (1.0 - c2.a)) / max(a2, 1e-4);',
     '  float a1 = c1.a + a2 * (1.0 - c1.a); vec3 k1 = (c1.rgb * c1.a + k2 * a2 * (1.0 - c1.a)) / max(a1, 1e-4);',
-    // gradación de toda la escena: dos tonos más oscura y corrida hacia el rojo
-    '  k1 = k1 * vec3(.88, .73, .68); k1 = mix(k1, k1 * k1 * 1.25, .15);',
     '  gl_FragColor = vec4(k1, a1); }'
   ].join('\n');
 

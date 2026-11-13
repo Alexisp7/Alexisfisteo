@@ -624,12 +624,22 @@
         gg.addColorStop(0, '#FBEFD0'); gg.addColorStop(.55, '#E8CF95'); gg.addColorStop(1, '#C39B55');
         poli(cara, gg, TINTA + '.9)', .9);
         [.84, .34].forEach(function (q) { ctx.strokeStyle = 'rgba(70,48,18,.5)'; ctx.lineWidth = .6; camino(circulo3(frente, V, Z, G.Rr * q, 48), true); ctx.stroke(); });
-        var fase = GI.giro * 9.3;
-        for (var s = 0; s < 6; s++) {   // seis rayos iguales, sin estela: se ven igual a ambos lados del eje
+        // giro propio alrededor de +U (V → Z), el mismo sentido que L. Seis rayos iguales serían ambiguos (efecto de
+        // rueda de carreta); uno de ellos lleva un contrapeso y una muesca en el canto que se siguen con la vista.
+        var fase = GI.giro * 5.2, rr = function (an, q, o) { return add(add(o || frente, V, Math.cos(an) * G.Rr * q), Z, Math.sin(an) * G.Rr * q); };
+        for (var s = 0; s < 6; s++) {
           var an2 = fase + s * Math.PI / 3;
-          var a0 = add(add(frente, V, Math.cos(an2) * G.Rr * .34), Z, Math.sin(an2) * G.Rr * .34), a1 = add(add(frente, V, Math.cos(an2) * G.Rr * .84), Z, Math.sin(an2) * G.Rr * .84);
-          linea(Pp(a0), Pp(a1), 'rgba(70,48,18,', '.55', 1.1);
+          linea(Pp(rr(an2, .34)), Pp(rr(an2, .84)), 'rgba(70,48,18,', s ? '.55' : '.85', s ? 1.1 : 1.7);
         }
+        var mk = Pp(rr(fase, .62)), mr = 2.9;
+        ctx.fillStyle = '#B07A28'; ctx.strokeStyle = TINTA + '.9)'; ctx.lineWidth = .7; ctx.beginPath(); ctx.arc(mk[0], mk[1], mr, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#F6E6BE'; ctx.beginPath(); ctx.arc(mk[0] - .8, mk[1] - .8, .9, 0, 7); ctx.fill();
+        // muesca en la cara, sobre el filete exterior, al final del rayo marcado
+        ctx.strokeStyle = TINTA + '.9)'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.beginPath();
+        var m0 = Pp(rr(fase, .9)), m1 = Pp(rr(fase, 1)); ctx.moveTo(m0[0], m0[1]); ctx.lineTo(m1[0], m1[1]); ctx.stroke();
+        // y la misma muesca cruzando el canto, cuando ese tramo del canto mira al lector
+        var nm = [V[0] * Math.cos(fase), V[1] * Math.cos(fase), Math.sin(fase)];
+        if (dep(add(C, nm, 1)) - dep(C) > .05) { var c0 = Pp(rr(fase, 1)), c1 = Pp(rr(fase, 1, atras)); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(c0[0], c0[1]); ctx.lineTo(c1[0], c1[1]); ctx.stroke(); }
         var hc = Pp(add(frente, U, fr[2] * .15));
         ctx.fillStyle = '#F5F0E6'; ctx.strokeStyle = TINTA + '.9)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(hc[0], hc[1], 4.2, 0, 7); ctx.fill(); ctx.stroke();
         ctx.fillStyle = '#1E1A16'; ctx.beginPath(); ctx.arc(hc[0], hc[1], 1.3, 0, 7); ctx.fill();
@@ -664,13 +674,34 @@
       });
       objs.sort(function (p, q) { return p.z - q.z; }).forEach(function (o) { cola.push(o); });
       pinta(cola);
+      // las notas del rotor y de L no persiguen la pieza: señalan, fijo, el punto de su órbita más cercano a la caja.
+      // Cuando la pieza pasa por ahí, ese tramo de la órbita se enciende y se apaga con suavidad.
+      var caja = [ARRG.lado > 0 ? ARRG.tx - 14 : ARRG.tx + ARRG.ancho + 14, ARRG.ty];
+      function cerca(R) {
+        var mejor = null;
+        for (var q = 0; q < 180; q++) { var a = 2 * Math.PI * q / 180, pt = P(R * Math.cos(a), R * Math.sin(a), h), dd = Math.hypot(pt[0] - caja[0], pt[1] - caja[1]); if (!mejor || dd < mejor[2]) mejor = [pt, a, dd]; }
+        return mejor;
+      }
+      var fijo = { rotor: cerca(G.d), L: cerca(rt) };
+      ['rotor', 'L'].forEach(function (k) {
+        if (GI.focoVis !== k || GI.lav < .01) return;
+        var R = k === 'rotor' ? G.d : rt, a0 = fijo[k][1], dps = Math.atan2(Math.sin(psi - a0), Math.cos(psi - a0)), luz = Math.exp(-dps * dps / .12);
+        ctx.save(); ctx.globalAlpha = GI.lav; ctx.lineCap = 'round';
+        [[.42, 5, .10 + .25 * luz], [.22, 1.6, .35 + .6 * luz]].forEach(function (c) {
+          ctx.strokeStyle = ORO + c[2].toFixed(3) + ')'; ctx.lineWidth = c[1]; ctx.beginPath();
+          for (var q = 0; q <= 24; q++) { var a = a0 - c[0] + 2 * c[0] * q / 24, pt = P(R * Math.cos(a), R * Math.sin(a), h); q ? ctx.lineTo(pt[0], pt[1]) : ctx.moveTo(pt[0], pt[1]); }
+          ctx.stroke();
+        });
+        var pf = fijo[k][0]; ctx.fillStyle = ORO + (.25 + .5 * luz).toFixed(3) + ')'; ctx.beginPath(); ctx.arc(pf[0], pf[1], 2.4 + 2.2 * luz, 0, 7); ctx.fill();
+        ctx.restore();
+      });
       var pisoPts = [P(-B, -B, bz), P(B, -B, bz), P(B, B, bz), P(B, B, 0), P(-B, -B, 0)];
       GI.hit = {
         flechas: [['L', Lb, Lt], ['L', Lt, dl], ['mg', mg0, mg1], ['tau', tz, tq], ['omega', tz, om]],
         rotulos: [['L', [Lt[0] + 14, Lt[1] - 12]], ['L', [dl[0] + 12, dl[1] + 8]], ['mg', [mg1[0] + 18, mg1[1] - 4]], ['tau', [tq[0] + 12, tq[1]]], ['omega', [om[0] + 13, om[1]]], ['mg', [dm[0], dm[1] - 14]]],
         rotor: [cara, dorso], piv: pv, torre: (function () { var a = P(0, 0, bz), b = P(0, 0, h), w = .7 * cam.s; return [a[0] - w, b[1], 2 * w, a[1] - b[1]]; })(),
         base: tapa.concat([]), caras: caras.map(function (c) { return c.pts; }),
-        ancla: { rotor: fc, torre: pv, L: Lt, mg: [(mg0[0] + mg1[0]) / 2, (mg0[1] + mg1[1]) / 2], tau: tq, omega: om }
+        ancla: { rotor: fijo.rotor[0], torre: pv, L: fijo.L[0], mg: [(mg0[0] + mg1[0]) / 2, (mg0[1] + mg1[1]) / 2], tau: tq, omega: om }
       };
       cam.az = 0;
     }

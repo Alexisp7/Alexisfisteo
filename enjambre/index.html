@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enjambre de Física</title>
 <meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#ffffff; --ink:#1d1424; --mute:#7a6d85; --line:#ece6f0; --soft:#f7f4f9;
@@ -573,6 +575,59 @@ body.con-tejido #paisaje{display:none}
 body.con-tejido #cyto{mix-blend-mode:screen;opacity:.5}
 body.con-tejido .node .glow,body.con-tejido .node .thorn,body.con-tejido .node .mem,body.con-tejido .node .nucleo,body.con-tejido .node .nucleo-b,body.con-tejido .node .huevo-v,body.con-tejido .node .fangs,body.con-tejido .node .pu-h,body.con-tejido .vein,body.con-tejido .creep{display:none}
 body.con-tejido .node .gl,body.con-tejido .node .tents,body.con-tejido .node .body{display:none}
+
+/* ============ maqueta de fondo ============ */
+#maqueta{position:relative;width:100%;aspect-ratio:1774/887;z-index:3;--s:.8;font-family:"Barlow Semi Condensed","Bahnschrift","Arial Narrow",sans-serif;color:#F3EAF8}
+#maqueta[hidden]{display:none}
+.mq-fondo{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;pointer-events:none;-webkit-mask:linear-gradient(#000 91%,rgba(0,0,0,.6) 95.5%,transparent);mask:linear-gradient(#000 91%,rgba(0,0,0,.6) 95.5%,transparent)}
+body.con-maqueta:has(#v-hive.on) header{display:none}
+body.con-maqueta .swarm{height:auto;min-height:0;background:#100817}
+body.con-maqueta #swarm>:not(#maqueta):not(#mq-suelo):not(#side){display:none!important}
+#mq-suelo{position:relative;z-index:2;margin-top:calc(-80px*var(--s,.8));--s:.8;pointer-events:none}#mq-suelo .mq-huevos{pointer-events:auto}
+#mq-suelo[hidden]{display:none}
+#mq-suelo img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;-webkit-mask:linear-gradient(rgba(0,0,0,.7),#000 12%);mask:linear-gradient(rgba(0,0,0,.7),#000 12%);filter:hue-rotate(28deg) saturate(1.15) brightness(.86);user-select:none;pointer-events:none}
+#mq-suelo .mq-huevos{position:absolute;left:50%;top:calc(170px*var(--s));transform:translateX(-50%);width:min(92%,calc(1100px*var(--s)));justify-content:center;padding:calc(14px*var(--s)) calc(22px*var(--s));background:radial-gradient(closest-side,rgba(16,8,23,.85),rgba(16,8,23,.55) 70%,rgba(16,8,23,0));font-size:calc(17px*var(--s))}
+#mq-suelo .mq-huevos b{text-align:center;font-size:calc(12px*var(--s))}
+body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
+#maqueta>*{position:absolute}
+.mq-hot{background:none;border:0;padding:0;cursor:pointer;border-radius:999px;display:block}
+.mq-hot:focus-visible{outline:2px solid #B8F52D;outline-offset:2px}
+.mq-org{border-radius:50%;transition:box-shadow .3s}
+.mq-org:hover{box-shadow:0 0 calc(40px*var(--s)) rgba(196,74,255,.55), inset 0 0 calc(30px*var(--s)) rgba(229,164,255,.35)}
+.mq-pulso{aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(229,164,255,.55) 0,rgba(196,74,255,.25) 28%,rgba(146,40,232,0) 60%);animation:mqPulso 3.4s ease-in-out var(--d) infinite}
+@keyframes mqPulso{0%,100%{opacity:.25;transform:translate(-50%,-50%) scale(.85)}50%{opacity:.85;transform:translate(-50%,-50%) scale(1.05)}}
+/* parche del conteo: difumina el número pintado y escribe el real con la misma letra */
+.mq-cnt{transform:translate(-50%,-50%);pointer-events:none}
+.mq-cnt::before{content:"";position:absolute;left:50%;top:50%;width:calc(100px*var(--s));height:calc(32px*var(--s));transform:translate(-50%,-50%);border-radius:50%;backdrop-filter:blur(calc(7px*var(--s)));-webkit-backdrop-filter:blur(calc(7px*var(--s)));background:radial-gradient(ellipse,rgba(22,10,32,.78) 0,rgba(22,10,32,.55) 55%,rgba(22,10,32,0) 72%);-webkit-mask:radial-gradient(ellipse,#000 52%,transparent 72%);mask:radial-gradient(ellipse,#000 52%,transparent 72%)}
+.mq-cnt span{position:relative;display:block;font-weight:700;font-size:calc(17px*var(--s));letter-spacing:.02em;color:#D8F04A;text-shadow:0 0 calc(3px*var(--s)) #000,0 1px 2px #000,0 0 calc(10px*var(--s)) rgba(184,245,45,.35);white-space:nowrap}
+/* panel y barra de evolución: el marco pintado queda, el interior se reescribe */
+.mq-panel,.mq-evo,.mq-adn{border-radius:calc(22px*var(--s))}
+.mq-panel{padding:calc(14px*var(--s)) calc(14px*var(--s));background:radial-gradient(ellipse at 40% 35%,#1a0e1e,#110816 70%,#110816);box-shadow:0 0 calc(18px*var(--s)) calc(10px*var(--s)) rgba(17,8,22,.85)}
+.mq-k{font-family:"Space Mono",ui-monospace,monospace;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:calc(12.5px*var(--s));color:#D8F04A}
+.mq-ch{font-family:"Space Mono",ui-monospace,monospace;font-size:calc(14px*var(--s));color:#cdb8d8;margin-top:calc(8px*var(--s))}
+.mq-panel h2{margin:calc(8px*var(--s)) 0 calc(6px*var(--s));font-weight:600;font-size:calc(35px*var(--s));line-height:1.08;color:#F3EAF8;letter-spacing:.005em}
+.mq-sub{margin:0;font-size:calc(15.5px*var(--s));color:#cbbfd2}
+.mq-go{margin-top:calc(18px*var(--s));display:inline-flex;align-items:center;gap:calc(14px*var(--s));padding:calc(9px*var(--s)) calc(22px*var(--s));border:0;border-radius:999px;background:#B8F52D;color:#14110f;font:inherit;font-weight:700;font-size:calc(18px*var(--s));cursor:pointer;box-shadow:0 0 calc(18px*var(--s)) rgba(184,245,45,.7),0 0 calc(40px*var(--s)) rgba(184,245,45,.3);animation:beckon 2.6s ease-out infinite}
+.mq-go:hover{background:#d6ef5c}
+.mq-nota{margin:calc(20px*var(--s)) 0 0;padding-top:calc(14px*var(--s));border-top:1px solid rgba(243,234,248,.12);font-size:calc(14.5px*var(--s));line-height:1.45;color:#cbbfd2}
+.mq-evo{padding:calc(6px*var(--s)) calc(10px*var(--s));background:rgba(20,10,26,.97);box-shadow:0 0 calc(12px*var(--s)) calc(8px*var(--s)) rgba(20,10,26,.85)}
+.mq-ek{font-family:"Space Mono",ui-monospace,monospace;font-size:calc(12.5px*var(--s));color:#d9cfe0;letter-spacing:.04em}
+.mq-ev{font-weight:700;font-size:calc(17px*var(--s));margin-top:calc(3px*var(--s))}
+.mq-bar{height:calc(8px*var(--s));margin-top:calc(9px*var(--s));border-radius:99px;background:rgba(170,145,185,.18);overflow:hidden}
+.mq-bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8ac215,#B8F52D);box-shadow:0 0 calc(10px*var(--s)) rgba(184,245,45,.8)}
+.mq-adn{display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(16,8,22,.98) 55%,rgba(16,8,22,.6) 75%,rgba(16,8,22,0));line-height:1}
+.mq-adn b{font-weight:700;font-size:calc(28px*var(--s));color:#D8F04A;text-shadow:0 0 calc(10px*var(--s)) rgba(184,245,45,.7)}
+.mq-adn i{font-style:normal;font-family:"Space Mono",monospace;font-size:calc(10px*var(--s));color:#AA91B9;margin-top:calc(3px*var(--s))}
+.mq-adn-luz{pointer-events:none;mix-blend-mode:screen;background:linear-gradient(180deg,transparent,rgba(211,74,255,.35) 20%,transparent 40%);background-size:100% 300%;animation:mqAdn 5s linear infinite;-webkit-mask:linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask:linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent)}
+@keyframes mqAdn{from{background-position:0 100%}to{background-position:0 -200%}}
+.mq-huevos{display:flex;flex-wrap:wrap;gap:calc(4px*var(--s)) calc(14px*var(--s));align-items:center;padding:calc(8px*var(--s)) calc(14px*var(--s));border-radius:calc(18px*var(--s));background:radial-gradient(ellipse,rgba(16,8,23,.72),rgba(16,8,23,.35) 70%,rgba(16,8,23,0));font-size:calc(14px*var(--s))}
+.mq-huevos b{width:100%;font-family:"Space Mono",monospace;font-size:calc(11px*var(--s));letter-spacing:.14em;text-transform:uppercase;color:#AA91B9;font-weight:400}
+.mq-huevos button{background:none;border:0;padding:0;color:#e8dcef;font:inherit;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:calc(6px*var(--s));text-shadow:0 1px 3px #000}
+.mq-huevos button:hover{color:#fff}
+.mq-huevos i{width:calc(9px*var(--s));height:calc(11px*var(--s));border-radius:50% 50% 46% 46%/60% 60% 40% 40%;background:radial-gradient(circle at 40% 35%,#f4ffc0,#B8F52D 45%,#3d5a06);box-shadow:0 0 calc(8px*var(--s)) rgba(184,245,45,.75);animation:mqHuevo 2.8s ease-in-out infinite}
+.mq-huevos em{font-style:normal;color:#D8F04A;font-size:.9em}
+@keyframes mqHuevo{50%{box-shadow:0 0 calc(14px*var(--s)) rgba(184,245,45,1)}}
+@media (prefers-reduced-motion:reduce){.mq-pulso,.mq-adn-luz,.mq-huevos i,.mq-go{animation:none}}
 </style>
 </head>
 <body>
@@ -1014,7 +1069,7 @@ function drawHive(){
   q('.dr').forEach((el,i)=>DR[i].el=el);
   swarmEls={svg,E,FE,DR,DE,fx:svg.querySelector('.fx'),creep:q('.creepm').map(el=>({el,id:el.dataset.id})),motes:q('.mote'),vs:vEls,
     nodes:q('.node').map(g=>({g,id:g.dataset.id,br:g.querySelector('.br'),tn:[...g.querySelectorAll('.tent')],tp:[...g.querySelectorAll('.barb')],mem:g.querySelector('.mem'),gl:g.querySelector('.gl'),lv:[...g.querySelectorAll('.larva')]}))};
-  cytoInit(); tejidoInit(); bindSwarm(svg); drawResume(); paint(); applyFocus(); drawLegend(); checkMutations();
+  cytoInit(); tejidoInit(); bindSwarm(svg); maquetaDraw(); drawResume(); paint(); applyFocus(); drawLegend(); checkMutations();
   if(!RMs && !raf) raf=requestAnimationFrame(loop);
 }
 // vena orgánica: cúbica con curvas propias, ahusada y con un leve abultamiento
@@ -1284,6 +1339,53 @@ function tejidoDraw(t){
   const u=TJ.u; gl.uniform2f(u.R,TJ.cv.width,TJ.cv.height); gl.uniform1f(u.T,(t||0)/1000); gl.uniform4fv(u.N,N); gl.uniform4fv(u.S,S); gl.uniform1i(u.Nn,n); gl.uniform4fv(u.E,E); gl.uniform1i(u.En,ne);
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
 }
+/* ============ maqueta: la imagen de Andreé de fondo y la colonia real encima (solo en pantallas anchas) ============ */
+const MQ={W:1774,H:887,
+  pos:{circ:[890,160,69],cal:[783,328,241],vrel:[978,318,251],mcirc:[1155,275,190],elec:[1318,212,125],gauss:[1475,175,73],mag:[1650,155,68],
+       ene:[1475,368,264],grav:[1665,322,259],ter1:[622,435,343],din:[1200,455,355],tmp:[838,465,520],cin:[1045,460,511],mom:[1522,495,545],
+       rot:[1345,540,603],osc:[1115,612,656],ter2:[745,630,694],flu:[930,630,695],equi:[1337,705,761],ato:[1678,665,707]},
+  tabs:[['hive',333,100],['list',440,90],['inv',537,90],['data',614,34]]};
+function maquetaDraw(){
+  const sw=document.getElementById('swarm'); if(!sw) return;
+  const on=innerWidth>760; document.body.classList.toggle('con-maqueta',on);
+  let st=document.getElementById('maqueta');
+  if(!on){ if(st) st.hidden=true; const su=document.getElementById('mq-suelo'); if(su) su.hidden=true; return; }
+  if(!st){ st=document.createElement('div'); st.id='maqueta'; sw.appendChild(st); }
+  st.hidden=false;
+  const X=x=>(100*x/MQ.W).toFixed(3)+'%', Y=y=>(100*y/MQ.H).toFixed(3)+'%';
+  const xs=studyOrder(), done=xs.filter(x=>(x.state||0)>=2).length, e=nextExercise(), t=e&&T(primTopic(e));
+  const L=LAY||layout(), awake=DB.topics.filter(q=>mastery(q.id).n).length, pct=Math.round(L.g*100);
+  const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
+  let h=`<img class="mq-fondo" src="maqueta/fondo.webp" alt="" draggable="false">`;
+  // barra superior pintada: zonas activas sobre las pestañas y el emblema
+  h+=`<a class="mq-hot mq-logo" href="../bitacora.html" title="Físicas · volver a la bitácora" style="left:${X(20)};top:0;width:${X(250)};height:${Y(46)}"></a>`;
+  for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
+  // pulso de luz en los núcleos y conteos reales
+  for(const [id,[x,y,ly]] of Object.entries(MQ.pos)){ const tp=T(id); if(!tp) continue; const [d,n]=cnt(id), r=48+((hashStr(id)%7)*2);
+    h+=`<i class="mq-pulso" style="left:${X(x)};top:${Y(y)};width:${X(r*2)};--d:${(-(hashStr(id)%30)/10).toFixed(1)}s"></i>`;
+    h+=`<span class="mq-cnt" style="left:${X(x)};top:${Y(ly+21)}"><span>${d}/${n}</span></span>`;
+    h+=`<button class="mq-hot mq-org" data-id="${id}" aria-label="${esc(tp.name)}: ${d} de ${n}" style="left:${X(x-r)};top:${Y(y-r)};width:${X(2*r)};height:${Y(2*r)}"></button>`; }
+  // los temas que no salen en la maqueta: huevos latentes sobre el suelo
+  const resto=DB.topics.filter(q=>!MQ.pos[q.id]);
+  const hv=`<div class="mq-huevos"><b>Huevos latentes · temas que aún no despiertan</b>${resto.map(q=>{const [d,n]=cnt(q.id); return `<button data-id="${q.id}"><i></i>${esc(q.name)}${n?` <em>${d}/${n}</em>`:''}</button>`;}).join('')}</div>`;
+  let su=document.getElementById('mq-suelo'); if(!su){ su=document.createElement('div'); su.id='mq-suelo'; st.after(su); }
+  su.hidden=false; su.innerHTML=`<img src="maqueta/colonia.webp" alt="" draggable="false">`+hv;
+  // panel «sigue por aquí»
+  h+=`<div class="mq-panel" style="left:${X(158)};top:${Y(102)};width:${X(372)};height:${Y(338)}">`+(e?`<div class="mq-k">Sigue por aquí</div><div class="mq-ch">${esc(e.num||'')}${t?' · '+esc(t.name):''}</div><h2>${esc(e.title)}</h2>
+      <p class="mq-sub">${e.prio==='clave'?'Ejercicio clave: no te lo saltes.':(e.state===1?'Lo dejaste a medias.':'La colonia muta con cada ejercicio que resuelves.')}</p>
+      <button class="mq-go" data-study="${e.id}">${e.state===1?'Retomar':'Empezar'} <span aria-hidden="true">→</span></button>`:`<div class="mq-k">Todo resuelto</div><h2>La colonia está saciada.</h2>`)
+    +`<p class="mq-nota">${done} de ${xs.length} resueltos. Cada par de bases del ADN es un ejercicio, agrupados por tema como en Estudiar. Toca un organismo para ver sus ejercicios.</p></div>`;
+  // evolución de la colonia y contador del ADN
+  h+=`<div class="mq-evo" style="left:${X(228)};top:${Y(762)};width:${X(300)};height:${Y(72)}"><div class="mq-ek">Evolución de la colonia</div><div class="mq-ev">${pct}% · ${awake} de ${DB.topics.length} temas despiertos</div><div class="mq-bar"><span style="width:${Math.max(2,pct)}%"></span></div></div>`;
+  h+=`<div class="mq-adn" style="left:${X(42)};top:${Y(788)};width:${X(58)};height:${Y(56)}"><b>${done}</b><i>${xs.length}</i></div>`;
+  h+=`<i class="mq-adn-luz" style="left:${X(28)};top:${Y(120)};width:${X(90)};height:${Y(650)}"></i>`;
+  st.innerHTML=h;
+  st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab); renderAll();});
+  st.parentNode.querySelectorAll('.mq-org,.mq-huevos button').forEach(b=>b.onclick=()=>{selected=selected===b.dataset.id?null:b.dataset.id; applyFocus(); drawSide();});
+  bindCommon(st);
+  const fit=()=>{ const k=(st.clientWidth/MQ.W).toFixed(4); st.style.setProperty('--s',k); su.style.setProperty('--s',k); }; fit();
+}
+addEventListener('resize',()=>{ clearTimeout(MQ.rz); MQ.rz=setTimeout(maquetaDraw,180); });
 function cytoInit(){
   const cv=document.getElementById('cyto'), sw=document.getElementById('swarm'); if(!cv||!sw) return; paisaje();
   const W=sw.clientWidth, H=sw.clientHeight, k=.5;
@@ -1316,7 +1418,7 @@ function cytoDraw(t){
 }
 function loop(){
   raf=0; if(document.hidden || !document.getElementById('v-hive').classList.contains('on')) return;
-  paint(); tejidoDraw(performance.now()); raf=requestAnimationFrame(loop);
+  if(!document.body.classList.contains('con-maqueta')){ paint(); tejidoDraw(performance.now()); } raf=requestAnimationFrame(loop);
 }
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden && !RMs && !raf) raf=requestAnimationFrame(loop); });
 let rzT=0; addEventListener('resize',()=>{clearTimeout(rzT); rzT=setTimeout(()=>{ if(document.getElementById('v-hive').classList.contains('on')) drawHive(); },160);});

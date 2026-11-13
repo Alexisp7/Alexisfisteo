@@ -54,7 +54,7 @@
 
     // ── utilidades de dibujo ──
     function txt(str, x, y, o) {   // texto nítido (el lienzo se estira con el viewBox)
-      var vb = svg.viewBox.baseVal, kx = W / vb.width * dpr, ky = H / vb.height * dpr, k = Math.min(kx, ky);
+      var vb = svg.viewBox.baseVal, kx = W / vb.width * dpr, ky = H / vb.height * dpr, k = Math.min(kx, ky); y += desY || 0;
       ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.font = (o.it ? 'italic 500 ' : o.peso ? o.peso + ' ' : '400 ') + (o.px * k).toFixed(1) + 'px ' + (o.mono ? "'Space Mono',monospace" : "'Cormorant Garamond',serif");
       if ('letterSpacing' in ctx) ctx.letterSpacing = o.mono ? (o.px * .16 * k).toFixed(1) + 'px' : '0px';
@@ -292,86 +292,156 @@
     var G = { m: .15, Rr: 3, d: 4, h: 9.5, rps: 40 };
     G.I = .5 * G.m * Math.pow(G.Rr / 100, 2); G.w = 2 * Math.PI * G.rps; G.Lm = G.I * G.w; G.tau = G.m * 9.81 * G.d / 100; G.Om = G.tau / G.Lm;
     var LENTA = .5;
+    // Solo-giróscopo: la precesión se integra (ψ += Ω·½·vel·dt) y no hay bucle de video. Al señalar una pieza
+    // la precesión se detiene suavemente, aparece su nota y el resto queda en gris tenue, como en las otras escenas.
+    var GI = { psi: 2.4, vel: 0, arm: 9, foco: null, dim: {}, hit: null, giro: 0 };
+    var PARTES = ['base', 'torre', 'eje', 'rotor', 'L', 'orb', 'mg', 'd', 'tau', 'omega'];
+    PARTES.forEach(function (k) { GI.dim[k] = 1; });
+    // qué queda nítido al señalar cada pieza
+    var FOCO = { rotor: ['rotor', 'eje'], torre: ['torre', 'base', 'eje'], L: ['L', 'orb', 'rotor', 'eje'], mg: ['mg', 'd', 'eje', 'rotor'], tau: ['tau', 'L', 'mg', 'd'], omega: ['omega', 'orb', 'L'] };
+    // ingreso: las piezas caen en orden (base, torre, eje, rotor) y después se trazan los vectores
+    var ENTRA = { base: [0, -22], torre: [.14, -46], eje: [.34, -34], rotor: [.5, -54], orb: [1, 0], tau: [1.15, 0], mg: [1.25, 0], d: [1.3, 0], L: [1.4, 0], omega: [1.6, 0] };
+    var FILTRO = 'filter' in ctx, desY = 0, SOLIDAS = ['base', 'torre', 'eje', 'rotor'];
+    function rebote(x) { x = cl(x, 0, 1); var c1 = 1.1, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+    function entrada(k) {
+      if (!SOLO || quieto) return { a: 1, oy: 0, len: 1 };
+      var e = ENTRA[k], u = (GI.arm - e[0]) / .55;
+      if (e[1]) return { a: suave(u * 1.8), oy: (1 - rebote(u)) * e[1], len: 1 };
+      var l = suave((GI.arm - e[0]) / .6); return { a: l > 0 ? 1 : 0, oy: 0, len: l };
+    }
+    function parte(k, a, fn) {   // dibuja una pieza con su ingreso y su atenuación
+      var e = entrada(k), g = GI.dim[k]; if (e.a <= 0 || a <= 0) return;
+      // las piezas macizas se apagan con un filtro (gris claro y opaco: no se transparentan sus capas internas);
+      // las líneas y los rótulos, con transparencia
+      var x = (1 - g) / .8, maciza = FILTRO && SOLIDAS.indexOf(k) >= 0;
+      ctx.save(); ctx.globalAlpha = a * e.a * (maciza ? 1 : g); ctx.translate(0, e.oy); desY = e.oy;
+      if (FILTRO && g < .97) ctx.filter = 'grayscale(' + x.toFixed(2) + ')' + (maciza ? ' sepia(' + (.3 * x).toFixed(2) + ') contrast(' + (1 - .55 * x).toFixed(2) + ') brightness(' + (1 + .32 * x).toFixed(2) + ')' : '');
+      fn(e.len); ctx.restore(); desY = 0;
+    }
     function dibujaIV(t, a) {
       if (a <= 0) return;
-      cam.el = .5; cam.s = 24; cam.x = 1030; cam.y = 610;
-      ctx.globalAlpha = a;
-      var u = t - T4, psi = 2.4 + G.Om * LENTA * Math.max(0, u - 1.2) * suave((u - .4) / 1.6) , U = [Math.cos(psi), Math.sin(psi), 0], V = [-U[1], U[0], 0], Z = [0, 0, 1], h = G.h;
+      cam.el = .5; cam.s = SOLO ? 26 : 24; cam.x = SOLO ? 1100 : 1030; cam.y = SOLO ? 598 : 610;
+      if (SOLO && W <= 900) { var vb = svg.viewBox.baseVal; cam.s = 30; cam.x = vb.x + vb.width / 2; cam.y = vb.y + vb.height - 165; }   // móvil: la escena va arriba, bajo la ecuación
+      var u = t - T4, psi = SOLO ? GI.psi : 2.4 + G.Om * LENTA * Math.max(0, u - 1.2) * suave((u - .4) / 1.6), U = [Math.cos(psi), Math.sin(psi), 0], V = [-U[1], U[0], 0], Z = [0, 0, 1], h = G.h;
       function add(p, q, s) { return [p[0] + q[0] * s, p[1] + q[1] * s, p[2] + q[2] * s]; }
       function Pp(q) { return P(q[0], q[1], q[2]); }
-      var piv = [0, 0, h], C = add(piv, U, G.d), Cs = Pp(C);
-      // sombra y base
-      var B0 = P(0, 0, 0), som = ctx.createRadialGradient(B0[0], B0[1], 0, B0[0], B0[1], 190);
-      som.addColorStop(0, 'rgba(30,26,22,.15)'); som.addColorStop(1, 'rgba(30,26,22,0)');
-      ctx.save(); ctx.translate(B0[0], B0[1]); ctx.scale(1, Math.sin(cam.el)); ctx.translate(-B0[0], -B0[1]); ctx.fillStyle = som; ctx.beginPath(); ctx.arc(B0[0], B0[1], 190, 0, 7); ctx.fill(); ctx.restore();
-      var bz = .9, bR = 4.4;
-      ctx.fillStyle = '#2B241F'; camino(circulo3([0, 0, 0], [1, 0, 0], [0, 1, 0], bR, 72), true); ctx.fill();
-      var a1 = P(-bR, 0, 0), a2 = P(-bR, 0, bz), b1 = P(bR, 0, 0), b2 = P(bR, 0, bz);
-      ctx.fillStyle = '#2B241F'; ctx.beginPath(); ctx.moveTo(a1[0], a1[1]); ctx.lineTo(a2[0], a2[1]); ctx.lineTo(b2[0], b2[1]); ctx.lineTo(b1[0], b1[1]); ctx.fill();
-      var gb = ctx.createLinearGradient(a2[0], 0, b2[0], 0); gb.addColorStop(0, '#5A4E44'); gb.addColorStop(.45, '#8C7F72'); gb.addColorStop(1, '#4A4038');
-      ctx.fillStyle = gb; camino(circulo3([0, 0, bz], [1, 0, 0], [0, 1, 0], bR, 72), true); ctx.fill(); ctx.strokeStyle = TINTA + '.8)'; ctx.lineWidth = .8; ctx.stroke();
-      ctx.strokeStyle = 'rgba(244,238,227,.2)'; ctx.lineWidth = .6; camino(circulo3([0, 0, bz], [1, 0, 0], [0, 1, 0], 3.4, 60)); ctx.stroke();
-      // trayectorias: punta de L y centro del rotor
-      var LL = 5.2, rt = G.d + LL;
-      ctx.setLineDash([2, 4]); ctx.strokeStyle = VINO + '.4)'; ctx.lineWidth = .8; camino(circulo3(piv, [1, 0, 0], [0, 1, 0], rt, 120)); ctx.stroke();
-      ctx.strokeStyle = TINTA + '.22)'; camino(circulo3(piv, [1, 0, 0], [0, 1, 0], G.d, 90)); ctx.stroke(); ctx.setLineDash([]);
-      // torre
-      var tr = .42, t0 = P(0, 0, bz), t1 = P(0, 0, h), tw = tr * cam.s;
-      var gt = ctx.createLinearGradient(t0[0] - tw, 0, t0[0] + tw, 0); gt.addColorStop(0, '#5C4220'); gt.addColorStop(.38, '#E9CF94'); gt.addColorStop(1, '#6B4A1E');
-      function torre() {
+      function dep(q) { return Pp(q)[2]; }
+      var piv = [0, 0, h], C = add(piv, U, G.d), th = .75, LL = 5.2, rt = G.d + LL;
+      var objs = [], rotulos = [];
+      // ── sombra y base (siempre al fondo) ──
+      parte('base', a, function () {
+        var B0 = P(0, 0, 0), som = ctx.createRadialGradient(B0[0], B0[1], 0, B0[0], B0[1], 190);
+        som.addColorStop(0, 'rgba(30,26,22,.15)'); som.addColorStop(1, 'rgba(30,26,22,0)');
+        ctx.save(); ctx.translate(B0[0], B0[1]); ctx.scale(1, Math.sin(cam.el)); ctx.translate(-B0[0], -B0[1]); ctx.fillStyle = som; ctx.beginPath(); ctx.arc(B0[0], B0[1], 190, 0, 7); ctx.fill(); ctx.restore();
+        var bz = .9, bR = 4.4;
+        ctx.fillStyle = '#2B241F'; camino(circulo3([0, 0, 0], [1, 0, 0], [0, 1, 0], bR, 72), true); ctx.fill();
+        var a1 = P(-bR, 0, 0), a2 = P(-bR, 0, bz), b1 = P(bR, 0, 0), b2 = P(bR, 0, bz);
+        ctx.beginPath(); ctx.moveTo(a1[0], a1[1]); ctx.lineTo(a2[0], a2[1]); ctx.lineTo(b2[0], b2[1]); ctx.lineTo(b1[0], b1[1]); ctx.fill();
+        var gb = ctx.createLinearGradient(a2[0], 0, b2[0], 0); gb.addColorStop(0, '#5A4E44'); gb.addColorStop(.45, '#8C7F72'); gb.addColorStop(1, '#4A4038');
+        ctx.fillStyle = gb; camino(circulo3([0, 0, bz], [1, 0, 0], [0, 1, 0], bR, 72), true); ctx.fill(); ctx.strokeStyle = TINTA + '.8)'; ctx.lineWidth = .8; ctx.stroke();
+        ctx.strokeStyle = 'rgba(244,238,227,.2)'; ctx.lineWidth = .6; camino(circulo3([0, 0, bz], [1, 0, 0], [0, 1, 0], 3.4, 60)); ctx.stroke();
+      });
+      // ── trayectorias punteadas (punta de L y centro del rotor), por tramos: cada tramo se ordena con su profundidad ──
+      [[rt, 120, VINO, .4], [G.d, 90, TINTA, .22]].forEach(function (o) {
+        var pts = []; for (var k = 0; k <= o[1]; k++) { var an = 2 * Math.PI * k / o[1]; pts.push([o[0] * Math.cos(an), o[0] * Math.sin(an), h]); }
+        for (var j = 0; j < o[1]; j++) (function (q0, q1, j) {
+          var m = add(q0, q1, 1).map(function (v) { return v / 2; }), z = dep(m);
+          if (Math.hypot(m[0] - C[0], m[1] - C[1]) < G.Rr) z = dep(C) - .01;   // dentro del disco: lo tapa el rotor
+          objs.push({ z: z, k: 'orb', f: function (len) {
+            if (j / o[1] > len) return;
+            var p0 = Pp(q0), p1 = Pp(q1); ctx.setLineDash([2, 4]); ctx.lineDashOffset = -j * 6;
+            ctx.strokeStyle = o[2] + o[3] + ')'; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0;
+          } });
+        })(pts[j], pts[j + 1], j);
+      });
+      // ── torre ──
+      var bz2 = .9, t0 = P(0, 0, bz2), t1 = P(0, 0, h), tw = .42 * cam.s;
+      objs.push({ z: dep(piv), k: 'torre', f: function () {
+        var gt = ctx.createLinearGradient(t0[0] - tw, 0, t0[0] + tw, 0); gt.addColorStop(0, '#5C4220'); gt.addColorStop(.38, '#E9CF94'); gt.addColorStop(1, '#6B4A1E');
         ctx.fillStyle = gt; ctx.fillRect(t0[0] - tw, t1[1], 2 * tw, t0[1] - t1[1]);
         ctx.strokeStyle = TINTA + '.6)'; ctx.lineWidth = .6; ctx.strokeRect(t0[0] - tw, t1[1], 2 * tw, t0[1] - t1[1]);
         for (var k = 1; k < 4; k++) { var yy = t0[1] - (t0[1] - t1[1]) * k / 4; linea([t0[0] - tw, yy], [t0[0] + tw, yy], TINTA, .25, .5); }
+      } });
+      // ── eje en tres tramos: detrás del pivote, entre pivote y rotor, y la punta que asoma por fuera ──
+      function tramo(s0, s1) {
+        var A0 = Pp(add(piv, U, s0)), A1 = Pp(add(piv, U, s1));
+        return function () {
+          ctx.strokeStyle = '#3A3530'; ctx.lineWidth = 3.4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(A0[0], A0[1]); ctx.lineTo(A1[0], A1[1]); ctx.stroke();
+          ctx.strokeStyle = 'rgba(230,226,218,.6)'; ctx.lineWidth = .9; ctx.beginPath(); ctx.moveTo(A0[0], A0[1] - 1); ctx.lineTo(A1[0], A1[1] - 1); ctx.stroke();
+        };
       }
-      // eje del rotor
-      var A0 = Pp(add(piv, U, -1.1)), A1 = Pp(add(piv, U, G.d + 1.3));
-      function eje() {
-        ctx.strokeStyle = '#3A3530'; ctx.lineWidth = 3.4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(A0[0], A0[1]); ctx.lineTo(A1[0], A1[1]); ctx.stroke();
-        ctx.strokeStyle = 'rgba(230,226,218,.6)'; ctx.lineWidth = .9; ctx.beginPath(); ctx.moveTo(A0[0], A0[1] - 1); ctx.lineTo(A1[0], A1[1] - 1); ctx.stroke();
-        var pv = Pp(piv); sprite(SPR.acero, pv[0], pv[1], 7.5);
-      }
-      // rotor: cara trasera, canto y cara delantera, con radios difuminados por el giro
-      function rotor() {
-        var th = .75, f1 = add(C, U, th / 2), f0 = add(C, U, -th / 2), fr = Pp(f1)[2] > Pp(f0)[2] ? [f0, f1, 1] : [f1, f0, -1];
-        var atras = fr[0], frente = fr[1];
+      objs.push({ z: dep(add(piv, U, -.55)), k: 'eje', f: tramo(-1.1, 0) });
+      objs.push({ z: dep(add(piv, U, G.d / 2)), k: 'eje', f: tramo(0, G.d - th / 2) });
+      objs.push({ z: dep(add(piv, U, G.d + th / 2 + .45)), k: 'eje', f: tramo(G.d + th / 2, G.d + 1.3) });
+      var pv = Pp(piv);
+      objs.push({ z: dep(piv) + .002, k: 'torre', f: function () { sprite(SPR.acero, pv[0], pv[1], 7.5); } });
+      // ── rotor: cara trasera, canto y cara delantera, con radios difuminados por el giro ──
+      var f1 = add(C, U, th / 2), f0 = add(C, U, -th / 2), fr = dep(f1) > dep(f0) ? [f0, f1, 1] : [f1, f0, -1];
+      var atras = fr[0], frente = fr[1], fc = Pp(frente), cara = circulo3(frente, V, Z, G.Rr, 64), dorso = circulo3(atras, V, Z, G.Rr, 64);
+      objs.push({ z: dep(C), k: 'rotor', f: function () {
         for (var k = 0; k <= 8; k++) {
           var cc = add(atras, U, fr[2] * th * k / 8);
           ctx.fillStyle = k < 8 ? '#6B4A1E' : '#8A6228'; camino(circulo3(cc, V, Z, G.Rr, 64), true); ctx.fill();
         }
-        var fc = Pp(frente), cara = circulo3(frente, V, Z, G.Rr, 64);
         var gg = ctx.createRadialGradient(fc[0] - 18, fc[1] - 22, 4, fc[0], fc[1], G.Rr * cam.s * 1.1);
         gg.addColorStop(0, '#FBEFD0'); gg.addColorStop(.5, '#D2A35A'); gg.addColorStop(1, '#7C5521');
         ctx.fillStyle = gg; camino(cara, true); ctx.fill(); ctx.strokeStyle = 'rgba(60,38,12,.85)'; ctx.lineWidth = .9; ctx.stroke();
         [.82, .36].forEach(function (q) { ctx.strokeStyle = 'rgba(60,38,12,.45)'; ctx.lineWidth = .7; camino(circulo3(frente, V, Z, G.Rr * q, 56)); ctx.stroke(); });
         // radios: el rotor gira a 40 vueltas/s; se ven como un abanico difuso
-        var fase = T * 9.3;
+        var fase = (SOLO ? GI.giro : T) * 9.3;
         for (var s = 0; s < 6; s++) for (var j = 0; j < 5; j++) {
-          var an = fase + s * Math.PI / 3 - j * .09, p0 = add(frente, add(V, Z, 0), 0);
+          var an = fase + s * Math.PI / 3 - j * .09;
           var a0 = add(add(frente, V, Math.cos(an) * G.Rr * .36), Z, Math.sin(an) * G.Rr * .36), a1 = add(add(frente, V, Math.cos(an) * G.Rr * .82), Z, Math.sin(an) * G.Rr * .82);
           linea(Pp(a0), Pp(a1), 'rgba(60,38,12,', (.42 * (1 - j / 5)).toFixed(2), 1.4);
         }
         var hc = Pp(add(frente, U, fr[2] * .15)); sprite(SPR.acero, hc[0], hc[1], 6);
-      }
-      var delante = Cs[2] > 0;
-      if (delante) { torre(); eje(); rotor(); } else { rotor(); eje(); torre(); }
-      // vectores: L a lo largo del eje, peso, torque y dL
-      var Lt = Pp(add(C, U, LL)), Lb = Pp(add(C, U, G.d * 0 + .7));
-      flecha(Lb[0], Lb[1], Lt[0], Lt[1], VINO, .95, 2.1, 11);
-      txt('L', Lt[0] + 8, Lt[1] - 6, { px: 22, it: true, c: '#7A2E22', a: 1, halo: true });
+      } });
+      // ── vectores: L a lo largo del eje, dL en su punta, peso, torque y Ω; cada uno se traza al entrar ──
+      function vec(p0, p1, col, al, w, hb) { return function (len) { flecha(p0[0], p0[1], p0[0] + (p1[0] - p0[0]) * len, p0[1] + (p1[1] - p0[1]) * len, col, al, w, hb); }; }
+      var Lb = Pp(add(C, U, th / 2)), Lt = Pp(add(C, U, LL)), dl = Pp(add(add(C, U, LL), V, 1.6));
+      objs.push({ z: dep(add(C, U, (th / 2 + LL) / 2)), k: 'L', f: vec(Lb, Lt, VINO, .95, 2.1, 11) });
+      objs.push({ z: dep(add(C, U, LL)) + .001, k: 'L', f: function (len) { if (len > .6) vec(Lt, dl, ORO, .9, 1.1, 7)((len - .6) / .4); } });
       var mg0 = Pp(add(C, Z, -G.Rr - .2)), mg1 = Pp(add(C, Z, -G.Rr - 3.2));
-      flecha(mg0[0], mg0[1], mg1[0], mg1[1], TINTA, .85, 1.3, 8);
-      txt('mg', mg1[0] + 8, mg1[1] + 2, { px: 18, it: true, c: '#1E1A16', a: .9, halo: true });
+      objs.push({ z: dep(C) + .001, k: 'mg', f: vec(mg0, mg1, TINTA, .85, 1.3, 8) });
       var tz = Pp(piv), tq = Pp(add(piv, V, 3.6));
-      flecha(tz[0], tz[1], tq[0], tq[1], ORO, .95, 1.5, 9);
-      txt('τ', tq[0] + 6, tq[1] + 4, { px: 20, it: true, c: '#8A5A16', a: 1, halo: true });
-      var dl = Pp(add(add(C, U, LL), V, 1.6)); flecha(Lt[0], Lt[1], dl[0], dl[1], ORO, .9, 1.1, 7);
-      txt('dL', dl[0] + 5, dl[1] + 12, { px: 15, it: true, c: '#8A5A16', a: .95, halo: true });
-      var om = Pp(add(piv, Z, 3.4)); flecha(tz[0], tz[1] - 8, om[0], om[1], ORO, .8, 1.1, 8);
-      txt('Ω', om[0] + 7, om[1] + 6, { px: 19, it: true, c: '#8A5A16', a: 1 });
-      // cota d
-      var dm = Pp(add(piv, U, G.d * .45)); txt('d', dm[0], dm[1] - 9, { px: 17, it: true, c: '#1E1A16', a: .9, al: 'center', halo: true });
+      objs.push({ z: dep(add(piv, V, 1.8)), k: 'tau', f: vec(tz, tq, ORO, .95, 1.5, 9) });
+      var om = Pp(add(piv, Z, 3.4));
+      objs.push({ z: dep(piv) + .003, k: 'omega', f: vec([tz[0], tz[1] - 8], om, ORO, .8, 1.1, 8) });
+      // ── pintor: de atrás hacia adelante ──
+      objs.sort(function (p, q) { return p.z - q.z; }).forEach(function (o) { parte(o.k, a, o.f); });
+      // ── rótulos, encima de todo ──
+      var dm = Pp(add(piv, U, G.d * .45));
+      [['L', 'L', Lt[0] + 8, Lt[1] - 6, { px: 22, it: true, c: '#7A2E22', a: 1, halo: true }],
+       ['L', 'dL', dl[0] + 5, dl[1] + 12, { px: 15, it: true, c: '#8A5A16', a: .95, halo: true }],
+       ['mg', 'mg', mg1[0] + 8, mg1[1] + 2, { px: 18, it: true, c: '#1E1A16', a: .9, halo: true }],
+       ['tau', 'τ', tq[0] + 6, tq[1] + 4, { px: 20, it: true, c: '#8A5A16', a: 1, halo: true }],
+       ['omega', 'Ω', om[0] + 7, om[1] + 6, { px: 19, it: true, c: '#8A5A16', a: 1 }],
+       ['d', 'd', dm[0], dm[1] - 9, { px: 17, it: true, c: '#1E1A16', a: .9, al: 'center', halo: true }]].forEach(function (r) {
+        parte(r[0], a, function (len) { if (len > .7) { r[4].a *= (len - .7) / .3; txt(r[1], r[2], r[3], r[4]); } });
+      });
       ctx.globalAlpha = 1;
+      // ── zonas para señalar (coordenadas del viewBox) y anclas de las notas ──
+      GI.hit = {
+        flechas: [['L', Lb, Lt], ['L', Lt, dl], ['mg', mg0, mg1], ['tau', tz, tq], ['omega', tz, om]],
+        rotulos: [['L', [Lt[0] + 14, Lt[1] - 12]], ['L', [dl[0] + 12, dl[1] + 8]], ['mg', [mg1[0] + 18, mg1[1] - 4]], ['tau', [tq[0] + 12, tq[1]]], ['omega', [om[0] + 13, om[1]]], ['mg', [dm[0], dm[1] - 14]]],
+        rotor: [cara, dorso], piv: pv, torre: [t0[0] - tw, t1[1], 2 * tw, t0[1] - t1[1]], base: circulo3([0, 0, .9], [1, 0, 0], [0, 1, 0], 4.4, 36),
+        ancla: { rotor: fc, torre: pv, L: Lt, mg: [(mg0[0] + mg1[0]) / 2, (mg0[1] + mg1[1]) / 2], tau: tq, omega: om }
+      };
       return psi;
+    }
+    function dentro(p, poli) { var c = false; for (var i = 0, j = poli.length - 1; i < poli.length; j = i++) { var a = poli[i], b = poli[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
+    function aSegmento(p, a, b) { var dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy, s = l ? cl(((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l, 0, 1) : 0; return Math.hypot(p[0] - a[0] - s * dx, p[1] - a[1] - s * dy); }
+    function pieza(p) {   // qué pieza está bajo el puntero
+      var z = GI.hit; if (!z) return null;
+      var mejor = null, dmin = 11;
+      z.flechas.forEach(function (f) { var d = aSegmento(p, f[1], f[2]); if (d < dmin) { dmin = d; mejor = f[0]; } });
+      z.rotulos.forEach(function (r) { var d = Math.hypot(p[0] - r[1][0], p[1] - r[1][1]); if (d < 14 && d < dmin + 4) { dmin = d; mejor = r[0]; } });
+      if (mejor) return mejor;
+      if (Math.hypot(p[0] - z.piv[0], p[1] - z.piv[1]) < 10) return 'torre';
+      if (dentro(p, z.rotor[0]) || dentro(p, z.rotor[1])) return 'rotor';
+      var r = z.torre; if (p[0] >= r[0] - 3 && p[0] <= r[0] + r[2] + 3 && p[1] >= r[1] && p[1] <= r[1] + r[3]) return 'torre';
+      if (dentro(p, z.base)) return 'torre';
+      return null;
     }
 
     // ═════════ II · Sistema: tres masas unidas por resortes (solo fuerzas internas y centrales) ═════════
@@ -549,7 +619,23 @@
       d: ['El peso, aplicado a d del pivote, da un', 'torque horizontal y perpendicular a L.', 'Cambia la dirección de L, no su tamaño:', 'el eje gira alrededor del pivote, no cae.'] });
     var n9 = en(DER, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
       d: ['Rotor de 150 g, R = 3 cm, d = 4 cm y', '40 vueltas/s: I ω ≈ 0,017 kg·m²/s y', 'τ ≈ 0,059 N·m, así que Ω ≈ 3,5 rad/s,', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
-    var AGENDA = [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [nS1, TS + 1, TS + 5.6], [DES.cab, TS + 6, TC - .3], [DES.p[0], TS + 6, TC - .3], [DES.p[1], TS + 8.6, TC - .3], [DES.p[2], TS + 11.2, TC - .3], [nS2, TS + 13.4, TC - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
+    // solo-giróscopo: una nota por pieza, en el mismo lugar arriba; aparece solo al señalar la pieza
+    var ARRG = { tx: 1112, ty: 226, ancho: 252, lado: -1, pie: true }, NG = {};
+    if (SOLO) {
+      NG.rotor = en(ARRG, { k: 'Rotor', tit: 'L = I ω',
+        d: ['Disco de 150 g y radio 3 cm: I = ½ m R²', '≈ 6,75 × 10⁻⁵ kg·m². A 40 vueltas/s,', 'ω ≈ 251 rad/s y L = I ω ≈ 0,017 kg·m²/s,', 'dirigido a lo largo del eje.'] });
+      NG.torre = en(ARRG, { k: 'Pivote', tit: 'Un apoyo sin torque',
+        d: ['La fuerza del soporte actúa en el pivote,', 'así que no hace torque respecto de él.', 'Solo el peso lo hace. Si el rotor no', 'girara (L = 0), ese torque lo haría caer.'] });
+      NG.L = en(ARRG, { k: 'Momento angular', tit: 'dL = τ dt',
+        d: ['L apunta a lo largo del eje. En cada dt', 'cambia en dL = τ dt, horizontal y', 'perpendicular a L: la punta recorre el', 'círculo punteado y |L| no cambia.'] });
+      NG.mg = en(ARRG, { k: 'Peso', tit: 'τ = r × m g',
+        d: ['Actúa en el centro del rotor, a d = 4 cm', 'del pivote. Su torque respecto del pivote', 'es horizontal y vale m g d ≈ 0,059 N·m', '(m = 150 g, g = 9,81 m/s²).'] });
+      NG.tau = en(ARRG, { k: 'Torque', tit: 'τ = dL/dt',
+        d: ['El peso, aplicado a d del pivote, da un', 'torque horizontal y perpendicular a L.', 'Cambia la dirección de L, no su tamaño:', 'el eje gira alrededor del pivote, no cae.'] });
+      NG.omega = en(ARRG, { k: 'Precesión', tit: 'Ω = m g d / (I ω)',
+        d: ['Rotor de 150 g, R = 3 cm, d = 4 cm y', '40 vueltas/s: I ω ≈ 0,017 kg·m²/s y', 'τ ≈ 0,059 N·m, así que Ω ≈ 3,5 rad/s,', 'una vuelta en 1,8 s. Vale si ω ≫ Ω.'] });
+    }
+    var AGENDA = SOLO ? [] : [[n1, 2.2, 9.4], [n2, 6.4, T2 - .3], [nS1, TS + 1, TS + 5.6], [DES.cab, TS + 6, TC - .3], [DES.p[0], TS + 6, TC - .3], [DES.p[1], TS + 8.6, TC - .3], [DES.p[2], TS + 11.2, TC - .3], [nS2, TS + 13.4, TC - .3], [n6, T3 + .8, T3 + 5.4], [n7, T3 + 5.8, T4 - .3], [n8, T4 + 1.4, T4 + 9.6], [n9, T4 + 6.4, FIN - .2]];
 
     // ── capítulos ──
     var CAPS = [['I', 'Definición', 0], ['II', 'Sistema', TS], ['III', 'Cañón', TC], ['IV', 'Sólido', T3], ['V', 'Giróscopo', T4]];
@@ -583,7 +669,17 @@
       });
     }
 
-    function salta(t) { T = t; notas.forEach(function (n) { n.pon(false); }); rastro = [[], []]; }
+    function salta(t) {
+      T = t; notas.forEach(function (n) { n.pon(false); }); rastro = [[], []];
+      if (SOLO) { GI.arm = quieto ? 9 : 0; GI.psi = 2.4; GI.vel = 0; GI.foco = null; GI.giro = 0; PARTES.forEach(function (k) { GI.dim[k] = 1; }); }
+    }
+    // señalar una pieza del giróscopo: el puntero se lleva a coordenadas del viewBox y se busca la pieza
+    if (SOLO) {
+      var aVB = function (ev) { var r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal; return [vb.x + (ev.clientX - r.left) / r.width * vb.width, vb.y + (ev.clientY - r.top) / r.height * vb.height]; };
+      var senala = function (ev) { if (!fig.classList.contains('on')) return; GI.foco = GI.arm > 1.4 ? pieza(aVB(ev)) : null; fig.style.cursor = GI.foco ? 'help' : ''; };
+      fig.addEventListener('pointermove', senala); fig.addEventListener('pointerdown', senala);
+      fig.addEventListener('pointerleave', function () { GI.foco = null; fig.style.cursor = ''; });
+    }
     fig.moSalta = salta; fig.moFija = function (t) { salta(t); fijo = true; }; fig.moSuelta = function () { fijo = false; };   // para capturas
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.moOn) salta(INI); fig.moOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
 
@@ -595,8 +691,9 @@
       var vb = svg.viewBox.baseVal, kx = W / vb.width * dpr, ky = H / vb.height * dpr;
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
-      var fundido = t < INI + .4 ? Math.max(0, t - INI) / .4 : t > FIN ? 1 - suave((t - FIN) / (DUR - FIN - .3)) : 1;
+      var fundido = SOLO ? 1 : t < INI + .4 ? Math.max(0, t - INI) / .4 : t > FIN ? 1 - suave((t - FIN) / (DUR - FIN - .3)) : 1;
       // I y II comparten el punto O; la cámara se desliza de uno al otro
+      if (SOLO) { psiAct = dibujaIV(t, 1); cam.el = Math.PI / 2; cam.s = 1; cam.x = OX; cam.y = OY; if (GI.hit) for (var kn in NG) NG[kn].ubica(GI.hit.ancla[kn][0], GI.hit.ancla[kn][1]); return; }
       var a1 = ventana(t, 0, T2 + .6, .8) * fundido;
       dibujaI(t, a1 * (1 - suave((t - T2 + .6) / .8)) + 0);
       cam.x = OX; cam.y = OY;
@@ -640,6 +737,17 @@
     if (quieto) T = INI + 8; else if (SOLO) T = INI;
     return {
       tick: function (dt) {
+        if (SOLO) {
+          if (!fig.classList.contains('on')) return;
+          if (!fig.moOn) { salta(INI); fig.moOn = true; }
+          GI.arm += dt; GI.giro += quieto ? 0 : dt;
+          var vObj = quieto || GI.foco ? 0 : GI.arm > 1.9 ? 1 : 0;   // la precesión arranca al terminar el ingreso y se detiene al señalar
+          GI.vel += (vObj - GI.vel) * Math.min(1, dt * 3); GI.psi += G.Om * LENTA * GI.vel * dt;
+          PARTES.forEach(function (k) { var o = !GI.foco || FOCO[GI.foco].indexOf(k) >= 0 ? 1 : .2; GI.dim[k] += (o - GI.dim[k]) * Math.min(1, dt * 9); });
+          for (var kn in NG) NG[kn].pon(GI.foco === kn);
+          dibuja(T); lecturas(T); ecuacion(T);
+          return;
+        }
         if (!fig.classList.contains('on')) return;
         var enC = CN && T >= TC && T < T3;
         if (!quieto && !fijo && !(enC && CN.ocupado())) { T += dt; if (T >= DUR || T < INI) salta(INI); }

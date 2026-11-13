@@ -329,7 +329,7 @@ var menu = function () {
     function enPantalla(bx, by) { var sx = bx * SC, sy = -by * SC; return [C[0] + Math.cos(ROLL) * sx - Math.sin(ROLL) * sy, C[1] + Math.sin(ROLL) * sx + Math.cos(ROLL) * sy]; }
     var BC = Math.sqrt(27), RSH = BC * SC;   // radio de la sombra en pantalla
     // ── WebGL
-    var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false }), U = {}, listo = false;
+    var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true }), U = {}, listo = false;
     if (gl) gl.getExtension('OES_standard_derivatives');
     if (gl) {
       var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }'); gl.compileShader(vs);
@@ -359,30 +359,20 @@ var menu = function () {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
-    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, tPinta = 0, respiro = 0, inicio = performance.now(), armT = null;
+    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, inicio = performance.now(), armT = null;
     // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
-      if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; tPinta = 0; return; }
+      if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
       // la resolución casi no baja: si la GPU va lenta se ajusta poco y se salta un cuadro
-      // con una GPU muy lenta (o sin aceleración) cada cuadro cuesta cientos de ms: entonces se deja al navegador
-      // al menos otro tanto libre entre cuadro y cuadro. El dibujo sigue moviéndose y a resolución completa;
-      // solo baja la cadencia, y con una GPU normal esto nunca actúa
-      if (tPinta && respiro && t - tPinta < respiro) return;
-      if (tPinta && t - tPinta > 60) respiro = 2 * (t - tPinta); else if (tPinta) respiro = 0;
       if (++cuadro % salto) return;
-      pintar(); tPinta = t;
+      pintar();
       // si va lento se pinta un cuadro de cada dos; la resolución no cambia nunca (si bajara, se pixelaría a mitad de la escena)
       if (previo) { var d = (t - previo) / salto; lentos = d > 30 ? lentos + 1 : Math.max(0, lentos - 1);
         if (lentos > 25) { lentos = 0; if (salto < 2) salto = 2; } }
       previo = t;
     })(0);
-    // precarga: un primer cuadro a resolución completa, todavía bajo la hoja de carga, para que la compilación del
-    // trazador de rayos y la primera subida a la GPU no ocurran a la vista
-    fig.bnPrecarga = function () { if (listo && lienzo.getBoundingClientRect().width) pintar(); };
-    // la entrada de la escena (la mancha que se extiende, el disco que aparece) empieza cuando la hoja se retira
-    if (window.fxRevelado) window.fxRevelado.then(function () { inicio = performance.now(); });
     fig.bnT = function (t) { tiempo = t; };
     fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
@@ -1711,14 +1701,8 @@ var menu = function () {
     mods[activo].tick(dt);
   }
   requestAnimationFrame(bucle);
-  // el agujero negro hace su primer cuadro ahora, con la hoja encima
-  var fig0 = escenas[0];
-  // dos cuadros más para que todo lo que se compila o decodifica al primer dibujo ocurra todavía bajo la hoja
-  // el primer cuadro del agujero negro va en su propia tarea; luego dos cuadros más bajo la hoja
-  return new Promise(function (ok) { setTimeout(function () {
-    if (fig0.bnPrecarga) fig0.bnPrecarga();
-    requestAnimationFrame(function () { requestAnimationFrame(ok); });
-  }, 0); });
+  // dos cuadros más bajo la hoja: el agujero negro ya dibujó (y compiló) antes de que se vea
+  return new Promise(function (ok) { requestAnimationFrame(function () { requestAnimationFrame(ok); }); });
   }
 };
 requestAnimationFrame(function () { setTimeout(function () {

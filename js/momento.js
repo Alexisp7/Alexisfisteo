@@ -587,20 +587,26 @@
       function aro3(zr, r, mitad) {   // un aro horizontal alrededor de la columna (mitad: 1 la de adelante, -1 la de atrás)
         var p3 = [], ax = dep([0, 0, zr]);
         for (var i = 0; i <= 48; i++) { var a = 2 * Math.PI * i / 48, q = [r * Math.cos(a), r * Math.sin(a), zr]; p3.push(q); }
+        // por tramos: un tramo es de esta mitad si su punto medio lo es; así las dos mitades comparten sus extremos
         var tr = [], out = [];
-        p3.forEach(function (q) { if ((dep(q) - ax) * mitad >= -.001) tr.push(P(q[0], q[1], q[2])); else if (tr.length) { out.push(tr); tr = []; } });
+        for (var k = 0; k < 48; k++) {
+          var m = [(p3[k][0] + p3[k + 1][0]) / 2, (p3[k][1] + p3[k + 1][1]) / 2, zr];
+          if ((dep(m) - ax) * mitad >= 0) { if (!tr.length) tr.push(P(p3[k][0], p3[k][1], zr)); tr.push(P(p3[k + 1][0], p3[k + 1][1], zr)); }
+          else if (tr.length) { out.push(tr); tr = []; }
+        }
         if (tr.length) out.push(tr);
-        if (out.length > 1 && (dep(p3[0]) - ax) * mitad >= -.001) { out[0] = out.pop().concat(out[0]); }
+        if (out.length > 1 && ((dep([(p3[0][0] + p3[1][0]) / 2, (p3[0][1] + p3[1][1]) / 2, zr]) - ax) * mitad >= 0)) out[0] = out.pop().concat(out[0].slice(1));
         return out;
       }
       objs.push({ z: dep(piv), k: 'torre', f: function () {
         var RW = .055 * cam.s, RA2 = .032 * cam.s;
         cilindro(bz, bz + .42, 1.12, LATON, '#E6CC92');
+        aro3(bz + .42, 1.12, -1).forEach(function (tr) { tubo(tr, RW * 1.2, TL, 'butt'); });   // mitad de atrás del aro, antes que la columna
         cilindro(bz + .42, h - .6, .3, BRONCE);
         [bz + 1.5, h - 1.25].forEach(function (zr) { aro3(zr, .33, 1).forEach(function (tr) { tubo(tr, RA2, ACERO, 'butt'); }); });
         aro3(bz + .42, 1.12, 1).forEach(function (tr) { tubo(tr, RW * 1.2, TL, 'butt'); });
         cilindro(h - .6, h - .15, .62, LATON, '#EAD39E');
-        aro3(h - .15, .62, 1).forEach(function (tr) { tubo(tr, RA2 * 1.2, TL, 'butt'); });
+        [-1, 1].forEach(function (m) { aro3(h - .15, .62, m).forEach(function (tr) { tubo(tr, RA2 * 1.2, TL, 'butt'); }); });
       } });
       // ── eje en tres tramos ──
       function tramo(s0, s1) {

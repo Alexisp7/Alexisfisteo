@@ -56,14 +56,30 @@ const verde = new THREE.PointLight(0xb8f52d, 0.5, 2.5, 2); verde.position.set(0,
 
 const pulso = { value: 0.5 };
 
+const tiempo = { value: 0 };
 function piel(m) {
   m.onBeforeCompile = (s) => {
     s.uniforms.uPulso = pulso;
+    s.uniforms.uTiempo = tiempo;
+    s.vertexShader = s.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vPosL;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvPosL = position;');
     s.fragmentShader = s.fragmentShader
-      .replace('#include <common>', '#include <common>\nuniform float uPulso;')
+      .replace('#include <common>', `#include <common>
+        uniform float uPulso, uTiempo; varying vec3 vPosL;
+        float ruido(vec3 p){ return sin(p.x*1.7+sin(p.y*2.3+uTiempo*.9))*sin(p.y*1.9+sin(p.z*2.1-uTiempo*1.1))*sin(p.z*2.2+sin(p.x*1.6+uTiempo*.7)); }`)
+      .replace('#include <map_fragment>', `#include <map_fragment>
+        // bolsas verdes: más verde y un líquido que se mueve por dentro
+        float verdor = smoothstep(0.03, 0.16, diffuseColor.g - max(diffuseColor.r, diffuseColor.b));
+        vec3 q = vPosL * 60.0;
+        float flujo = 0.5 + 0.5 * ruido(q + vec3(0.0, uTiempo * 1.6, 0.0));
+        float vetas = smoothstep(0.55, 0.95, 0.5 + 0.5 * ruido(q * 1.8 - vec3(uTiempo * 1.2, 0.0, uTiempo * 0.8)));
+        vec3 liquido = mix(vec3(0.16, 0.55, 0.03), vec3(0.62, 1.0, 0.16), flujo) + vetas * vec3(0.35, 0.45, 0.1);
+        diffuseColor.rgb = mix(diffuseColor.rgb, liquido, verdor * 0.95);`)
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
-        float verdor = smoothstep(0.06, 0.22, diffuseColor.g - max(diffuseColor.r, diffuseColor.b));
-        totalEmissiveRadiance += diffuseColor.rgb * verdor * (0.9 + 1.3 * uPulso);`);
+        totalEmissiveRadiance += liquido * verdor * (1.0 + 0.9 * flujo + 0.8 * uPulso);`)
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n        roughnessFactor = mix(roughnessFactor, 0.12, verdor);')
+      .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n        metalnessFactor = mix(metalnessFactor, 0.0, verdor);');
   };
   m.needsUpdate = true;
 }
@@ -88,7 +104,7 @@ function animar(t) {
   if (H.torso) H.torso.rotation.set(a * 0.025 * s(t * 1.2), a * 0.03 * s(t * 0.5), 0);
   if (H.cabeza) H.cabeza.rotation.set(a * 0.07 * s(t * 0.8 + 0.4), a * 0.13 * s(t * 0.45), a * 0.04 * s(t * 0.6));
   for (const k in H) if (k.startsWith('bolsa_')) {  // cada bolsa late a su ritmo
-    const p = 1 + a * 0.14 * Math.max(0, s(t * 2.2 + fase(k))) ** 2;
+    const p = 1 + a * (0.12 + 0.16 * Math.max(0, s(t * 1.6 + fase(k))) ** 2); // se inflan un poco y laten
     H[k].scale.setScalar(p);
   }
 }
@@ -111,6 +127,7 @@ function cuadro() {
   const resp = reducido ? 0 : Math.sin(t * 1.2);
   modelo.scale.set(1 + resp * 0.004, 1 + resp * 0.008, 1 + resp * 0.004);
   animar(t);
+  tiempo.value = reducido ? 0 : t;
   pulso.value = reducido ? 0.5 : 0.5 + 0.5 * Math.sin(t * 2.0);
   verde.intensity = 0.3 + pulso.value * 0.5;
   render.render(escena, camara);
@@ -135,7 +152,7 @@ function cargar() {
     modelo.add(g.scene);
     escena.add(modelo);
     caja.classList.add('listo');
-    window.__personaje = { render, escena, camara, cuadro, modelo, H, animar };
+    window.__personaje = { render, escena, camara, cuadro, modelo, H, animar, tiempo, pulso };
     render.setAnimationLoop(cuadro);
   });
 }

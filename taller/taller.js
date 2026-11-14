@@ -10,6 +10,7 @@ import { PALETA } from './organico.js';
 
 const UNIDADES = {
   huevo: () => import('./unidades/huevo.js'),
+  zancuda: () => import('./unidades/zancuda.js'),
 };
 
 const $ = (s) => document.querySelector(s);
@@ -136,7 +137,12 @@ $('#b-glb').addEventListener('click', async () => {
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   } finally { b.disabled = false; b.textContent = 'Descargar .glb'; }
 });
-document.querySelectorAll('[data-unidad]').forEach((el) => el.addEventListener('click', () => cargar(el.dataset.unidad)));
+const botones = document.querySelectorAll('[data-unidad]');
+botones.forEach((el) => el.addEventListener('click', () => {
+  botones.forEach((o) => o.setAttribute('aria-current', String(o === el)));
+  history.replaceState(null, '', '?u=' + el.dataset.unidad);
+  cargar(el.dataset.unidad);
+}));
 
 /* Bucle: se detiene cuando la pestaña no se ve */
 const reloj = new THREE.Clock();
@@ -152,7 +158,9 @@ renderer.setAnimationLoop(cuadro);
 document.addEventListener('visibilitychange', () => renderer.setAnimationLoop(document.hidden ? null : cuadro));
 
 ajustar();
-cargar(new URLSearchParams(location.search).get('u') || 'huevo').catch((e) => {
+const inicial = UNIDADES[new URLSearchParams(location.search).get('u')] ? new URLSearchParams(location.search).get('u') : 'huevo';
+botones.forEach((o) => o.setAttribute('aria-current', String(o.dataset.unidad === inicial)));
+cargar(inicial).catch((e) => {
   console.error(e);
   estado.textContent = 'No se pudo construir la unidad.';
 });

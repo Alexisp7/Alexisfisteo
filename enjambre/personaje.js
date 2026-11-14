@@ -8,7 +8,7 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 // zona en coordenadas de la imagen de la maqueta (1774×887)
-const ZONA = { x: 387, y: 0, w: 1000, h: 887 };
+const ZONA = { x: 935, y: 688, w: 330, h: 240 }; // abajo, en el suelo oscuro libre entre Fluidos, Oscilador y Equilibrio
 const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const caja = document.createElement('div');
@@ -16,8 +16,7 @@ caja.className = 'mq-personaje';
 caja.setAttribute('aria-hidden', 'true');
 caja.style.cssText = `left:${(100 * ZONA.x / 1774).toFixed(3)}%;top:${(100 * ZONA.y / 887).toFixed(3)}%;width:${(100 * ZONA.w / 1774).toFixed(3)}%;height:${(100 * ZONA.h / 887).toFixed(3)}%`;
 
-// maquetaDraw() rehace el HTML de #maqueta: volvemos a meter la caja justo después de la capa de objetos
-// (encima de los organismos pintados, debajo de rótulos y zonas clicables)
+// maquetaDraw() rehace el HTML de #maqueta: volvemos a meter la caja cada vez
 function colocar() {
   const st = document.getElementById('maqueta');
   if (!st || st.hidden) return;
@@ -39,13 +38,13 @@ const escena = new THREE.Scene();
 escena.environment = new THREE.PMREMGenerator(render).fromScene(new RoomEnvironment(), 0.04).texture;
 escena.environmentIntensity = 0.8;
 const camara = new THREE.PerspectiveCamera(26, 1, 0.05, 50);
-const MIRA = new THREE.Vector3(0, 0.52, 0);
-camara.position.set(0, 1.0, 3.45);
+const MIRA = new THREE.Vector3(0, 0.56, 0);
+camara.position.set(0, 0.95, 3.2);
 camara.lookAt(MIRA);
 
 escena.add(new THREE.HemisphereLight(0xe6d8ff, 0x220a2a, 0.6));
 const clave = new THREE.DirectionalLight(0xfff0e0, 2.4); clave.position.set(-2, 3.5, 3); escena.add(clave);
-const contra = new THREE.DirectionalLight(0xc44aff, 4.0); contra.position.set(2.4, 2, -3); escena.add(contra);
+const contra = new THREE.DirectionalLight(0xc44aff, 5.0); contra.position.set(2.4, 2, -3); escena.add(contra);
 const contra2 = new THREE.DirectionalLight(0x9228e8, 2.2); contra2.position.set(-2.6, 1.2, -2.5); escena.add(contra2);
 const verde = new THREE.PointLight(0xb8f52d, 0.5, 2.5, 2); verde.position.set(0, 0.25, 1.2); escena.add(verde);
 
@@ -79,7 +78,7 @@ function tamano() {
 function cuadro() {
   if (!modelo || !visible || !caja.isConnected || !tamano()) return;
   const t = (performance.now() - t0) / 1000;
-  modelo.rotation.y = reducido ? -0.3 : -0.3 + Math.sin(t * 0.22) * 0.5;
+  modelo.rotation.y = reducido ? -0.35 : -0.35 + Math.sin(t * 0.22) * 0.35;
   const resp = reducido ? 0 : Math.sin(t * 1.2);
   modelo.scale.set(1 + resp * 0.005, 1 + resp * 0.01, 1 + resp * 0.005);
   pulso.value = reducido ? 0.5 : 0.5 + 0.5 * Math.sin(t * 2.0);

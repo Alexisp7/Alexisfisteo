@@ -619,6 +619,19 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 .mq-personaje::before{content:"";position:absolute;left:14%;right:14%;bottom:3%;height:14%;border-radius:50%;background:radial-gradient(closest-side,rgba(8,2,12,.9),rgba(60,14,80,.35) 60%,transparent);filter:blur(5px)}
 #mq-escenario{position:relative;z-index:1;width:100%;aspect-ratio:1774/120;background:linear-gradient(#100817,#0e0614)}
 #mq-escenario[hidden]{display:none}
+/* portada en una sola pantalla: el mapa se ajusta al alto de la ventana */
+body.con-maqueta #maqueta,body.con-maqueta #mq-escenario{width:min(100%,calc(100vh*1774/1007));margin-inline:auto}
+body.con-maqueta:has(#v-hive.on){background:#100817;overflow-x:hidden}
+.inv-huevos{position:relative;margin:28px 0;border-radius:18px;overflow:hidden;--s:.8}
+.inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
+.inv-huevos .mq-huevos{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(94%,1000px);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;padding:14px 20px;
+  background:radial-gradient(closest-side,rgba(16,8,23,.85),rgba(16,8,23,.55) 70%,transparent);font-family:"Barlow Semi Condensed","Arial Narrow",sans-serif}
+.inv-huevos .mq-huevos b{flex-basis:100%;text-align:center;font-family:"Space Mono",monospace;font-weight:400;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#cbb8d8}
+.inv-huevos .mq-huevos button{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:#F3EAF8;font:inherit;font-size:17px;font-weight:600;cursor:pointer;padding:2px 4px}
+.inv-huevos .mq-huevos button:hover{color:#D8F04A}
+.inv-huevos .mq-huevos i{width:8px;height:8px;border-radius:50%;background:#B8F52D;box-shadow:0 0 8px #B8F52D}
+.inv-huevos .mq-huevos em{font-style:normal;font-family:"Space Mono",monospace;font-size:12px;color:#B8F52D}
+
 #maqueta .mq-panel{background:rgba(14,7,20,.78);box-shadow:none;border-radius:calc(30px*var(--s))}
 /* arte separado de Andreé (maqueta2): marco orgánico, brillo que recorre la red, células que respiran y laten */
 .mq-marco{pointer-events:none;user-select:none;height:auto}
@@ -1428,9 +1441,8 @@ function maquetaDraw(){
     h+=`<button class="mq-hot mq-org" data-id="${id}" aria-label="${esc(tp.name)}: ${d} de ${n}" style="left:${X(x-r)};top:${Y(y-r)};width:${X(2*r)};height:${Y(2*r)}"></button>`; }
   // los temas que no salen en la maqueta: huevos latentes sobre el suelo
   const resto=DB.topics.filter(q=>!MQ.pos[q.id]);
-  const hv=`<div class="mq-huevos"><b>Huevos latentes · temas que aún no despiertan</b>${resto.map(q=>{const [d,n]=cnt(q.id); return `<button data-id="${q.id}"><i></i>${esc(q.name)}${n?` <em>${d}/${n}</em>`:''}</button>`;}).join('')}</div>`;
-  let su=document.getElementById('mq-suelo'); if(!su){ su=document.createElement('div'); su.id='mq-suelo'; st.after(su); }
-  su.hidden=false; su.innerHTML=`<img src="maqueta/colonia.webp" alt="" draggable="false">`+hv;
+  // los huevos latentes (temas sin célula) se mudaron a Invasión: la portada entra en una sola pantalla
+  const su=document.getElementById('mq-suelo'); if(su) su.remove();
   // panel «sigue por aquí»
   h+=`<div class="mq-panel" style="left:${X(158)};top:${Y(102)};width:${X(372)};height:${Y(338)}">`+(e?`<div class="mq-k">Sigue por aquí</div><div class="mq-ch">${esc(e.num||'')}${t?' · '+esc(t.name):''}</div><h2>${esc(e.title)}</h2>
       <p class="mq-sub">${e.prio==='clave'?'Ejercicio clave: no te lo saltes.':(e.state===1?'Lo dejaste a medias.':'La colonia muta con cada ejercicio que resuelves.')}</p>
@@ -1451,7 +1463,7 @@ function maquetaDraw(){
   st.parentNode.querySelectorAll('.mq-org,.mq-huevos button').forEach(b=>b.onclick=()=>{selected=selected===b.dataset.id?null:b.dataset.id; applyFocus(); drawSide();});
   bindCommon(st);
   st.insertAdjacentHTML('beforeend',objetosMaqueta(st));
-  const fit=()=>{ const k=(st.clientWidth/MQ.W).toFixed(4); st.style.setProperty('--s',k); su.style.setProperty('--s',k); }; fit();
+  const fit=()=>{ const k=(st.clientWidth/MQ.W).toFixed(4); st.style.setProperty('--s',k); }; fit();
 }
 addEventListener('resize',()=>{ clearTimeout(MQ.rz); MQ.rz=setTimeout(maquetaDraw,180); });
 // ── la maqueta viva: se anima la propia pintura (respiración, remolino de los núcleos, líquido) ──
@@ -2325,6 +2337,12 @@ function invHistory(){
             ${e?`<button class="tiny" data-study="${e.id}">repasar</button>`:''}</li>`}).join('')}</ol></details>`}).join('')}
     ${(INVS.log||[]).length?`<div class="log">Intentos antiguos (sin detalle): ${INVS.log.map(l=>`<span style="margin-right:14px">${l.d} · <b>${l.ok}/${l.n}</b> en ${mmss(l.s)}</span>`).join('')}</div>`:''}</div>`;
 }
+// temas que aún no tienen célula en el mapa de la colmena (antes iban bajo la portada)
+function huevosLatentes(){
+  const resto=DB.topics.filter(q=>!MQ.pos[q.id]); if(!resto.length) return '';
+  const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
+  return `<section class="inv-huevos"><img src="maqueta/colonia.webp" alt="" draggable="false"><div class="mq-huevos"><b>Huevos latentes · temas que aún no despiertan</b>${resto.map(q=>{const [d,n]=cnt(q.id); return `<button data-id="${q.id}"><i></i>${esc(q.name)}${n?` <em>${d}/${n}</em>`:''}</button>`;}).join('')}</div></section>`;
+}
 function drawInv(){
   const root=document.getElementById('inv'); if(!root) return;
   clearInterval(invTick); invTick=null;
@@ -2398,7 +2416,9 @@ function drawInv(){
       <div class="why">${esc(q.why)}</div><div class="mn">~${q.min}</div></div>`).join('')}
     <div class="wv"><div></div><div class="src">Tiempo estimado · nuevas sin ver: ${fresh('facil')} fáciles, ${fresh('intermedio')} intermedias, ${fresh('dificil')} difíciles</div><div></div><div class="mn"><b>${tot}</b></div></div></div>
     <div class="launch"><button class="go" data-start>Empezar ${esc(M.name.toLowerCase())} <span>→</span></button><button class="reroll" data-reroll>↻ Reiniciar ejercicios</button><span class="pill">${M.min>=60?(M.min/60)+' h':M.min+' min'} · el cronómetro no se detiene aunque cambies de pestaña.</span></div>
+    ${huevosLatentes()}
     ${invHistory()}`;
+  root.querySelectorAll('.inv-huevos [data-id]').forEach(b=>b.onclick=()=>{selected=b.dataset.id; show('hive'); renderAll(); applyFocus(); drawSide();});
   root.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{INVS.mode=b.dataset.mode; INVS.wave=null; INVS.prev=null; invSave(INVS); drawInv();});
   root.querySelectorAll('[data-reroll]').forEach(b=>b.onclick=()=>{const old=new Set((INVS.prev?.qs||[]).map(q=>q.id)); invWave(old); drawInv(); toast('Nueva oleada: otros ejercicios');});
   root.querySelector('[data-start]').onclick=invStart;

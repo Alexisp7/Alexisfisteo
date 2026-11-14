@@ -648,7 +648,7 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
    si la ventana es más alta, abajo sigue el suelo de la colonia; si es más baja, tutor, progreso y personaje se apoyan en el borde inferior */
 body.con-maqueta:has(#v-hive.on){background:#100817;overflow:hidden}
 body.con-maqueta:has(#v-hive.on) #swarm{display:block;height:100vh;min-height:0;overflow:hidden;
-  background:linear-gradient(#100817,rgba(16,8,23,.35) 18%,rgba(16,8,23,.55)),url(maqueta/colonia.webp) center bottom/100% auto no-repeat,#100817}
+  background:linear-gradient(#100817,rgba(16,8,23,.35) 18%,rgba(16,8,23,.55)),url(maqueta2/fondo-4k.png) center bottom/100% auto no-repeat,#100817}
 body.con-maqueta #maqueta{width:100%;flex:none;margin:0}
 body.con-maqueta #mq-escenario{display:none!important}
 body.con-maqueta:has(#v-hive.on) .mq-tutor{top:min(45.096vw,calc(100vh - 10.203vw - 14px))!important}
@@ -669,6 +669,7 @@ body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.
 .mq-marco{pointer-events:none;user-select:none;height:auto}
 .mq-filtros{position:absolute;width:0;height:0}
 .mq-liquido,.mq-conex{inset:0;width:100%;height:100%;pointer-events:none;user-select:none}
+#maqueta>.mq-fondo,.mq-liquido{width:100%;height:100%;object-fit:cover;object-position:50% 70%}
 .mq-liquido{filter:url(#mqLiquido);-webkit-mask:url(maqueta2/liquido-mascara.png) 0 0/100% 100% no-repeat;mask:url(maqueta2/liquido-mascara.png) 0 0/100% 100% no-repeat;opacity:.95}
 .mq-conex{filter:url(#mqVivo)}
 .mq-gas{inset:0;pointer-events:none;overflow:hidden;mix-blend-mode:screen}
@@ -1471,7 +1472,7 @@ function maquetaDraw(){
   const xs=studyOrder(), done=xs.filter(x=>(x.state||0)>=2).length, e=nextExercise(), t=e&&T(primTopic(e));
   const L=LAY||layout(), awake=DB.topics.filter(q=>mastery(q.id).n).length, pct=Math.round(L.g*100);
   const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
-  let h=`<img class="mq-fondo" src="maqueta2/fondo.webp" alt="" draggable="false">${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/marco-abajo.webp" alt="" draggable="false" style="left:${X(762)};top:${Y(628)};width:${X(1007)}">`+`<img class="mq-marco" src="maqueta2/marco-izq.webp" alt="" draggable="false" style="left:${X(1.5)};top:${Y(24.8)};width:${X(934)}">`;
+  let h=`<img class="mq-fondo" src="maqueta2/fondo-4k.png" alt="" draggable="false">${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/marco-abajo.webp" alt="" draggable="false" style="left:${X(762)};top:${Y(628)};width:${X(1007)}">`+`<img class="mq-marco" src="maqueta2/marco-izq.webp" alt="" draggable="false" style="left:${X(1.5)};top:${Y(24.8)};width:${X(934)}">`;
   // barra superior pintada: zonas activas sobre las pestañas y el emblema
   h+=`<a class="mq-hot mq-logo" href="../bitacora.html" title="Físicas · volver a la bitácora" style="left:${X(20)};top:0;width:${X(250)};height:${Y(46)}"></a>`;
   for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
@@ -1523,7 +1524,7 @@ const MQ_VIVO=`<svg class="mq-filtros" width="0" height="0" aria-hidden="true"><
     <animate attributeName="baseFrequency" dur="8s" values="0.012 0.05;0.016 0.062;0.012 0.05" repeatCount="indefinite"/></feTurbulence>
     <feDisplacementMap in="SourceGraphic" in2="r" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>
 </defs></svg>
-<img class="mq-liquido" src="maqueta2/fondo.webp" alt="" draggable="false">
+<img class="mq-liquido" src="maqueta2/fondo-4k.png" alt="" draggable="false">
 <img class="mq-conex" src="maqueta2/conexiones.webp" alt="" draggable="false">
 <div class="mq-gas"><i></i><i></i><i></i><i></i><i></i></div>`;
 // modo edición (?editar): arrastra cualquier objeto, rueda = tamaño, doble clic = volver a su sitio. Se guarda en este navegador.

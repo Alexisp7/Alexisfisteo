@@ -619,6 +619,15 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 .mq-personaje::before{content:"";position:absolute;left:14%;right:14%;bottom:3%;height:14%;border-radius:50%;background:radial-gradient(closest-side,rgba(8,2,12,.9),rgba(60,14,80,.35) 60%,transparent);filter:blur(5px)}
 #mq-escenario{position:relative;z-index:1;width:100%;aspect-ratio:1774/120;background:linear-gradient(#100817,#0e0614)}
 #mq-escenario[hidden]{display:none}
+.mq-adnbar{z-index:6;aspect-ratio:1958/428;pointer-events:auto}
+.mq-adnbar img{position:absolute;inset:0;width:100%;height:100%;user-select:none;pointer-events:none}
+.mq-adnv{filter:drop-shadow(0 0 calc(5px*var(--s)) rgba(184,245,45,.9));animation:mqAdnVerde 3.2s ease-in-out infinite}
+@keyframes mqAdnVerde{0%,100%{opacity:.85}50%{opacity:1}}
+.mq-adnbar span{position:absolute;left:50%;bottom:-2%;transform:translate(-50%,100%);font-family:"Space Mono",monospace;font-size:calc(12px*var(--s));letter-spacing:.08em;color:#cbb8d8;white-space:nowrap;opacity:0;transition:opacity .3s}
+.mq-adnbar:hover span{opacity:1}
+body.con-maqueta:has(#v-hive.on) .mq-adnbar{top:min(34.95vw,calc(100vh - 10.203vw - 18px - 5.32vw))!important}
+@media (prefers-reduced-motion:reduce){.mq-adnv{animation:none}}
+
 /* tutor y progreso con las piezas recortadas completas del marco de Andreé (maqueta2/tutor, progreso, anillo) */
 #maqueta .mq-tutor{background:none;border:0;box-shadow:none;border-radius:0;overflow:visible;
   padding:calc(50px*var(--s)) calc(64px*var(--s)) calc(14px*var(--s)) calc(40px*var(--s))}
@@ -1486,6 +1495,9 @@ function maquetaDraw(){
       <p><strong>¡Bienvenido, explorador!</strong><br>Aquí comienza tu viaje por el enjambre del conocimiento. Selecciona una <em>célula</em> y sigue aprendiendo.</p>
       <p class="mq-tmas">${tutor} ${done} de ${xs.length} ejercicios resueltos · ${awake} de ${DB.topics.length} temas despiertos. Cada par de bases del ADN es un ejercicio.</p>
       <button class="mq-tbtn" aria-label="Más" aria-expanded="false" onclick="const c=this.closest('.mq-tutor');this.setAttribute('aria-expanded',c.classList.toggle('abierto'))"><svg viewBox="0 0 20 12"><path d="M2 2l8 8 8-8"/></svg></button></div>`;
+  // barra de ADN de Andreé: los peldaños se pintan de verde según los ejercicios resueltos (de izquierda a derecha)
+  { const fr=xs.length?done/xs.length:0, borde=(9.45+83.6*fr).toFixed(2);
+    h+=`<div class="mq-adnbar" style="left:${X(1075)};top:${Y(620)};width:${X(430)}" title="${done} de ${xs.length} ejercicios resueltos"><img src="maqueta2/adn-barra.webp" alt="" draggable="false"><img class="mq-adnv" src="maqueta2/adn-barra-verde.webp" alt="" draggable="false" style="clip-path:inset(0 calc(100% - ${borde}%) 0 0)"><span>${done} / ${xs.length} resueltos</span></div>`; }
   h+=`<div class="mq-progreso" style="left:${X(1430)};top:${Y(812)};width:${X(318)};height:${Y(150)}"><span class="mq-pk">Tu progreso</span>
       <div class="mq-anillo" style="--p:${Math.max(1,pr)}"><b>${pr}%</b></div><div class="mq-pn"><b>${done} / ${xs.length}</b>Ejercicios</div></div>`;
   h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;

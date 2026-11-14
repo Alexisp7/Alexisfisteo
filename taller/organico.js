@@ -97,6 +97,7 @@ export function organizar(mat, op = {}) {
       .replace('#include <common>', `#include <common>
 uniform float uT; uniform float uPulso; uniform float uFuerza;
 varying vec3 vQ; varying vec2 vUv2;
+${op.fragDecl || ''}
 ${GLSL_RUIDO}
 float tl_altura(vec3 q){ float h = 0.0; ${op.relieve || ''} return h; }
 `)
@@ -114,6 +115,8 @@ ${op.tinte || ''}`)
   vec3 vGrad = sign(fDet) * (dH.x * R1 + dH.y * R2);
   normal = normalize(abs(fDet) * vN - vGrad);
 }`)
+      .replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>
+${op.material || ''}`)
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
 ${op.brillo || ''}`);
   };

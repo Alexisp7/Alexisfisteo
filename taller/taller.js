@@ -32,7 +32,7 @@ escena.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 escena.environmentIntensity = 0.22;
 
 const camara = new THREE.PerspectiveCamera(34, 1, 0.05, 60);
-camara.position.set(4.3, 2.7, 5.6);
+camara.position.set(3.3, 2.0, 4.3);
 
 const controles = new OrbitControls(camara, lienzo);
 controles.enableDamping = true;
@@ -48,9 +48,9 @@ escena.add(new THREE.HemisphereLight(0x6a3a8a, 0x0a0410, 0.55));
 const clave = new THREE.DirectionalLight(PALETA.brillo, 2.4);
 clave.position.set(-3.5, 5.5, 3);
 clave.castShadow = true;
-clave.shadow.mapSize.set(2048, 2048);
-Object.assign(clave.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 1, far: 15 });
-clave.shadow.bias = -0.0004; clave.shadow.normalBias = 0.02; clave.shadow.radius = 4;
+clave.shadow.mapSize.set(4096, 4096);
+Object.assign(clave.shadow.camera, { left: -2.4, right: 2.4, top: 2.4, bottom: -2.4, near: 2, far: 12 });
+clave.shadow.bias = -0.0002; clave.shadow.normalBias = 0.04; clave.shadow.radius = 4;
 escena.add(clave);
 const contra = new THREE.DirectionalLight(PALETA.primario, 3.2);
 contra.position.set(2.5, 3, -4.5);
@@ -119,7 +119,7 @@ interruptor('#b-malla', 'malla', () => {
   actual?.grupo.traverse((o) => { if (o.isMesh) o.material.wireframe = op.malla; });
 });
 $('#b-vista').addEventListener('click', () => {
-  camara.position.set(4.3, 2.7, 5.6);
+  camara.position.set(3.3, 2.0, 4.3);
   if (actual) controles.target.copy(actual.objetivo);
 });
 $('#b-glb').addEventListener('click', async () => {

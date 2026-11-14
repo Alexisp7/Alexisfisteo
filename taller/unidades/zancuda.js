@@ -10,10 +10,11 @@ export const ficha = {
   nombre: 'Zancuda nodriza',
   estado: 'Propuesta para revisar',
   partes: [
-    ['Caparazón', 'Placas gruesas de quitina color hueso y bronce, apiladas con el borde levantado hacia adelante; cada una lleva una púa cónica y deja ver la carne violeta entre ellas.'],
-    ['Patas', 'Seis patas de huesos gruesos en forma de barril, con mangas de carne violeta en cada articulación, espolones y garras de hueso; se levantan y vuelven a apoyar de una en una.'],
-    ['Guadañas', 'Dos brazos alzados que se arquean hacia afuera, dentados por dentro, terminan en garras largas y se mecen al acecho.'],
-    ['Vientre', 'Abdomen redondo de carne violeta con placas color naranja por debajo; a los costados carga racimos de sacos verdes luminosos, sujetos por tiras de carne.'],
+    ['Cabeza y torso', 'Torso erguido de anillos de quitina sobre el cuerpo; la cabeza, alargada, lleva una corona de púas barridas hacia atrás, ojos verdes y dos ganchos bajo el hocico.'],
+    ['Costillas', 'Una cortina de costillas violetas, nudosas, cuelga desde los hombros sobre la espalda.'],
+    ['Patas', 'Seis patas largas y arqueadas, de cuatro segmentos con forma de hueso y mangas violetas en cada articulación; terminan en garras grandes y se apoyan de una en una. Entre ellas, una membrana violeta.'],
+    ['Guadañas', 'Dos brazos alzados desde los hombros que se arquean hacia afuera, dentados por dentro, con garras largas.'],
+    ['Vientre', 'Abdomen largo y horizontal con una fila de púas en el lomo, placas naranjas por debajo y racimos de sacos verdes luminosos a los costados.'],
   ],
 };
 
@@ -162,7 +163,7 @@ export async function construir({ progreso = () => {} } = {}) {
     return colorear(g, (t, u, c) => c.copy(COL.oscuro).lerp(COL.bronce, S(t, 0, 0.25)).lerp(COL.hueso, S(t, 0.3, 0.7)).lerp(COL.punta, S(t, 0.78, 1)));
   }
   // Hueso de pata: tubo con bulbo cerca de la base, cuello en la punta y anillos de crecimiento
-  function hueso(L, r0, r1, comba, semilla, hueco = 0.05) {
+  function hueso(L, r0, r1, comba, semilla, hueco = 0.05, maza = false) {
     const pts = [];
     for (let k = 0; k <= 6; k++) { const t = k / 6; pts.push(V(0.012 * Math.sin(t * 5 + semilla), hueco + (L - 2 * hueco) * t, comba * Math.sin(Math.PI * t))); }
     const g = tuboAfinado(new THREE.CatmullRomCurve3(pts), {
@@ -173,6 +174,13 @@ export async function construir({ progreso = () => {} } = {}) {
         const cabeza0 = 0.42 * Math.exp(-Math.pow(t / 0.08, 2));
         const cabeza1 = 0.34 * Math.exp(-Math.pow((1 - t) / 0.07, 2));
         const surcos = -0.06 * Math.pow(0.5 + 0.5 * Math.cos(t * Math.PI * 2 * 4), 12) * S(t, 0.12, 0.2) * (1 - S(t, 0.8, 0.88));
+        if (maza) {
+          // se ensancha hacia el extremo distal y remata en un nudo, como un hueso largo
+          const cuerpoM = 0.5 + 0.62 * Math.pow(t, 1.6) + 0.12 * Math.sin(Math.PI * t);
+          const nudo = 0.28 * Math.exp(-Math.pow((t - 0.9) / 0.07, 2)) - 0.35 * Math.exp(-Math.pow((1 - t) / 0.035, 2));
+          const base0 = 0.22 * Math.exp(-Math.pow(t / 0.06, 2));
+          return r0 * (cuerpoM + nudo + base0 + surcos);
+        }
         return base * (barril + cabeza0 + cabeza1 + surcos) * (1 - 0.6 * Math.pow(Math.max(0, Math.abs(t - 0.5) * 2 - 0.97) / 0.03, 2));
       },
     });
@@ -270,50 +278,114 @@ export async function construir({ progreso = () => {} } = {}) {
   progreso('Caparazón');
   const cuerpo = new THREE.Group(); cuerpo.name = 'Cuerpo';
   cuerpo.position.y = ALTO;
-  cuerpo.scale.setScalar(1.2);
+  cuerpo.scale.setScalar(1.0);
   grupo.add(cuerpo);
 
   const E_ce = { c: V(0, 0.02, 0.22), r: V(0.42, 0.33, 0.5), inclina: 0.1 };
-  const E_ca = { c: V(0, -0.05, 0.8), r: V(0.25, 0.2, 0.25), inclina: 0.25 };
-  const E_ab = { c: V(0, -0.06, -0.84), r: V(0.68, 0.62, 0.7), inclina: -0.2 };
+  const E_ab = { c: V(0, 0.0, -1.2), r: V(0.55, 0.5, 1.05), inclina: -0.04 };
 
   cuerpo.add(elipsoide(E_ce, 0.98, mCarne, 1));
-  cuerpo.add(elipsoide(E_ca, 0.97, mCarne, 2));
-  // bandas del tórax
-  [[0.95, 0.3, 0.16], [0.42, -0.25, 0.2], [-0.12, -0.92, 0.22]].forEach(([a, b, lp], i) => {
-    const { m, Sup } = banda(E_ce, a, b, 1.55, i, { alza: 0.12, grosor: 0.06 });
+  [[0.95, 0.3], [0.42, -0.25], [-0.12, -0.92]].forEach(([a, b], i) => {
+    const { m, Sup } = banda(E_ce, a, b, 1.5, i, { alza: 0.12, grosor: 0.06 });
     cuerpo.add(m);
-    crestaEn(cuerpo, E_ce, Sup, 0, 0.15, lp * 1.25, 0.06);
+    if (i === 2) crestaEn(cuerpo, E_ce, Sup, 0, 0.15, 0.26, 0.06);
+    for (const u of [-0.8, 0.8]) crestaEn(cuerpo, E_ce, Sup, u, 0.15, 0.15, 0.04, u * 0.6);
   });
-  // casco de la cabeza
+  /* ---------------- Torso erguido ---------------- */
+  progreso('Torso');
+  const torso = new THREE.Group(); torso.name = 'Torso';
+  torso.position.set(0, 0.18, 0.5);
+  cuerpo.add(torso);
+  const espina = new THREE.CatmullRomCurve3([V(0, -0.1, -0.05), V(0, 0.3, 0.06), V(0, 0.66, 0.18), V(0, 0.95, 0.3), V(0, 1.1, 0.36)]);
   {
-    const { m, Sup } = banda(E_ca, 0.5, -0.9, 1.35, 9, { alza: 0.05, grosor: 0.03 });
-    cuerpo.add(m);
-    crestaEn(cuerpo, E_ca, Sup, -0.55, 0.35, 0.1, 0.025, -0.6);
-    crestaEn(cuerpo, E_ca, Sup, 0.55, 0.35, 0.1, 0.025, 0.6);
+    const g = tuboAfinado(espina, { tramos: 80, lados: 20, ruido: R, rugosidad: 0.08, radio: (t) => 0.13 - 0.04 * t + 0.012 * Math.sin(t * 30) });
+    const m = new THREE.Mesh(g, mCarne); m.castShadow = true; torso.add(m);
   }
-  // ojos: dos pares al frente de la cabeza
-  [[0.78, 0.28, 0.036], [0.68, 0.62, 0.028], [0.86, 0.12, 0.02]].forEach(([s, ph, r]) => {
+  // placas del pecho (adelante) y de la espalda, apiladas a lo largo del torso
+  for (let i = 0; i < 7; i++) {
+    const t = 0.06 + i * 0.125;
+    const c = espina.getPointAt(t), tg = espina.getTangentAt(t);
+    const E_t = { c, r: V(0.21 - 0.05 * t, 0.16 - 0.035 * t, 0.1), inclina: -Math.PI / 2 + Math.atan2(tg.z, tg.y) };
+    const pecho = banda(E_t, 0.98, -0.75, 1.65, 60 + i, { alza: 0.14, grosor: 0.045, centro: Math.PI, nu: 30, nv: 16 });
+    torso.add(pecho.m);
+    const lomo = banda(E_t, 0.98, -0.75, 1.5, 70 + i, { alza: 0.18, grosor: 0.05, nu: 30, nv: 16 });
+    torso.add(lomo.m);
+    if (i % 2 === 0) crestaEn(torso, E_t, lomo.Sup, 0, 0.1, 0.12 + 0.025 * i, 0.03, 0);
+  }
+
+  /* ---------------- Cabeza ---------------- */
+  const cabeza = new THREE.Group(); cabeza.name = 'Cabeza';
+  cabeza.position.copy(espina.getPointAt(1)).add(V(0, 0.06, 0.04));
+  torso.add(cabeza);
+  const E_ca = { c: V(0, 0, 0.14), r: V(0.18, 0.15, 0.34), inclina: 0.5 };
+  cabeza.add(elipsoide(E_ca, 0.97, mCarne, 2));
+  {
+    const { m } = banda(E_ca, 0.75, -0.95, 1.4, 9, { alza: 0.08, grosor: 0.035, nu: 32, nv: 22 });
+    cabeza.add(m);
+  }
+  // corona: púas largas que salen de la nuca hacia atrás y se curvan hacia arriba
+  const corona = [[0, 1.0, 0.065], [-0.3, 0.9, 0.058], [0.3, 0.9, 0.058], [-0.6, 0.72, 0.05], [0.6, 0.72, 0.05], [-0.9, 0.5, 0.042], [0.9, 0.5, 0.042], [-0.15, 0.45, 0.034], [0.15, 0.45, 0.034]];
+  corona.forEach(([ax, largo, radio], k) => {
+    const base = puntoElip(E_ca, -0.35 - 0.12 * (k > 6 ? 1 : 0), ax * 0.9, 0.95);
+    const dir = V(Math.sin(ax) * 0.55, 0.3 + 0.15 * Math.cos(ax) + (k > 6 ? 0.3 : 0), -1).normalize();
+    const m = new THREE.Mesh(pua(largo, radio, 0.22, 12), mQuitina);
+    colocar(m, base, dir, V(0, 1, 0.2));
+    m.castShadow = true; cabeza.add(m);
+  });
+  // ojos al frente de la cabeza
+  [[0.62, 0.42, 0.03], [0.5, 0.75, 0.024], [0.74, 0.18, 0.018]].forEach(([s, ph, r]) => {
     for (const lado of [-1, 1]) {
       const o = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 14), mOjo);
-      o.position.copy(puntoElip(E_ca, s, ph * lado, 0.99));
-      cuerpo.add(o);
+      o.position.copy(puntoElip(E_ca, s, ph * lado + 0.35 * lado, 0.99));
+      cabeza.add(o);
     }
   });
-  await cuadro();
-
-  // quelíceros: dos ganchos que se abren y cierran
+  // quelíceros: dos ganchos bajo el hocico que se abren y cierran
   const quel = [];
   for (const lado of [-1, 1]) {
     const piv = new THREE.Group();
-    piv.position.copy(puntoElip(E_ca, 0.85, Math.PI * 0.62 * lado, 0.95));
-    const pts = [V(0, 0, 0), V(lado * 0.03, -0.07, 0.1), V(lado * 0.0, -0.17, 0.17), V(-lado * 0.05, -0.26, 0.13), V(-lado * 0.07, -0.3, 0.07)];
-    const g = tuboAfinado(new THREE.CatmullRomCurve3(pts), { tramos: 40, lados: 12, radio: (t) => 0.042 * Math.pow(1 - t, 0.8) + 0.002 });
+    piv.position.copy(puntoElip(E_ca, 0.82, Math.PI * 0.7 * lado, 0.92));
+    const pts = [V(0, 0, 0), V(lado * 0.03, -0.07, 0.08), V(lado * 0.0, -0.17, 0.12), V(-lado * 0.05, -0.25, 0.08), V(-lado * 0.07, -0.28, 0.02)];
+    const g = tuboAfinado(new THREE.CatmullRomCurve3(pts), { tramos: 40, lados: 12, radio: (t) => 0.036 * Math.pow(1 - t, 0.8) + 0.002 });
     colorear(g, (t, u, c) => c.copy(COL.oscuro).lerp(COL.bronce, S(t, 0, 0.3)).lerp(COL.punta, S(t, 0.7, 1)));
     const m = new THREE.Mesh(g, mQuitina); m.castShadow = true;
-    piv.add(m); cuerpo.add(piv);
+    piv.add(m); cabeza.add(piv);
     quel.push({ piv, lado });
   }
+  // cortina de costillas que cuelga desde los hombros
+  const costillas = new THREE.Group(); costillas.name = 'Costillas';
+  costillas.position.copy(espina.getPointAt(0.86)).add(V(0, 0, -0.1));
+  torso.add(costillas);
+  const violeta = new THREE.Color(0x7a3492), violetaOsc = new THREE.Color(0x2a0c33);
+  for (let k = 0; k < 11; k++) {
+    const x = (k / 10 - 0.5) * 0.85;
+    const largo = 0.95 + 0.3 * Math.cos((k / 10 - 0.5) * Math.PI) + 0.08 * Math.sin(k * 2.3);
+    const pts = [V(x * 0.6, 0, 0), V(x * 0.85, 0.08, -0.22), V(x, -0.08, -0.42), V(x * 1.05, -largo * 0.55, -0.5 - 0.04 * Math.sin(k)), V(x * 1.1, -largo, -0.44)];
+    const g = tuboAfinado(new THREE.CatmullRomCurve3(pts), {
+      tramos: 90, lados: 9,
+      radio: (t) => (0.03 - 0.016 * t) * (1 + 0.45 * Math.pow(0.5 + 0.5 * Math.cos(t * Math.PI * 2 * 7), 10)) + 0.002,
+    });
+    colorear(g, (t, u, c) => {
+      const nudo = Math.pow(0.5 + 0.5 * Math.cos(t * Math.PI * 2 * 7), 10);
+      c.copy(violetaOsc).lerp(violeta, 0.55 + 0.4 * nudo).lerp(COL.punta, S(t, 0.92, 1) * 0.5);
+    });
+    const m = new THREE.Mesh(g, mQuitina); m.castShadow = true; costillas.add(m);
+  }
+  // brazos pequeños del pecho con dedos en gancho
+  const bracitos = [];
+  for (const lado of [-1, 1]) {
+    const h = new THREE.Group(); h.position.copy(espina.getPointAt(0.55)).add(V(lado * 0.16, 0, 0.12));
+    h.rotation.set(1.9, 0, -0.35 * lado);
+    const a1 = new THREE.Mesh(hueso(0.32, 0.04, 0.034, 0.02, lado * 11), mQuitina); h.add(a1); h.add(junta(0.045));
+    const c2 = new THREE.Group(); c2.position.y = 0.32; c2.rotation.x = -1.2; h.add(c2); c2.add(junta(0.04));
+    c2.add(new THREE.Mesh(hueso(0.28, 0.034, 0.028, -0.02, lado * 13), mQuitina));
+    for (const dz of [-0.03, 0, 0.03]) {
+      const d = new THREE.Mesh(garra(0.12, 0.012, 0.04, dz * 100), mQuitina);
+      d.position.set(dz, 0.28, 0); d.rotation.x = 0.6; c2.add(d);
+    }
+    torso.add(h); bracitos.push({ h, c2, lado });
+  }
+  await cuadro();
 
   /* ---------------- Abdomen ---------------- */
   progreso('Vientre');
@@ -327,23 +399,23 @@ export async function construir({ progreso = () => {} } = {}) {
   const crestas = [0.36, 0.4, 0.36, 0.3, 0.22];
   for (let i = 0; i < bandasAb.length; i++) {
     const [a, b] = bandasAb[i];
-    const { m, Sup } = banda(E_ab, a, b, 1.62 - 0.04 * i, 20 + i, { alza: 0.24, grosor: 0.08, nu: 44, nv: 28 });
+    const { m, Sup } = banda(E_ab, a, b, 0.72, 20 + i, { alza: 0.2, grosor: 0.07, nu: 30, nv: 28 });
     abd.add(m);
     crestaEn(abd, E_ab, Sup, 0, 0.12, crestas[i], 0.08 - i * 0.006);
-    if (i > 0) for (const u of [-0.8, 0.8]) crestaEn(abd, E_ab, Sup, u, 0.15, 0.16 + 0.03 * (i % 2), 0.045, u);
+    for (const u of [-0.85, 0.85]) crestaEn(abd, E_ab, Sup, u, 0.15, 0.17 + 0.04 * (i % 2), 0.045, u * 0.6);
     await cuadro();
   }
 
   // placas ventrales, más cálidas, debajo y detrás
-  [[-0.1, -0.42], [-0.38, -0.7], [-0.64, -0.98]].forEach(([a, b], i) => {
+  [[0.5, 0.15], [0.2, -0.15], [-0.1, -0.45], [-0.4, -0.75], [-0.68, -0.98]].forEach(([a, b], i) => {
     const { m } = banda(E_ab, a, b, 0.75, 40 + i, { alza: 0.12, grosor: 0.06, centro: Math.PI, tono: COL.naranja, nu: 26, nv: 20 });
     abd.add(m);
   });
   // sacos del vientre, en hileras a los lados
   const sacos = [];
-  const filas = [[Math.PI - 1.3, [0.62, 0.3, -0.02]], [Math.PI + 1.3, [0.62, 0.3, -0.02]], [Math.PI - 0.66, [0.72, 0.44, 0.14]], [Math.PI + 0.66, [0.72, 0.44, 0.14]], [Math.PI, [0.8, 0.55, 0.28]]];
+  const filas = [[-1.2, [0.66, 0.33, 0.0, -0.33, -0.64]], [1.2, [0.66, 0.33, 0.0, -0.33, -0.64]], [-1.95, [0.5, 0.17, -0.16, -0.48]], [1.95, [0.5, 0.17, -0.16, -0.48]]];
   filas.forEach(([ph, ss], f) => ss.forEach((s, n) => {
-    const r = (0.21 - 0.04 * Math.abs(s - 0.4)) * (f === 4 ? 0.8 : 1) * (0.88 + 0.24 * (0.5 + 0.5 * Math.sin(n * 3.7 + f)));
+    const r = (0.2 - 0.05 * Math.abs(s)) * (f > 1 ? 0.85 : 1) * (0.88 + 0.24 * (0.5 + 0.5 * Math.sin(n * 3.7 + f)));
     const g = new THREE.SphereGeometry(1, 48, 36);
     const p = g.attributes.position, P = V();
     for (let k = 0; k < p.count; k++) {
@@ -353,7 +425,7 @@ export async function construir({ progreso = () => {} } = {}) {
     }
     g.computeVertexNormals();
     const m = new THREE.Mesh(g, mSaco);
-    const c = puntoElip(E_ab, s + 0.03 * Math.sin(n + f), ph, 1.0);
+    const c = puntoElip(E_ab, s + 0.03 * Math.sin(n + f), ph, 0.97);
     m.position.copy(c);
     const fuera = c.clone().sub(E_ab.c).normalize();
     m.quaternion.setFromUnitVectors(ARRIBA, fuera);
@@ -363,17 +435,17 @@ export async function construir({ progreso = () => {} } = {}) {
     sacos.push({ m, r, fase: n * 1.3 + f * 2.1 });
   }));
   // tiras de carne que sujetan las hileras
-  for (const ph of [Math.PI - 0.33, Math.PI + 0.33, Math.PI - 0.98, Math.PI + 0.98, Math.PI - 1.62, Math.PI + 1.62]) {
+  for (const ph of [-0.8, 0.8, -1.58, 1.58, -2.3, 2.3]) {
     const pts = [];
     for (let k = 0; k <= 14; k++) {
-      const s = 0.9 - 1.0 * (k / 14);
+      const s = 0.88 - 1.76 * (k / 14);
       pts.push(puntoElip(E_ab, s, ph + 0.05 * Math.sin(k * 1.7), 1.0 + 0.035 * Math.pow(Math.sin(k * 1.1), 2)));
     }
     const g = tuboAfinado(new THREE.CatmullRomCurve3(pts), { tramos: 120, lados: 10, ruido: R, rugosidad: 0.3, radio: (t) => 0.024 * (0.6 + 0.4 * Math.sin(Math.PI * t)) + 0.006 * Math.sin(t * 40) });
     const m = new THREE.Mesh(g, mCarne); m.castShadow = true; abd.add(m);
   }
   const luzVientre = new THREE.PointLight(PALETA.acido, 2.2, 3.5, 2);
-  luzVientre.position.copy(puntoElip(E_ab, -0.05, Math.PI, 1.12));
+  luzVientre.position.copy(puntoElip(E_ab, 0.0, Math.PI, 1.15));
   abd.add(luzVientre);
   await cuadro();
 
@@ -382,7 +454,7 @@ export async function construir({ progreso = () => {} } = {}) {
   const brazos = [];
   for (const lado of [-1, 1]) {
     const hombro = new THREE.Group();
-    hombro.position.copy(puntoElip(E_ce, 0.88, Math.PI * 0.42 * lado, 0.95));
+    hombro.position.copy(espina.getPointAt(0.78)).add(V(lado * 0.2, 0, -0.02));
     hombro.rotation.y = 0.45 * lado;
     const alza = new THREE.Group(); alza.rotation.x = 0.1; alza.rotation.z = -0.3 * lado; hombro.add(alza);
     const s1 = new THREE.Mesh(hueso(0.9, 0.1, 0.085, -0.05, lado * 3), mQuitina); s1.castShadow = true; alza.add(s1);
@@ -400,46 +472,95 @@ export async function construir({ progreso = () => {} } = {}) {
     const muneca = new THREE.Group(); muneca.position.y = 0.85; muneca.rotation.set(0.25, 0, -1.0 * lado); codo.add(muneca);
     muneca.add(junta(0.085));
     const g = new THREE.Mesh(garra(0.78, 0.085, 0.22, lado * 7), mQuitina); g.castShadow = true; muneca.add(g);
-    cuerpo.add(hombro);
+    torso.add(hombro);
     brazos.push({ alza, codo, muneca, lado });
   }
 
   /* ---------------- Patas ---------------- */
   progreso('Patas');
-  const L1 = 1.0, L2 = 1.06;
+  const L1 = 1.22, L2 = 1.34, ARCO1 = 0.09, ARCO2 = 0.13;
+  const sub = (L, k) => Math.hypot(L / 2, k * L);
   const patas = [];
-  const filasPata = [[0.46, 0.72, 0.9, 1.72], [0.24, 0.1, 0.14, 1.66], [0.0, -0.5, -0.8, 1.78]];
+  const filasPata = [[0.34, 0.44, 0.72, 0.95, 1.9], [0.4, 0.04, 0.1, 0.12, 1.85], [0.38, -0.46, -0.5, -0.88, 1.95]];
   const orden = [0, 4, 2, 3, 1, 5];
   let n = 0;
-  for (const lado of [-1, 1]) for (const [z, ang, angPie, D] of filasPata) {
-    const cadera = V(lado * 0.33, -0.08, z);
+  for (const lado of [-1, 1]) for (const [hx, z, ang, angPie, D] of filasPata) {
+    const cadera = V(lado * hx, -0.08, z);
     const dirC = V(lado * Math.cos(ang), 0.3, Math.sin(ang));
     const finCoxa = cadera.clone().addScaledVector(dirC, 0.24);
     const Lc = finCoxa.distanceTo(cadera);
-    const px = lado * 0.33 + lado * Math.cos(angPie) * D, pz = z + Math.sin(angPie) * D;
+    const px = lado * hx + lado * Math.cos(angPie) * D, pz = z + Math.sin(angPie) * D;
     const pie = V(px, suelo(px, pz), pz);
     const fuera = V(pie.x - cadera.x, 0, pie.z - cadera.z).normalize();
-    const tobilloRel = V(-fuera.x * 0.16, 0.42, -fuera.z * 0.16);
+    const tobilloRel = V(-fuera.x * 0.1, 0.5, -fuera.z * 0.1);
     const Lt = tobilloRel.length();
     const semilla = n * 1.7 + 0.3;
     const mk = (g) => { const m = new THREE.Mesh(g, mQuitina); m.matrixAutoUpdate = false; m.castShadow = true; m.receiveShadow = true; grupo.add(m); return m; };
     const coxa = mk(hueso(Lc, 0.1, 0.095, 0.01, semilla, 0.025));
-    const femur = mk(hueso(L1, 0.1, 0.085, 0.06, semilla + 1));
-    const tibia = mk(hueso(L2, 0.088, 0.068, -0.05, semilla + 2));
-    const tarso = mk(garra(Lt, 0.07, 0.12, semilla + 3));
+    const l1 = sub(L1, ARCO1), l2 = sub(L2, ARCO2);
+    const femur = mk(hueso(l1, 0.085, 0.085, 0.03, semilla + 1, 0.04, true));
+    const femur2 = mk(hueso(l1, 0.08, 0.08, 0.03, semilla + 1.5, 0.04, true));
+    const tibia = mk(hueso(l2, 0.074, 0.074, -0.03, semilla + 2, 0.04, true));
+    const tibia2 = mk(hueso(l2, 0.066, 0.066, -0.03, semilla + 2.5, 0.04, true));
+    const tarso = mk(garra(Lt, 0.085, 0.13, semilla + 3));
     // espinas del fémur y espolón de la rodilla
     for (const [t, l] of [[0.4, 0.14], [0.68, 0.16]]) {
       const e = new THREE.Mesh(pua(l, 0.034, 0.5, 9), mQuitina);
-      colocar(e, V(0, L1 * t, 0.08 + 0.06 * Math.sin(Math.PI * t)), V(0, 0.45, 1), V(0, 1, 0));
-      e.castShadow = true; femur.add(e);
+      colocar(e, V(0, l1 * t, 0.06 + 0.07 * t), V(0, 0.45, 1), V(0, 1, 0));
+      e.castShadow = true; femur2.add(e);
     }
     { const e = new THREE.Mesh(pua(0.26, 0.05, 0.55, 10), mQuitina); colocar(e, V(0, 0.08, 0.05), V(0, -0.75, 0.6), V(0, -1, 0)); e.castShadow = true; tibia.add(e); }
-    const juntas = [junta(0.11), junta(0.1), junta(0.088), junta(0.07)];
+    const juntas = [junta(0.11), junta(0.1), junta(0.095), junta(0.088), junta(0.08), junta(0.068)];
     juntas.forEach((j) => { j.matrixAutoUpdate = false; grupo.add(j); });
-    patas.push({ cadera, finCoxa, pie, fuera, tobilloRel, coxa, femur, tibia, tarso, juntas, turno: orden[n] });
+    patas.push({ cadera, finCoxa, pie, fuera, tobilloRel, coxa, femur, femur2, tibia, tibia2, tarso, juntas, turno: orden[n], lado, fila: n % 3 });
     n++;
   }
   await cuadro();
+
+  /* ---------------- Membrana entre las patas ---------------- */
+  const mMembrana = organizar(new THREE.MeshPhysicalMaterial({
+    color: 0x4a1a58, roughness: 0.6, clearcoat: 0.35, clearcoatRoughness: 0.35, side: THREE.DoubleSide,
+    sheen: 0.3, sheenColor: new THREE.Color(PALETA.secundario), sheenRoughness: 0.5, emissive: 0xffffff,
+  }), {
+    clave: 'membrana', fuerza: 0.02,
+    relieve: 'h = 0.6*sin(vUv2.x*70.0 + tl_snoise(vec3(vUv2*6.0, 1.0))*2.0) + 0.3*tl_snoise(vec3(vUv2*20.0, 3.0));',
+    tinte: 'diffuseColor.rgb *= 0.7 + 0.35*h; diffuseColor.rgb *= 0.65 + 0.5*smoothstep(1.0, 0.2, vUv2.y);',
+    brillo: `vec3 vv = normalize(vViewPosition); float fres = pow(1.0 - abs(dot(normal, vv)), 2.0);
+             totalEmissiveRadiance = vec3(0.57,0.16,0.91) * fres * 0.1;`,
+  });
+  const CM = 13, FM = 9; // columnas por tramo entre patas, filas de arriba abajo
+  const membranas = [-1, 1].map((lado) => {
+    const nCol = 2 * CM + 1, pos = new Float32Array(nCol * FM * 3), uv = [], idx = [];
+    for (let c = 0; c < nCol; c++) for (let f = 0; f < FM; f++) uv.push(c / (nCol - 1), f / (FM - 1));
+    for (let c = 0; c < nCol - 1; c++) for (let f = 0; f < FM - 1; f++) { const a = c * FM + f, b = a + FM; idx.push(a, b, a + 1, b, b + 1, a + 1); }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    g.setIndex(idx);
+    const m = new THREE.Mesh(g, mMembrana); m.frustumCulled = false; m.castShadow = true; m.receiveShadow = true;
+    grupo.add(m);
+    return { m, lado, nCol, arriba: [V(), V(), V()], abajo: [V(), V(), V()] };
+  });
+  const _mA = V(), _mB = V(), _mP = V(), _cen = V();
+  function rehacerMembrana(mb) {
+    const pos = mb.m.geometry.attributes.position.array;
+    for (let c = 0; c < mb.nCol; c++) {
+      const tramo = Math.min(1, Math.floor(c / CM)), fr = (c - tramo * CM) / CM;
+      const comba = Math.sin(Math.PI * fr);
+      _mA.lerpVectors(mb.arriba[tramo], mb.arriba[tramo + 1], fr);
+      _mB.lerpVectors(mb.abajo[tramo], mb.abajo[tramo + 1], fr);
+      _mB.lerp(_mA, 0.18 * comba); // el borde libre se recoge entre pata y pata
+      for (let f = 0; f < FM; f++) {
+        const v = f / (FM - 1);
+        _mP.lerpVectors(_mA, _mB, v);
+        _mP.y -= 0.05 * Math.sin(Math.PI * v) * (0.4 + comba);
+        _mP.x -= mb.lado * 0.06 * Math.sin(Math.PI * v) * comba;
+        const k = (c * FM + f) * 3; pos[k] = _mP.x; pos[k + 1] = _mP.y; pos[k + 2] = _mP.z;
+      }
+    }
+    mb.m.geometry.attributes.position.needsUpdate = true;
+    mb.m.geometry.computeVertexNormals();
+  }
 
   /* ---------------- Suelo de biomasa ---------------- */
   progreso('Biomasa');
@@ -492,9 +613,16 @@ export async function construir({ progreso = () => {} } = {}) {
   grupo.add(esporas);
 
   /* ---------------- Animación ---------------- */
-  const materiales = [mQuitina, mCarne, mSaco, mSuelo];
+  const materiales = [mQuitina, mCarne, mSaco, mSuelo, mJunta, mMembrana];
   const M4 = new THREE.Matrix4();
-  const H = V(), A = V(), B = V(), T = V(), P = V(), polo = V();
+  const H = V(), A = V(), B = V(), T = V(), P = V(), polo = V(), M1 = V(), M2 = V(), _ab = V(), _pp = V();
+  // punto medio de un hueso, desplazado hacia el polo para que la pata se arquee
+  const arco = (X, Y, L, k, pl, out) => {
+    _ab.subVectors(Y, X); const d = _ab.length(); _ab.divideScalar(d);
+    _pp.copy(pl).addScaledVector(_ab, -pl.dot(_ab)).normalize();
+    const h = Math.sqrt(Math.max(0, Math.pow(Math.hypot(L / 2, k * L), 2) - d * d / 4));
+    return out.copy(X).add(Y).multiplyScalar(0.5).addScaledVector(_pp, h);
+  };
   const PERIODO = 7.2, PASO = 0.62;
 
   function actualizar(t, dt, { respirar = true } = {}) {
@@ -522,6 +650,11 @@ export async function construir({ progreso = () => {} } = {}) {
       br.codo.rotation.z = br.lado * (-1.25 + 0.12 * Math.sin(f - 0.6) * vivo);
       br.muneca.rotation.z = br.lado * (-1.0 + 0.15 * Math.sin(f - 1.1) * vivo);
     }
+    torso.rotation.x = (0.04 * Math.sin(t * 0.6) - 0.02) * vivo;
+    torso.rotation.z = 0.03 * Math.sin(t * 0.37) * vivo;
+    cabeza.rotation.set(0.06 * Math.sin(t * 0.9 + 1) * vivo, 0.12 * Math.sin(t * 0.43) * vivo, 0);
+    costillas.rotation.x = 0.04 * Math.sin(t * 1.1 + 0.5) * vivo;
+    for (const bz of bracitos) { bz.c2.rotation.x = -1.2 + 0.2 * Math.sin(t * 1.7 + bz.lado) * vivo; }
     for (const q of quel) q.piv.rotation.y = q.lado * (0.06 + 0.1 * Math.max(0, Math.sin(t * 2.6 + q.lado))) * vivo;
 
     // patas: cadera sigue al cuerpo, el pie queda en el suelo salvo cuando le toca dar un paso
@@ -538,14 +671,23 @@ export async function construir({ progreso = () => {} } = {}) {
         }
       }
       T.copy(P).add(pa.tobilloRel);
-      polo.copy(ARRIBA).addScaledVector(pa.fuera, 0.35);
+      polo.copy(ARRIBA).addScaledVector(pa.fuera, 0.55);
       ik(A, T, L1, L2, polo, B);
       orientar(pa.coxa, H, A, polo);
-      orientar(pa.femur, A, B, polo);
-      orientar(pa.tibia, B, T, polo);
+      arco(A, B, L1, ARCO1, polo, M1);
+      arco(B, T, L2, ARCO2, polo, M2);
+      orientar(pa.femur, A, M1, polo); orientar(pa.femur2, M1, B, polo);
+      orientar(pa.tibia, B, M2, polo); orientar(pa.tibia2, M2, T, polo);
       orientar(pa.tarso, T, P, pa.fuera);
-      orientar(pa.juntas[0], H, A, polo); orientar(pa.juntas[1], A, B, polo); orientar(pa.juntas[2], B, T, polo); orientar(pa.juntas[3], T, P, pa.fuera);
+      const J = pa.juntas;
+      orientar(J[0], H, A, polo); orientar(J[1], A, M1, polo); orientar(J[2], M1, B, polo);
+      orientar(J[3], B, M2, polo); orientar(J[4], M2, T, polo); orientar(J[5], T, P, pa.fuera);
+      const mb = membranas[pa.lado < 0 ? 0 : 1];
+      mb.arriba[pa.fila].copy(H).lerp(_cen.set(0, H.y, H.z), 0.35); mb.arriba[pa.fila].y -= 0.16;
+      mb.abajo[pa.fila].copy(H).lerp(T, 0.22); mb.abajo[pa.fila].y = T.y + 0.08;
     }
+
+    for (const mb of membranas) rehacerMembrana(mb);
 
     for (let k = 0; k < nE; k++) {
       const e = eDat[k];

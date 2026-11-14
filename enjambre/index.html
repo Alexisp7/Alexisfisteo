@@ -612,6 +612,11 @@ body.con-maqueta #swarm>:not(#maqueta):not(#mq-suelo):not(#side){display:none!im
 #mq-suelo .mq-huevos b{text-align:center;font-size:calc(12px*var(--s))}
 body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #maqueta>*{position:absolute}
+/* personaje principal (enjambre/personaje.js) */
+.mq-personaje{z-index:4;cursor:grab;touch-action:pan-y;opacity:0;transition:opacity 1.6s ease;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55))}
+.mq-personaje.listo{opacity:1}.mq-personaje.gira{cursor:grabbing}
+.mq-personaje canvas{width:100%;height:100%;display:block}
+
 .mq-hot{background:none;border:0;padding:0;cursor:pointer;border-radius:999px;display:block}
 .mq-hot:focus-visible{outline:2px solid #B8F52D;outline-offset:2px}
 .mq-org{border-radius:50%;transition:box-shadow .3s}
@@ -651,6 +656,7 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 @keyframes mqHuevo{50%{box-shadow:0 0 calc(14px*var(--s)) rgba(184,245,45,1)}}
 @media (prefers-reduced-motion:reduce){.mq-pulso,.mq-adn-luz,.mq-huevos i,.mq-go{animation:none}}
 </style>
+<script type="importmap">{"imports":{"three":"../taller/lib/three/three.module.min.js","three/addons/":"../taller/lib/three/addons/"}}</script>
 </head>
 <body>
 <header>
@@ -2486,5 +2492,6 @@ drawLegend(); renderAll();
 })();
 try{let v=localStorage.getItem(KEY+'-tab'); if(v==='pillars') v='inv'; if(v&&v!=='study') show(v);}catch(e){}
 </script>
+<script type="module" src="personaje.js"></script>
 </body>
 </html>

@@ -659,13 +659,20 @@ body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.
 #maqueta .mq-panel{background:rgba(14,7,20,.78);box-shadow:none;border-radius:calc(30px*var(--s))}
 /* arte separado de Andreé (maqueta2): marco orgánico, brillo que recorre la red, células que respiran y laten */
 .mq-marco{pointer-events:none;user-select:none;height:auto}
-.mq-energia{inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.6;
-  background:linear-gradient(115deg,transparent 0 40%,rgba(229,164,255,.0) 44%,rgba(229,164,255,.75) 48%,rgba(184,245,45,.45) 50%,rgba(229,164,255,.0) 54%,transparent 58% 100%);
-  background-size:250% 100%;animation:mqEnergia 7s linear infinite;
-  -webkit-mask:url(maqueta2/red-mascara.png) 0 0/100% 100% no-repeat;mask:url(maqueta2/red-mascara.png) 0 0/100% 100% no-repeat}
-@keyframes mqEnergia{from{background-position:120% 0}to{background-position:-20% 0}}
+.mq-filtros{position:absolute;width:0;height:0}
+.mq-liquido,.mq-conex{inset:0;width:100%;height:100%;pointer-events:none;user-select:none}
+.mq-liquido{filter:url(#mqLiquido);-webkit-mask:url(maqueta2/liquido-mascara.png) 0 0/100% 100% no-repeat;mask:url(maqueta2/liquido-mascara.png) 0 0/100% 100% no-repeat;opacity:.95}
+.mq-conex{filter:url(#mqVivo)}
+.mq-gas{inset:0;pointer-events:none;overflow:hidden;mix-blend-mode:screen}
+.mq-gas i{position:absolute;border-radius:50%;filter:blur(calc(30px*var(--s)));opacity:0;animation:mqGas 22s ease-in-out infinite}
+.mq-gas i:nth-child(1){left:30%;top:68%;width:30%;height:22%;background:radial-gradient(closest-side,rgba(196,74,255,.55),transparent);animation-delay:-3s}
+.mq-gas i:nth-child(2){left:55%;top:72%;width:34%;height:20%;background:radial-gradient(closest-side,rgba(146,40,232,.5),transparent);animation-delay:-10s;animation-duration:27s}
+.mq-gas i:nth-child(3){left:75%;top:62%;width:24%;height:22%;background:radial-gradient(closest-side,rgba(184,245,45,.28),transparent);animation-delay:-16s;animation-duration:31s}
+.mq-gas i:nth-child(4){left:40%;top:40%;width:22%;height:20%;background:radial-gradient(closest-side,rgba(229,164,255,.25),transparent);animation-delay:-7s;animation-duration:35s}
+.mq-gas i:nth-child(5){left:12%;top:74%;width:26%;height:18%;background:radial-gradient(closest-side,rgba(184,245,45,.22),transparent);animation-delay:-20s;animation-duration:29s}
+@keyframes mqGas{0%{opacity:0;transform:translate(0,0) scale(.85)}25%{opacity:1}60%{opacity:.8}100%{opacity:0;transform:translate(8%,-22%) scale(1.25)}}
 .mq-celula>img{animation:mqLuz var(--resp,4.5s) ease-in-out var(--f,0s) infinite}
-@media (prefers-reduced-motion:reduce){.mq-energia,.mq-celula>img{animation:none}}
+@media (prefers-reduced-motion:reduce){.mq-celula>img{animation:none}.mq-gas{display:none}.mq-liquido,.mq-conex{filter:none}}
 
 /* tutor, progreso y contador (pedido 2026-11-14, maqueta de Andreé) */
 #mq-adn{-webkit-mask:linear-gradient(#000 57%,transparent 76%);mask:linear-gradient(#000 57%,transparent 76%)}
@@ -1456,7 +1463,7 @@ function maquetaDraw(){
   const xs=studyOrder(), done=xs.filter(x=>(x.state||0)>=2).length, e=nextExercise(), t=e&&T(primTopic(e));
   const L=LAY||layout(), awake=DB.topics.filter(q=>mastery(q.id).n).length, pct=Math.round(L.g*100);
   const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
-  let h=`<img class="mq-fondo" src="maqueta2/placa.webp" alt="" draggable="false"><i class="mq-energia"></i>`+`<img class="mq-marco" src="maqueta2/marco-abajo.webp" alt="" draggable="false" style="left:${X(762)};top:${Y(628)};width:${X(1007)}">`+`<img class="mq-marco" src="maqueta2/marco-izq.webp" alt="" draggable="false" style="left:${X(1.5)};top:${Y(24.8)};width:${X(934)}">`;
+  let h=`<img class="mq-fondo" src="maqueta2/fondo.webp" alt="" draggable="false">${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/marco-abajo.webp" alt="" draggable="false" style="left:${X(762)};top:${Y(628)};width:${X(1007)}">`+`<img class="mq-marco" src="maqueta2/marco-izq.webp" alt="" draggable="false" style="left:${X(1.5)};top:${Y(24.8)};width:${X(934)}">`;
   // barra superior pintada: zonas activas sobre las pestañas y el emblema
   h+=`<a class="mq-hot mq-logo" href="../bitacora.html" title="Físicas · volver a la bitácora" style="left:${X(20)};top:0;width:${X(250)};height:${Y(46)}"></a>`;
   for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
@@ -1493,9 +1500,21 @@ addEventListener('resize',()=>{ clearTimeout(MQ.rz); MQ.rz=setTimeout(maquetaDra
 // ── la maqueta viva: se anima la propia pintura (respiración, remolino de los núcleos, líquido) ──
 // ── la maqueta por objetos: cada pieza de la pintura es su propio recorte (maqueta/objetos/*.webp, objetos.json) ──
 // [id, tipo, x, y, ancho, alto, centro x, centro y, radio, padre] en píxeles de la maqueta (1774×887)
-const MQO=[["celula-circ","celula",877,130,126,126,940,193,51,"","maqueta2/celulas/circ.webp"],["celula-cal","celula",790,265,120,120,850,325,48,"","maqueta2/celulas/cal.webp"],["celula-vrel","celula",971,278,82,82,1012,319,33,"","maqueta2/celulas/vrel.webp"],["celula-mcirc","celula",1100,230,112,112,1156,286,45,"","maqueta2/celulas/mcirc.webp"],["celula-elec","celula",1231,178,126,126,1294,241,51,"","maqueta2/celulas/elec.webp"],["celula-gauss","celula",1371,132,134,134,1438,199,54,"","maqueta2/celulas/gauss.webp"],["celula-mag","celula",1522,133,120,120,1582,193,48,"","maqueta2/celulas/mag.webp"],["celula-ene","celula",1339,280,150,150,1414,355,60,"","maqueta2/celulas/ene.webp"],["celula-grav","celula",1529,284,82,82,1570,325,33,"","maqueta2/celulas/grav.webp"],["celula-ter1","celula",667,340,126,126,730,403,51,"","maqueta2/celulas/ter1.webp"],["celula-din","celula",1115,344,142,142,1186,415,57,"","maqueta2/celulas/din.webp"],["celula-tmp","celula",835,376,126,126,898,439,51,"","maqueta2/celulas/tmp.webp"],["celula-cin","celula",1009,376,90,90,1054,421,36,"","maqueta2/celulas/cin.webp"],["celula-mom","celula",1408,421,96,96,1456,469,39,"","maqueta2/celulas/mom.webp"],["celula-rot","celula",1227,432,134,134,1294,499,54,"","maqueta2/celulas/rot.webp"],["celula-osc","celula",1085,515,82,82,1126,556,33,"","maqueta2/celulas/osc.webp"],["celula-ter2","celula",754,505,126,126,817,568,51,"","maqueta2/celulas/ter2.webp"],["celula-flu","celula",902,506,142,142,973,577,57,"","maqueta2/celulas/flu.webp"],["celula-equi","celula",1514,551,82,82,1555,592,33,"","maqueta2/celulas/equi.webp"],["celula-ato","celula",1612,469,84,84,1654,511,34,"","maqueta2/celulas/ato.webp"],["volador-1","volador",1069,23,78,45,1110,43,0,""],["volador-2","volador",1005,70,52,40,1032,87,0,""],["volador-3","volador",619,268,49,31,646,283,0,""],["barra","interfaz",0,0,1774,47,887,23,0,""],["evolucion","interfaz",148,742,414,120,355,802,0,""],["contador","interfaz",22,766,100,106,72,819,0,""]];
+const MQO=[["celula-circ","celula",877,130,126,126,940,193,51,"","maqueta2/celulas/circ.webp"],["celula-cal","celula",790,265,120,120,850,325,48,"","maqueta2/celulas/cal.webp"],["celula-vrel","celula",971,278,82,82,1012,319,33,"","maqueta2/celulas/vrel.webp"],["celula-mcirc","celula",1100,230,112,112,1156,286,45,"","maqueta2/celulas/mcirc.webp"],["celula-elec","celula",1231,178,126,126,1294,241,51,"","maqueta2/celulas/elec.webp"],["celula-gauss","celula",1371,132,134,134,1438,199,54,"","maqueta2/celulas/gauss.webp"],["celula-mag","celula",1522,133,120,120,1582,193,48,"","maqueta2/celulas/mag.webp"],["celula-ene","celula",1339,280,150,150,1414,355,60,"","maqueta2/celulas/ene.webp"],["celula-grav","celula",1529,284,82,82,1570,325,33,"","maqueta2/celulas/grav.webp"],["celula-ter1","celula",667,340,126,126,730,403,51,"","maqueta2/celulas/ter1.webp"],["celula-din","celula",1115,344,142,142,1186,415,57,"","maqueta2/celulas/din.webp"],["celula-tmp","celula",835,376,126,126,898,439,51,"","maqueta2/celulas/tmp.webp"],["celula-cin","celula",1009,376,90,90,1054,421,36,"","maqueta2/celulas/cin.webp"],["celula-mom","celula",1408,421,96,96,1456,469,39,"","maqueta2/celulas/mom.webp"],["celula-rot","celula",1227,432,134,134,1294,499,54,"","maqueta2/celulas/rot.webp"],["celula-osc","celula",1085,515,82,82,1126,556,33,"","maqueta2/celulas/osc.webp"],["celula-ter2","celula",754,505,126,126,817,568,51,"","maqueta2/celulas/ter2.webp"],["celula-flu","celula",902,506,142,142,973,577,57,"","maqueta2/celulas/flu.webp"],["celula-equi","celula",1514,551,82,82,1555,592,33,"","maqueta2/celulas/equi.webp"],["celula-ato","celula",1612,469,84,84,1654,511,34,"","maqueta2/celulas/ato.webp"],["volador-1","volador",1069,23,78,45,1110,43,0,""],["volador-2","volador",1005,70,52,40,1032,87,0,""],["volador-3","volador",619,268,49,31,646,283,0,""],["barra","interfaz",0,0,1774,47,887,23,0,""],["evolucion","interfaz",148,742,414,120,355,802,0,""],["contador","interfaz",22,766,100,106,72,819,0,""],["nucleo-circ","nucleo",912,165,56,56,940.0,193.0,28.0,"celula-circ","maqueta2/nucleos/circ.webp"],["nucleo-cal","nucleo",824,299,52,52,850.0,325.0,26.0,"celula-cal","maqueta2/nucleos/cal.webp"],["nucleo-vrel","nucleo",994,301,36,36,1012.0,319.0,18.0,"celula-vrel","maqueta2/nucleos/vrel.webp"],["nucleo-mcirc","nucleo",1131,261,50,50,1156.0,286.0,25.0,"celula-mcirc","maqueta2/nucleos/mcirc.webp"],["nucleo-elec","nucleo",1266,213,56,56,1294.0,241.0,28.0,"celula-elec","maqueta2/nucleos/elec.webp"],["nucleo-gauss","nucleo",1408,169,60,60,1438.0,199.0,30.0,"celula-gauss","maqueta2/nucleos/gauss.webp"],["nucleo-mag","nucleo",1556,167,52,52,1582.0,193.0,26.0,"celula-mag","maqueta2/nucleos/mag.webp"],["nucleo-ene","nucleo",1381,322,66,66,1414.0,355.0,33.0,"celula-ene","maqueta2/nucleos/ene.webp"],["nucleo-grav","nucleo",1552,307,36,36,1570.0,325.0,18.0,"celula-grav","maqueta2/nucleos/grav.webp"],["nucleo-ter1","nucleo",702,375,56,56,730.0,403.0,28.0,"celula-ter1","maqueta2/nucleos/ter1.webp"],["nucleo-din","nucleo",1155,384,62,62,1186.0,415.0,31.0,"celula-din","maqueta2/nucleos/din.webp"],["nucleo-tmp","nucleo",870,411,56,56,898.0,439.0,28.0,"celula-tmp","maqueta2/nucleos/tmp.webp"],["nucleo-cin","nucleo",1034,401,40,40,1054.0,421.0,20.0,"celula-cin","maqueta2/nucleos/cin.webp"],["nucleo-mom","nucleo",1435,448,42,42,1456.0,469.0,21.0,"celula-mom","maqueta2/nucleos/mom.webp"],["nucleo-rot","nucleo",1264,469,60,60,1294.0,499.0,30.0,"celula-rot","maqueta2/nucleos/rot.webp"],["nucleo-osc","nucleo",1108,538,36,36,1126.0,556.0,18.0,"celula-osc","maqueta2/nucleos/osc.webp"],["nucleo-ter2","nucleo",789,540,56,56,817.0,568.0,28.0,"celula-ter2","maqueta2/nucleos/ter2.webp"],["nucleo-flu","nucleo",942,546,62,62,973.0,577.0,31.0,"celula-flu","maqueta2/nucleos/flu.webp"],["nucleo-equi","nucleo",1537,574,36,36,1555.0,592.0,18.0,"celula-equi","maqueta2/nucleos/equi.webp"],["nucleo-ato","nucleo",1635,492,38,38,1654.0,511.0,19.0,"celula-ato","maqueta2/nucleos/ato.webp"]];
 const MQL={circ:[940,116],cal:[850,251],vrel:[1012,260],mcirc:[1156,215],elec:[1294,164],gauss:[1438,119],mag:[1582,119],ene:[1414,269],grav:[1570,266],ter1:[730,326],din:[1186,332],tmp:[898,362],cin:[1054,359],mom:[1456,404],rot:[1294,419],osc:[1126,497],ter2:[817,491],flu:[973,494],equi:[1555,533],ato:[1654,451]};
 const MQV={};
+// capas vivas de la portada: líquido del suelo que ondula, conexiones aisladas que se mecen, gas que flota
+const MQ_VIVO=`<svg class="mq-filtros" width="0" height="0" aria-hidden="true"><defs>
+  <filter id="mqVivo" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="4" result="r">
+    <animate attributeName="baseFrequency" dur="11s" values="0.011;0.015;0.011" repeatCount="indefinite"/></feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="mqLiquido" x="0" y="0" width="100%" height="100%"><feTurbulence type="turbulence" baseFrequency="0.012 0.05" numOctaves="2" seed="9" result="r">
+    <animate attributeName="baseFrequency" dur="8s" values="0.012 0.05;0.016 0.062;0.012 0.05" repeatCount="indefinite"/></feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="r" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>
+</defs></svg>
+<img class="mq-liquido" src="maqueta2/fondo.webp" alt="" draggable="false">
+<img class="mq-conex" src="maqueta2/conexiones.webp" alt="" draggable="false">
+<div class="mq-gas"><i></i><i></i><i></i><i></i><i></i></div>`;
 // modo edición (?editar): arrastra cualquier objeto, rueda = tamaño, doble clic = volver a su sitio. Se guarda en este navegador.
 const MQE_KEY='colmena-maqueta3-objetos';
 function mqeLee(){ try{ return JSON.parse(localStorage.getItem(MQE_KEY)||'{}'); }catch(e){ return {}; } }
@@ -1529,16 +1548,16 @@ function objetosMaqueta(st){
       const or=`${(100*(cx-x)/w).toFixed(2)}% ${(100*(cy-y)/hh).toFixed(2)}%`, hs=hashStr(id);
       h+=`<div class="mq-o mq-${k}" id="mq-${id}" data-objeto="${id}" style="left:${X(x)};top:${Y(y)};width:${X(w)};height:${Y(hh)};transform-origin:${or};--f:${(-(hs%70)/10).toFixed(1)}s">`
         +`<img src="${src||`maqueta/objetos/${id}.webp`}" alt="" draggable="false">`;
-      for(const [nid,,nx,ny,nw,nh] of (hijos[id]||[])) h+=`<img class="mq-nuc" id="mq-${nid}" data-objeto="${nid}" src="maqueta/objetos/${nid}.webp" alt="" draggable="false" style="left:${(100*(nx-x)/w).toFixed(3)}%;top:${(100*(ny-y)/hh).toFixed(3)}%;width:${(100*nw/w).toFixed(3)}%;--g:${(-(hs%90)/10).toFixed(1)}s">`;
+      for(const [nid,,nx,ny,nw,nh,,,,,nsrc] of (hijos[id]||[])) h+=`<img class="mq-nuc" id="mq-${nid}" data-objeto="${nid}" src="${nsrc||`maqueta/objetos/${nid}.webp`}" alt="" draggable="false" style="left:${(100*(nx-x)/w).toFixed(3)}%;top:${(100*(ny-y)/hh).toFixed(3)}%;width:${(100*nw/w).toFixed(3)}%;--g:${(-(hs%90)/10).toFixed(1)}s">`;
       h+='</div>'; }
     c.innerHTML=h; MQV.capa=c;
   }
-  st.insertBefore(MQV.capa,st.firstChild.nextSibling); mqeAplica(); mqeInit(st);
+  (st.querySelector('.mq-conex')||st.firstChild).after(MQV.capa); mqeAplica(); mqeInit(st);
   // cada célula según su avance real: con más ejercicios resueltos respira más rápido y su núcleo gira y brilla más
   for(const id of Object.keys(MQ.pos)){ const el=MQV.capa.querySelector('#mq-celula-'+id); if(!el||!T(id)) continue;
     const p=Math.min(1,(mastery(id).p||0)*4), r=(MQO.find(o=>o[0]==='celula-'+id)||[])[8]||50;
     el.style.setProperty('--resp',(5.2-2.4*p+(r>60?.8:r<32?-.9:0)).toFixed(2)+'s');
-    el.style.setProperty('--amp',(1+.022+.03*p).toFixed(3));
+    el.style.setProperty('--amp',(1+.04+.035*p).toFixed(3));
     el.style.setProperty('--giro',(26-16*p).toFixed(1)+'s');
     el.style.setProperty('--luz',(1+.08+.22*p).toFixed(2));
     el.classList.toggle('sel',selected===id); }

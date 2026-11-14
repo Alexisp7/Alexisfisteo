@@ -621,9 +621,13 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #mq-escenario[hidden]{display:none}
 /* portada en una sola pantalla: el mapa se ajusta al alto de la ventana */
 /* portada a pantalla completa con las proporciones originales (2:1): ancho completo; si sobra alto, el suelo oscuro lo rellena */
-body.con-maqueta #maqueta,body.con-maqueta #mq-escenario{width:min(100%,calc(100vh*1774/887));margin-inline:auto}
+body.con-maqueta #maqueta,body.con-maqueta #mq-escenario{width:min(100%,calc(100vh*1774/990));margin-inline:auto}
 body.con-maqueta:has(#v-hive.on) #swarm{height:100vh;min-height:0;overflow:hidden;display:flex;flex-direction:column}
-body.con-maqueta:has(#v-hive.on) #mq-escenario{flex:1 1 0;aspect-ratio:auto;min-height:0;width:100%;background:linear-gradient(#120a1a,#100817 60%)}
+body.con-maqueta:has(#v-hive.on) #mq-escenario{flex:1 1 0;aspect-ratio:auto;min-height:0;
+  background:linear-gradient(#100817,rgba(16,8,23,.35) 30%,rgba(16,8,23,.5)),url(maqueta/colonia.webp) center top/100% auto no-repeat,#100817;filter:none}
+body.con-maqueta:has(#v-hive.on) #swarm{background:#100817;isolation:isolate}
+/* en pantallas más anchas que el diseño, los lados se rellenan con el mismo fondo difuminado (sin franjas negras) */
+body.con-maqueta:has(#v-hive.on) #swarm::before{content:"";position:absolute;inset:-40px;z-index:-1;background:url(maqueta2/placa.webp) center/cover;filter:blur(28px) brightness(.55)}
 body.con-maqueta:has(#v-hive.on){background:#100817;overflow-x:hidden}
 .inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
@@ -1454,11 +1458,11 @@ function maquetaDraw(){
   // abajo: «Tu Tutor» y «Tu progreso» (el personaje va a la izquierda, ver personaje.js); arriba a la derecha, el contador
   const pr=xs.length?Math.round(100*done/xs.length):0;
   const tutor=e?`Te toca <b>${esc(e.title)}</b>${t?` (${esc(t.name)})`:''}.`:'Resolviste todo lo que hay en la colmena. Pásame más ejercicios para que evolucione.';
-  h+=`<div class="mq-tutor" style="left:${X(590)};top:${Y(722)};width:${X(670)};height:${Y(152)}"><span class="mq-tt">Tu Tutor</span>
+  h+=`<div class="mq-tutor" style="left:${X(590)};top:${Y(800)};width:${X(670)};height:${Y(152)}"><span class="mq-tt">Tu Tutor</span>
       <p><strong>¡Bienvenido, explorador!</strong><br>Aquí comienza tu viaje por el enjambre del conocimiento. Selecciona una <em>célula</em> y sigue aprendiendo.</p>
       <p class="mq-tmas">${tutor} ${done} de ${xs.length} ejercicios resueltos · ${awake} de ${DB.topics.length} temas despiertos. Cada par de bases del ADN es un ejercicio.</p>
       <button class="mq-tbtn" aria-label="Más" aria-expanded="false" onclick="const c=this.closest('.mq-tutor');this.setAttribute('aria-expanded',c.classList.toggle('abierto'))"><svg viewBox="0 0 20 12"><path d="M2 2l8 8 8-8"/></svg></button></div>`;
-  h+=`<div class="mq-progreso" style="left:${X(1430)};top:${Y(734)};width:${X(318)};height:${Y(140)}"><span class="mq-pk">Tu progreso</span>
+  h+=`<div class="mq-progreso" style="left:${X(1430)};top:${Y(812)};width:${X(318)};height:${Y(140)}"><span class="mq-pk">Tu progreso</span>
       <div class="mq-anillo" style="--p:${Math.max(1,pr)}"><b>${pr}%</b></div><div class="mq-pn"><b>${done} / ${xs.length}</b>Ejercicios</div></div>`;
   h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;
   st.innerHTML=h;

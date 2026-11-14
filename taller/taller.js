@@ -10,7 +10,9 @@ import { PALETA } from './organico.js';
 
 const UNIDADES = {
   huevo: () => import('./unidades/huevo.js'),
-  zancuda: () => import('./unidades/zancuda.js'),
+  zancuda: () => import('./unidades/zancuda.js').then((m) => m.variante('a')),
+  'zancuda-b': () => import('./unidades/zancuda.js').then((m) => m.variante('b')),
+  'zancuda-c': () => import('./unidades/zancuda.js').then((m) => m.variante('c')),
 };
 
 const $ = (s) => document.querySelector(s);

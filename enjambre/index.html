@@ -613,14 +613,34 @@ body.con-maqueta #swarm>:not(#maqueta):not(#mq-escenario):not(#mq-suelo):not(#si
 body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #maqueta>*{position:absolute}
 /* personaje principal (enjambre/personaje.js) */
-.mq-personaje{position:absolute;left:50%;bottom:calc(70px*var(--s,.8));transform:translateX(-50%);height:88%;aspect-ratio:1.45;pointer-events:none;opacity:0;transition:opacity 2s ease;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6))}
+.mq-personaje{position:absolute;z-index:5;pointer-events:none;opacity:0;transition:opacity 2s ease;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6))}
 .mq-personaje.listo{opacity:1}
 .mq-personaje canvas{position:relative;width:100%;height:100%;display:block}
 .mq-personaje::before{content:"";position:absolute;left:14%;right:14%;bottom:3%;height:14%;border-radius:50%;background:radial-gradient(closest-side,rgba(8,2,12,.9),rgba(60,14,80,.35) 60%,transparent);filter:blur(5px)}
-#mq-escenario{position:relative;z-index:2;width:100%;height:clamp(380px,42vw,720px);--s:.8;margin-top:-1px;
-  background:radial-gradient(48% 62% at 50% 62%,rgba(146,40,232,.28),rgba(86,35,77,.12) 55%,transparent 80%),linear-gradient(#0e0614,#100817 70%,#0d0613)}
-#mq-escenario::before{content:"";position:absolute;inset:0 0 auto;height:90px;background:linear-gradient(rgba(16,8,23,.95),transparent);pointer-events:none}
+#mq-escenario{position:relative;z-index:1;width:100%;aspect-ratio:1774/120;background:linear-gradient(#100817,#0e0614)}
 #mq-escenario[hidden]{display:none}
+/* tutor, progreso y contador (pedido 2026-11-14, maqueta de Andreé) */
+#mq-adn{-webkit-mask:linear-gradient(#000 57%,transparent 76%);mask:linear-gradient(#000 57%,transparent 76%)}
+.mq-tutor{z-index:6;box-sizing:border-box;padding:calc(30px*var(--s)) calc(60px*var(--s)) calc(14px*var(--s)) calc(30px*var(--s));border-radius:calc(26px*var(--s));
+  background:linear-gradient(180deg,rgba(30,12,40,.94),rgba(16,8,23,.96));border:calc(2px*var(--s)) solid rgba(196,74,255,.55);
+  box-shadow:0 0 calc(24px*var(--s)) rgba(146,40,232,.45),inset 0 0 calc(30px*var(--s)) rgba(146,40,232,.18);font-size:calc(20px*var(--s));line-height:1.35;color:#ECE2F2;overflow:hidden;transition:height .35s ease}
+.mq-tutor p{margin:0}.mq-tutor strong{font-size:calc(21px*var(--s));color:#fff}.mq-tutor b{color:#fff}.mq-tutor em{font-style:normal;color:#B8F52D;font-weight:700}
+.mq-tt{position:absolute;left:calc(26px*var(--s));top:calc(-2px*var(--s));padding:calc(4px*var(--s)) calc(30px*var(--s));font-weight:700;font-size:calc(21px*var(--s));color:#E5A4FF;
+  background:linear-gradient(180deg,#3a1450,#22102c);border:calc(2px*var(--s)) solid rgba(196,74,255,.6);border-top:0;border-radius:0 0 calc(16px*var(--s)) calc(16px*var(--s))}
+.mq-tmas{display:none;margin-top:calc(8px*var(--s))!important;font-size:calc(16px*var(--s));color:#c9b8d6}
+.mq-tutor.abierto{height:auto!important}.mq-tutor.abierto .mq-tmas{display:block}
+.mq-tbtn{position:absolute;right:calc(20px*var(--s));bottom:calc(14px*var(--s));width:calc(30px*var(--s));height:calc(22px*var(--s));padding:0;border:0;background:none;cursor:pointer}
+.mq-tbtn svg{width:100%;height:100%;fill:none;stroke:#E5A4FF;stroke-width:2.4;transition:transform .3s}.mq-tutor.abierto .mq-tbtn svg{transform:rotate(180deg)}
+.mq-progreso{z-index:6;box-sizing:border-box;display:flex;align-items:center;gap:calc(22px*var(--s));padding:calc(34px*var(--s)) calc(24px*var(--s)) calc(14px*var(--s));border-radius:calc(26px*var(--s));
+  background:linear-gradient(180deg,rgba(30,12,40,.92),rgba(16,8,23,.95));border:calc(2px*var(--s)) solid rgba(196,74,255,.45);box-shadow:0 0 calc(20px*var(--s)) rgba(146,40,232,.35)}
+.mq-pk{position:absolute;left:calc(26px*var(--s));top:calc(8px*var(--s));font-size:calc(19px*var(--s));color:#E5A4FF;font-weight:600}
+.mq-anillo{flex:none;width:calc(84px*var(--s));aspect-ratio:1;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(closest-side,#160a1f 74%,transparent 76% 100%),conic-gradient(#B8F52D calc(var(--p)*1%),rgba(170,145,185,.22) 0);filter:drop-shadow(0 0 calc(6px*var(--s)) rgba(184,245,45,.45))}
+.mq-anillo b{font-size:calc(22px*var(--s));color:#D8F04A}
+.mq-pn{font-size:calc(17px*var(--s));color:#cbbad6;line-height:1.3}.mq-pn b{display:block;font-size:calc(22px*var(--s));color:#fff}
+.mq-gema{z-index:6;display:flex;align-items:center;justify-content:center;gap:calc(8px*var(--s));border-radius:99px;background:rgba(16,8,23,.85);border:1px solid rgba(196,74,255,.35);font-weight:700;font-size:calc(19px*var(--s));color:#fff}
+.mq-gema i{width:calc(16px*var(--s));aspect-ratio:1;background:#B8F52D;clip-path:polygon(50% 0,100% 38%,80% 100%,20% 100%,0 38%);box-shadow:0 0 8px #B8F52D}
+
 #mq-escenario+#mq-suelo img,#mq-escenario+#mq-suelo canvas{-webkit-mask:linear-gradient(transparent,#000 24%);mask:linear-gradient(transparent,#000 24%)}
 
 .mq-hot{background:none;border:0;padding:0;cursor:pointer;border-radius:999px;display:block}
@@ -1390,7 +1410,7 @@ function maquetaDraw(){
   const xs=studyOrder(), done=xs.filter(x=>(x.state||0)>=2).length, e=nextExercise(), t=e&&T(primTopic(e));
   const L=LAY||layout(), awake=DB.topics.filter(q=>mastery(q.id).n).length, pct=Math.round(L.g*100);
   const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
-  let h=`<img class="mq-fondo" src="maqueta/placa.webp" alt="" draggable="false">`;
+  let h=`<img class="mq-fondo" src="maqueta/placa-tutor.webp" alt="" draggable="false">`;
   // barra superior pintada: zonas activas sobre las pestañas y el emblema
   h+=`<a class="mq-hot mq-logo" href="../bitacora.html" title="Físicas · volver a la bitácora" style="left:${X(20)};top:0;width:${X(250)};height:${Y(46)}"></a>`;
   for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
@@ -1407,10 +1427,16 @@ function maquetaDraw(){
       <p class="mq-sub">${e.prio==='clave'?'Ejercicio clave: no te lo saltes.':(e.state===1?'Lo dejaste a medias.':'La colonia muta con cada ejercicio que resuelves.')}</p>
       <button class="mq-go" data-study="${e.id}">${e.state===1?'Retomar':'Empezar'} <span aria-hidden="true">→</span></button>`:`<div class="mq-k">Todo resuelto</div><h2>La colonia está saciada.</h2>`)
     +`<p class="mq-nota">${done} de ${xs.length} resueltos. Cada par de bases del ADN es un ejercicio, agrupados por tema como en Estudiar. Toca un organismo para ver sus ejercicios.</p></div>`;
-  // evolución de la colonia y contador del ADN
-  h+=`<div class="mq-evo" style="left:${X(228)};top:${Y(762)};width:${X(300)};height:${Y(72)}"><div class="mq-ek">Evolución de la colonia</div><div class="mq-ev">${pct}% · ${awake} de ${DB.topics.length} temas despiertos</div><div class="mq-bar"><span style="width:${Math.max(2,pct)}%"></span></div></div>`;
-  h+=`<div class="mq-adn" style="left:${X(42)};top:${Y(788)};width:${X(58)};height:${Y(56)}"><b>${done}</b><i>${xs.length}</i></div>`;
-  h+=`<i class="mq-adn-luz" style="left:${X(28)};top:${Y(120)};width:${X(90)};height:${Y(650)}"></i>`;
+  // abajo: «Tu Tutor» y «Tu progreso» (el personaje va a la izquierda, ver personaje.js); arriba a la derecha, el contador
+  const pr=xs.length?Math.round(100*done/xs.length):0;
+  const tutor=e?`Te toca <b>${esc(e.title)}</b>${t?` (${esc(t.name)})`:''}.`:'Resolviste todo lo que hay en la colmena. Pásame más ejercicios para que evolucione.';
+  h+=`<div class="mq-tutor" style="left:${X(590)};top:${Y(800)};width:${X(670)};height:${Y(152)}"><span class="mq-tt">Tu Tutor</span>
+      <p><strong>¡Bienvenido, explorador!</strong><br>Aquí comienza tu viaje por el enjambre del conocimiento. Selecciona una <em>célula</em> y sigue aprendiendo.</p>
+      <p class="mq-tmas">${tutor} ${done} de ${xs.length} ejercicios resueltos · ${awake} de ${DB.topics.length} temas despiertos. Cada par de bases del ADN es un ejercicio.</p>
+      <button class="mq-tbtn" aria-label="Más" aria-expanded="false" onclick="const c=this.closest('.mq-tutor');this.setAttribute('aria-expanded',c.classList.toggle('abierto'))"><svg viewBox="0 0 20 12"><path d="M2 2l8 8 8-8"/></svg></button></div>`;
+  h+=`<div class="mq-progreso" style="left:${X(1430)};top:${Y(812)};width:${X(318)};height:${Y(140)}"><span class="mq-pk">Tu progreso</span>
+      <div class="mq-anillo" style="--p:${Math.max(1,pr)}"><b>${pr}%</b></div><div class="mq-pn"><b>${done} / ${xs.length}</b>Ejercicios</div></div>`;
+  h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;
   st.innerHTML=h;
   st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab); renderAll();});
   st.parentNode.querySelectorAll('.mq-org,.mq-huevos button').forEach(b=>b.onclick=()=>{selected=selected===b.dataset.id?null:b.dataset.id; applyFocus(); drawSide();});
@@ -1454,7 +1480,7 @@ function objetosMaqueta(st){
   if(!MQV.capa){
     const c=document.createElement('div'); c.className='mq-objetos'; let h='';
     const hijos={}; for(const o of MQO) if(o[9]) (hijos[o[9]]=hijos[o[9]]||[]).push(o);
-    for(const [id,k,x,y,w,hh,cx,cy,r,pa] of MQO){ if(pa) continue;
+    for(const [id,k,x,y,w,hh,cx,cy,r,pa] of MQO){ if(pa||id==='evolucion'||id==='contador') continue;
       const or=`${(100*(cx-x)/w).toFixed(2)}% ${(100*(cy-y)/hh).toFixed(2)}%`, hs=hashStr(id);
       h+=`<div class="mq-o mq-${k}" id="mq-${id}" data-objeto="${id}" style="left:${X(x)};top:${Y(y)};width:${X(w)};height:${Y(hh)};transform-origin:${or};--f:${(-(hs%70)/10).toFixed(1)}s">`
         +`<img src="maqueta/objetos/${id}.webp" alt="" draggable="false">`;

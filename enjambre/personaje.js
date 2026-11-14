@@ -9,20 +9,26 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// su propio espacio: una franja entre el mapa de la colmena y el suelo, para no tapar nada
-const escenario = document.createElement('section');
+// abajo a la izquierda, donde antes estaba «Evolución de la colonia», mirando hacia el mapa.
+// Coordenadas de la imagen de la maqueta (1774×887); baja un poco más allá del borde, sobre una franja propia.
+const ZONA = { x: -20, y: 490, w: 690, h: 510 };
+const escenario = document.createElement('div');   // franja bajo el mapa: deja sitio al tutor y al personaje
 escenario.id = 'mq-escenario';
 escenario.setAttribute('aria-hidden', 'true');
 const caja = document.createElement('div');
 caja.className = 'mq-personaje';
-escenario.appendChild(caja);
+caja.setAttribute('aria-hidden', 'true');
+caja.style.cssText = `left:${(100 * ZONA.x / 1774).toFixed(3)}%;top:${(100 * ZONA.y / 887).toFixed(3)}%;width:${(100 * ZONA.w / 1774).toFixed(3)}%;height:${(100 * ZONA.h / 887).toFixed(3)}%`;
 
-// maquetaDraw() crea o rehace #maqueta: mantenemos el escenario justo después
+// maquetaDraw() rehace el HTML de #maqueta: volvemos a meter la caja tras la capa de objetos
 function colocar() {
   const st = document.getElementById('maqueta');
   if (!st) return;
   escenario.hidden = st.hidden;
   if (st.nextSibling !== escenario) st.after(escenario);
+  const obj = st.querySelector(':scope > .mq-objetos');
+  if (obj) { if (obj.nextSibling !== caja) obj.after(caja); }
+  else if (caja.parentNode !== st) st.appendChild(caja);
 }
 new MutationObserver(colocar).observe(document.body, { childList: true, subtree: true });
 
@@ -101,7 +107,7 @@ function tamano() {
 function cuadro() {
   if (!modelo || !visible || !caja.isConnected || !tamano()) return;
   const t = (performance.now() - t0) / 1000;
-  modelo.rotation.y = reducido ? -0.35 : -0.35 + Math.sin(t * 0.22) * 0.35;
+  modelo.rotation.y = reducido ? 0.55 : 0.55 + Math.sin(t * 0.22) * 0.2; // de tres cuartos, mirando al mapa
   const resp = reducido ? 0 : Math.sin(t * 1.2);
   modelo.scale.set(1 + resp * 0.004, 1 + resp * 0.008, 1 + resp * 0.004);
   animar(t);

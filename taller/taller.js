@@ -30,10 +30,10 @@ escena.background = new THREE.Color(PALETA.fondo);
 escena.fog = new THREE.FogExp2(PALETA.fondo, 0.12);
 const pmrem = new THREE.PMREMGenerator(renderer);
 escena.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-escena.environmentIntensity = 0.22;
+escena.environmentIntensity = 0.45;
 
 const camara = new THREE.PerspectiveCamera(34, 1, 0.05, 60);
-camara.position.set(3.3, 2.0, 4.3);
+camara.position.set(1.7, 1.9, 5.6);
 
 const controles = new OrbitControls(camara, lienzo);
 controles.enableDamping = true;
@@ -44,19 +44,19 @@ controles.maxPolarAngle = Math.PI * 0.53;
 controles.autoRotateSpeed = 0.55;
 controles.autoRotate = !reduce;
 
-/* Luces: clave lila arriba a la izquierda, contraluz violeta, relleno frío desde abajo */
-escena.add(new THREE.HemisphereLight(0x6a3a8a, 0x0a0410, 0.55));
-const clave = new THREE.DirectionalLight(PALETA.brillo, 2.4);
+/* Luces: clave blanca fría arriba a la izquierda, contraluz azulado, relleno violeta suave */
+escena.add(new THREE.HemisphereLight(0x4a4866, 0x08040c, 0.45));
+const clave = new THREE.DirectionalLight(0xe6ecff, 3.2);
 clave.position.set(-3.5, 5.5, 3);
 clave.castShadow = true;
 clave.shadow.mapSize.set(4096, 4096);
 Object.assign(clave.shadow.camera, { left: -2.4, right: 2.4, top: 2.4, bottom: -2.4, near: 2, far: 12 });
 clave.shadow.bias = -0.0002; clave.shadow.normalBias = 0.04; clave.shadow.radius = 4;
 escena.add(clave);
-const contra = new THREE.DirectionalLight(PALETA.primario, 3.2);
+const contra = new THREE.DirectionalLight(0x9aa8ff, 2.6);
 contra.position.set(2.5, 3, -4.5);
 escena.add(contra);
-const relleno = new THREE.PointLight(PALETA.secundario, 2.5, 9, 2);
+const relleno = new THREE.PointLight(PALETA.secundario, 1.4, 9, 2);
 relleno.position.set(3.2, 2.2, 3.2);
 escena.add(relleno);
 
@@ -64,7 +64,7 @@ escena.add(relleno);
 const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
 const composer = new EffectComposer(renderer, rt);
 composer.addPass(new RenderPass(escena, camara));
-const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.6, 0.5, 0.76);
+const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.35, 0.5, 0.88);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
@@ -120,7 +120,7 @@ interruptor('#b-malla', 'malla', () => {
   actual?.grupo.traverse((o) => { if (o.isMesh) o.material.wireframe = op.malla; });
 });
 $('#b-vista').addEventListener('click', () => {
-  camara.position.set(3.3, 2.0, 4.3);
+  camara.position.set(1.7, 1.9, 5.6);
   if (actual) controles.target.copy(actual.objetivo);
 });
 $('#b-glb').addEventListener('click', async () => {

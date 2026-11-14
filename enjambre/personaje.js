@@ -63,6 +63,30 @@ function piel(m) {
 }
 
 let modelo = null, visible = true;
+// el modelo viene separado en partes, cada una con su hueso (guadañas, garras, brazos, manos, cabeza, torso
+// y 18 bolsas verdes). Aquí se mueve cada parte por separado.
+const H = {};
+const fase = (n) => { let h = 0; for (const ch of n) h = (h * 31 + ch.charCodeAt(0)) % 997; return h / 997 * 6.283; };
+function animar(t) {
+  const s = Math.sin, a = reducido ? 0 : 1;
+  for (const lado of ['izq', 'der']) {
+    const sg = lado === 'izq' ? 1 : -1, d = lado === 'izq' ? 0 : 0.7;
+    const gu = H['guadana_' + lado];   // las guadañas se alzan y amenazan despacio
+    if (gu) gu.rotation.set(a * (0.11 * s(t * 0.9 + d) - 0.05), 0, a * sg * (0.13 * s(t * 0.9 + d) + 0.03 * s(t * 2.3 + d)));
+    const ga = H['garra_tras_' + lado];
+    if (ga) ga.rotation.set(a * 0.17 * s(t * 1.1 + d + 1.5), 0, a * sg * 0.13 * s(t * 1.3 + d));
+    const br = H['brazo_' + lado];     // los brazos delanteros tantean
+    if (br) br.rotation.set(a * 0.2 * s(t * 1.7 + d), a * sg * 0.1 * s(t * 1.2 + d), 0);
+    const ma = H['mano_' + lado];
+    if (ma) ma.rotation.set(a * 0.28 * s(t * 2.4 + d * 2), 0, a * sg * 0.15 * s(t * 1.9 + d));
+  }
+  if (H.torso) H.torso.rotation.set(a * 0.025 * s(t * 1.2), a * 0.03 * s(t * 0.5), 0);
+  if (H.cabeza) H.cabeza.rotation.set(a * 0.07 * s(t * 0.8 + 0.4), a * 0.13 * s(t * 0.45), a * 0.04 * s(t * 0.6));
+  for (const k in H) if (k.startsWith('bolsa_')) {  // cada bolsa late a su ritmo
+    const p = 1 + a * 0.14 * Math.max(0, s(t * 2.2 + fase(k))) ** 2;
+    H[k].scale.setScalar(p);
+  }
+}
 const t0 = performance.now();
 
 function tamano() {
@@ -80,7 +104,8 @@ function cuadro() {
   const t = (performance.now() - t0) / 1000;
   modelo.rotation.y = reducido ? -0.35 : -0.35 + Math.sin(t * 0.22) * 0.35;
   const resp = reducido ? 0 : Math.sin(t * 1.2);
-  modelo.scale.set(1 + resp * 0.005, 1 + resp * 0.01, 1 + resp * 0.005);
+  modelo.scale.set(1 + resp * 0.004, 1 + resp * 0.008, 1 + resp * 0.004);
+  animar(t);
   pulso.value = reducido ? 0.5 : 0.5 + 0.5 * Math.sin(t * 2.0);
   verde.intensity = 0.3 + pulso.value * 0.5;
   render.render(escena, camara);
@@ -98,13 +123,14 @@ function cargar() {
     g.scene.traverse((o) => {
       if (!o.isMesh) return;
       if (!o.geometry.attributes.normal) o.geometry.computeVertexNormals();
+      if (o.isSkinnedMesh) { o.frustumCulled = false; for (const b of o.skeleton.bones) H[b.name] = b; }
       piel(o.material);
     });
     modelo = new THREE.Group();
     modelo.add(g.scene);
     escena.add(modelo);
     caja.classList.add('listo');
-    window.__personaje = { render, escena, camara, cuadro, modelo };
+    window.__personaje = { render, escena, camara, cuadro, modelo, H, animar };
     render.setAnimationLoop(cuadro);
   });
 }

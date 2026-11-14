@@ -620,9 +620,11 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #mq-escenario{position:relative;z-index:1;width:100%;aspect-ratio:1774/120;background:linear-gradient(#100817,#0e0614)}
 #mq-escenario[hidden]{display:none}
 /* portada en una sola pantalla: el mapa se ajusta al alto de la ventana */
-body.con-maqueta #maqueta,body.con-maqueta #mq-escenario{width:min(100%,calc(100vh*1774/1007));margin-inline:auto}
+body.con-maqueta #maqueta,body.con-maqueta #mq-escenario{width:min(90%,calc(88vh*1774/1007));margin-inline:auto}
+#maqueta>.mq-fondo{-webkit-mask:linear-gradient(90deg,transparent,#000 2.5%,#000 97.5%,transparent),linear-gradient(#000 92%,transparent);-webkit-mask-composite:source-in;mask:linear-gradient(90deg,transparent,#000 2.5%,#000 97.5%,transparent),linear-gradient(#000 92%,transparent);mask-composite:intersect}
+body.con-maqueta:has(#v-hive.on) #swarm{min-height:100vh;display:flex;flex-direction:column;justify-content:center}
 body.con-maqueta:has(#v-hive.on){background:#100817;overflow-x:hidden}
-.inv-huevos{position:relative;margin:28px 0;border-radius:18px;overflow:hidden;--s:.8}
+.inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
 .inv-huevos .mq-huevos{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(94%,1000px);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;padding:14px 20px;
   background:radial-gradient(closest-side,rgba(16,8,23,.85),rgba(16,8,23,.55) 70%,transparent);font-family:"Barlow Semi Condensed","Arial Narrow",sans-serif}
@@ -2399,7 +2401,7 @@ function drawInv(){
   // sumario
   const tot=qs.reduce((a,q)=>a+q.min,0), pool=invPool(), H=INVS.hist||{};
   const fresh=d=>pool.filter(q=>q.dif===d&&!H[q.id]).length;
-  root.innerHTML=`<div class="inv-head"><div style="flex:1;min-width:280px">
+  root.innerHTML=`${huevosLatentes()}<div class="inv-head"><div style="flex:1;min-width:280px">
       <div class="eyebrow">examen de física · ${(INVS.hx||[]).length+(INVS.log||[]).length} evaluaciones guardadas</div>
       <h1>Invasión</h1>
       <p>Elige el tamaño del ataque. Cada invasión sortea las secciones (Electro, Termo, Fluidos, Torque, Energía, Equilibrio…) y mezcla fáciles, intermedios y difíciles para que el tiempo sea el de un examen real (fácil ≈ 4 min, intermedio ≈ 6, difícil ≈ 10). Aquí los ves ordenados por sección; al empezar se revuelven sin dos de la misma sección ni de la misma dificultad seguidos. Primero salen los que nunca viste, luego los que fallaste.</p>
@@ -2416,7 +2418,6 @@ function drawInv(){
       <div class="why">${esc(q.why)}</div><div class="mn">~${q.min}</div></div>`).join('')}
     <div class="wv"><div></div><div class="src">Tiempo estimado · nuevas sin ver: ${fresh('facil')} fáciles, ${fresh('intermedio')} intermedias, ${fresh('dificil')} difíciles</div><div></div><div class="mn"><b>${tot}</b></div></div></div>
     <div class="launch"><button class="go" data-start>Empezar ${esc(M.name.toLowerCase())} <span>→</span></button><button class="reroll" data-reroll>↻ Reiniciar ejercicios</button><span class="pill">${M.min>=60?(M.min/60)+' h':M.min+' min'} · el cronómetro no se detiene aunque cambies de pestaña.</span></div>
-    ${huevosLatentes()}
     ${invHistory()}`;
   root.querySelectorAll('.inv-huevos [data-id]').forEach(b=>b.onclick=()=>{selected=b.dataset.id; show('hive'); renderAll(); applyFocus(); drawSide();});
   root.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{INVS.mode=b.dataset.mode; INVS.wave=null; INVS.prev=null; invSave(INVS); drawInv();});

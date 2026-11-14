@@ -7,22 +7,22 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-// zona en coordenadas de la imagen de la maqueta (1774×887)
-const ZONA = { x: 935, y: 688, w: 330, h: 240 }; // abajo, en el suelo oscuro libre entre Fluidos, Oscilador y Equilibrio
 const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// su propio espacio: una franja entre el mapa de la colmena y el suelo, para no tapar nada
+const escenario = document.createElement('section');
+escenario.id = 'mq-escenario';
+escenario.setAttribute('aria-hidden', 'true');
 const caja = document.createElement('div');
 caja.className = 'mq-personaje';
-caja.setAttribute('aria-hidden', 'true');
-caja.style.cssText = `left:${(100 * ZONA.x / 1774).toFixed(3)}%;top:${(100 * ZONA.y / 887).toFixed(3)}%;width:${(100 * ZONA.w / 1774).toFixed(3)}%;height:${(100 * ZONA.h / 887).toFixed(3)}%`;
+escenario.appendChild(caja);
 
-// maquetaDraw() rehace el HTML de #maqueta: volvemos a meter la caja cada vez
+// maquetaDraw() crea o rehace #maqueta: mantenemos el escenario justo después
 function colocar() {
   const st = document.getElementById('maqueta');
-  if (!st || st.hidden) return;
-  const obj = st.querySelector(':scope > .mq-objetos');
-  if (obj) { if (obj.nextSibling !== caja) obj.after(caja); }
-  else if (caja.parentNode !== st) st.appendChild(caja);
+  if (!st) return;
+  escenario.hidden = st.hidden;
+  if (st.nextSibling !== escenario) st.after(escenario);
 }
 new MutationObserver(colocar).observe(document.body, { childList: true, subtree: true });
 
@@ -71,8 +71,8 @@ function animar(t) {
   const s = Math.sin, a = reducido ? 0 : 1;
   for (const lado of ['izq', 'der']) {
     const sg = lado === 'izq' ? 1 : -1, d = lado === 'izq' ? 0 : 0.7;
-    const gu = H['guadana_' + lado];   // las guadañas se alzan y amenazan despacio
-    if (gu) gu.rotation.set(a * (0.11 * s(t * 0.9 + d) - 0.05), 0, a * sg * (0.13 * s(t * 0.9 + d) + 0.03 * s(t * 2.3 + d)));
+    // las dos guadañas (las manos principales) se quedan quietas
+
     const ga = H['garra_tras_' + lado];
     if (ga) ga.rotation.set(a * 0.17 * s(t * 1.1 + d + 1.5), 0, a * sg * 0.13 * s(t * 1.3 + d));
     const br = H['brazo_' + lado];     // los brazos delanteros tantean

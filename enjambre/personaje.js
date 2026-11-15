@@ -11,7 +11,7 @@ const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // abajo a la izquierda, donde antes estaba «Evolución de la colonia», mirando hacia el mapa.
 // Coordenadas de la imagen de la maqueta (1774×887); baja un poco más allá del borde, sobre una franja propia.
-const ZONA = { x: -20, y: 490, w: 690, h: 510 };
+const ZONA = { x: -20, y: 400, w: 690, h: 510 };
 const escenario = document.createElement('div');   // franja bajo el mapa: deja sitio al tutor y al personaje
 escenario.id = 'mq-escenario';
 escenario.setAttribute('aria-hidden', 'true');
@@ -19,6 +19,8 @@ const caja = document.createElement('div');
 caja.className = 'mq-personaje';
 caja.setAttribute('aria-hidden', 'true');
 caja.style.cssText = `left:${(100 * ZONA.x / 1774).toFixed(3)}%;top:${(100 * ZONA.y / 887).toFixed(3)}%;width:${(100 * ZONA.w / 1774).toFixed(3)}%;height:${(100 * ZONA.h / 887).toFixed(3)}%`;
+// plataforma biomecánica de Andreé bajo los pies (detrás del personaje); los orbes laten
+caja.insertAdjacentHTML('afterbegin', '<img class="mq-plataforma" src="maqueta2/plataforma.webp" alt="" draggable="false"><img class="mq-plataforma mq-plat-orbes" src="maqueta2/plataforma-orbes.webp" alt="" draggable="false">');
 
 // maquetaDraw() rehace el HTML de #maqueta: volvemos a meter la caja tras la capa de objetos
 function colocar() {

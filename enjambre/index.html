@@ -674,7 +674,7 @@ body.con-maqueta #maqueta{width:100%;flex:none;margin:0}
 body.con-maqueta #mq-escenario{display:none!important}
 body.con-maqueta:has(#v-hive.on) .mq-tutor{top:min(45.096vw,calc(100vh - 10.203vw - 14px))!important}
 body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(30.44vw,calc(100vh - 19.504vw - 2px))!important}
-body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.749vw + 1vw))!important}
+body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(22.548vw,calc(100vh - 28.749vw - 3vw))!important}
 .inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
 .inv-huevos .mq-huevos{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(94%,1000px);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;padding:14px 20px;
@@ -786,6 +786,10 @@ body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.
 #maqueta .mq-rot{transform:translate(calc(-50% + var(--px,0)*7px),calc(-.56em + var(--py,0)*4px));transition:transform .9s cubic-bezier(.2,.7,.2,1)}
 /* reloj de costado, recostado sobre los huevos */
 @media (prefers-reduced-motion:reduce){#maqueta .mq-conex,#maqueta .mq-objetos,#maqueta .mq-larvas,#maqueta .mq-org,#maqueta .mq-red-sombra{transform:none}}
+.mq-plataforma{position:absolute;left:5.4%;top:38.6%;width:75.4%;height:auto;pointer-events:none;user-select:none}
+.mq-plat-orbes{mix-blend-mode:screen;animation:mqOrbes 3.4s ease-in-out infinite}
+@keyframes mqOrbes{0%,100%{opacity:.15;filter:brightness(1)}50%{opacity:.85;filter:brightness(1.5) drop-shadow(0 0 6px rgba(140,222,70,.8))}}
+@media (prefers-reduced-motion:reduce){.mq-plat-orbes{animation:none;opacity:.3}}
 /* piezas nuevas de la hoja de Andreé */
 .mq-capsula{position:absolute;pointer-events:none;border-style:solid;border-width:0 calc(22px*var(--s));border-image:url(maqueta2/barra-arriba.webp) 0 72 fill / 0 calc(22px*var(--s)) stretch;opacity:.95}
 #maqueta .mq-tutor::after{background-image:url(maqueta2/tutor-caja.webp)}

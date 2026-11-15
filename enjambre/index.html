@@ -645,14 +645,14 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #maqueta .mq-tutor::before{inset:14% 1.8% 5% 1.8%}#maqueta .mq-progreso::before{inset:5% 2.6% 5% 2.6%}
 #maqueta .mq-progreso.mq-reloj{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:calc(4px*var(--s));padding:0}
 #maqueta .mq-progreso.mq-reloj::before,#maqueta .mq-progreso.mq-reloj::after{display:none}
-.mq-rel{position:relative;width:100%;aspect-ratio:796/806;filter:drop-shadow(0 0 calc(10px*var(--s)) rgba(12,4,18,.9))}
+.mq-rel{position:relative;width:100%;aspect-ratio:1223/781;filter:drop-shadow(0 0 calc(10px*var(--s)) rgba(12,4,18,.9))}
 .mq-rel img{position:absolute;inset:0;width:100%;height:100%;user-select:none;pointer-events:none}
 .mq-rel .mq-rel-verde{filter:drop-shadow(0 0 calc(6px*var(--s)) rgba(140,222,70,.7))}
-.mq-rel .mq-rel-aguja{inset:auto;left:45.45%;top:31.07%;width:8.17%;height:27.87%;transform-origin:50.32% 85.54%}
+.mq-rel .mq-rel-aguja{inset:auto;left:47.93%;top:24.35%;width:4.20%;height:22.73%;transform-origin:50.32% 85.54%}
 #maqueta .mq-progreso.mq-adnp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6px*var(--s));padding:0}
 #maqueta .mq-progreso.mq-adnp::after{display:none}#maqueta .mq-progreso.mq-adnp::before{inset:-6% -4%;border-radius:50%;background:radial-gradient(closest-side,rgba(12,5,18,.88) 55%,rgba(12,5,18,.55) 78%,transparent)}
 .mq-adnp .mq-adnbar{width:100%;margin:0}
-.mq-adnt{font-size:calc(19px*var(--s));color:#cbbad6;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.9)}.mq-adnt b{color:#fff;font-weight:600;margin-left:.3em}
+.mq-adnt{margin-top:calc(-14px*var(--s));font-size:calc(19px*var(--s));color:#cbbad6;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.9)}.mq-adnt b{color:#fff;font-weight:600;margin-left:.3em}
 #maqueta .mq-anillo b{position:relative;color:#8CDE46;text-shadow:0 0 8px rgba(96,189,36,.6)}
 
 /* portada a pantalla completa, sin franjas ni deformar: el arte ocupa todo el ancho (proporción 2:1 intacta);
@@ -663,7 +663,7 @@ body.con-maqueta:has(#v-hive.on) #swarm{display:block;height:100vh;min-height:0;
 body.con-maqueta #maqueta{width:100%;flex:none;margin:0}
 body.con-maqueta #mq-escenario{display:none!important}
 body.con-maqueta:has(#v-hive.on) .mq-tutor{top:min(45.096vw,calc(100vh - 10.203vw - 14px))!important}
-body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(34.385vw,calc(100vh - 15.784vw - 4px))!important}
+body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(31.905vw,calc(100vh - 18.151vw - 2px))!important}
 body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.749vw + 1vw))!important}
 .inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
@@ -775,7 +775,6 @@ body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.
 #maqueta .mq-red-sombra{transform:translate3d(calc(var(--px,0)*-3px),calc(var(--py,0)*-2px),0);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
 #maqueta .mq-rot{transform:translate(calc(-50% + var(--px,0)*7px),calc(-.56em + var(--py,0)*4px));transition:transform .9s cubic-bezier(.2,.7,.2,1)}
 /* reloj de costado, recostado sobre los huevos */
-.mq-reloj .mq-rel{transform:perspective(calc(900px*var(--s))) rotateY(-42deg) rotateZ(16deg);transform-origin:80% 70%}
 @media (prefers-reduced-motion:reduce){#maqueta .mq-conex,#maqueta .mq-objetos,#maqueta .mq-larvas,#maqueta .mq-org,#maqueta .mq-red-sombra{transform:none}}
 /* piezas nuevas de la hoja de Andreé */
 .mq-capsula{position:absolute;pointer-events:none;border-style:solid;border-width:0 calc(22px*var(--s));border-image:url(maqueta2/barra-arriba.webp) 0 72 fill / 0 calc(22px*var(--s)) stretch;opacity:.95}
@@ -1522,7 +1521,7 @@ function maquetaDraw(){
   const xs=studyOrder(), done=xs.filter(x=>(x.state||0)>=2).length, e=nextExercise(), t=e&&T(primTopic(e));
   const L=LAY||layout(), awake=DB.topics.filter(q=>mastery(q.id).n).length, pct=Math.round(L.g*100);
   const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
-  let h=`<img class="mq-fondo" src="maqueta2/fondo2-4k.png" alt="" draggable="false"><div class="mq-capsula" style="left:${X(268)};top:${Y(3)};width:${X(1496)};height:${Y(41)}"></div>${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/esquina.webp" alt="" draggable="false" style="left:${X(1405.4)};top:${Y(611)};width:${X(368.6)}"><img class="mq-marco" src="maqueta2/marco-grande.webp" alt="" draggable="false" style="left:0;top:${Y(44)};width:${X(751)}">`;
+  let h=`<img class="mq-fondo" src="maqueta2/fondo2-4k.png" alt="" draggable="false"><div class="mq-capsula" style="left:${X(268)};top:${Y(3)};width:${X(1496)};height:${Y(41)}"></div>${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/marco-grande.webp" alt="" draggable="false" style="left:0;top:${Y(44)};width:${X(751)}">`;
   // barra superior pintada: zonas activas sobre las pestañas y el emblema
   h+=`<a class="mq-hot mq-logo" href="../bitacora.html" title="Físicas · volver a la bitácora" style="left:${X(20)};top:0;width:${X(250)};height:${Y(46)}"></a>`;
   for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
@@ -1544,10 +1543,10 @@ function maquetaDraw(){
 
   // progreso: el reloj orgánico de Andreé; el tubo verde se llena en sentido horario desde las 12 según lo resuelto y la aguja marca el avance
   const fr=xs.length?done/xs.length:0, gr=(360*fr).toFixed(2);
-  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1390)};top:${Y(610)};width:${X(250)};height:${Y(280)}">
+  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1292)};top:${Y(566)};width:${X(472)};height:${Y(322)}">
       <div class="mq-rel" role="img" aria-label="Progreso: ${done} de ${xs.length} ejercicios resueltos">
-        <img src="maqueta2/reloj2-esfera.webp" alt="" draggable="false">
-        <img class="mq-rel-verde" src="maqueta2/reloj2-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 49.56% 54.91%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 49.56% 54.91%,#000 ${gr}deg,transparent 0)">
+        <img src="maqueta2/reloj3.webp" alt="" draggable="false">
+        <img class="mq-rel-verde" src="maqueta2/reloj3-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 50.52% 43.87%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 50.52% 43.87%,#000 ${gr}deg,transparent 0)">
         <img class="mq-rel-aguja" src="maqueta2/reloj-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
       </div>
       <div class="mq-adnt">Progreso <b>${done} / ${xs.length}</b></div></div>`;

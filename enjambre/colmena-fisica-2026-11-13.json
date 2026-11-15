@@ -1,5 +1,5 @@
 {
-  "version": 22,
+  "version": 23,
   "topics": [
     {
       "id": "cin",
@@ -310,6 +310,14 @@
       "pre": [
         "ene"
       ]
+    },
+    {
+      "id": "vcom",
+      "name": "Variable compleja",
+      "area": "mat",
+      "q": -3,
+      "r": 3,
+      "pre": []
     }
   ],
   "exercises": [
@@ -15883,6 +15891,1212 @@
       ],
       "img": "img/sz27-27-85.png",
       "num": "27.85"
+    },
+    {
+      "id": "bk2-e7",
+      "title": "e^{1/z}: ¿polo o singularidad esencial?",
+      "text": "",
+      "key": "Parte principal infinita ⇒ singularidad esencial: |f| no tiene un límite único al acercarse a z = 0.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, ejemplo de la sección 2.11 (sección 2.11, p. 81)",
+      "notes": "",
+      "hints": [
+        "Mira la serie: ¿cuántas potencias negativas de z aparecen?",
+        "Acércate a 0 por el eje real negativo, el positivo y el imaginario: ¿qué hace |e^{1/z}|?"
+      ],
+      "sol": [
+        "e^{1/z} = 1 + 1/z + 1/(2! z²) + 1/(3! z³) + …, válida para 0 < |z| < R con R arbitrario.",
+        "La parte principal (potencias negativas) tiene infinitos términos: no es un polo de ningún orden, es una singularidad esencial.",
+        "Por el eje real negativo (z = −x): e^{−1/x} → 0. Por el eje real positivo: e^{1/x} → ∞.",
+        "Por el eje imaginario (z = iy): e^{1/z} = e^{−i/y}, de módulo 1 constante, pero su argumento oscila sin parar."
+      ],
+      "ans": [
+        "Singularidad esencial en z = 0",
+        "|f| → 0 (eje real −), → ∞ (eje real +), = 1 con fase oscilante (eje imaginario)"
+      ],
+      "img": "img/bk2-e7.png",
+      "num": "Ej. 2.7",
+      "analisis": true
+    },
+    {
+      "id": "bk2-e9",
+      "title": "∮dz/z = 2πi aunque 1/z tenga primitiva",
+      "text": "f(z) = 1/z tiene primitiva F(z) = Log z. ¿Cómo se obtiene ∮_C dz/z alrededor del origen usando F, y por qué no da cero? (Butkov, ejemplo de p. 84, Fig. 2.17)",
+      "key": "Log z es multivaluada: para usar F(b) − F(a) hay que cortar el contorno, y el salto 2πi de la rama da la integral.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, ejemplo de la sección 2.12, primer método (sección 2.12, p. 84)",
+      "notes": "",
+      "hints": [
+        "Si F′ = f en todo el contorno cerrado, ∮f dz sería 0. ¿Por qué aquí no?",
+        "¿Qué le pasa a Log z al dar una vuelta alrededor del origen?"
+      ],
+      "sol": [
+        "f(z) = 1/z tiene primitiva F(z) = Log z, pero Log z no es univaluada en un lazo que rodea el origen.",
+        "Para conservar f = F′ hay que abrir el contorno: se integra de B a A sobre la circunferencia y se hace el límite B → A.",
+        "∮dz/z = lím_{B→A} [log A − log B] = 2πi, con la rama principal, que salta 2πi sobre el semieje real negativo."
+      ],
+      "ans": [
+        "∮_C dz/z = 2πi",
+        "El resultado es exactamente el salto de la rama de Log z al cruzar el corte"
+      ],
+      "img": "",
+      "num": "Ej. 2.9",
+      "analisis": true
+    },
+    {
+      "id": "bk2-e21",
+      "title": "Re(log z): potencial entre cilindros coaxiales",
+      "text": "",
+      "key": "La parte real de una función analítica es armónica: sirve de potencial donde sus curvas de nivel coinciden con los conductores.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, ejemplo de la sección 2.13 (sección 2.13, p. 98)",
+      "notes": "",
+      "hints": [
+        "¿Qué ecuación cumple la parte real de toda función analítica?",
+        "¿En qué curvas es constante log√(x²+y²)?"
+      ],
+      "sol": [
+        "Si φ no depende de z (la coordenada espacial), la ecuación de Laplace queda φ_xx + φ_yy = 0.",
+        "Toda u = Re f(z) con f analítica la cumple. Se toma f(z) = log z = log|z| + i arg z.",
+        "u(x, y) = log√(x² + y²) es constante en las circunferencias x² + y² = const (cilindros en 3D).",
+        "Por unicidad, es el potencial entre dos cilindros conductores coaxiales: φ = log a en r = a y φ = log b en r = b (Fig. 2.28)."
+      ],
+      "ans": [
+        "φ = Re(log z) = log r",
+        "Equipotenciales: circunferencias r = const (cilindros coaxiales)"
+      ],
+      "img": "img/bk2-e21.png",
+      "num": "Ej. 2.21",
+      "analisis": true
+    },
+    {
+      "id": "bk2-e25",
+      "title": "Polo sobre el camino: rodear por arriba o por abajo (±iε)",
+      "text": "",
+      "key": "Rodear un polo simple por abajo suma +πi Res y por arriba −πi Res; la diferencia es 2πi Res y el valor principal es el promedio.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, Example 3 de la sección 2.15 (sección 2.15, p. 110)",
+      "notes": "",
+      "hints": [
+        "Haz el semicírculo pequeño de radio r alrededor de −k₀ y toma r → 0: ¿qué fracción de 2πi Res aporta?",
+        "Bajar el camino equivale a subir el polo: k₀ + iε."
+      ],
+      "sol": [
+        "g(x) = ∫_C f(x,k) dk sobre el eje real no está definida: el camino pasa por los polos simples k = ±k₀.",
+        "Se deforma el camino con un semicírculo pequeño: por abajo del polo (antihorario) aporta +πi Res f(x,−k₀); por arriba (horario) aporta −πi Res f(x,−k₀).",
+        "Por eso las dos elecciones difieren en 2πi Res f(x,−k₀), sin importar el radio mientras no haya otras singularidades.",
+        "Notación física: con h = f·(k + k₀), pasar por abajo = ∫ h/(k − (k₀ + iε)) dk; pasar por arriba = ∫ h/(k − (k₀ − iε)) dk.",
+        "Si el polo no debe contribuir se usa el valor principal de Cauchy g₃ = lím_{ε→0}[∫_{−∞}^{−k₀−ε} + ∫_{−k₀+ε}^{∞}], y resulta g₃ = ½(g₁ + g₂).",
+        "Cuál elección es la correcta lo deciden condiciones físicas adicionales (p. ej. causalidad), no la matemática."
+      ],
+      "ans": [
+        "g(abajo) − g(arriba) = 2πi Res f(x, −k₀)",
+        "Semicírculo: ±πi Res",
+        "Valor principal = ½(g₁ + g₂)"
+      ],
+      "img": "img/bk2-e25.png",
+      "num": "Ej. 2.25",
+      "analisis": true
+    },
+    {
+      "id": "bk2-e10",
+      "title": "Tres atajos para residuos",
+      "text": "",
+      "key": "Elige el atajo según la forma: polo simple → lím (z−a)f; polo de orden m → derivada m−1; f = g/h con h(a)=0 → g(a)/h′(a).",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, ejemplos de la sección 2.12 (segundo, tercer y cuarto método) (sección 2.12, p. 85)",
+      "notes": "",
+      "hints": [
+        "tan z / z²: ¿de qué orden es el polo en 0 si tan z ≈ z?",
+        "e^z/z⁴: polo de orden 4, necesitas la derivada tercera.",
+        "e^z/sin z: forma g/h con h(0) = 0 y h′(0) ≠ 0."
+      ],
+      "sol": [
+        "tan z/z² tiene polo simple en 0 (tan z ≈ z): Res = lím z·tan z/z² = lím (sin z/z)(1/cos z) = 1.",
+        "e^z/z⁴ tiene polo de orden 4: Res = (1/3!) lím d³/dz³ [z⁴·e^z/z⁴] = (1/6) lím e^z = 1/6.",
+        "e^z/sin z = g/h con h(0) = 0, h′(0) = cos 0 = 1: Res = e^z/cos z |_{z=0} = 1."
+      ],
+      "ans": [
+        "Res tan z/z² (0) = 1",
+        "Res e^z/z⁴ (0) = 1/6",
+        "Res e^z/sin z (0) = 1"
+      ],
+      "img": "img/bk2-e10.png",
+      "num": "Ej. 2.10"
+    },
+    {
+      "id": "bk2-e15",
+      "title": "∫dx/(x²+a²) cerrando por arriba",
+      "text": "",
+      "key": "Integral real → contorno semicircular; se acota el arco (|∫| ≤ πR·máx|f| → 0) y queda 2πi por el residuo del semiplano superior.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, Example 2 de la sección 2.12 (sección 2.12, p. 87)",
+      "notes": "",
+      "hints": [
+        "Cierra con un semicírculo de radio R en el semiplano superior.",
+        "Acota: |z² + a²| ≥ R²/2 para R > a√2.",
+        "¿Qué polo queda adentro?"
+      ],
+      "sol": [
+        "∮_C dz/(z²+a²) = ∫_{−R}^{R} dx/(x²+a²) + ∫_{C_R} dz/(z²+a²), con C el semicírculo superior (Fig. 2.18).",
+        "Para R > a√2: |1 + a²/z²| > ½, así 1/|z²+a²| < 2/R².",
+        "Estimación: |∫_{C_R}| ≤ πR·máx 1/|z²+a²| < 2π/R → 0.",
+        "Adentro solo está z = ai: ∮ = 2πi Res(ai) = 2πi/(2ai) = π/a, para todo R > a.",
+        "Con R → ∞: ∫_{−∞}^{∞} dx/(x²+a²) = π/a."
+      ],
+      "ans": [
+        "π/a  (a > 0)"
+      ],
+      "img": "img/bk2-e15.png",
+      "num": "Ej. 2.15"
+    },
+    {
+      "id": "bk2-e14",
+      "title": "∫₀^{2π} dθ/(1 − 2p cos θ + p²)",
+      "text": "",
+      "key": "Integral angular → z = e^{iθ}, dθ = dz/(iz), cos θ = (z + 1/z)/2; solo cuentan los polos dentro del círculo unidad.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, Example 1 de la sección 2.12 (sección 2.12, p. 86)",
+      "notes": "",
+      "hints": [
+        "Sustituye z = e^{iθ} y simplifica el denominador hasta factorizarlo.",
+        "Los polos son z = p y z = 1/p: ¿cuál está dentro si |p| < 1?"
+      ],
+      "sol": [
+        "Con z = e^{iθ}: dθ = dz/(iz), cos θ = ½(z + 1/z).",
+        "I = ∮_C dz / [i(z − p)(1 − pz)] sobre el círculo unidad.",
+        "Polos en z = p y z = 1/p. Si |p| < 1, solo z = p queda adentro: Res = (1/i)·1/(1 − p²) ⇒ I = 2π/(1 − p²).",
+        "Si |p| > 1, el polo de adentro es z = 1/p: Res = (1/i)·1/(p² − 1) ⇒ I = 2π/(p² − 1).",
+        "Ambos casos: I = 2π/|p² − 1|."
+      ],
+      "ans": [
+        "I = 2π/|p² − 1|  (|p| ≠ 1)"
+      ],
+      "img": "img/bk2-e14.png",
+      "num": "Ej. 2.14"
+    },
+    {
+      "id": "bk2-e16",
+      "title": "∫₀^∞ cos x/(x²+a²): truco de e^{iz}",
+      "text": "",
+      "key": "cos z crece en el semiplano superior; e^{iz} = e^{−y}e^{ix} está acotada: se integra e^{iz} y se toma la parte real.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, Example 3 de la sección 2.12 (sección 2.12, p. 89)",
+      "notes": "",
+      "hints": [
+        "Primero extiende a (−∞, ∞) usando la paridad.",
+        "¿Por qué no sirve reemplazar cos x por cos z?",
+        "Usa e^{iz} y el semicírculo superior."
+      ],
+      "sol": [
+        "I = ½ ∫_{−∞}^{∞} cos x dx/(x² + a²) (integrando par).",
+        "cos z no está acotado en el semiplano superior; e^{iz} sí: |e^{iz}| = e^{−y} ≤ 1 para y ≥ 0.",
+        "J = ∮_C e^{iz}dz/(z²+a²) sobre el semicírculo; el arco tiende a 0 como en el ejemplo anterior.",
+        "J = 2πi Res(ai) = 2πi·e^{−a}/(2ai) = (π/a)e^{−a}.",
+        "∫ e^{ix}/(x²+a²) = ∫ cos x/(x²+a²) + i∫ sin x/(x²+a²) = (π/a)e^{−a}; al ser real el resultado, I = (π/2a)e^{−a}."
+      ],
+      "ans": [
+        "I = (π/2a) e^{−a}  (a > 0)"
+      ],
+      "img": "img/bk2-e16.png",
+      "num": "Ej. 2.16"
+    },
+    {
+      "id": "bk2-e17",
+      "title": "∫₀^∞ sin x/x = π/2 (polo en el camino)",
+      "text": "",
+      "key": "Al pasar a e^{iz}/z aparece un polo sobre el eje real: se esquiva con un semicírculo pequeño, que aporta medio residuo.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, Examples 4 y 5 de la sección 2.12 (sección 2.12, p. 90)",
+      "notes": "",
+      "hints": [
+        "I = ½∫_{−∞}^{∞} sin x/x. ¿Qué integral compleja usas?",
+        "El polo en 0 viene del cos x añadido, no de sin x: esquívalo con un semicírculo C_r.",
+        "Método alterno (ej. 5): separa sin z = (e^{iz} − e^{−iz})/2i y cierra cada parte por un semiplano distinto."
+      ],
+      "sol": [
+        "I = ½∫_{−∞}^{∞} sin x/x dx. Se usa ∮ e^{iz}/z dz, pero el integrando tiene polo en z = 0 sobre el eje real.",
+        "Contorno de la Fig. 2.21: eje real con un semicírculo pequeño C_r por encima del 0 y el arco grande C_R. Adentro no hay polos: la suma vale 0.",
+        "La integral sobre C_R → 0 (el libro la acota integrando por partes); sobre C_r (horario, radio → 0) da −πi·Res(0) = −πi.",
+        "Las partes imaginarias de los tramos reales dan ∫_{−∞}^{∞} sin x/x dx, que por tanto vale π.",
+        "Ejemplo 5 (otro camino): con sin z = (e^{iz} − e^{−iz})/2i, I₁ (cerrando arriba) = 0 e I₂ (cerrando abajo, horario, con el polo) = −2πi; ∫ sin x/x = (I₁ − I₂)/2i = π."
+      ],
+      "ans": [
+        "∫_{−∞}^{∞} sin x/x dx = π",
+        "I = ∫₀^∞ sin x/x dx = π/2"
+      ],
+      "img": "img/bk2-e17.png",
+      "num": "Ej. 2.17"
+    },
+    {
+      "id": "bk2-e3",
+      "title": "Fracciones parciales: tres series de una sola función",
+      "text": "",
+      "key": "Las singularidades parten el plano en anillos; en cada anillo, cada fracción simple se expande con la serie geométrica en la variable pequeña.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, Example 2 de la sección 2.10 (sección 2.10, p. 77)",
+      "notes": "",
+      "hints": [
+        "Factoriza el denominador: raíces i y 2.",
+        "¿Cuántas regiones de convergencia hay alrededor de z = 0?",
+        "En 1 < |z| < 2: 1/(z−2) en potencias de z, 1/(z−i) en potencias de 1/z."
+      ],
+      "sol": [
+        "z² − (2 + i)z + 2i = (z − i)(z − 2): f no es analítica solo en z = i y z = 2 (polos simples).",
+        "Alrededor de 0 hay tres desarrollos: Taylor en |z| < 1 y dos de Laurent, en 1 < |z| < 2 y en |z| > 2.",
+        "f(z) = [1/(2 − i)]·[1/(z − 2) − 1/(z − i)].",
+        "Para 1 < |z| < 2: 1/(z − 2) = −½Σ(z/2)ⁿ (Taylor) y 1/(z − i) = Σ iⁿ/z^{n+1} (Laurent, |z| > 1). Se restan y se multiplica por 1/(2 − i)."
+      ],
+      "ans": [
+        "Regiones: |z| < 1, 1 < |z| < 2, |z| > 2",
+        "1 < |z| < 2: f = [1/(2−i)]·[−Σ zⁿ/2^{n+1} − Σ iⁿ/z^{n+1}]"
+      ],
+      "img": "img/bk2-e3.png",
+      "num": "Ej. 2.3"
+    },
+    {
+      "id": "bk2-e13",
+      "title": "Residuo de un polo de orden 4 por series",
+      "text": "",
+      "key": "Lleva el polo al origen (w = z − a), expande los factores analíticos y lee el coeficiente de w^{−1}.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, ejemplo de la sección 2.12, quinto método (sección 2.12, p. 85)",
+      "notes": "",
+      "hints": [
+        "Haz w = z − 1.",
+        "Expande e^{tw} y 1/(3 + w) y busca el coeficiente de w³ del producto."
+      ],
+      "sol": [
+        "Se pide el residuo en z = 1 de e^{tz}/[(z + 2)(z − 1)⁴]. Con z = w + 1: f = e^t · e^{tw}/[(w + 3)w⁴].",
+        "e^{tw} = 1 + tw + t²w²/2! + t³w³/3! + … ; 1/(3 + w) = ⅓[1 − w/3 + w²/3² − w³/3³ + …] (|w| < 3).",
+        "Coeficiente de w³ del producto: ⅓[−1/3³ + t³/3! − t/3² − t²/(3·2!)].",
+        "Res f(1) = e^t (t³/18 − t²/18 − t/27 + 1/81)."
+      ],
+      "ans": [
+        "Res f(1) = e^t (t³/18 − t²/18 − t/27 + 1/81)"
+      ],
+      "img": "img/bk2-e13.png",
+      "num": "Ej. 2.13"
+    },
+    {
+      "id": "bk2-e19",
+      "title": "∫ e^{ax}/cosh πx con un rectángulo",
+      "text": "",
+      "key": "Si el semicírculo no sirve, usa la periodicidad: en y = 1 el integrando se repite multiplicado por −e^{ia}, y el rectángulo encierra un solo polo.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "dificil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, Example 6 de la sección 2.12 (sección 2.12, p. 94)",
+      "notes": "",
+      "hints": [
+        "¿Por qué no sirve un semicírculo grande?",
+        "Calcula cosh π(x + i): ¿qué relación tiene con cosh πx?",
+        "Dentro del rectángulo de altura 1 solo está z = i/2."
+      ],
+      "sol": [
+        "El integrando decae como e^{(−π+a)|x|}: converge para |a| < π. Un semicírculo no ayuda porque no decae a lo largo del eje imaginario.",
+        "Polos en z = (2k + 1)i/2; el rectángulo −R, R, R + i, −R + i (Fig. 2.25) solo contiene z = i/2, con Res = e^{az}/(cosh πz)′ = e^{ai/2}/(πi).",
+        "cosh π(x + i) = −cosh πx, por eso el lado superior da I′_R = +e^{ai} I_R.",
+        "Los lados verticales J₁, J₂ → 0 porque |cosh π(R + iy)| ~ e^{πR}/2 y |a| < π.",
+        "2πi·e^{ai/2}/(πi) = (1 + e^{ai}) I ⇒ I = 1/cos(a/2) = sec(a/2)."
+      ],
+      "ans": [
+        "I = sec(a/2)  (−π < a < π)"
+      ],
+      "img": "img/bk2-e19.png",
+      "num": "Ej. 2.19"
+    },
+    {
+      "id": "bk2-e20",
+      "title": "∫₀^∞ x^{α−1}/(1+x): contorno de ojo de cerradura",
+      "text": "",
+      "key": "Con un corte de rama sobre el semieje real, los dos bordes difieren en el factor e^{2πi(α−1)}: el contorno de cerradura convierte eso en una ecuación para I.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "dificil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, Example 7 de la sección 2.12 (sección 2.12, p. 96)",
+      "notes": "",
+      "hints": [
+        "Escoge la rama 0 ≤ Arg z < 2π.",
+        "Borde inferior del corte: z^{α−1} = |z|^{α−1} e^{2πi(α−1)}.",
+        "Comprueba que C_r y C_R se anulan para 0 < α < 1."
+      ],
+      "sol": [
+        "z^{α−1} = |z|^{α−1} e^{i(α−1)(θ + 2kπ)}. Se usa la rama 0 ≤ Arg z < 2π: en el borde superior del corte coincide con x^{α−1}.",
+        "Borde inferior: ∫_∞^0 |z|^{α−1}e^{2πi(α−1)}/(1+z) dz = −e^{2πi(α−1)} I.",
+        "Contorno de cerradura (Fig. 2.26): 2πi Res f(−1) = [1 − e^{2πi(α−1)}] I + ∫_{C_r} + ∫_{C_R}.",
+        "|∫_{C_R}| ~ 2πR·R^{α−2} → 0 y |∫_{C_r}| ~ 2πr^α → 0.",
+        "Res en z = −1: e^{i(α−1)π}. I = 2πi e^{i(α−1)π}/(1 − e^{2πi(α−1)}) = π/sin απ."
+      ],
+      "ans": [
+        "I = π/sin(απ)  (0 < α < 1)"
+      ],
+      "img": "img/bk2-e20.png",
+      "num": "Ej. 2.20"
+    },
+    {
+      "id": "bk2-p10",
+      "title": "i^i: todo pasa por Log",
+      "text": "",
+      "key": "Una potencia compleja se define con el logaritmo: a^b = e^{b Log a}, y la multivaluación del Log da infinitos valores.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 10 (p. 117)",
+      "notes": "",
+      "hints": [
+        "Escribe i^i = e^{i Log i}.",
+        "Log i = ln|i| + i(arg i + 2nπ)."
+      ],
+      "sol": [
+        "i^i = e^{i Log i}.",
+        "Log i = ln 1 + i(π/2 + 2nπ) = i(π/2 + 2nπ).",
+        "i·Log i = i²(π/2 + 2nπ) = −(π/2 + 2nπ).",
+        "i^i = e^{−(π/2 + 2nπ)}: todos los valores son reales; el principal es e^{−π/2} ≈ 0.208."
+      ],
+      "ans": [
+        "i^i = e^{−(π/2 + 2nπ)}, n entero",
+        "Valor principal: e^{−π/2} ≈ 0.208"
+      ],
+      "img": "img/bk2-p10.png",
+      "num": "10"
+    },
+    {
+      "id": "bk2-p14",
+      "title": "sin z = 1000",
+      "text": "",
+      "key": "Separa en parte real e imaginaria: sin(x+iy) = sin x cosh y + i cos x sinh y; luego resuelve el sistema real.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 14 (p. 117)",
+      "notes": "",
+      "hints": [
+        "sin(x + iy) = sin x cosh y + i cos x sinh y.",
+        "La parte imaginaria debe anularse: ¿cos x = 0 o sinh y = 0?",
+        "Si sinh y = 0, |sin x| ≤ 1 no alcanza 1000."
+      ],
+      "sol": [
+        "sin z = sin x cosh y + i cos x sinh y = 1000.",
+        "Imaginaria: cos x sinh y = 0. Con y = 0 quedaría sin x = 1000, imposible; así cos x = 0 ⇒ x = (n + ½)π.",
+        "Real: sin x cosh y = 1000. Como cosh y > 0, se necesita sin x = +1 ⇒ n par.",
+        "cosh y = 1000 ⇒ y = ±arccosh 1000 = ±ln(1000 + √999999) ≈ ±7.601."
+      ],
+      "ans": [
+        "z = (n + ½)π ± 7.601 i, n par"
+      ],
+      "img": "img/bk2-p14.png",
+      "num": "14"
+    },
+    {
+      "id": "bk2-p19",
+      "title": "¿u y v forman una función analítica?",
+      "text": "",
+      "key": "Antes de derivar, intenta reconocer f = u + iv como función de z; si sale una expresión en z sola, Cauchy–Riemann se cumplen solos.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 19 (p. 118)",
+      "notes": "",
+      "hints": [
+        "Fíjate en el denominador común (1 + x)² + y² = |1 + z|².",
+        "Prueba f = z/(1 + z) multiplicando por el conjugado."
+      ],
+      "sol": [
+        "Denominador común: (1 + x)² + y² = |1 + z|².",
+        "z/(1 + z) = z(1 + z̄)/|1 + z|² = (z + |z|²)/|1 + z|² = [x + x² + y² + iy]/|1 + z|².",
+        "Coincide con u + iv. f(z) = z/(1 + z) es analítica salvo en z = −1.",
+        "Por tanto u y v cumplen Cauchy–Riemann en todo punto z ≠ −1 (puede comprobarse derivando)."
+      ],
+      "ans": [
+        "Sí cumplen Cauchy–Riemann (salvo en z = −1)",
+        "f(z) = u + iv = z/(1 + z)"
+      ],
+      "img": "img/bk2-p19.png",
+      "num": "19"
+    },
+    {
+      "id": "bk2-p24",
+      "title": "Ocho integrales en |z| = 2: ¿qué teorema toca?",
+      "text": "",
+      "key": "Flujo: ubicar singularidades → ver cuáles están dentro de |z| = 2 → elegir Cauchy (0), fórmula integral o fórmula de la derivada.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 24 (p. 118)",
+      "notes": "",
+      "hints": [
+        "Para cada integrando, ¿dónde está la singularidad y está dentro de |z| = 2?",
+        "Una singularidad evitable no aporta nada.",
+        "Para h): el residuo es el coeficiente de z^{n−1} en la serie de sin z."
+      ],
+      "sol": [
+        "a) cos z/z: fórmula integral con f = cos z en 0 ⇒ 2πi.",
+        "b) sin z/z: singularidad evitable en 0 ⇒ 0.",
+        "c) e^z/(z − 1): z = 1 adentro ⇒ 2πi e.",
+        "d) z₀ = 1 − i (|z₀| = √2 < 2): 2πi(2z₀² + 3z₀ − 1) = 2πi(2 − 7i) = 14π + 4πi.",
+        "e) 2z/(z² − 9): polos ±3 fuera del círculo ⇒ 0.",
+        "f) sin z/z²: Res = (sin)′(0) = 1 ⇒ 2πi.",
+        "g) e^z/(z − 1)²: fórmula de la derivada ⇒ 2πi e.",
+        "h) sin z/zⁿ: Res = coeficiente de z^{n−1} en sin z. Si n es par: 2πi(−1)^{n/2−1}/(n−1)!; si n es impar o n ≤ 0: 0."
+      ],
+      "ans": [
+        "a) 2πi  b) 0  c) 2πie  d) 14π + 4πi",
+        "e) 0  f) 2πi  g) 2πie",
+        "h) n par: 2πi(−1)^{n/2−1}/(n−1)!; n impar: 0"
+      ],
+      "img": "img/bk2-p24.png",
+      "num": "24"
+    },
+    {
+      "id": "bk2-p25",
+      "title": "e^z/(z²−1) con cuatro contornos",
+      "text": "",
+      "key": "El valor solo depende de qué polos encierra el contorno: el trabajo real es geometría (¿±1 dentro o fuera?).",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 25 (p. 118)",
+      "notes": "",
+      "hints": [
+        "Polos simples en z = 1 (Res e/2) y z = −1 (Res −1/(2e)).",
+        "d) En polares r⁴(cos⁴θ + sin⁴θ) = ½: ¿cuánto vale r sobre el eje real?"
+      ],
+      "sol": [
+        "Res en z = 1: e/2; en z = −1: e^{−1}/(−2).",
+        "a) |z − 1| = 1 encierra solo z = 1 ⇒ 2πi·e/2 = πie.",
+        "b) |z − i| = 1: ±1 están a distancia √2 > 1 de i ⇒ 0.",
+        "c) La elipse x²/4 + y²/9 = 1 encierra ±1 ⇒ 2πi(e/2 − 1/(2e)) = 2πi sinh 1.",
+        "d) r⁴ = ½/(cos⁴θ + sin⁴θ). En θ = 0, π: r = 2^{−1/4} ≈ 0.84 < 1. El máximo r = 1 ocurre en θ = π/4 (mín. de cos⁴ + sin⁴ = ½), lejos del eje real ⇒ ±1 fuera ⇒ 0."
+      ],
+      "ans": [
+        "a) πie  b) 0",
+        "c) 2πi sinh 1 = πi(e − 1/e)  d) 0"
+      ],
+      "img": "img/bk2-p25.png",
+      "num": "25"
+    },
+    {
+      "id": "bk2-p31",
+      "title": "Radio de convergencia de arctan z en z = 1",
+      "text": "",
+      "key": "El radio de una serie de Taylor es la distancia del centro a la singularidad más cercana; no hace falta calcular la serie.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 31 (p. 119)",
+      "notes": "",
+      "hints": [
+        "¿Dónde deja de ser analítica arctan z? Piensa en su derivada 1/(1 + z²).",
+        "Distancia de 1 a ±i."
+      ],
+      "sol": [
+        "arctan z es analítica en z = 1 (su derivada 1/(1 + z²) lo es), así que tiene serie de Taylor ahí.",
+        "Sus singularidades (puntos de rama) están en z = ±i, donde 1 + z² = 0.",
+        "R = |1 − i| = |1 + i| = √2."
+      ],
+      "ans": [
+        "R = √2 (distancia de 1 a ±i)"
+      ],
+      "img": "img/bk2-p31.png",
+      "num": "31"
+    },
+    {
+      "id": "bk2-p33",
+      "title": "Todas las series de Laurent (a, b, c)",
+      "text": "",
+      "key": "Cada singularidad dibuja una frontera: tantos desarrollos como anillos alrededor del centro; en cada uno, geometría con la variable pequeña.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 33 (p. 119)",
+      "notes": "",
+      "hints": [
+        "a) Con w = z − 1, z(z − 2) = w² − 1.",
+        "c) Fracciones parciales: z/(z² − 1) = ½[1/(z − 1) + 1/(z + 1)]; con w = z − 2 los polos están a distancia 1 y 3.",
+        "Se trabajan a), b) y c); d)–f) son de ramas."
+      ],
+      "sol": [
+        "a) w = z − 1: f = 1/(w² − 1). |w| < 1: f = −Σ w^{2n}. |w| > 1: f = Σ_{n≥1} w^{−2n}.",
+        "b) |z| < 1: (1 + z)^{−3} = Σ (−1)ⁿ (n+1)(n+2)/2 · zⁿ. |z| > 1: Σ (−1)ⁿ (n+1)(n+2)/2 · z^{−n−3}.",
+        "c) w = z − 2: f = ½[1/(w + 1) + 1/(w + 3)]; tres regiones: |w| < 1, 1 < |w| < 3, |w| > 3.",
+        "|w| < 1: ½Σ (−1)ⁿ (1 + 3^{−n−1}) wⁿ.",
+        "1 < |w| < 3: ½[Σ (−1)ⁿ w^{−n−1} + Σ (−1)ⁿ wⁿ/3^{n+1}].",
+        "|w| > 3: ½Σ (−1)ⁿ (1 + 3ⁿ) w^{−n−1}."
+      ],
+      "ans": [
+        "a) −Σ(z−1)^{2n} (|z−1|<1); Σ_{n≥1}(z−1)^{−2n} (|z−1|>1)",
+        "b) Σ(−1)ⁿ C(n+2,2) zⁿ (|z|<1); Σ(−1)ⁿ C(n+2,2) z^{−n−3} (|z|>1)",
+        "c) tres desarrollos en w = z−2: |w|<1, 1<|w|<3, |w|>3"
+      ],
+      "img": "img/bk2-p33.png",
+      "num": "33"
+    },
+    {
+      "id": "bk2-p34",
+      "title": "Clasificar singularidades y calcular residuos",
+      "text": "",
+      "key": "Para cada f: ubica ceros del denominador, mira su orden contra el numerador y elige el atajo de residuo adecuado.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 34 (p. 120)",
+      "notes": "",
+      "hints": [
+        "Polo simple de g/h: Res = g(a)/h′(a).",
+        "c) y g): expande en serie alrededor de 0 antes de decidir el orden.",
+        "Se trabajan a)–e) y g)."
+      ],
+      "sol": [
+        "a) (z+1)/[z(z−2)]: polos simples. Res(0) = −1/2, Res(2) = 3/2.",
+        "b) Polo doble en −1: Res = d/dz[(z²−2z)/(z²+4)]_{−1} = −14/25. Polos simples ±2i: Res = (7 ± i)/25. (Suma 0, coherente con f ~ 1/z² en ∞.)",
+        "c) 1 − e^{2z} = −2z − 2z² − (4/3)z³ − …: polo de orden 3 en 0, Res = −4/3.",
+        "d) z/cos z: polos simples en z = (n + ½)π, Res = z/(−sin z) = (−1)^{n+1}(n + ½)π.",
+        "e) tanh z: polos simples en z = i(n + ½)π, Res = sinh z/sinh z = 1.",
+        "g) La serie da 3/z² − 3/z² + 0 + z²/15 + …: singularidad evitable en 0, Res = 0."
+      ],
+      "ans": [
+        "a) Res(0) = −1/2, Res(2) = 3/2",
+        "b) Res(−1) = −14/25 (doble), Res(±2i) = (7 ± i)/25",
+        "c) polo orden 3, Res = −4/3  d) Res = (−1)^{n+1}(n+½)π",
+        "e) Res = 1 en i(n+½)π  g) evitable, Res = 0"
+      ],
+      "img": "img/bk2-p34.png",
+      "num": "34"
+    },
+    {
+      "id": "bk2-p36",
+      "title": "Teorema del residuo: cuatro contornos",
+      "text": "",
+      "key": "Encuentra polos, decide cuáles encierra C, suma residuos. En d) la clave es ubicar la curva x⁴ + y⁴ = 4 (ver 25 d).",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 36 (p. 120)",
+      "notes": "",
+      "hints": [
+        "a) Solo z = 2i está dentro de |z − 2i| = 1.",
+        "c) z e^{1/z} = z + 1 + 1/(2z) + …",
+        "d) Raíces de z² + iz + 2: z = i y z = −2i. Sobre el eje imaginario la curva pasa por r = √2."
+      ],
+      "sol": [
+        "a) Res en 2i: 1/(4i) ⇒ 2πi/(4i) = π/2.",
+        "b) Polos 0, ±i dentro de |z| = 2. Res(0) = 1; Res(±i) = cosh(±πi)/(2i·(±i)) = 1/2 cada uno. Suma 2 ⇒ 4πi.",
+        "c) Coeficiente de 1/z en z e^{1/z}: 1/2 ⇒ πi.",
+        "d) z² + iz + 2 = (z − i)(z + 2i). La curva corta los ejes en r = √2 ≈ 1.41: z = i adentro, z = −2i afuera. Res(i) = (i − 1)/(3i) = (1 + i)/3 ⇒ 2πi(1 + i)/3 = (2π/3)(i − 1)."
+      ],
+      "ans": [
+        "a) π/2  b) 4πi",
+        "c) πi  d) (2π/3)(−1 + i)"
+      ],
+      "img": "img/bk2-p36.png",
+      "num": "36"
+    },
+    {
+      "id": "bk2-p37",
+      "title": "Integrales angulares con z = e^{iθ}",
+      "text": "",
+      "key": "Mismo flujo siempre: z = e^{iθ}, polinomio en z, polos dentro del círculo unidad. Para d), deriva respecto de a un resultado ya conocido.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 37 (p. 120)",
+      "notes": "",
+      "hints": [
+        "a) Polo dentro: z₊ = (−1 + √(1−ε²))/ε.",
+        "b) Escribe cos 3θ = Re z³ y factoriza 2z² − 5z + 2 = (2z − 1)(z − 2).",
+        "d) ∂/∂a de ∫dθ/(a + b sin θ) = 2π/√(a² − b²)."
+      ],
+      "sol": [
+        "a) dθ = dz/(iz): I = ∮ 2dz/[i(εz² + 2z + ε)]. Polo interior z₊; Res = 2/(iε(z₊ − z₋)) = 1/(i√(1−ε²)) ⇒ 2π/√(1 − ε²).",
+        "b) I = Re ∮ z³ dz/[−i(2z − 1)(z − 2)]. Polo interior z = ½: Res = (1/8)/(3i) ⇒ 2πi/(24i) = π/12.",
+        "c) 1 + sin²θ = (3 − cos 2θ)/2; con φ = 2θ queda ∫₀^{2π} dφ/(3 − cos φ) = 2π/√8 = π/√2.",
+        "d) ∫dθ/(a + b sin θ) = 2π(a² − b²)^{−1/2}; derivando en a: ∫dθ/(a + b sin θ)² = 2πa/(a² − b²)^{3/2}.",
+        "e) cosⁿθ = 2^{−n}(z + 1/z)ⁿ; el residuo toma el término central C(n, n/2): 2π·C(n, n/2)/2ⁿ = n!π/[2^{n−1}((n/2)!)²]."
+      ],
+      "ans": [
+        "a) 2π/√(1−ε²)  b) π/12  c) π/√2",
+        "d) 2πa/(a²−b²)^{3/2}  e) n!π/[2^{n−1}((n/2)!)²]"
+      ],
+      "img": "img/bk2-p37.png",
+      "num": "37"
+    },
+    {
+      "id": "bk2-p38",
+      "title": "Integrales reales con la técnica de la sección 2.12",
+      "text": "",
+      "key": "Racional → semicírculo y residuos del semiplano superior; con cos kx o sin x → e^{ikz} (lema de Jordan); polo doble cuando a = b.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "dificil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 38 (p. 121)",
+      "notes": "",
+      "hints": [
+        "a) Polos superiores: a e^{iπ/4} y a e^{3iπ/4}.",
+        "b) Sustituye u = x³.",
+        "d) y e): usa e^{ikz} y toma parte real o imaginaria.",
+        "f) con a = b el polo ia es doble."
+      ],
+      "sol": [
+        "a) Res = 1/(4z³) en z = a e^{iπ/4}, a e^{3iπ/4}; 2πi·Σ = π/(a³√2).",
+        "b) u = x³: ∫₀^∞ x²dx/(x⁶+1) = ⅓∫₀^∞ du/(u²+1) = π/6.",
+        "c) Polo triple en i: Res = (1/2!)·d²/dz²(z + i)^{−3} |_{z=i} = 6/(2i)⁵ = 3/(16i) ⇒ 3π/8.",
+        "d) 2πi·Res de e^{ikz}/[(z−a)² + b²] en a + ib = 2πi e^{ika−kb}/(2ib); parte real: (π/b)e^{−kb} cos ka.",
+        "e) Im ∫ x e^{ix}/(x² + 1) = Im[2πi·i e^{−1}/(2i)] = π/e; la mitad para (0, ∞): π/(2e).",
+        "f) Polos ia, ib: suma de residuos de e^{iz}/[(z²+a²)(z²+b²)] da (π/(a² − b²))(e^{−b}/b − e^{−a}/a). Teoremas: residuos, estimación del arco y lema de Jordan.",
+        "Si a = b: Res doble ⇒ ∫ cos x/(x²+a²)² dx = π(1 + a)e^{−a}/(2a³)."
+      ],
+      "ans": [
+        "a) π/(a³√2)  b) π/6  c) 3π/8",
+        "d) (π/b)e^{−kb} cos ka  e) π/(2e)",
+        "f) (π/(a²−b²))(e^{−b}/b − e^{−a}/a); si a = b: π(1+a)e^{−a}/(2a³)"
+      ],
+      "img": "img/bk2-p38.png",
+      "num": "38"
+    },
+    {
+      "id": "bk2-p40",
+      "title": "Hallar f(z) a partir de su parte real",
+      "text": "",
+      "key": "Si u tiene forma reconocible, adivina f y verifica; si no, usa Cauchy–Riemann (v_y = u_x, v_x = −u_y) o el método de Milne (y = 0).",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 40 (p. 121)",
+      "notes": "",
+      "hints": [
+        "Compara con tan(x + iy): multiplica numerador y denominador por cos(x − iy).",
+        "Método directo: con y = 0, u = tan x ⇒ f(z) = tan z."
+      ],
+      "sol": [
+        "tan z = sin z cos z̄ /|cos z|². Con sin(2x) y sinh(2y): tan z = [sin 2x + i sinh 2y]/(cos 2x + cosh 2y).",
+        "La parte real coincide con u(x, y): u es armónica y es Re tan z.",
+        "v(x, y) = sinh 2y/(cosh 2y + cos 2x).",
+        "f(z) = tan z (analítica salvo en z = (n + ½)π)."
+      ],
+      "ans": [
+        "v = sinh 2y/(cosh 2y + cos 2x)",
+        "f(z) = tan z"
+      ],
+      "img": "img/bk2-p40.png",
+      "num": "40"
+    },
+    {
+      "id": "bk2-p18",
+      "title": "Circuito RLC con fasores",
+      "text": "",
+      "key": "Método de exponenciales complejas: v = Re(V₀e^{iωt}), prueba i = Re(Ie^{iωt}); la ecuación diferencial se vuelve algebraica.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "clave",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 18 (p. 117)",
+      "notes": "",
+      "hints": [
+        "Sustituye i(t) = I e^{iωt} y v(t) = V₀ e^{iωt} en la ecuación.",
+        "d/dt → iω, d²/dt² → −ω²."
+      ],
+      "sol": [
+        "L i″ + R i′ + i/C = v′. Con i = Ie^{iωt}, v = V₀e^{iωt}: (−ω²L + iωR + 1/C) I = iωV₀.",
+        "I = V₀/[R + i(ωL − 1/(ωC))] (impedancia Z = R + iX, X = ωL − 1/(ωC)).",
+        "Parte real: i(t) = I₀ cos(ωt + φ), I₀ = |I| = V₀/√(R² + (ωL − 1/(ωC))²).",
+        "φ = −arg Z: tan φ = (1/(ωC) − ωL)/R."
+      ],
+      "ans": [
+        "I₀ = V₀/√(R² + (ωL − 1/ωC)²)",
+        "tan φ = (1/(ωC) − ωL)/R"
+      ],
+      "img": "img/bk2-p18.png",
+      "num": "18"
+    },
+    {
+      "id": "bk2-p16",
+      "title": "Σ cos nx y Σ sin nx con Euler",
+      "text": "",
+      "key": "Suma la geométrica compleja Σe^{inx} y saca el factor de fase e^{iNx/2}: la parte real e imaginaria dan las dos sumas (es la red de difracción).",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 16 (p. 117)",
+      "notes": "",
+      "hints": [
+        "Σ_{0}^{N} e^{inx} = (e^{i(N+1)x} − 1)/(e^{ix} − 1).",
+        "Factoriza e^{i(N+1)x/2} arriba y e^{ix/2} abajo."
+      ],
+      "sol": [
+        "S = Σ_{n=0}^{N} e^{inx} = (e^{i(N+1)x} − 1)/(e^{ix} − 1).",
+        "= e^{iNx/2} · sin[(N+1)x/2]/sin(x/2).",
+        "Re S: Σ cos nx = sin[(N+1)x/2] cos(Nx/2)/sin(x/2).",
+        "Im S: Σ sin nx = sin[(N+1)x/2] sin(Nx/2)/sin(x/2)."
+      ],
+      "ans": [
+        "Σ_{0}^{N} sin nx = sin[(N+1)x/2]·sin(Nx/2)/sin(x/2)"
+      ],
+      "img": "img/bk2-p16.png",
+      "num": "16"
+    },
+    {
+      "id": "bk2-p17",
+      "title": "Σ aⁿ cos nx y Σ aⁿ sin nx",
+      "text": "",
+      "key": "Serie geométrica de razón a e^{ix}: converge si |a| < 1; luego parte real e imaginaria.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 17 (p. 117)",
+      "notes": "",
+      "hints": [
+        "Σ (ae^{ix})ⁿ = 1/(1 − ae^{ix}).",
+        "Multiplica por el conjugado 1 − ae^{−ix}."
+      ],
+      "sol": [
+        "Σ_{0}^{∞} (ae^{ix})ⁿ = 1/(1 − ae^{ix}), válida si |ae^{ix}| = |a| < 1.",
+        "1/(1 − ae^{ix}) = (1 − a cos x + i a sin x)/(1 − 2a cos x + a²).",
+        "Σ aⁿ cos nx = (1 − a cos x)/(1 − 2a cos x + a²);  Σ aⁿ sin nx = a sin x/(1 − 2a cos x + a²)."
+      ],
+      "ans": [
+        "Σ aⁿ cos nx = (1 − a cos x)/(1 − 2a cos x + a²)",
+        "Σ aⁿ sin nx = a sin x/(1 − 2a cos x + a²)",
+        "Válido para |a| < 1"
+      ],
+      "img": "img/bk2-p17.png",
+      "num": "17"
+    },
+    {
+      "id": "bk2-p9",
+      "title": "Raíces: ∛(i − 1) y (−1 − i)^{4/5}",
+      "text": "",
+      "key": "Forma polar primero; n raíces separadas 2π/n. Para potencias racionales, eleva al numerador y saca la raíz del denominador.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 9 (p. 117)",
+      "notes": "",
+      "hints": [
+        "i − 1 = √2 e^{i3π/4}.",
+        "(−1 − i)⁴ = −4: luego busca las raíces quintas de −4."
+      ],
+      "sol": [
+        "a) i − 1 = √2 e^{i3π/4} ⇒ z = 2^{1/6} e^{i(π/4 + 2kπ/3)}, k = 0, 1, 2: ángulos π/4, 11π/12, 19π/12.",
+        "b) −1 − i = √2 e^{i5π/4} ⇒ (−1 − i)⁴ = 4e^{i5π} = −4.",
+        "Raíces quintas de −4: z = 2^{2/5}[cos((2k+1)π/5) + i sin((2k+1)π/5)], k = 0,…,4."
+      ],
+      "ans": [
+        "a) 2^{1/6}[cos θ + i sin θ], θ = π/4, 11π/12, 19π/12",
+        "b) 2^{2/5}[cos θ + i sin θ], θ = (2k+1)π/5, k = 0…4"
+      ],
+      "img": "img/bk2-p9.png",
+      "num": "9"
+    },
+    {
+      "id": "bk2-p8",
+      "title": "De Moivre: sin 4θ y cos 4θ",
+      "text": "",
+      "key": "(cos θ + i sin θ)⁴ = cos 4θ + i sin 4θ: expande con el binomio y separa partes.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 8 (p. 117)",
+      "notes": "",
+      "hints": [
+        "Usa el binomio con c = cos θ, s = sin θ."
+      ],
+      "sol": [
+        "(c + is)⁴ = c⁴ + 4ic³s − 6c²s² − 4ics³ + s⁴.",
+        "Imaginaria: sin 4θ = 4c³s − 4cs³.",
+        "Real: cos 4θ = c⁴ − 6c²s² + s⁴."
+      ],
+      "ans": [
+        "cos 4θ = cos⁴θ − 6cos²θ sin²θ + sin⁴θ"
+      ],
+      "img": "img/bk2-p8.png",
+      "num": "8"
+    },
+    {
+      "id": "bk2-p12",
+      "title": "Ceros de sin z y de sinh z",
+      "text": "",
+      "key": "|sin z|² = sin²x + sinh²y: suma de cuadrados, se anula solo si ambos son cero.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 12 (p. 117)",
+      "notes": "",
+      "hints": [
+        "sin(x + iy) = sin x cosh y + i cos x sinh y.",
+        "sinh z = −i sin(iz)."
+      ],
+      "sol": [
+        "|sin z|² = sin²x cosh²y + cos²x sinh²y = sin²x + sinh²y.",
+        "Se anula solo si sinh y = 0 (y = 0) y sin x = 0: z = nπ, en el eje real.",
+        "sinh z = −i sin(iz) = 0 ⇔ iz = nπ ⇔ z = inπ (eje imaginario)."
+      ],
+      "ans": [
+        "sin z = 0 solo en z = nπ",
+        "sinh z = 0 en z = inπ"
+      ],
+      "img": "img/bk2-p12.png",
+      "num": "12"
+    },
+    {
+      "id": "bk2-p20",
+      "title": "Cauchy–Riemann en una recta no basta",
+      "text": "",
+      "key": "Analítica en un punto exige derivada en todo un entorno: que Cauchy–Riemann valgan solo sobre una recta no alcanza.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 20 (p. 118)",
+      "notes": "",
+      "hints": [
+        "Calcula u_x, u_y, v_x, v_y y evalúa en y = 0.",
+        "¿Se cumplen también en puntos cercanos con y ≠ 0?"
+      ],
+      "sol": [
+        "u = 3y² − x³, v = 6xy² − 3yx². u_x = −3x², u_y = 6y, v_x = 6y² − 6xy, v_y = 12xy − 3x².",
+        "a) En y = 0: u_x = v_y = −3x² y u_y = −v_x = 0: sí se cumplen en todo el eje real.",
+        "b) Las derivadas son polinomios: continuas en todas partes.",
+        "c) Fuera del eje, u_x = v_y exige xy = 0: no se cumplen en ningún entorno de un punto del eje ⇒ f no es analítica en ningún punto del eje real."
+      ],
+      "ans": [
+        "a) Sí  b) Sí",
+        "c) No: CR solo valen sobre la recta, no en un entorno"
+      ],
+      "img": "img/bk2-p20.png",
+      "num": "20"
+    },
+    {
+      "id": "bk2-p21",
+      "title": "x² + iy: la integral depende del camino",
+      "text": "",
+      "key": "Si f no es analítica, ∫f dz depende del camino. Separa ∫(x² + iy)(dx + i dy) en una parte exacta y otra que no lo es.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 21 (p. 118)",
+      "notes": "",
+      "hints": [
+        "Cauchy–Riemann: u_x = 2x, v_y = 1.",
+        "∫(x²+iy)(dx+idy) = ∫x²dx − ∫y dy + i(∫y dx + ∫x² dy)."
+      ],
+      "sol": [
+        "u_x = 2x ≠ v_y = 1 salvo en la recta x = ½, y u_y = 0 = −v_x: CR no valen en ningún abierto ⇒ no analítica en ningún z.",
+        "Parte independiente del camino: ∫x²dx − ∫y dy = 8/3 − 1/2 = 13/6. Parte dependiente: i(∫y dx + ∫x² dy).",
+        "Recta x = 2t, y = t: ∫y dx + ∫x²dy = 1 + 4/3 = 7/3.",
+        "Parábola x = 2t, y = t²: 2/3 + 2 = 8/3.",
+        "Curva x = 2t², y = t: 4/3 + 4/5 = 32/15."
+      ],
+      "ans": [
+        "Recta: 13/6 + 7i/3",
+        "Parábola y = x²/4: 13/6 + 8i/3",
+        "x = 2y²: 13/6 + 32i/15"
+      ],
+      "img": "img/bk2-p21.png",
+      "num": "21"
+    },
+    {
+      "id": "bk2-p22",
+      "title": "∫₀^i dz/(1 − z²): ¿independiente del camino?",
+      "text": "",
+      "key": "Independiente del camino solo entre caminos que no se separan por las singularidades ±1; lo más cómodo: primitiva ½Log[(1+z)/(1−z)] o el camino recto.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 22 (p. 118)",
+      "notes": "",
+      "hints": [
+        "¿Dónde no es analítico el integrando?",
+        "Parametriza z = iy, 0 ≤ y ≤ 1."
+      ],
+      "sol": [
+        "1/(1 − z²) es analítica salvo en z = ±1: la integral es la misma para todos los caminos de 0 a i que puedan deformarse uno en otro sin cruzar ±1.",
+        "Camino recto z = iy: I = ∫₀¹ i dy/(1 + y²) = iπ/4.",
+        "Equivalente: I = ½Log[(1 + z)/(1 − z)] |₀^i = ½ Log i = iπ/4 (rama continua a lo largo del camino).",
+        "Un camino que rodee z = 1 (Res = −½) o z = −1 (Res = ½) suma ±πi por vuelta."
+      ],
+      "ans": [
+        "I = iπ/4 para caminos que no rodean ±1",
+        "Cada vuelta alrededor de ±1 cambia I en ±πi"
+      ],
+      "img": "img/bk2-p22.png",
+      "num": "22"
+    },
+    {
+      "id": "bk2-p23",
+      "title": "∫ dz/z^{1/2} por arriba y por abajo",
+      "text": "",
+      "key": "Con la rama principal, z^{1/2} = e^{iθ/2} con −π < θ ≤ π: parametriza z = e^{iθ} y la diferencia entre caminos refleja el corte.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 23 (p. 118)",
+      "notes": "",
+      "hints": [
+        "z = e^{iθ}, dz = ie^{iθ}dθ, z^{−1/2} = e^{−iθ/2}.",
+        "Arriba θ va de π a 0; abajo, de −π a 0."
+      ],
+      "sol": [
+        "Integrando: z^{−1/2}dz = i e^{iθ/2} dθ; primitiva 2e^{iθ/2}.",
+        "a) Arriba (θ: π → 0): 2(1 − e^{iπ/2}) = 2(1 − i) = 2 − 2i.",
+        "b) Abajo (θ: −π → 0): 2(1 − e^{−iπ/2}) = 2(1 + i) = 2 + 2i.",
+        "Los resultados difieren porque z^{1/2} tiene un corte en el semieje real negativo (en −1 cada camino ve un valor distinto de la raíz)."
+      ],
+      "ans": [
+        "a) 2 − 2i",
+        "b) 2 + 2i"
+      ],
+      "img": "img/bk2-p23.png",
+      "num": "23"
+    },
+    {
+      "id": "bk2-p35",
+      "title": "sin[1/(1 − z)]: singularidad esencial",
+      "text": "",
+      "key": "Sustituye w = 1/(1 − z) en la serie de sin w: infinitas potencias negativas de (z − 1).",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "facil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 35 (p. 120)",
+      "notes": "",
+      "hints": [
+        "sin w = w − w³/3! + w⁵/5! − …"
+      ],
+      "sol": [
+        "Con w = 1/(1 − z): sin w = Σ (−1)ⁿ/(2n+1)! · (1 − z)^{−(2n+1)}, válida para todo z ≠ 1.",
+        "Es su serie de Laurent en z = 1, con infinitos términos de potencias negativas: singularidad esencial."
+      ],
+      "ans": [
+        "Laurent: Σ(−1)ⁿ (1−z)^{−(2n+1)}/(2n+1)!",
+        "Infinitas potencias negativas ⇒ esencial"
+      ],
+      "img": "img/bk2-p35.png",
+      "num": "35"
+    },
+    {
+      "id": "bk2-p39",
+      "title": "∫ e^{ax}/(1 + e^x) con un rectángulo de altura 2π",
+      "text": "",
+      "key": "Igual que el ejemplo 6: la periodicidad 2πi de e^z hace que el lado superior repita la integral con el factor e^{2πia}.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "dificil",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 39 (p. 121)",
+      "notes": "La convergencia exige 0 < a < 1 (con a < 0 el integrando crece hacia −∞). Se trabaja el inciso b).",
+      "hints": [
+        "El rectángulo y = 0, y = 2π encierra solo el polo z = iπ.",
+        "Res = e^{aiπ}/e^{iπ} = −e^{iπa}."
+      ],
+      "sol": [
+        "e^{a(x+2πi)} = e^{2πia}e^{ax} y 1 + e^{x+2πi} = 1 + e^x: el lado superior da −e^{2πia} I.",
+        "Lados verticales → 0 para 0 < a < 1.",
+        "(1 − e^{2πia}) I = 2πi(−e^{iπa}).",
+        "I = 2πi/(e^{iπa} − e^{−iπa}) = π/sin(πa)."
+      ],
+      "ans": [
+        "b) π/sin(aπ)"
+      ],
+      "img": "img/bk2-p39.png",
+      "num": "39"
+    },
+    {
+      "id": "bk2-p42",
+      "title": "w = z² convierte un círculo en una cardioide",
+      "text": "",
+      "key": "Escribe el círculo en polares (r = 2cos θ), aplica w = r²e^{2iθ} y lee ρ(φ). La conformidad falla donde w′ = 0.",
+      "topics": [
+        "vcom"
+      ],
+      "prio": "fundamental",
+      "dif": "intermedio",
+      "pillar": false,
+      "state": 0,
+      "source": "Butkov, Mathematical Physics, cap. 2, problema 42 (p. 122)",
+      "notes": "Con este círculo sale 2(1 + cos φ); el libro da 2(1 − cos φ).",
+      "hints": [
+        "(x − 1)² + y² = 1 ⇔ r = 2cos θ.",
+        "ρ = r², φ = 2θ."
+      ],
+      "sol": [
+        "En polares: r = 2cos θ, −π/2 ≤ θ ≤ π/2.",
+        "w = z² ⇒ ρ = r² = 4cos²θ = 2(1 + cos 2θ) = 2(1 + cos φ): una cardioide.",
+        "El libro escribe ρ = 2(1 − cos φ): es la misma cardioide girada en π (corresponde al círculo centrado en −1).",
+        "w′ = 2z se anula en z = 0, que está sobre el círculo: ahí los ángulos se duplican y aparece la cúspide en w = 0."
+      ],
+      "ans": [
+        "ρ = 2(1 + cos φ) (el libro: 2(1 − cos φ), misma curva girada)",
+        "Falla en z = 0 (w′ = 0): cúspide en w = 0"
+      ],
+      "img": "img/bk2-p42.png",
+      "num": "42"
     }
   ]
 }

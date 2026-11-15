@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Célula provisional de «Variable compleja»: se reemplaza cuando llegue la imagen de Andreé -->
+  <defs>
+    <radialGradient id="g" cx="50%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#E5A4FF" stop-opacity=".55"/>
+      <stop offset=".55" stop-color="#9228E8" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#100817" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="92" fill="url(#g)"/>
+  <circle cx="100" cy="100" r="70" fill="none" stroke="#8CDE46" stroke-opacity=".75" stroke-width="2.5" stroke-dasharray="7 9" stroke-linecap="round"/>
+  <circle cx="100" cy="100" r="54" fill="none" stroke="#C44AFF" stroke-opacity=".5" stroke-width="1.5"/>
+  <text x="100" y="122" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="64" font-style="italic" fill="#F2E6FF" fill-opacity=".9">∮</text>
+</svg>

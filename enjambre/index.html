@@ -835,8 +835,8 @@ body.con-maqueta #swarm,html:has(body.con-maqueta),body.con-maqueta{background:#
 @keyframes mqHilosDeriva{0%{transform:translate3d(-.8%,.4%,0) rotate(-.3deg)}100%{transform:translate3d(.8%,-.6%,0) rotate(.3deg)}}
 #maqueta .mq-hilo{position:absolute;max-width:none;height:auto;opacity:.32;filter:saturate(.45) brightness(1.55) blur(1.6px);transform:rotate(var(--a)) scaleY(var(--fl));animation:mqHilo var(--t,10s) ease-in-out var(--d,0s) infinite alternate}
 @keyframes mqHilo{0%{transform:rotate(calc(var(--a) - 2.5deg)) scaleY(var(--fl)) translateY(-3px)}100%{transform:rotate(calc(var(--a) + 2.5deg)) scaleY(var(--fl)) translateY(3px)}}
-#maqueta .mq-zocalo{position:absolute;z-index:6;height:auto;max-width:none;pointer-events:none;user-select:none;top:43.1vw;filter:drop-shadow(0 calc(-6px*var(--s)) calc(10px*var(--s)) rgba(40,8,50,.35))}
-body.con-maqueta:has(#v-hive.on) #maqueta .mq-zocalo{top:min(43.1vw,calc(100vh - 6.95vw + .5vw))}
+#maqueta .mq-zocalo{position:absolute;left:0;width:100%;height:auto;max-width:none;pointer-events:none;user-select:none;top:38.28vw;filter:drop-shadow(0 calc(-6px*var(--s)) calc(10px*var(--s)) rgba(40,8,50,.35))}
+body.con-maqueta:has(#v-hive.on) #maqueta .mq-zocalo{top:min(38.28vw,calc(100vh - 11.73vw + 1vw))}
 @media (prefers-reduced-motion:reduce){#maqueta .mq-hilos-medio,#maqueta .mq-hilo{animation:none}}
 </style>
 <script type="importmap">{"imports":{"three":"../taller/lib/three/three.module.min.js","three/addons/":"../taller/lib/three/addons/"}}</script>
@@ -1595,8 +1595,6 @@ function maquetaDraw(){
         <img class="mq-rel-aguja" src="maqueta2/reloj4-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
       </div>
       <div class="mq-adnt" aria-hidden="true">Progreso<b>${done} / ${xs.length}</b></div></div>`;
-  // suelo en primera línea entre el personaje y el reloj: las garras del marco de Andreé, en espejo
-  h+=`<img class="mq-zocalo" src="maqueta2/suelo-garras.webp" alt="" draggable="false" style="left:${X(640)};width:${X(860)}">`;
   h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;
   st.innerHTML=h;
   st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab); renderAll();});
@@ -1630,6 +1628,8 @@ function mqKit(){ const X=v=>(100*v/MQ.W).toFixed(3)+'%', Y=v=>(100*v/MQ.H).toFi
   MQH.forEach(([k,x,y,w,a,fl],j)=>{ const [kw,kh]=MQK['C'+String(k).padStart(2,'0')], hh=w*kh/kw;
     h+=`<img class="mq-hilo" src="maqueta2/kit/C${String(k).padStart(2,'0')}.webp" alt="" draggable="false" style="left:${X(x-w/2)};top:${Y(y-hh/2)};width:${X(w)};--a:${a}deg;--fl:${fl};--d:${(-(j*1.7)%11).toFixed(1)}s;--t:${(9+(j*37%7)).toFixed(0)}s">`; });
   h+='</div>';
+  // suelo continuo de garras superpuestas (garras del marco de Andreé), detrás del personaje, las células y el reloj
+  h+='<img class="mq-zocalo" src="maqueta2/suelo-garras.webp" alt="" draggable="false">';
   h+='<div class="mq-conex mq-kit" aria-hidden="true">';
   for(const [a,b,t] of (MQ_UNIONES?MQC:[])){ const A=MQ.pos[a], B=MQ.pos[b]; if(!A||!B) continue;
     const dx=B[0]-A[0], dy=B[1]-A[1], L=Math.hypot(dx,dy), ang=Math.atan2(dy,dx)*180/Math.PI, hs=hashStr(a+b);

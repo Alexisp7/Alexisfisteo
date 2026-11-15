@@ -663,7 +663,7 @@ body.con-maqueta:has(#v-hive.on) #swarm{display:block;height:100vh;min-height:0;
 body.con-maqueta #maqueta{width:100%;flex:none;margin:0}
 body.con-maqueta #mq-escenario{display:none!important}
 body.con-maqueta:has(#v-hive.on) .mq-tutor{top:min(45.096vw,calc(100vh - 10.203vw - 14px))!important}
-body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(33.596vw,calc(100vh - 16.911vw - 4px))!important}
+body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(34.385vw,calc(100vh - 15.784vw - 4px))!important}
 body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.749vw + 1vw))!important}
 .inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
@@ -770,6 +770,13 @@ body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.
 .mq-conex{filter:url(#mqVivo) drop-shadow(0 0 calc(6px*var(--s)) rgba(196,74,255,.35))}
 .mq-personaje{transform:translate3d(calc(var(--px,0)*8px),calc(var(--py,0)*5px),0);transition:opacity 2s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
 @media (prefers-reduced-motion:reduce){#maqueta>.mq-fondo,#maqueta .mq-liquido,#maqueta .mq-gas,.mq-personaje{transform:none}}
+/* el circuito también se desplaza (plano medio), su sombra menos, los rótulos un poco más */
+#maqueta .mq-conex,#maqueta .mq-objetos,#maqueta .mq-larvas,#maqueta .mq-org{transform:translate3d(calc(var(--px,0)*5px),calc(var(--py,0)*3px),0);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+#maqueta .mq-red-sombra{transform:translate3d(calc(var(--px,0)*-3px),calc(var(--py,0)*-2px),0);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+#maqueta .mq-rot{transform:translate(calc(-50% + var(--px,0)*7px),calc(-.56em + var(--py,0)*4px));transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+/* reloj de costado, recostado sobre los huevos */
+.mq-reloj .mq-rel{transform:perspective(calc(900px*var(--s))) rotateY(-42deg) rotateZ(16deg);transform-origin:80% 70%}
+@media (prefers-reduced-motion:reduce){#maqueta .mq-conex,#maqueta .mq-objetos,#maqueta .mq-larvas,#maqueta .mq-org,#maqueta .mq-red-sombra{transform:none}}
 /* piezas nuevas de la hoja de Andreé */
 .mq-capsula{position:absolute;pointer-events:none;border-style:solid;border-width:0 calc(22px*var(--s));border-image:url(maqueta2/barra-arriba.webp) 0 72 fill / 0 calc(22px*var(--s)) stretch;opacity:.95}
 #maqueta .mq-tutor::after{background-image:url(maqueta2/tutor-caja.webp)}
@@ -1537,7 +1544,7 @@ function maquetaDraw(){
 
   // progreso: el reloj orgánico de Andreé; el tubo verde se llena en sentido horario desde las 12 según lo resuelto y la aguja marca el avance
   const fr=xs.length?done/xs.length:0, gr=(360*fr).toFixed(2);
-  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1300)};top:${Y(596)};width:${X(268)};height:${Y(300)}">
+  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1390)};top:${Y(610)};width:${X(250)};height:${Y(280)}">
       <div class="mq-rel" role="img" aria-label="Progreso: ${done} de ${xs.length} ejercicios resueltos">
         <img src="maqueta2/reloj2-esfera.webp" alt="" draggable="false">
         <img class="mq-rel-verde" src="maqueta2/reloj2-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 49.56% 54.91%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 49.56% 54.91%,#000 ${gr}deg,transparent 0)">

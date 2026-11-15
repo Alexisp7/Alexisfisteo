@@ -120,10 +120,15 @@ function tamano() {
   return true;
 }
 
+const mira = { x: 0, y: 0, tx: 0, ty: 0 };
+addEventListener('pointermove', (ev) => { mira.tx = ev.clientX / innerWidth * 2 - 1; mira.ty = ev.clientY / innerHeight * 2 - 1; });
 function cuadro() {
   if (!modelo || !visible || !caja.isConnected || !tamano()) return;
   const t = (performance.now() - t0) / 1000;
-  modelo.rotation.y = reducido ? 0.55 : 0.55 + Math.sin(t * 0.22) * 0.2; // de tres cuartos, mirando al mapa
+  // de tres cuartos, mirando al mapa; el mouse lo gira un poco en 3D (profundidad real)
+  if (!reducido) { mira.x += (mira.tx - mira.x) * 0.05; mira.y += (mira.ty - mira.y) * 0.05; }
+  modelo.rotation.y = reducido ? 0.55 : 0.55 + Math.sin(t * 0.22) * 0.2 + mira.x * 0.35;
+  modelo.rotation.x = reducido ? 0 : mira.y * 0.08;
   const resp = reducido ? 0 : Math.sin(t * 1.2);
   modelo.scale.set(1 + resp * 0.004, 1 + resp * 0.008, 1 + resp * 0.004);
   animar(t);

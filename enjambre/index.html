@@ -652,7 +652,16 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #maqueta .mq-progreso.mq-adnp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6px*var(--s));padding:0}
 #maqueta .mq-progreso.mq-adnp::after{display:none}#maqueta .mq-progreso.mq-adnp::before{inset:-6% -4%;border-radius:50%;background:radial-gradient(closest-side,rgba(12,5,18,.88) 55%,rgba(12,5,18,.55) 78%,transparent)}
 .mq-adnp .mq-adnbar{width:100%;margin:0}
-.mq-reloj .mq-adnt{position:absolute;left:4%;bottom:10%;margin:0}
+.mq-reloj{pointer-events:auto}
+.mq-reloj .mq-adnt{position:absolute;left:69.1%;top:-6%;margin:0;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:calc(2px*var(--s));padding:calc(10px*var(--s)) calc(18px*var(--s));border-radius:calc(16px*var(--s));
+  background:radial-gradient(ellipse at 50% 30%,rgba(60,22,80,.94),rgba(16,8,23,.94));border:1px solid rgba(140,222,70,.55);
+  box-shadow:0 0 calc(18px*var(--s)) rgba(140,222,70,.45),0 0 calc(40px*var(--s)) rgba(196,74,255,.35);font-size:calc(15px*var(--s));letter-spacing:.06em;color:#d9c6e4;
+  transition:opacity .25s ease,transform .35s cubic-bezier(.3,1.5,.5,1),filter .35s;filter:blur(4px)}
+.mq-reloj .mq-adnt b{margin:0;font-size:calc(30px*var(--s));color:#E9FFD0;text-shadow:0 0 calc(12px*var(--s)) rgba(140,222,70,.9)}
+.mq-reloj:hover .mq-adnt,.mq-reloj:focus-within .mq-adnt{opacity:1;transform:translate(-50%,-50%) scale(1);filter:none}
+.mq-reloj:hover .mq-rel{filter:drop-shadow(0 0 calc(14px*var(--s)) rgba(140,222,70,.35))}
+@media (prefers-reduced-motion:reduce){.mq-reloj .mq-adnt{transition:opacity .2s;transform:translate(-50%,-50%);filter:none}}
 .mq-adnt{font-size:calc(19px*var(--s));color:#cbbad6;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.9)}.mq-adnt b{color:#fff;font-weight:600;margin-left:.3em}
 #maqueta .mq-anillo b{position:relative;color:#8CDE46;text-shadow:0 0 8px rgba(96,189,36,.6)}
 
@@ -1550,7 +1559,7 @@ function maquetaDraw(){
         <img class="mq-rel-verde" src="maqueta2/reloj4-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 69.1% 40.13%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 69.1% 40.13%,#000 ${gr}deg,transparent 0)">
         <img class="mq-rel-aguja" src="maqueta2/reloj4-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
       </div>
-      <div class="mq-adnt">Progreso <b>${done} / ${xs.length}</b></div></div>`;
+      <div class="mq-adnt" aria-hidden="true">Progreso<b>${done} / ${xs.length}</b></div></div>`;
   h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;
   st.innerHTML=h;
   st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab); renderAll();});

@@ -645,14 +645,15 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #maqueta .mq-tutor::before{inset:14% 1.8% 5% 1.8%}#maqueta .mq-progreso::before{inset:5% 2.6% 5% 2.6%}
 #maqueta .mq-progreso.mq-reloj{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:calc(4px*var(--s));padding:0}
 #maqueta .mq-progreso.mq-reloj::before,#maqueta .mq-progreso.mq-reloj::after{display:none}
-.mq-rel{position:relative;width:100%;aspect-ratio:1223/781;filter:drop-shadow(0 0 calc(10px*var(--s)) rgba(12,4,18,.9))}
+.mq-rel{position:relative;width:100%;aspect-ratio:1386/904;filter:drop-shadow(0 0 calc(10px*var(--s)) rgba(12,4,18,.9))}
 .mq-rel img{position:absolute;inset:0;width:100%;height:100%;user-select:none;pointer-events:none}
 .mq-rel .mq-rel-verde{filter:drop-shadow(0 0 calc(6px*var(--s)) rgba(140,222,70,.7))}
-.mq-rel .mq-rel-aguja{inset:auto;left:47.93%;top:24.35%;width:4.20%;height:22.73%;transform-origin:50.32% 85.54%}
+.mq-rel .mq-rel-aguja{inset:auto;left:66.93%;top:22.2%;width:4.33%;height:21.24%;transform-origin:50% 84.42%}
 #maqueta .mq-progreso.mq-adnp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6px*var(--s));padding:0}
 #maqueta .mq-progreso.mq-adnp::after{display:none}#maqueta .mq-progreso.mq-adnp::before{inset:-6% -4%;border-radius:50%;background:radial-gradient(closest-side,rgba(12,5,18,.88) 55%,rgba(12,5,18,.55) 78%,transparent)}
 .mq-adnp .mq-adnbar{width:100%;margin:0}
-.mq-adnt{margin-top:calc(-14px*var(--s));font-size:calc(19px*var(--s));color:#cbbad6;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.9)}.mq-adnt b{color:#fff;font-weight:600;margin-left:.3em}
+.mq-reloj .mq-adnt{position:absolute;left:4%;bottom:10%;margin:0}
+.mq-adnt{font-size:calc(19px*var(--s));color:#cbbad6;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.9)}.mq-adnt b{color:#fff;font-weight:600;margin-left:.3em}
 #maqueta .mq-anillo b{position:relative;color:#8CDE46;text-shadow:0 0 8px rgba(96,189,36,.6)}
 
 /* portada a pantalla completa, sin franjas ni deformar: el arte ocupa todo el ancho (proporción 2:1 intacta);
@@ -663,7 +664,7 @@ body.con-maqueta:has(#v-hive.on) #swarm{display:block;height:100vh;min-height:0;
 body.con-maqueta #maqueta{width:100%;flex:none;margin:0}
 body.con-maqueta #mq-escenario{display:none!important}
 body.con-maqueta:has(#v-hive.on) .mq-tutor{top:min(45.096vw,calc(100vh - 10.203vw - 14px))!important}
-body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(31.905vw,calc(100vh - 18.151vw - 2px))!important}
+body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(30.44vw,calc(100vh - 19.504vw - 2px))!important}
 body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.749vw + 1vw))!important}
 .inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
@@ -1543,11 +1544,11 @@ function maquetaDraw(){
 
   // progreso: el reloj orgánico de Andreé; el tubo verde se llena en sentido horario desde las 12 según lo resuelto y la aguja marca el avance
   const fr=xs.length?done/xs.length:0, gr=(360*fr).toFixed(2);
-  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1292)};top:${Y(566)};width:${X(472)};height:${Y(322)}">
+  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1236)};top:${Y(540)};width:${X(530)};height:${Y(346)}">
       <div class="mq-rel" role="img" aria-label="Progreso: ${done} de ${xs.length} ejercicios resueltos">
-        <img src="maqueta2/reloj3.webp" alt="" draggable="false">
-        <img class="mq-rel-verde" src="maqueta2/reloj3-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 50.52% 43.87%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 50.52% 43.87%,#000 ${gr}deg,transparent 0)">
-        <img class="mq-rel-aguja" src="maqueta2/reloj-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
+        <img src="maqueta2/reloj4.webp" alt="" draggable="false">
+        <img class="mq-rel-verde" src="maqueta2/reloj4-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 69.1% 40.13%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 69.1% 40.13%,#000 ${gr}deg,transparent 0)">
+        <img class="mq-rel-aguja" src="maqueta2/reloj4-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
       </div>
       <div class="mq-adnt">Progreso <b>${done} / ${xs.length}</b></div></div>`;
   h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;

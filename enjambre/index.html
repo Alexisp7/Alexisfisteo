@@ -676,7 +676,7 @@ body.con-maqueta:has(#v-hive.on) #swarm{display:block;height:100vh;min-height:0;
 body.con-maqueta #maqueta{width:100%;flex:none;margin:0}
 body.con-maqueta #mq-escenario{display:none!important}
 body.con-maqueta:has(#v-hive.on) .mq-tutor{top:min(45.096vw,calc(100vh - 10.203vw - 14px))!important}
-body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(30.44vw,calc(100vh - 19.504vw - 2px))!important}
+body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(36.64vw,calc(100vh - 16.911vw + 2.5vw))!important}
 body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(26.27vw,calc(100vh - 25.03vw + 5.2vw))!important}
 .inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
@@ -1577,7 +1577,7 @@ function maquetaDraw(){
 
   // progreso: el reloj orgánico de Andreé; el tubo verde se llena en sentido horario desde las 12 según lo resuelto y la aguja marca el avance
   const fr=xs.length?done/xs.length:0, gr=(360*fr).toFixed(2);
-  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1314)};top:${Y(587)};width:${X(460)};height:${Y(300)}">
+  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1314)};top:${Y(650)};width:${X(460)};height:${Y(300)}">
       <div class="mq-rel" role="img" aria-label="Progreso: ${done} de ${xs.length} ejercicios resueltos">
         <img src="maqueta2/reloj4.webp" alt="" draggable="false">
         <img class="mq-rel-verde" src="maqueta2/reloj4-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 69.1% 40.13%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 69.1% 40.13%,#000 ${gr}deg,transparent 0)">

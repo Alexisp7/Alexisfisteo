@@ -1556,13 +1556,7 @@ function maquetaDraw(){
   const resto=DB.topics.filter(q=>!MQ.pos[q.id]);
   // los huevos latentes (temas sin célula) se mudaron a Invasión: la portada entra en una sola pantalla
   const su=document.getElementById('mq-suelo'); if(su) su.remove();
-  // panel «sigue por aquí»
-  const estado=e?(e.prio==='clave'?'Ejercicio clave':(e.state===1?'Lo dejaste a medias':'')):'';
-  h+=`<div class="mq-panel mq-sigue" style="left:${X(50)};top:${Y(106)};width:${X(342)};height:${Y(262)}">`+(e?`<p class="mq-k">Sigue por aquí</p>
-      <div class="mq-tema"><span>${t?esc(t.name):''}</span><span class="mq-num">${esc(e.num||'')}</span></div>
-      <h2>${esc(e.title)}</h2>${estado?`<p class="mq-sub"><i aria-hidden="true"></i>${estado}</p>`:''}
-      <button class="mq-go" data-study="${e.id}">${e.state===1?'Retomar ejercicio':'Empezar ejercicio'}</button>`:`<p class="mq-k">Todo resuelto</p><h2>La colonia está saciada.</h2>`)
-    +`<p class="mq-nota">Toca una célula para ver sus ejercicios.</p></div>`;
+  // el panel «sigue por aquí» se quitó a pedido de Andreé (2026-11-15): el marco queda limpio
   // abajo: «Tu Tutor» y «Tu progreso» (el personaje va a la izquierda, ver personaje.js); arriba a la derecha, el contador
 
   // progreso: el reloj orgánico de Andreé; el tubo verde se llena en sentido horario desde las 12 según lo resuelto y la aguja marca el avance

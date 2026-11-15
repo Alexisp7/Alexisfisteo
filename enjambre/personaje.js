@@ -104,7 +104,7 @@ function animar(t) {
   if (H.torso) H.torso.rotation.set(a * 0.025 * s(t * 1.2), a * 0.03 * s(t * 0.5), 0);
   if (H.cabeza) H.cabeza.rotation.set(a * 0.07 * s(t * 0.8 + 0.4), a * 0.13 * s(t * 0.45), a * 0.04 * s(t * 0.6));
   for (const k in H) if (k.startsWith('bolsa_')) {  // cada bolsa late a su ritmo
-    const p = 1 + a * (0.12 + 0.16 * Math.max(0, s(t * 1.6 + fase(k))) ** 2); // se inflan un poco y laten
+    const p = 1 + a * (0.28 + 0.24 * Math.max(0, s(t * 1.6 + fase(k))) ** 2); // se inflan un poco y laten
     H[k].scale.setScalar(p);
   }
 }

@@ -124,7 +124,7 @@ function rostro() {
   const tex = brillo();
   const matOjo = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xc8ff7a), toneMapped: false });
   // coordenadas medidas en el espacio del hueso de la cabeza, a los lados del hocico
-  for (const [x, y, z] of [[-0.0522, -0.1864, 0.3063], [-0.0083, -0.1879, 0.3148]]) {
+  for (const [x, y, z] of [[-0.0268, -0.191, 0.3105], [0.0206, -0.1962, 0.3022]]) {
     const g = new THREE.Group(); g.position.set(x, y, z);
     const bola = new THREE.Mesh(new THREE.SphereGeometry(0.0062, 16, 12), matOjo); g.add(bola);
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: VERDE, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
@@ -134,9 +134,9 @@ function rostro() {
   // gas: partículas suaves que salen de la boca, suben y se deshacen
   const N = 60, pos = new Float32Array(N * 3), vida = new Float32Array(N), vel = new Float32Array(N * 3);
   const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const mat = new THREE.PointsMaterial({ map: tex, color: VERDE, size: 0.07, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, toneMapped: false });
+  const mat = new THREE.PointsMaterial({ map: tex, color: VERDE, size: 0.07, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, toneMapped: false });
   const pts = new THREE.Points(geo, mat); pts.frustumCulled = false;
-  const origen = new THREE.Vector3(-0.0284, -0.2096, 0.3);
+  const origen = new THREE.Vector3(-0.006, -0.2096, 0.3);
   gas = { pts, pos, vida, vel, origen, N };
   for (let i = 0; i < N; i++) vida[i] = Math.random();
   cabeza.add(pts);
@@ -158,7 +158,7 @@ function animarRostro(t) {
     pos[i * 3] += vel[i * 3] + Math.sin(t * 1.3 + i) * 0.00015; pos[i * 3 + 1] += vel[i * 3 + 1] + vida[i] * 0.0009; pos[i * 3 + 2] += vel[i * 3 + 2];
   }
   gas.pts.geometry.attributes.position.needsUpdate = true;
-  gas.pts.material.opacity = 0.28 + 0.1 * Math.sin(t * 1.7);
+  gas.pts.material.opacity = 0.13 + 0.04 * Math.sin(t * 1.7);
 }
 const t0 = performance.now();
 

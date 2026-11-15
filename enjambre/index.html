@@ -643,6 +643,10 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #maqueta .mq-tutor::after,#maqueta .mq-progreso::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url(maqueta2/tutor.webp) 0 0/100% 100% no-repeat}
 #maqueta .mq-progreso::after{background-image:url(maqueta2/progreso.webp)}
 #maqueta .mq-tutor::before{inset:14% 1.8% 5% 1.8%}#maqueta .mq-progreso::before{inset:5% 2.6% 5% 2.6%}
+#maqueta .mq-progreso.mq-adnp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6px*var(--s));padding:0}
+#maqueta .mq-progreso.mq-adnp::after{display:none}#maqueta .mq-progreso.mq-adnp::before{inset:-6% -4%;border-radius:50%;background:radial-gradient(closest-side,rgba(12,5,18,.88) 55%,rgba(12,5,18,.55) 78%,transparent)}
+.mq-adnp .mq-adnbar{width:100%;margin:0}
+.mq-adnt{font-size:calc(17px*var(--s));color:#cbbad6;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.9)}.mq-adnt b{color:#fff;font-weight:600;margin-left:.3em}
 #maqueta .mq-anillo b{position:relative;color:#8CDE46;text-shadow:0 0 8px rgba(96,189,36,.6)}
 
 /* portada a pantalla completa, sin franjas ni deformar: el arte ocupa todo el ancho (proporción 2:1 intacta);
@@ -1473,7 +1477,7 @@ function maquetaDraw(){
   const xs=studyOrder(), done=xs.filter(x=>(x.state||0)>=2).length, e=nextExercise(), t=e&&T(primTopic(e));
   const L=LAY||layout(), awake=DB.topics.filter(q=>mastery(q.id).n).length, pct=Math.round(L.g*100);
   const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
-  let h=`<img class="mq-fondo" src="maqueta2/fondo-4k.png" alt="" draggable="false">${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/marco-abajo.webp" alt="" draggable="false" style="left:${X(762)};top:${Y(628)};width:${X(1007)}">`+`<img class="mq-marco" src="maqueta2/marco-izq.webp" alt="" draggable="false" style="left:${X(1.5)};top:${Y(24.8)};width:${X(934)}">`;
+  let h=`<img class="mq-fondo" src="maqueta2/fondo-4k.png" alt="" draggable="false">${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/marco-abajo.webp" alt="" draggable="false" style="left:${X(762)};top:${Y(628)};width:${X(1007)}">`+`<img class="mq-marco" src="maqueta2/marco-izq.webp" alt="" draggable="false" style="left:${X(1.5)};top:${Y(24.8)};width:${X(809.1)}">`;
   // barra superior pintada: zonas activas sobre las pestañas y el emblema
   h+=`<a class="mq-hot mq-logo" href="../bitacora.html" title="Físicas · volver a la bitácora" style="left:${X(20)};top:0;width:${X(250)};height:${Y(46)}"></a>`;
   for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
@@ -1485,22 +1489,21 @@ function maquetaDraw(){
   // los huevos latentes (temas sin célula) se mudaron a Invasión: la portada entra en una sola pantalla
   const su=document.getElementById('mq-suelo'); if(su) su.remove();
   // panel «sigue por aquí»
-  h+=`<div class="mq-panel" style="left:${X(158)};top:${Y(102)};width:${X(372)};height:${Y(338)}">`+(e?`<div class="mq-k">Sigue por aquí</div><div class="mq-ch">${esc(e.num||'')}${t?' · '+esc(t.name):''}</div><h2>${esc(e.title)}</h2>
+  h+=`<div class="mq-panel" style="left:${X(33)};top:${Y(102)};width:${X(372)};height:${Y(338)}">`+(e?`<div class="mq-k">Sigue por aquí</div><div class="mq-ch">${esc(e.num||'')}${t?' · '+esc(t.name):''}</div><h2>${esc(e.title)}</h2>
       <p class="mq-sub">${e.prio==='clave'?'Ejercicio clave: no te lo saltes.':(e.state===1?'Lo dejaste a medias.':'La colonia muta con cada ejercicio que resuelves.')}</p>
       <button class="mq-go" data-study="${e.id}">${e.state===1?'Retomar':'Empezar'} <span aria-hidden="true">→</span></button>`:`<div class="mq-k">Todo resuelto</div><h2>La colonia está saciada.</h2>`)
     +`<p class="mq-nota">${done} de ${xs.length} resueltos. Cada par de bases del ADN es un ejercicio, agrupados por tema como en Estudiar. Toca un organismo para ver sus ejercicios.</p></div>`;
   // abajo: «Tu Tutor» y «Tu progreso» (el personaje va a la izquierda, ver personaje.js); arriba a la derecha, el contador
-  const pr=xs.length?Math.round(100*done/xs.length):0;
   const tutor=e?`Te toca <b>${esc(e.title)}</b>${t?` (${esc(t.name)})`:''}.`:'Resolviste todo lo que hay en la colmena. Pásame más ejercicios para que evolucione.';
   h+=`<div class="mq-tutor" style="left:${X(590)};top:${Y(800)};width:${X(670)};height:${Y(181)}"><span class="mq-tt">Tu Tutor</span>
       <p><strong>¡Bienvenido, explorador!</strong><br>Aquí comienza tu viaje por el enjambre del conocimiento. Selecciona una <em>célula</em> y sigue aprendiendo.</p>
       <p class="mq-tmas">${tutor} ${done} de ${xs.length} ejercicios resueltos · ${awake} de ${DB.topics.length} temas despiertos. Cada par de bases del ADN es un ejercicio.</p>
       <button class="mq-tbtn" aria-label="Más" aria-expanded="false" onclick="const c=this.closest('.mq-tutor');this.setAttribute('aria-expanded',c.classList.toggle('abierto'))"><svg viewBox="0 0 20 12"><path d="M2 2l8 8 8-8"/></svg></button></div>`;
-  // progreso solo abajo: anillo + conteo + la barra de ADN de Andreé (peldaños en verde según lo resuelto, de izquierda a derecha)
+  // progreso solo abajo: la barra de ADN de Andreé, grande (peldaños en verde según lo resuelto) y el conteo debajo
   const borde=(9.45+83.6*(xs.length?done/xs.length:0)).toFixed(2);
-  h+=`<div class="mq-progreso" style="left:${X(1430)};top:${Y(812)};width:${X(318)};height:${Y(150)}"><span class="mq-pk">Tu progreso</span>
-      <div class="mq-anillo" style="--p:${Math.max(1,pr)}"><b>${pr}%</b></div><div class="mq-pn"><b>${done} / ${xs.length}</b>Ejercicios
-      <div class="mq-adnbar" title="${done} de ${xs.length} ejercicios resueltos"><img src="maqueta2/adn-barra.webp" alt="" draggable="false"><img class="mq-adnv" src="maqueta2/adn-barra-verde.webp" alt="" draggable="false" style="clip-path:inset(0 calc(100% - ${borde}%) 0 0)"></div></div></div>`;
+  h+=`<div class="mq-progreso mq-adnp" style="left:${X(1412)};top:${Y(812)};width:${X(346)};height:${Y(150)}" title="${done} de ${xs.length} ejercicios resueltos">
+      <div class="mq-adnbar"><img src="maqueta2/adn-barra.webp" alt="" draggable="false"><img class="mq-adnv" src="maqueta2/adn-barra-verde.webp" alt="" draggable="false" style="clip-path:inset(0 calc(100% - ${borde}%) 0 0)"></div>
+      <div class="mq-adnt">Progreso <b>${done} / ${xs.length}</b></div></div>`;
   h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;
   st.innerHTML=h;
   st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab); renderAll();});

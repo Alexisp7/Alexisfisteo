@@ -108,6 +108,58 @@ function animar(t) {
     H[k].scale.setScalar(p);
   }
 }
+// rostro: dos ojos verdes pequeños pero muy notorios y un poco de gas verde que sale de la boca.
+// Van colgados del hueso de la cabeza, así siguen sus movimientos.
+const VERDE = new THREE.Color(0x8cde46);
+let ojos = [], gas = null;
+function brillo() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.25, 'rgba(255,255,255,.55)'); r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 64, 64);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+function rostro() {
+  const cabeza = H.cabeza; if (!cabeza) return;
+  const tex = brillo();
+  const matOjo = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xc8ff7a), toneMapped: false });
+  // coordenadas medidas en el espacio del hueso de la cabeza, a los lados del hocico
+  for (const [x, y, z] of [[-0.0522, -0.1864, 0.3063], [-0.0083, -0.1879, 0.3148]]) {
+    const g = new THREE.Group(); g.position.set(x, y, z);
+    const bola = new THREE.Mesh(new THREE.SphereGeometry(0.0062, 16, 12), matOjo); g.add(bola);
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: VERDE, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+    halo.scale.setScalar(0.04); g.add(halo);
+    cabeza.add(g); ojos.push({ g, halo });
+  }
+  // gas: partículas suaves que salen de la boca, suben y se deshacen
+  const N = 60, pos = new Float32Array(N * 3), vida = new Float32Array(N), vel = new Float32Array(N * 3);
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({ map: tex, color: VERDE, size: 0.07, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, toneMapped: false });
+  const pts = new THREE.Points(geo, mat); pts.frustumCulled = false;
+  const origen = new THREE.Vector3(-0.0284, -0.2096, 0.3);
+  gas = { pts, pos, vida, vel, origen, N };
+  for (let i = 0; i < N; i++) vida[i] = Math.random();
+  cabeza.add(pts);
+}
+function animarRostro(t) {
+  for (const [i, o] of ojos.entries()) { // parpadeo de luz, no de forma
+    const k = reducido ? 1 : 0.85 + 0.15 * Math.sin(t * 3.1 + i) + (Math.sin(t * 0.7) > 0.985 ? 0.6 : 0);
+    o.halo.scale.setScalar(0.04 * k);
+  }
+  if (!gas || reducido) return;
+  const { pos, vida, vel, origen, N } = gas;
+  for (let i = 0; i < N; i++) {
+    vida[i] += 0.006 + (i % 5) * 0.0012;
+    if (vida[i] >= 1) {
+      vida[i] = 0;
+      pos[i * 3] = origen.x + (Math.random() - 0.5) * 0.02; pos[i * 3 + 1] = origen.y; pos[i * 3 + 2] = origen.z;
+      vel[i * 3] = (Math.random() - 0.5) * 0.0009; vel[i * 3 + 1] = -0.0002 - Math.random() * 0.0005; vel[i * 3 + 2] = 0.0008 + Math.random() * 0.0008;
+    }
+    pos[i * 3] += vel[i * 3] + Math.sin(t * 1.3 + i) * 0.00015; pos[i * 3 + 1] += vel[i * 3 + 1] + vida[i] * 0.0009; pos[i * 3 + 2] += vel[i * 3 + 2];
+  }
+  gas.pts.geometry.attributes.position.needsUpdate = true;
+  gas.pts.material.opacity = 0.28 + 0.1 * Math.sin(t * 1.7);
+}
 const t0 = performance.now();
 
 function tamano() {
@@ -127,6 +179,7 @@ function cuadro() {
   const resp = reducido ? 0 : Math.sin(t * 1.2);
   modelo.scale.set(1 + resp * 0.004, 1 + resp * 0.008, 1 + resp * 0.004);
   animar(t);
+  animarRostro(t);
   tiempo.value = reducido ? 0 : t;
   pulso.value = reducido ? 0.5 : 0.5 + 0.5 * Math.sin(t * 2.0);
   verde.intensity = 0.3 + pulso.value * 0.5;
@@ -152,7 +205,8 @@ function cargar() {
     modelo.add(g.scene);
     escena.add(modelo);
     caja.classList.add('listo');
-    window.__personaje = { render, escena, camara, cuadro, modelo, H, animar, tiempo, pulso };
+    rostro();
+    window.__personaje = { render, escena, camara, cuadro, modelo, H, animar, animarRostro, tiempo, pulso, gas };
     render.setAnimationLoop(cuadro);
   });
 }

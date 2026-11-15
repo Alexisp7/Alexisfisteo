@@ -11,7 +11,7 @@ const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // abajo a la izquierda, donde antes estaba «Evolución de la colonia», mirando hacia el mapa.
 // Coordenadas de la imagen de la maqueta (1774×887); baja un poco más allá del borde, sobre una franja propia.
-const ZONA = { x: 78, y: 381, w: 600, h: 444 };
+const ZONA = { x: 641, y: 478, w: 440, h: 326 };
 const escenario = document.createElement('div');   // franja bajo el mapa: deja sitio al tutor y al personaje
 escenario.id = 'mq-escenario';
 escenario.setAttribute('aria-hidden', 'true');
@@ -77,10 +77,16 @@ function piel(m) {
         float flujo = 0.5 + 0.5 * ruido(q + vec3(0.0, uTiempo * 1.6, 0.0));
         float vetas = smoothstep(0.55, 0.95, 0.5 + 0.5 * ruido(q * 1.8 - vec3(uTiempo * 1.2, 0.0, uTiempo * 0.8)));
         vec3 liquido = mix(vec3(0.16, 0.55, 0.03), vec3(0.62, 1.0, 0.16), flujo) + vetas * vec3(0.35, 0.45, 0.1);
-        diffuseColor.rgb = mix(diffuseColor.rgb, liquido, verdor * 0.95);`)
+        diffuseColor.rgb = mix(diffuseColor.rgb, liquido, verdor * 0.95);
+        // quitina: tinte violeta como la plataforma y el circuito, y venas rosadas finas que brillan
+        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.2, 0.8, 1.4) + vec3(0.03, 0.0, 0.05), (1.0 - verdor) * 0.7);
+        float venas = smoothstep(0.9, 0.99, 0.5 + 0.5 * ruido(vPosL * 150.0 + vec3(uTiempo * 0.15)));`)
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
-        totalEmissiveRadiance += liquido * verdor * (1.0 + 0.9 * flujo + 0.8 * uPulso);`)
-      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n        roughnessFactor = mix(roughnessFactor, 0.12, verdor);')
+        totalEmissiveRadiance += liquido * verdor * (1.0 + 0.9 * flujo + 0.8 * uPulso);
+        float borde = smoothstep(0.8, 1.0, 1.0 - abs(dot(normalize(normal), normalize(vViewPosition))));
+        totalEmissiveRadiance += vec3(0.75, 0.2, 0.95) * borde * 0.18 * (1.0 - verdor);
+        totalEmissiveRadiance += vec3(1.0, 0.35, 0.95) * venas * (0.35 + 0.25 * uPulso) * (1.0 - verdor);`)
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n        roughnessFactor = mix(roughnessFactor * 0.85, 0.12, verdor);')
       .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n        metalnessFactor = mix(metalnessFactor, 0.0, verdor);');
   };
   m.needsUpdate = true;

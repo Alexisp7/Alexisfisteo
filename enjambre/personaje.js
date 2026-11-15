@@ -11,7 +11,7 @@ const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // abajo a la izquierda, donde antes estaba «Evolución de la colonia», mirando hacia el mapa.
 // Coordenadas de la imagen de la maqueta (1774×887); baja un poco más allá del borde, sobre una franja propia.
-const ZONA = { x: 78, y: 396, w: 600, h: 444 };
+const ZONA = { x: 78, y: 411, w: 600, h: 444 };
 const escenario = document.createElement('div');   // franja bajo el mapa: deja sitio al tutor y al personaje
 escenario.id = 'mq-escenario';
 escenario.setAttribute('aria-hidden', 'true');

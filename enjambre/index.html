@@ -833,10 +833,10 @@ body.con-maqueta #swarm,html:has(body.con-maqueta),body.con-maqueta{background:#
 #maqueta .mq-hilos{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 #maqueta .mq-hilos-medio{position:absolute;inset:-2%;width:104%;height:104%;opacity:.85;animation:mqHilosDeriva 40s ease-in-out infinite alternate}
 @keyframes mqHilosDeriva{0%{transform:translate3d(-.8%,.4%,0) rotate(-.3deg)}100%{transform:translate3d(.8%,-.6%,0) rotate(.3deg)}}
-#maqueta .mq-hilo{position:absolute;max-width:none;height:auto;opacity:.5;filter:saturate(.75) blur(.4px);transform:rotate(var(--a)) scaleY(var(--fl));animation:mqHilo var(--t,10s) ease-in-out var(--d,0s) infinite alternate}
+#maqueta .mq-hilo{position:absolute;max-width:none;height:auto;opacity:.32;filter:saturate(.45) brightness(1.55) blur(1.6px);transform:rotate(var(--a)) scaleY(var(--fl));animation:mqHilo var(--t,10s) ease-in-out var(--d,0s) infinite alternate}
 @keyframes mqHilo{0%{transform:rotate(calc(var(--a) - 2.5deg)) scaleY(var(--fl)) translateY(-3px)}100%{transform:rotate(calc(var(--a) + 2.5deg)) scaleY(var(--fl)) translateY(3px)}}
-#maqueta .mq-zocalo{position:absolute;z-index:6;height:auto;max-width:none;pointer-events:none;user-select:none;top:44.6vw;filter:drop-shadow(0 calc(-6px*var(--s)) calc(10px*var(--s)) rgba(40,8,50,.35))}
-body.con-maqueta:has(#v-hive.on) #maqueta .mq-zocalo{top:min(44.6vw,calc(100vh - 5.95vw + 1.2vw))}
+#maqueta .mq-zocalo{position:absolute;z-index:6;height:auto;max-width:none;pointer-events:none;user-select:none;top:43.1vw;filter:drop-shadow(0 calc(-6px*var(--s)) calc(10px*var(--s)) rgba(40,8,50,.35))}
+body.con-maqueta:has(#v-hive.on) #maqueta .mq-zocalo{top:min(43.1vw,calc(100vh - 6.95vw + .5vw))}
 @media (prefers-reduced-motion:reduce){#maqueta .mq-hilos-medio,#maqueta .mq-hilo{animation:none}}
 </style>
 <script type="importmap">{"imports":{"three":"../taller/lib/three/three.module.min.js","three/addons/":"../taller/lib/three/addons/"}}</script>
@@ -1595,8 +1595,8 @@ function maquetaDraw(){
         <img class="mq-rel-aguja" src="maqueta2/reloj4-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
       </div>
       <div class="mq-adnt" aria-hidden="true">Progreso<b>${done} / ${xs.length}</b></div></div>`;
-  // zócalo en primera línea entre el personaje y el reloj: piezas recicladas del marco grande
-  h+=`<img class="mq-zocalo" src="maqueta2/zocalo.webp" alt="" draggable="false" style="left:${X(690)};width:${X(760)}">`;
+  // suelo en primera línea entre el personaje y el reloj: las garras del marco de Andreé, en espejo
+  h+=`<img class="mq-zocalo" src="maqueta2/suelo-garras.webp" alt="" draggable="false" style="left:${X(640)};width:${X(860)}">`;
   h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;
   st.innerHTML=h;
   st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab); renderAll();});
@@ -1641,7 +1641,7 @@ function mqKit(){ const X=v=>(100*v/MQ.W).toFixed(3)+'%', Y=v=>(100*v/MQ.H).toFi
   return h; }
 
 // estructuras de cada tema en sus tres fases (maqueta2/fases/<id>-<1|2|3>.webp, sin pérdida): ancho y alto nativos
-const MQF={"cin":[[293,283],[431,225],[528,278]],"vrel":[[170,153],[403,234],[494,249]],"din":[[263,241],[349,249],[506,264]],"mcirc":[[272,268],[314,263],[442,301]],"osc":[[317,259],[327,215],[493,290]],"flu":[[329,280],[326,199],[521,293]],"cal":[[252,194],[323,232],[527,318]],"ter1":[[287,269],[333,224],[495,251]],"tmp":[[283,275],[323,261],[473,274]],"ter2":[[292,231],[331,250],[467,268]],"circ":[[229,259],[352,233],[494,280]],"elec":[[214,201],[324,275],[518,333]],"ene":[[253,249],[318,228],[517,289]],"mom":[[253,253],[320,223],[493,273]],"equi":[[278,216],[348,196],[520,268]],"rot":[[305,236],[321,249],[504,308]],"gauss":[[254,221],[333,256],[454,295]],"mag":[[216,218],[333,235],[452,270]],"grav":[[264,297],[316,243],[485,283]],"ato":[[213,186],[321,253],[413,278]],"vcom":[[1260,918],[1186,1058],[1219,1200]]};
+const MQF={"cin":[[270,182],[431,225],[528,278]],"vrel":[[169,146],[403,233],[493,249]],"din":[[203,169],[349,249],[506,264]],"mcirc":[[243,195],[314,263],[441,301]],"osc":[[218,145],[327,213],[493,290]],"flu":[[299,227],[326,199],[521,293]],"cal":[[242,187],[323,232],[526,318]],"ter1":[[218,257],[333,224],[495,251]],"tmp":[[247,151],[323,260],[473,273]],"ter2":[[235,140],[331,250],[466,268]],"circ":[[204,227],[350,232],[493,280]],"elec":[[178,123],[324,275],[518,333]],"ene":[[244,159],[318,227],[517,289]],"mom":[[137,166],[320,222],[492,273]],"equi":[[259,135],[348,195],[519,268]],"rot":[[276,189],[321,249],[504,308]],"gauss":[[228,166],[333,256],[453,295]],"mag":[[169,135],[333,235],[452,270]],"grav":[[216,161],[316,243],[485,283]],"ato":[[179,113],[321,253],[413,278]],"vcom":[[978,790],[1186,1058],[1219,1200]]};
 const MQF_ANCHO=[0,1.3,1.45]; // las mutaciones son anchas: se miden por su ancho (veces el de la célula) para no tapar a sus vecinas
 function mqFase(id){ const q=/[?&]fase=([123])/.exec(location.search); if(q) return +q[1];
   const all=DB.exercises.filter(e=>e.topics.includes(id)); if(!all.length) return 1;

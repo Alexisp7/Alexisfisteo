@@ -645,10 +645,10 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #maqueta .mq-tutor::before{inset:14% 1.8% 5% 1.8%}#maqueta .mq-progreso::before{inset:5% 2.6% 5% 2.6%}
 #maqueta .mq-progreso.mq-reloj{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:calc(4px*var(--s));padding:0}
 #maqueta .mq-progreso.mq-reloj::before,#maqueta .mq-progreso.mq-reloj::after{display:none}
-.mq-rel{position:relative;width:100%;aspect-ratio:1061/1213;filter:drop-shadow(0 0 calc(10px*var(--s)) rgba(12,4,18,.9))}
+.mq-rel{position:relative;width:100%;aspect-ratio:796/806;filter:drop-shadow(0 0 calc(10px*var(--s)) rgba(12,4,18,.9))}
 .mq-rel img{position:absolute;inset:0;width:100%;height:100%;user-select:none;pointer-events:none}
 .mq-rel .mq-rel-verde{filter:drop-shadow(0 0 calc(6px*var(--s)) rgba(140,222,70,.7))}
-.mq-rel .mq-rel-aguja{inset:auto;left:44.78%;top:25.27%;width:10%;height:30.2%;transform-origin:50.32% 85.54%}
+.mq-rel .mq-rel-aguja{inset:auto;left:45.45%;top:31.07%;width:8.17%;height:27.87%;transform-origin:50.32% 85.54%}
 #maqueta .mq-progreso.mq-adnp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6px*var(--s));padding:0}
 #maqueta .mq-progreso.mq-adnp::after{display:none}#maqueta .mq-progreso.mq-adnp::before{inset:-6% -4%;border-radius:50%;background:radial-gradient(closest-side,rgba(12,5,18,.88) 55%,rgba(12,5,18,.55) 78%,transparent)}
 .mq-adnp .mq-adnbar{width:100%;margin:0}
@@ -663,7 +663,7 @@ body.con-maqueta:has(#v-hive.on) #swarm{display:block;height:100vh;min-height:0;
 body.con-maqueta #maqueta{width:100%;flex:none;margin:0}
 body.con-maqueta #mq-escenario{display:none!important}
 body.con-maqueta:has(#v-hive.on) .mq-tutor{top:min(45.096vw,calc(100vh - 10.203vw - 14px))!important}
-body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(32.807vw,calc(100vh - 18.94vw - 4px))!important}
+body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(33.596vw,calc(100vh - 16.911vw - 4px))!important}
 body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.749vw + 1vw))!important}
 .inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
@@ -763,16 +763,21 @@ body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.
 #maqueta .mq-tutor{display:flex;flex-direction:column;justify-content:center;padding:calc(46px*var(--s)) calc(36px*var(--s)) calc(26px*var(--s))}
 #maqueta .mq-tutor p{text-align:justify;font-size:calc(18px*var(--s));line-height:1.5}
 #maqueta .mq-tutor strong{display:block;margin-bottom:calc(4px*var(--s))}
+/* piezas nuevas de la hoja de Andreé */
+.mq-capsula{position:absolute;pointer-events:none;border-style:solid;border-width:0 calc(22px*var(--s));border-image:url(maqueta2/barra-arriba.webp) 0 72 fill / 0 calc(22px*var(--s)) stretch;opacity:.95}
+#maqueta .mq-tutor::after{background-image:url(maqueta2/tutor-caja.webp)}
+#maqueta .mq-tutor::before{display:none}
+#maqueta .mq-tt{top:-11%;height:22%;left:5%;width:24%;background:linear-gradient(#2a1036,#170a20);border:1px solid rgba(229,164,255,.5);border-radius:calc(12px*var(--s));box-shadow:0 0 calc(10px*var(--s)) rgba(196,74,255,.35)}
 /* «Sigue por aquí»: ficha compacta */
 .mq-sigue-fondo{position:absolute;pointer-events:none;border-radius:calc(30px*var(--s));background:rgba(14,7,20,.8)}
-#maqueta .mq-sigue{background:none;display:flex;flex-direction:column;padding:calc(20px*var(--s)) calc(22px*var(--s)) calc(16px*var(--s));border-radius:calc(26px*var(--s))}
+#maqueta .mq-sigue{background:none;display:flex;flex-direction:column;padding:calc(16px*var(--s)) calc(22px*var(--s)) calc(12px*var(--s));border-radius:calc(26px*var(--s))}
 .mq-sigue .mq-k{margin:0;font-family:"Barlow Semi Condensed",sans-serif;text-transform:none;letter-spacing:.01em;font-weight:600;font-size:calc(15px*var(--s));color:#8CDE46}
-.mq-tema{display:flex;justify-content:space-between;align-items:baseline;gap:calc(12px*var(--s));margin-top:calc(14px*var(--s));padding-bottom:calc(8px*var(--s));border-bottom:1px solid rgba(229,164,255,.18);font-family:"Barlow Semi Condensed",sans-serif;font-weight:500;font-size:calc(15px*var(--s));color:#d9c6e4}
+.mq-tema{display:flex;justify-content:space-between;align-items:baseline;gap:calc(12px*var(--s));margin-top:calc(10px*var(--s));padding-bottom:calc(8px*var(--s));border-bottom:1px solid rgba(229,164,255,.18);font-family:"Barlow Semi Condensed",sans-serif;font-weight:500;font-size:calc(15px*var(--s));color:#d9c6e4}
 .mq-num{font-variant-numeric:tabular-nums;color:#a58bb6}
-.mq-sigue h2{margin:calc(12px*var(--s)) 0 0;font-family:"Syne",sans-serif;font-weight:700;font-size:calc(25px*var(--s));line-height:1.12;letter-spacing:-.012em;color:#F5EEF9;text-wrap:balance}
+.mq-sigue h2{margin:calc(10px*var(--s)) 0 0;font-family:"Syne",sans-serif;font-weight:700;font-size:calc(23px*var(--s));line-height:1.12;letter-spacing:-.012em;color:#F5EEF9;text-wrap:balance}
 .mq-sigue .mq-sub{display:flex;align-items:center;gap:calc(8px*var(--s));margin:calc(10px*var(--s)) 0 0;font-size:calc(14.5px*var(--s));color:#c9b5d6}
 .mq-sigue .mq-sub i{width:calc(7px*var(--s));aspect-ratio:1;border-radius:50%;background:#8CDE46;box-shadow:0 0 calc(8px*var(--s)) #60BD24}
-.mq-sigue .mq-go{align-self:flex-start;margin-top:calc(16px*var(--s));font-family:"Barlow Semi Condensed",sans-serif;font-size:calc(17px*var(--s));padding:calc(8px*var(--s)) calc(20px*var(--s))}
+.mq-sigue .mq-go{align-self:flex-start;margin-top:calc(12px*var(--s));font-family:"Barlow Semi Condensed",sans-serif;font-size:calc(17px*var(--s));padding:calc(8px*var(--s)) calc(20px*var(--s))}
 .mq-sigue .mq-go:focus-visible{outline:2px solid #E5A4FF;outline-offset:3px}
 .mq-sigue .mq-nota{margin-top:auto;padding-top:calc(10px*var(--s));border-top:0;font-size:calc(13.5px*var(--s));color:#a993b8}
 @media (prefers-reduced-motion:reduce){.mq-pulso,.mq-adn-luz,.mq-huevos i,.mq-go{animation:none}}
@@ -1503,7 +1508,7 @@ function maquetaDraw(){
   const xs=studyOrder(), done=xs.filter(x=>(x.state||0)>=2).length, e=nextExercise(), t=e&&T(primTopic(e));
   const L=LAY||layout(), awake=DB.topics.filter(q=>mastery(q.id).n).length, pct=Math.round(L.g*100);
   const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
-  let h=`<img class="mq-fondo" src="maqueta2/fondo2-4k.png" alt="" draggable="false">${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/marco-abajo.webp" alt="" draggable="false" style="left:${X(762)};top:${Y(628)};width:${X(1007)}">`+`<div class="mq-sigue-fondo" style="left:${X(22)};top:${Y(86)};width:${X(341)};height:${Y(311)}"></div><img class="mq-marco" src="maqueta2/marco-izq.webp" alt="" draggable="false" style="left:${X(1.5)};top:${Y(24.8)};width:${X(712)}">`;
+  let h=`<img class="mq-fondo" src="maqueta2/fondo2-4k.png" alt="" draggable="false"><div class="mq-capsula" style="left:${X(268)};top:${Y(3)};width:${X(1496)};height:${Y(41)}"></div>${MQ_VIVO}`+`<img class="mq-marco" src="maqueta2/esquina.webp" alt="" draggable="false" style="left:${X(1405.4)};top:${Y(611)};width:${X(368.6)}"><img class="mq-marco" src="maqueta2/marco-grande.webp" alt="" draggable="false" style="left:0;top:${Y(44)};width:${X(751)}">`;
   // barra superior pintada: zonas activas sobre las pestañas y el emblema
   h+=`<a class="mq-hot mq-logo" href="../bitacora.html" title="Físicas · volver a la bitácora" style="left:${X(20)};top:0;width:${X(250)};height:${Y(46)}"></a>`;
   for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
@@ -1516,7 +1521,7 @@ function maquetaDraw(){
   const su=document.getElementById('mq-suelo'); if(su) su.remove();
   // panel «sigue por aquí»
   const estado=e?(e.prio==='clave'?'Ejercicio clave':(e.state===1?'Lo dejaste a medias':'')):'';
-  h+=`<div class="mq-panel mq-sigue" style="left:${X(29)};top:${Y(90)};width:${X(327)};height:${Y(272)}">`+(e?`<p class="mq-k">Sigue por aquí</p>
+  h+=`<div class="mq-panel mq-sigue" style="left:${X(50)};top:${Y(106)};width:${X(342)};height:${Y(262)}">`+(e?`<p class="mq-k">Sigue por aquí</p>
       <div class="mq-tema"><span>${t?esc(t.name):''}</span><span class="mq-num">${esc(e.num||'')}</span></div>
       <h2>${esc(e.title)}</h2>${estado?`<p class="mq-sub"><i aria-hidden="true"></i>${estado}</p>`:''}
       <button class="mq-go" data-study="${e.id}">${e.state===1?'Retomar ejercicio':'Empezar ejercicio'}</button>`:`<p class="mq-k">Todo resuelto</p><h2>La colonia está saciada.</h2>`)
@@ -1527,11 +1532,10 @@ function maquetaDraw(){
       </div>`;
   // progreso: el reloj orgánico de Andreé; el tubo verde se llena en sentido horario desde las 12 según lo resuelto y la aguja marca el avance
   const fr=xs.length?done/xs.length:0, gr=(360*fr).toFixed(2);
-  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1262)};top:${Y(582)};width:${X(268)};height:${Y(336)}">
+  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1300)};top:${Y(596)};width:${X(268)};height:${Y(300)}">
       <div class="mq-rel" role="img" aria-label="Progreso: ${done} de ${xs.length} ejercicios resueltos">
-        <img src="maqueta2/reloj-esfera.webp" alt="" draggable="false">
-        <img class="mq-rel-verde" src="maqueta2/reloj-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 49.81% 51.11%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 49.81% 51.11%,#000 ${gr}deg,transparent 0)">
-        <img src="maqueta2/reloj-marcas.webp" alt="" draggable="false">
+        <img src="maqueta2/reloj2-esfera.webp" alt="" draggable="false">
+        <img class="mq-rel-verde" src="maqueta2/reloj2-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 49.56% 54.91%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 49.56% 54.91%,#000 ${gr}deg,transparent 0)">
         <img class="mq-rel-aguja" src="maqueta2/reloj-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
       </div>
       <div class="mq-adnt">Progreso <b>${done} / ${xs.length}</b></div></div>`;

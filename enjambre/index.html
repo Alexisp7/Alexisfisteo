@@ -750,6 +750,10 @@ body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.
 .mq-huevos em{font-style:normal;color:#8CDE46;font-size:.9em}
 @keyframes mqHuevo{50%{box-shadow:0 0 calc(14px*var(--s)) rgba(96,189,36,1)}}
 
+.mq-larvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#maqueta.sobre-larva,#maqueta.sobre-larva .mq-org{cursor:pointer}
+.mq-ltip{position:absolute;z-index:40;transform:translate(-50%,-100%);max-width:calc(260px*var(--s));padding:calc(6px*var(--s)) calc(10px*var(--s));border-radius:calc(10px*var(--s));background:rgba(16,8,23,.92);border:1px solid rgba(229,164,255,.25);color:#efe4f6;font-size:calc(13px*var(--s));line-height:1.3;pointer-events:none;opacity:0;transition:opacity .15s}
+.mq-ltip.on{opacity:1}.mq-ltip b{color:#a58bb6;font-weight:600;font-variant-numeric:tabular-nums}.mq-ltip i{display:block;font-style:normal;font-size:calc(11.5px*var(--s));color:#8CDE46;margin-top:2px}
 /* «Sigue por aquí»: ficha compacta */
 #maqueta .mq-sigue{display:flex;flex-direction:column;padding:calc(20px*var(--s)) calc(22px*var(--s)) calc(16px*var(--s));border-radius:calc(26px*var(--s))}
 .mq-sigue .mq-k{margin:0;font-family:"Barlow Semi Condensed",sans-serif;text-transform:none;letter-spacing:.01em;font-weight:600;font-size:calc(15px*var(--s));color:#8CDE46}
@@ -1524,6 +1528,7 @@ function maquetaDraw(){
   st.parentNode.querySelectorAll('.mq-org,.mq-huevos button').forEach(b=>b.onclick=()=>{selected=selected===b.dataset.id?null:b.dataset.id; applyFocus(); drawSide();});
   bindCommon(st);
   st.insertAdjacentHTML('beforeend',objetosMaqueta(st));
+  larvasMaqueta(st);
   const fit=()=>{ const k=(st.clientWidth/MQ.W).toFixed(4); st.style.setProperty('--s',k); }; fit();
 }
 addEventListener('resize',()=>{ clearTimeout(MQ.rz); MQ.rz=setTimeout(maquetaDraw,180); });
@@ -1568,6 +1573,75 @@ function mqeInit(st){
     guarda(id,[v[0],v[1],Math.max(.3,Math.min(3,+(v[2]*(e.deltaY<0?1.05:1/1.05)).toFixed(3)))]); },{passive:false});
   st.addEventListener('dblclick',e=>{ const el=e.target.closest('.mq-o'); if(el) guarda(el.dataset.objeto,[0,0,1]); });
   st.addEventListener('pointerover',e=>{ const el=e.target.closest('.mq-o'); if(el) info.textContent=el.dataset.objeto; });
+}
+// ── larvas: cada ejercicio es una larva que nada alrededor de su célula (como en el celular, con más detalle) ──
+// pendiente = carne oscura, a medias = rosa, resuelto = verde del personaje. Tocar una larva abre su ejercicio.
+const LV={};
+function larvaSprite(c0,c1,c2,rim,r){ // segmento sombreado: volumen, anillo y brillo húmedo
+  const k=4, d=Math.ceil(r*2*k+4), cv=document.createElement('canvas'); cv.width=cv.height=d; const g=cv.getContext('2d'), m=d/2, R=r*k;
+  const gr=g.createRadialGradient(m-R*.35,m-R*.4,R*.1,m,m,R); gr.addColorStop(0,c0); gr.addColorStop(.55,c1); gr.addColorStop(1,c2);
+  g.fillStyle=gr; g.beginPath(); g.arc(m,m,R,0,7); g.fill();
+  g.strokeStyle=rim; g.lineWidth=k*.55; g.stroke();
+  g.fillStyle='rgba(255,255,255,.55)'; g.beginPath(); g.ellipse(m-R*.32,m-R*.42,R*.32,R*.17,-.5,0,7); g.fill();
+  return cv;
+}
+function larvasMaqueta(st){
+  const PAL=[['#d9a8c8','#8a4673','#2a0a1e','#14040e'],['#ffd0ea','#e0559a','#5a1036','#1c0512'],['#efffc4','#8CDE46','#2f6a10','#0d2604']];
+  if(!LV.spr) LV.spr=PAL.map(c=>larvaSprite(c[0],c[1],c[2],c[3],4.4));
+  // dos capas: la mitad de atrás de cada órbita pasa por detrás de la célula, la de adelante por encima
+  LV.cv?.remove(); LV.cvA?.remove(); const cv=document.createElement('canvas'), cvA=document.createElement('canvas');
+  cv.className=cvA.className='mq-larvas'; cv.setAttribute('aria-hidden','true'); cvA.setAttribute('aria-hidden','true');
+  const capa=st.querySelector('.mq-objetos')||st.firstChild; capa.before(cvA); capa.after(cv);
+  LV.cv=cv; LV.cvA=cvA; LV.st=st; LV.g=cv.getContext('2d'); LV.gA=cvA.getContext('2d');
+  // reparto: anillo suelto alrededor de cada célula, varias órbitas para que quepan todas
+  const R=rng(9090), L=[];
+  for(const [id,[cx,cy]] of Object.entries(MQ.pos)){ if(!T(id)) continue;
+    const r0=(MQ.R[id]||45), ls=DB.exercises.filter(e=>primTopic(e)===id).sort((a,b)=>prioW(b.prio)-prioW(a.prio));
+    const porAnillo=Math.max(7,Math.floor(2*Math.PI*r0*1.2/17));
+    ls.forEach((e,i)=>{ const anillo=Math.floor(i/porAnillo), n=Math.min(porAnillo,ls.length-anillo*porAnillo);
+      const st2=e.state||0, rr=r0*1.12+anillo*15+R()*4;
+      L.push({e,cx,cy,rr,a:(i%porAnillo)/n*6.283+anillo*.4+R()*.3,w:(anillo%2?-1:1)*(.035+R()*.03),ph:R()*6.28,
+        st:st2>=2?2:st2===1?1:0,len:(e.prio==='clave'?1.15:1)*(st2>=2?1.12:1)*(.9+R()*.2),seg:st2>=2?7:6}); }); }
+  LV.L=L; LV.hover=null;
+  const tam=()=>{ const b=st.getBoundingClientRect(), pr=Math.min(2,devicePixelRatio||1); cv.width=cvA.width=Math.round(b.width*pr); cv.height=cvA.height=Math.round(b.height*pr); LV.k=b.width/MQ.W*pr; LV.pr=pr; };
+  tam(); LV.tam=tam;
+  const donde=ev=>{ const b=st.getBoundingClientRect(), x=(ev.clientX-b.left)/b.width*MQ.W, y=(ev.clientY-b.top)/b.height*MQ.H; let m=null,md=121;
+    for(const l of LV.L){ const dx=l.x-x, dy=l.y-y, d=dx*dx+dy*dy; if(d<md){md=d;m=l;} } return m; };
+  if(!st.dataset.larvas){ st.dataset.larvas=1;
+    st.addEventListener('pointermove',ev=>{ const l=donde(ev); if(l!==LV.hover){ LV.hover=l; st.classList.toggle('sobre-larva',!!l); LV.rot(l); } });
+    st.addEventListener('pointerleave',()=>{ LV.hover=null; st.classList.remove('sobre-larva'); LV.rot(null); });
+    st.addEventListener('click',ev=>{ const l=donde(ev); if(l){ ev.stopPropagation(); ev.preventDefault(); study(l.e.id); } },true); }
+  // rótulo pequeño con el ejercicio de la larva señalada
+  const tip=document.createElement('div'); tip.className='mq-ltip'; st.appendChild(tip);
+  LV.rot=l=>{ if(!l){ tip.classList.remove('on'); return; }
+    tip.innerHTML=`<b>${esc(l.e.num||'')}</b> ${esc(l.e.title)}<i>${['Pendiente','A medias','Resuelto'][l.st]}</i>`;
+    tip.style.left=(100*l.x/MQ.W)+'%'; tip.style.top=(100*(l.y-12)/MQ.H)+'%'; tip.classList.add('on'); };
+  if(!LV.loop){ LV.loop=1; const quieto=matchMedia('(prefers-reduced-motion: reduce)');
+    const paso=ms=>{ requestAnimationFrame(paso); if(document.hidden||!LV.cv?.isConnected||!LV.cv.offsetParent) return; larvasDibuja(quieto.matches?0:ms/1000); };
+    requestAnimationFrame(paso); addEventListener('resize',()=>LV.tam&&LV.tam()); }
+}
+function larvasDibuja(t){
+  const k=LV.k; for(const c of [LV.g,LV.gA]) c.clearRect(0,0,LV.cv.width,LV.cv.height);
+  const pts=[];
+  for(const l of LV.L){
+    const a=l.a+t*l.w, bob=Math.sin(t*1.3+l.ph)*2.2, r=l.rr+bob;
+    l.x=l.cx+Math.cos(a)*r; l.y=l.cy+Math.sin(a)*r*.82; // órbita algo achatada, como vista en perspectiva
+    const g=Math.sin(a)<-.15?LV.gA:LV.g;
+    const dir=a+(l.w>0?1.5708:-1.5708)+Math.sin(t*2.1+l.ph)*.25, on=LV.hover===l, sz=l.len*(on?1.5:1), spr=LV.spr[l.st];
+    // cuerpo: segmentos que se ondulan desde la cabeza hacia la cola
+    const n=l.seg; pts.length=0; let x=l.x, y=l.y, d=dir;
+    for(let i=0;i<n;i++){ pts.push(x,y); d=dir+Math.sin(t*5+l.ph-i*.9)*.28*(i/n); x-=Math.cos(d)*2.7*sz; y-=Math.sin(d)*2.7*sz; }
+    if(l.st===2||on){ g.globalCompositeOperation='lighter'; g.fillStyle=on?'rgba(229,164,255,.35)':'rgba(96,189,36,.22)';
+      g.beginPath(); g.arc(l.x*k,l.y*k,9*sz*k,0,7); g.fill(); g.globalCompositeOperation='source-over'; }
+    for(let i=n-1;i>=0;i--){ const f=i===0?1.05:1-(i/n)*.5, s=4.4*f*sz*k*2; g.drawImage(spr,pts[2*i]*k-s/2,pts[2*i+1]*k-s/2,s,s); }
+    // cabeza: mandíbulas que se abren y cierran
+    const hx=l.x*k, hy=l.y*k, mo=.35+.25*Math.sin(t*6+l.ph), hl=4.6*sz*k;
+    g.strokeStyle=l.st===2?'#203d08':'#14030c'; g.lineWidth=Math.max(.8,.7*sz*k); g.lineCap='round'; g.beginPath();
+    for(const sgn of [-1,1]){ const aa=dir+sgn*mo; g.moveTo(hx+Math.cos(dir+sgn*.6)*hl*.55,hy+Math.sin(dir+sgn*.6)*hl*.55);
+      g.quadraticCurveTo(hx+Math.cos(aa)*hl*1.3,hy+Math.sin(aa)*hl*1.3,hx+Math.cos(dir)*hl*1.35,hy+Math.sin(dir)*hl*1.35); }
+    g.stroke();
+    if(l.st===2){ g.fillStyle='#f4ffd0'; g.beginPath(); g.arc(hx+Math.cos(dir)*hl*.25,hy+Math.sin(dir)*hl*.25,.55*sz*k,0,7); g.fill(); }
+  }
 }
 function objetosMaqueta(st){
   const X=v=>(100*v/MQ.W).toFixed(4)+'%', Y=v=>(100*v/MQ.H).toFixed(4)+'%';

@@ -811,6 +811,9 @@ body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(26.27vw,calc(100vh - 25.0
 .mq-sigue .mq-go:focus-visible{outline:2px solid #E5A4FF;outline-offset:3px}
 .mq-sigue .mq-nota{margin-top:auto;padding-top:calc(10px*var(--s));border-top:0;font-size:calc(13.5px*var(--s));color:#a993b8}
 @media (prefers-reduced-motion:reduce){.mq-pulso,.mq-adn-luz,.mq-huevos i,.mq-go{animation:none}}
+/* fondo blanco provisional para evaluar otros fondos (Andreé, 2026-11-15): se ocultan la pintura, el líquido, el gas y la niebla */
+#maqueta,body.con-maqueta #swarm,html:has(body.con-maqueta),body.con-maqueta{background:#fff!important}
+#maqueta>.mq-fondo,#maqueta .mq-liquido,#maqueta .mq-gas,#maqueta .mq-niebla{display:none!important}
 </style>
 <script type="importmap">{"imports":{"three":"../taller/lib/three/three.module.min.js","three/addons/":"../taller/lib/three/addons/"}}</script>
 </head>

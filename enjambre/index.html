@@ -643,6 +643,12 @@ body.con-maqueta #side{z-index:6;top:calc(60px*var(--s,1))}
 #maqueta .mq-tutor::after,#maqueta .mq-progreso::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url(maqueta2/tutor.webp) 0 0/100% 100% no-repeat}
 #maqueta .mq-progreso::after{background-image:url(maqueta2/progreso.webp)}
 #maqueta .mq-tutor::before{inset:14% 1.8% 5% 1.8%}#maqueta .mq-progreso::before{inset:5% 2.6% 5% 2.6%}
+#maqueta .mq-progreso.mq-reloj{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:calc(4px*var(--s));padding:0}
+#maqueta .mq-progreso.mq-reloj::before,#maqueta .mq-progreso.mq-reloj::after{display:none}
+.mq-rel{position:relative;width:100%;aspect-ratio:1061/1213;filter:drop-shadow(0 0 calc(10px*var(--s)) rgba(12,4,18,.9))}
+.mq-rel img{position:absolute;inset:0;width:100%;height:100%;user-select:none;pointer-events:none}
+.mq-rel .mq-rel-verde{filter:drop-shadow(0 0 calc(6px*var(--s)) rgba(140,222,70,.7))}
+.mq-rel .mq-rel-aguja{inset:auto;left:44.78%;top:25.27%;width:10%;height:30.2%;transform-origin:50.32% 85.54%}
 #maqueta .mq-progreso.mq-adnp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6px*var(--s));padding:0}
 #maqueta .mq-progreso.mq-adnp::after{display:none}#maqueta .mq-progreso.mq-adnp::before{inset:-6% -4%;border-radius:50%;background:radial-gradient(closest-side,rgba(12,5,18,.88) 55%,rgba(12,5,18,.55) 78%,transparent)}
 .mq-adnp .mq-adnbar{width:100%;margin:0}
@@ -657,7 +663,7 @@ body.con-maqueta:has(#v-hive.on) #swarm{display:block;height:100vh;min-height:0;
 body.con-maqueta #maqueta{width:100%;flex:none;margin:0}
 body.con-maqueta #mq-escenario{display:none!important}
 body.con-maqueta:has(#v-hive.on) .mq-tutor{top:min(45.096vw,calc(100vh - 10.203vw - 14px))!important}
-body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(43.517vw,calc(100vh - 11.274vw - 12px))!important}
+body.con-maqueta:has(#v-hive.on) .mq-progreso{top:min(32.807vw,calc(100vh - 18.94vw - 4px))!important}
 body.con-maqueta:has(#v-hive.on) .mq-personaje{top:min(27.621vw,calc(100vh - 28.749vw + 1vw))!important}
 .inv-huevos{position:relative;margin:0 0 28px;border-radius:18px;overflow:hidden;--s:.8}
 .inv-huevos>img{display:block;width:100%;aspect-ratio:1936/544;object-fit:cover;filter:hue-rotate(28deg) saturate(1.15) brightness(.7)}
@@ -1519,10 +1525,15 @@ function maquetaDraw(){
   h+=`<div class="mq-tutor" style="left:${X(640)};top:${Y(800)};width:${X(540)};height:${Y(181)}"><span class="mq-tt">Tu Tutor</span>
       <p><strong>¡Bienvenido, explorador!</strong>Aquí comienza tu viaje por el enjambre del conocimiento. Selecciona una <em>célula</em> y sigue aprendiendo.</p>
       </div>`;
-  // progreso solo abajo: la barra de ADN de Andreé, grande (peldaños en verde según lo resuelto) y el conteo debajo
-  const borde=(9.45+83.6*(xs.length?done/xs.length:0)).toFixed(2);
-  h+=`<div class="mq-progreso mq-adnp" style="left:${X(1268)};top:${Y(772)};width:${X(502)};height:${Y(200)}">
-      <div class="mq-adnbar"><img src="maqueta2/adn-barra.webp" alt="" draggable="false"><img class="mq-adnv" src="maqueta2/adn-barra-verde.webp" alt="" draggable="false" style="clip-path:inset(0 calc(100% - ${borde}%) 0 0)"></div>
+  // progreso: el reloj orgánico de Andreé; el tubo verde se llena en sentido horario desde las 12 según lo resuelto y la aguja marca el avance
+  const fr=xs.length?done/xs.length:0, gr=(360*fr).toFixed(2);
+  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1262)};top:${Y(582)};width:${X(268)};height:${Y(336)}">
+      <div class="mq-rel" role="img" aria-label="Progreso: ${done} de ${xs.length} ejercicios resueltos">
+        <img src="maqueta2/reloj-esfera.webp" alt="" draggable="false">
+        <img class="mq-rel-verde" src="maqueta2/reloj-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 49.81% 51.11%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 49.81% 51.11%,#000 ${gr}deg,transparent 0)">
+        <img src="maqueta2/reloj-marcas.webp" alt="" draggable="false">
+        <img class="mq-rel-aguja" src="maqueta2/reloj-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
+      </div>
       <div class="mq-adnt">Progreso <b>${done} / ${xs.length}</b></div></div>`;
   h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;
   st.innerHTML=h;

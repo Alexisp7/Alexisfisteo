@@ -1507,7 +1507,7 @@ function maquetaDraw(){
   const su=document.getElementById('mq-suelo'); if(su) su.remove();
   // panel «sigue por aquí»
   const estado=e?(e.prio==='clave'?'Ejercicio clave':(e.state===1?'Lo dejaste a medias':'')):'';
-  h+=`<div class="mq-panel mq-sigue" style="left:${X(29)};top:${Y(93)};width:${X(327)};height:${Y(297)}">`+(e?`<p class="mq-k">Sigue por aquí</p>
+  h+=`<div class="mq-panel mq-sigue" style="left:${X(29)};top:${Y(90)};width:${X(327)};height:${Y(272)}">`+(e?`<p class="mq-k">Sigue por aquí</p>
       <div class="mq-tema"><span>${t?esc(t.name):''}</span><span class="mq-num">${esc(e.num||'')}</span></div>
       <h2>${esc(e.title)}</h2>${estado?`<p class="mq-sub"><i aria-hidden="true"></i>${estado}</p>`:''}
       <button class="mq-go" data-study="${e.id}">${e.state===1?'Retomar ejercicio':'Empezar ejercicio'}</button>`:`<p class="mq-k">Todo resuelto</p><h2>La colonia está saciada.</h2>`)

@@ -408,6 +408,7 @@
     ficha('llegadas', { ancla: [LT.x0 + 4, LT.y - 4], k: 'Registro del evento', tit: 'Tiempos de disparo', 
       d: ['Una marca por detector: su posición es el', 'tiempo de disparo desde el primero y su altura,', 'el logaritmo de las partículas. La ventana de', coma(T1H - T0H, 2) + ' µs no es la duración de la cascada: es', 'lo que tarda el frente en barrer la ladera,', 'inclinada respecto a él.'] });
     var EVT = [724, 758];
+    var TMB = [656, 300];
     ficha('evento', { ancla: [EVT[0] + 4, EVT[1] - 10], k: 'Evento sintético 001 · ficha técnica', tit: 'Qué es simulado y qué no',
       d: ['E_ν 10 PeV · y 0,2 · E_τ 8 PeV · τ → hadrones', 'τ ' + coma(L_TAU * 1000, 0) + ' m · aire ' + coma(L_CRUCE, 2) + ' km · X ' + coma(X_IMP, 0) + ' g/cm²', 'llegan ' + cient(N_IMP) + ' e± · ' + VIVOS.length + ' estaciones', 'Calculado: λ_τ, Greisen, NKG, umbral, ajuste.', 'Parametrizado: Linsley y Matthews (extrapolados).', 'Ilustrativo: valle, medallón y trazas.', 'No son datos de TAMBO.'] });
 
@@ -527,6 +528,9 @@
       c.fillText('ORIGEN ASTROFÍSICO · NO A ESCALA', MED.x, MED.y - MED.r - 16); c.textAlign = 'start';
       // identificador del evento (su ficha aparece al pasar el mouse)
       c.fillStyle = 'rgba(226,208,180,.9)'; c.font = '700 10px "Space Mono", monospace'; c.fillText('EVENTO SINTÉTICO 001 · MODELO ILUSTRATIVO', EVT[0], EVT[1]);
+      // rótulo mínimo del observatorio sobre la ladera instrumentada
+      c.fillStyle = 'rgba(213,196,174,.95)'; c.font = '700 11px "Space Mono", monospace'; c.fillText('TAMBO', TMB[0], TMB[1]);
+      c.font = '400 9px "Space Mono", monospace'; c.fillStyle = 'rgba(213,196,174,.7)'; c.fillText('red de detectores en la ladera', TMB[0], TMB[1] + 13);
       c.strokeStyle = 'rgba(214,194,166,.35)'; c.lineWidth = .6; c.beginPath(); c.moveTo(EVT[0], EVT[1] + 5); c.lineTo(EVT[0] + 266, EVT[1] + 5); c.stroke();
       // camino del neutrino (punteado tenue)
       c.strokeStyle = 'rgba(214,120,176,.3)'; c.lineWidth = .8; c.setLineDash([1.5, 4]); c.beginPath();
@@ -602,14 +606,23 @@
     }
     function nuMed(a, b, nom) { trazo(a, b, 'rgba(214,120,176,.6)', .8, [1.5, 2.5]); rotulo(nom, b[0] + 3, b[1] + 4, 'rgba(230,150,196,.9)', 12); }
 
-    // el ν: recorre el camino punteado al cerrar el bucle y, ya en la roca, va hasta el vértice
+    // el ν: al empezar el bucle sale del medallón (que lo produjo al final del bucle anterior), recorre el camino
+    // punteado con una estela que lo une a la escena (no a escala) y, ya en la roca, va hasta el vértice
+    var T_PAS = .9;
     function neutrino(t) {
-      var cn = caminoNu(), u0 = (t - (LOOP - 1.6)) / 1.6;
-      if (u0 > 0 && u0 < 1) { var q = cn[Math.min(cn.length - 1, Math.floor(u0 * (cn.length - 1)))], mz = Math.round(suave((u0 - .35) / .4) * 12) / 12, cc = [Math.round(140 + 74 * mz), Math.round(180 - 60 * mz), Math.round(230 - 54 * mz)].join(','); brillo(q[0], q[1], 10, cc, .7); ctx.fillStyle = 'rgb(' + cc + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 1.8, 0, 2 * Math.PI); ctx.fill(); }
-      if (t > T_VTX + 2) return;
-      var u = cl(t / T_VTX, 0, 1), a = Ps(sobre(VTX, -1.55)), cab = Ps(sobre(VTX, -1.55 + 1.55 * u)), al = t < T_VTX ? 1 : 1 - suave((t - T_VTX) / 1.8);
+      var cn = caminoNu(), u0 = t / T_PAS;
+      if (u0 < 1) {
+        var n = cn.length - 1, iq = Math.min(n, Math.floor(suave(u0) * n)), q = cn[iq], mz = Math.round(suave((u0 - .35) / .4) * 12) / 12, cc = [Math.round(140 + 74 * mz), Math.round(180 - 60 * mz), Math.round(230 - 54 * mz)].join(',');
+        if (u0 < .4) brillo(cn[0][0], cn[0][1], 16, '214,120,176', .5 * (1 - u0 / .4));
+        ctx.strokeStyle = 'rgba(' + cc + ',.55)'; ctx.lineWidth = 1.2; ctx.beginPath();
+        for (var k = Math.max(0, iq - 9); k <= iq; k++) { if (k === Math.max(0, iq - 9)) ctx.moveTo(cn[k][0], cn[k][1]); else ctx.lineTo(cn[k][0], cn[k][1]); }
+        ctx.stroke();
+        brillo(q[0], q[1], 12, cc, .8); ctx.fillStyle = 'rgb(' + cc + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 2, 0, 2 * Math.PI); ctx.fill();
+      }
+      if (t < T_PAS || t > T_VTX + 2) return;
+      var u = cl((t - T_PAS) / (T_VTX - T_PAS), 0, 1), a = Ps(sobre(VTX, -1.55)), cab = Ps(sobre(VTX, -1.55 + 1.55 * u)), al = t < T_VTX ? 1 : 1 - suave((t - T_VTX) / 1.8);
       ctx.globalAlpha = al;
-      trazo(a, cab, 'rgba(214,120,176,.85)', 1.1, [5, 4]);
+      trazo(a, cab, 'rgba(214,120,176,.85)', 1.2, [5, 4]);
       if (t < T_VTX) { brillo(cab[0], cab[1], 14, '214,120,176', .6); ctx.fillStyle = '#F7D0E4'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2, 0, 2 * Math.PI); ctx.fill(); rotulo('ν_τ', cab[0] - 4, cab[1] - 12, '#F2B8D8', 20); }
       ctx.globalAlpha = 1;
     }
@@ -628,9 +641,9 @@
       ctx.stroke();
       var sT = t < T_CARA ? L_ROCA * suave(ui / (T_CARA - T_VTX)) : L_ROCA + L_TAU * suave((t - T_CARA) / (T_DEC - T_CARA));
       var q1 = Ps(sobre(VTX, Math.min(sT, L_ROCA)));
-      trazo(vt, q1, 'rgba(240,150,110,.9)', 1.3, [4, 3]);
+      trazo(vt, q1, 'rgba(242,179,107,.9)', 1.5);
       var cab = q1;
-      if (sT > L_ROCA) { cab = Ps(sobre(VTX, sT)); trazo(q1, cab, 'rgba(255,190,150,.95)', 1.6); }
+      if (sT > L_ROCA) { cab = Ps(sobre(VTX, sT)); trazo(q1, cab, 'rgba(250,196,130,.95)', 1.6); }
       if (t < T_DEC) { brillo(cab[0], cab[1], 12, '255,150,110', .7); ctx.fillStyle = '#FFE2D0'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2.2, 0, 2 * Math.PI); ctx.fill(); rotulo('τ⁻', cab[0] - 4, cab[1] - 11, '#FFC9A8', 20); }
       var ud = t - T_DEC;
       if (ud > 0) {
@@ -650,7 +663,7 @@
       if (t < T_DEC) return;
       var sf = frente(t), crec = cl(sf / L_CRUCE, 0, 1), fin = (1 - .75 * suave((t - T_LLEGA) / 2)) * fade(t);
       if (fin <= 0) return;
-      var dens = .12 + .88 * suave((t - T_DEC - .25) / .85);   // semilla → abanico → fase madura
+      var dens = .08 + .92 * suave((t - T_DEC - .4) / 1.4);   // semilla → abanico → fase madura
       LOTES.forEach(function (l) { l.length = 0; }); ESTELA.length = 0; CAB.length = 0; CABH.length = 0;
       RAY.forEach(function (R) {
         if (sf < R.sb || R.q > (R.nuc ? .62 * dens : dens)) return;
@@ -668,20 +681,20 @@
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });
       if (ESTELA.length) { ctx.strokeStyle = 'rgba(158,219,238,' + (.012 * fin * resalta) + ')'; ctx.lineWidth = .5; ctx.beginPath(); for (var e = 0; e < ESTELA.length; e += 4) { ctx.moveTo(ESTELA[e], ESTELA[e + 1]); ctx.lineTo(ESTELA[e + 2], ESTELA[e + 3]); } ctx.stroke(); }
-      ctx.fillStyle = 'rgba(214,242,250,' + (.5 * fin) + ')';
+      ctx.fillStyle = 'rgba(214,242,250,' + (.5 * fin * (1 - .5 * crec)) + ')';
       for (var i = 0; i < CAB.length; i += 2) ctx.fillRect(CAB[i] - .5, CAB[i + 1] - .5, 1, 1);
       ctx.fillStyle = 'rgba(229,180,124,' + (.9 * fin) + ')';
       for (i = 0; i < CABH.length; i += 3) { ctx.beginPath(); ctx.arc(CABH[i], CABH[i + 1], CABH[i + 2] * .5 + .5, 0, 2 * Math.PI); ctx.fill(); }
       // eje: tenue, para no leerse como un láser
       var c0 = Ps(sobre(DEC, Math.max(0, sf - L_CRUCE * .3))), c1 = Ps(sobre(DEC, Math.min(sf, L_CRUCE)));
-      var gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]); gl.addColorStop(0, 'rgba(215,229,240,0)'); gl.addColorStop(1, 'rgba(215,229,240,' + (.3 * fin) + ')');
+      var gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]); gl.addColorStop(0, 'rgba(215,229,240,0)'); gl.addColorStop(1, 'rgba(215,229,240,' + (.18 * fin) + ')');
       ctx.strokeStyle = gl; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(c0[0], c0[1]); ctx.lineTo(c1[0], c1[1]); ctx.stroke();
       // el frente: un disco delgado (≈ 2 R_M) que avanza a c
       if (sf < L_CRUCE * 1.01) {
         var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), p1 = Ps([c[0] + E2[0] * rd, c[1] + E2[1] * rd, c[2] + E2[2] * rd]), p2 = Ps([c[0] + E1[0] * rd, c[1] + E1[1] * rd, c[2] + E1[2] * rd]);
         var rx = Math.max(2, Math.hypot(p2[0] - pc[0], p2[1] - pc[1])), ry = Math.max(2, Math.hypot(p1[0] - pc[0], p1[1] - pc[1]));
-        ctx.globalCompositeOperation = 'lighter'; brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '158,219,238', .16 * fin); ctx.globalCompositeOperation = 'source-over';
-        ctx.strokeStyle = 'rgba(215,229,240,' + (.7 * fin) + ')'; ctx.lineWidth = .8;
+        ctx.globalCompositeOperation = 'lighter'; brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '158,219,238', .09 * fin); ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = 'rgba(215,229,240,' + (.5 * fin) + ')'; ctx.lineWidth = .8;
         ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rx, ry, Math.atan2(p1[1] - pc[1], p1[0] - pc[0]) - Math.PI / 2, 0, 2 * Math.PI); ctx.stroke();
       }
     }
@@ -718,22 +731,27 @@
       ctx.fillText('0', LT.x0 - 3, LT.y + 15); ctx.textAlign = 'end'; ctx.fillText(coma(T1H - T0H, 2) + ' µs', LT.x1 + 3, LT.y + 15); ctx.textAlign = 'start';
       ctx.globalAlpha = 1;
     }
-    // inferencia (no partícula): eje ajustado en guiones, ±1° en dos contornos finos y el frente plano ajustado
+    // inferencia (no partícula), en tres tiempos: primero el frente ajustado a las llegadas, luego el eje
+    // reconstruido que sale de él y al final el cono que contiene el 68 % de las repeticiones
     function reconstruye(t) {
-      var u = suave((t - T_REC) / 1.2) * fade(t); if (u <= 0) return;
+      var fd = fade(t), uf = suave((t - T_REC - .2) / .6) * fd; if (uf <= 0) return;
       var a = Ps(sobre(IMP, -1.3)), b = A_IMP, ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = Math.hypot(b[0] - a[0], b[1] - a[1]);
-      var lv = L * suave((t - T_REC) / 1.4);
-      ctx.globalAlpha = u * .7;
-      trazo([b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv], b, '#E7C58F', 1, [5, 4]);
-      ctx.fillStyle = '#E7C58F'; ctx.beginPath();
-      ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - 8 * Math.cos(ang - .35), b[1] - 8 * Math.sin(ang - .35)); ctx.lineTo(b[0] - 8 * Math.cos(ang + .35), b[1] - 8 * Math.sin(ang + .35)); ctx.closePath(); ctx.fill();
-      var dA = Math.PI / 180; ctx.strokeStyle = 'rgba(215,174,132,.8)'; ctx.lineWidth = .6; ctx.beginPath();
-      ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - lv * Math.cos(ang - dA), b[1] - lv * Math.sin(ang - dA)); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - lv * Math.cos(ang + dA), b[1] - lv * Math.sin(ang + dA)); ctx.stroke();
-      var uf = suave((t - T_REC - .5) / .8) * fade(t);
-      if (uf > 0) {
-        var h = .32 * uf, fa = Ps([IMP[0] + E2[0] * h, IMP[1] + E2[1] * h, IMP[2] + E2[2] * h]), fb = Ps([IMP[0] - E2[0] * h, IMP[1] - E2[1] * h, IMP[2] - E2[2] * h]);
-        ctx.globalAlpha = uf * .75; trazo(fa, fb, '#E7C58F', .8, [2, 3]);
-        ctx.fillStyle = 'rgba(231,197,143,.9)'; ctx.font = '700 7px "Space Mono", monospace'; ctx.fillText('FRENTE AJUSTADO', fa[0] + 6, fa[1] + 2);
+      var h = .32 * uf, fa = Ps([IMP[0] + E2[0] * h, IMP[1] + E2[1] * h, IMP[2] + E2[2] * h]), fb = Ps([IMP[0] - E2[0] * h, IMP[1] - E2[1] * h, IMP[2] - E2[2] * h]);
+      ctx.globalAlpha = uf * .85; trazo(fa, fb, '#D8B68A', .9, [2, 3]);
+      ctx.fillStyle = 'rgba(231,197,143,.95)'; ctx.font = '700 9px "Space Mono", monospace'; ctx.fillText('FRENTE AJUSTADO', fb[0] + 6, fb[1] + 4);
+      var ue = suave((t - T_REC - .8) / .5) * fd;
+      if (ue > 0) {
+        var lv = L * ue;
+        ctx.globalAlpha = ue * .85;
+        trazo([b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv], b, '#E7C58F', 1.2, [5, 4]);
+        ctx.fillStyle = '#E7C58F'; ctx.beginPath();
+        ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - 8 * Math.cos(ang - .35), b[1] - 8 * Math.sin(ang - .35)); ctx.lineTo(b[0] - 8 * Math.cos(ang + .35), b[1] - 8 * Math.sin(ang + .35)); ctx.closePath(); ctx.fill();
+      }
+      var uc = suave((t - T_REC - 1.3) / .4) * fd;
+      if (uc > 0 && AJ) {
+        var dA = AJ.p68 * Math.PI / 180;
+        ctx.globalAlpha = uc * .35; ctx.fillStyle = 'rgba(231,197,143,.5)'; ctx.beginPath();
+        ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - L * Math.cos(ang - dA), b[1] - L * Math.sin(ang - dA)); ctx.lineTo(b[0] - L * Math.cos(ang + dA), b[1] - L * Math.sin(ang + dA)); ctx.closePath(); ctx.fill();
       }
       ctx.globalAlpha = 1;
     }

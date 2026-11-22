@@ -161,19 +161,57 @@ window.GLSL_AGUJERO = [
   '  float a1 = c1.a + a2 * (1.0 - c1.a); vec3 k1 = (c1.rgb * c1.a + k2 * a2 * (1.0 - c1.a)) / max(a1, 1e-4);',
   '  gl_FragColor = vec4(k1, a1); }'
 ].join('\n');
-// compilación en segundo plano. En Windows (ANGLE sobre Direct3D) este trazador tarda ~12 s en compilarse;
+// ── versiones optimizadas del MISMO trazador (misma física, mismos colores; comprobado píxel a píxel en pantalla)
+// 1) El rayo deja de integrarse cuando ya se aleja (p·v > 0) y está a r > 23: desde ahí su radio solo crece, así que ya
+//    no puede volver a cruzar el disco (que termina en r = 22,5) ni caer. Antes seguía hasta r = 48 sin cambiar nada.
+//    Ahorra ~25 % de cada cuadro y el resultado es idéntico bit a bit.
+// 2) Solo WebGL2: los dos discos (imagen directa y secundaria) se calculan en un bucle en vez de copiar el código dos
+//    veces. El compilador de Windows (Direct3D) tardaba ~13 s porque copiaba todo; así tarda ~9 s.
+//    Los fwidth (bordes suaves) se calculan antes del bucle con la misma expresión.
+function cambia(s, a, b) { if (s.split(a).length !== 2) throw Error('agujero: no se encontró ' + a.slice(0, 50)); return s.split(a).join(b); }
+var BASE = window.GLSL_AGUJERO;
+try {
+  var g1 = cambia(BASE, 'if (r > 48.0 && dot(p, v) > 0.0) break;', 'if (r > 23.0 && dot(p, v) > 0.0) break;');
+  var g2 = cambia(g1, '#extension GL_OES_standard_derivatives : enable', '#version 300 es');
+  g2 = cambia(g2, 'uniform vec2 uDim;', 'uniform vec2 uDim; uniform int uN2; out vec4 fragColor;');
+  g2 = g2.split('gl_FragColor').join('fragColor');
+  g2 = cambia(g2, 'vec4 disco(vec3 p, vec3 v, float hay) {', 'vec4 disco(vec3 p, vec3 v, float hay, float frX, float faX) {');
+  g2 = cambia(g2, 'float u = (r - 6.0) / 13.5, fr = min(fwidth(r), .4) + 1e-4, fa = length(fwidth(vec2(cos(ph), sin(ph))));', 'float u = (r - 6.0) / 13.5, fr = frX, fa = faX;');
+  g2 = cambia(g2, 'vec4 c1 = disco(hA, vA, n > 0 ? 1.0 : 0.0), c2 = disco(hB, vB, n > 1 ? 1.0 : 0.0);',
+    'float rA = max(length(hA.xz), 2.5), phA = atan(hA.z, hA.x), rB = max(length(hB.xz), 2.5), phB = atan(hB.z, hB.x);\n' +
+    '  float frA = min(fwidth(rA), .4) + 1e-4, faA = length(fwidth(vec2(cos(phA), sin(phA)))), frB = min(fwidth(rB), .4) + 1e-4, faB = length(fwidth(vec2(cos(phB), sin(phB))));\n' +
+    '  vec4 c1 = vec4(0.0), c2 = vec4(0.0);\n' +
+    // uN2 = 2 (uniforme): el compilador no puede desenrollar el bucle; si el rayo no tocó el disco, no se calcula
+    '  for (int k = 0; k < uN2; k++) { if (k >= n) break; bool b = k == 1; vec4 cc = disco(b ? hB : hA, b ? vB : vA, (b ? n > 1 : n > 0) ? 1.0 : 0.0, b ? frB : frA, b ? faB : faA); if (b) c2 = cc; else c1 = cc; }');
+  window.GLSL_AGUJERO = g1;
+  window.GLSL_AGUJERO2 = g2;
+} catch (e) { console.error(e); }
+
+// compilación en segundo plano. En Windows (ANGLE sobre Direct3D) este trazador tardaba ~13 s en compilarse;
 // preguntar LINK_STATUS enseguida congelaba la página todo ese tiempo. Con KHR_parallel_shader_compile el driver
 // compila en otro hilo y aquí solo se consulta COMPLETION_STATUS en cada cuadro, así la página sigue respondiendo.
-// El shader es el mismo: no cambia nada de lo que se dibuja. Devuelve una promesa con el programa (o null).
-var VS_AGUJERO = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+// Devuelve una promesa con el programa (o null). En un contexto WebGL2 usa GLSL_AGUJERO2.
+var VS1 = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }', VS2 = '#version 300 es\nin vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+function esGL2(gl) { return typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext; }
+window.fuenteAgujero = function (gl) { return esGL2(gl) && window.GLSL_AGUJERO2 ? window.GLSL_AGUJERO2 : window.GLSL_AGUJERO; };
+// contexto para el trazador: WebGL2 si hay (compila más rápido), si no WebGL1 con derivadas
+window.contextoAgujero = function (lienzo, op) {
+  var gl = window.GLSL_AGUJERO2 ? lienzo.getContext('webgl2', op) : null;
+  if (!gl) { gl = lienzo.getContext('webgl', op); if (gl) gl.getExtension('OES_standard_derivatives'); }
+  return gl;
+};
 window.compilaAgujero = function (gl, fuente) {
-  fuente = fuente || window.GLSL_AGUJERO;
-  var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, VS_AGUJERO); gl.compileShader(vs);
+  var dos = esGL2(gl);
+  fuente = fuente || window.fuenteAgujero(gl);
+  var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, dos ? VS2 : VS1); gl.compileShader(vs);
   var fs = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(fs, fuente); gl.compileShader(fs);
   var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
   var par = gl.getExtension('KHR_parallel_shader_compile');
   function fin() {
-    if (gl.getProgramParameter(pr, gl.LINK_STATUS)) return pr;
+    if (gl.getProgramParameter(pr, gl.LINK_STATUS)) {
+      var n2 = gl.getUniformLocation(pr, 'uN2'); if (n2) { gl.useProgram(pr); gl.uniform1i(n2, 2); }
+      return pr;
+    }
     if (!gl.isContextLost()) console.error(gl.getShaderInfoLog(fs) || gl.getProgramInfoLog(pr));
     return null;
   }
@@ -187,13 +225,12 @@ window.compilaAgujero = function (gl, fuente) {
   });
 };
 // el navegador guarda el shader ya compilado: si se compila una vez (en cualquier página del sitio), la siguiente
-// vez que se abra Cursos o Relatividad sale de esa caché en milisegundos
+// vez que se abra Cursos sale de esa caché en milisegundos
 window.precalientaAgujero = function () {
   try {
     var c = document.createElement('canvas'); c.width = c.height = 1;
-    var gl = c.getContext('webgl', { antialias: false, premultipliedAlpha: false });
+    var gl = window.contextoAgujero(c, { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true });
     if (!gl || !gl.getExtension('KHR_parallel_shader_compile')) return Promise.resolve(false);
-    gl.getExtension('OES_standard_derivatives');
     return window.compilaAgujero(gl).then(function (pr) {
       var x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext();
       return !!pr;

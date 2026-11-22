@@ -181,11 +181,10 @@ var menu = function () {
     function enPantalla(bx, by) { var sx = bx * SC, sy = -by * SC; return [C[0] + Math.cos(ROLL) * sx - Math.sin(ROLL) * sy, C[1] + Math.sin(ROLL) * sx + Math.cos(ROLL) * sy]; }
     var BC = Math.sqrt(27), RSH = BC * SC;   // radio de la sombra en pantalla
     // ── WebGL
-    var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true }), U = {}, listo = false;
-    if (gl) gl.getExtension('OES_standard_derivatives');
+    var gl = window.contextoAgujero(lienzo, { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true }), U = {}, listo = false;
     // el trazador se compila en segundo plano (ver compilaAgujero en js/agujero-glsl.js): la página no se congela
     // mientras tanto y la hoja de carga espera a fig.bnListo antes de retirarse
-    fig.bnListo = (gl ? window.compilaAgujero(gl, GLSL_AGUJERO) : Promise.resolve(null)).then(function (pr) {
+    fig.bnListo = (gl ? window.compilaAgujero(gl) : Promise.resolve(null)).then(function (pr) {
       if (pr) {
         gl.useProgram(pr);
         var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);

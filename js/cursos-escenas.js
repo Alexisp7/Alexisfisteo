@@ -191,52 +191,82 @@ var menu = function () {
         var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
         ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk', 'uEx', 'uSal', 'uAg'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
         listo = true; inicio = performance.now();   // la entrada del dibujo cuenta desde que el trazador está listo, como antes
-      } else fig.classList.add('bn-sin-gl');
+      } else { fig.classList.add('bn-sin-gl'); if (avisaPrimero) { avisaPrimero(); avisaPrimero = null; } }
     });
     var tiempo = 0, dim = [1, 1], dimMeta = [1, 1], hk = 0, hkMeta = 0, ex = 0, sal = 0, zoom = 1;
     // el disco gira en un bucle perfecto de 40 s (ver patron/disco en el shader)
     function tDisco(t) { return ((t % 40) + 40) % 40; }
-    function pintar() {
-      if (!listo) return;
-      var r = lienzo.getBoundingClientRect(); if (!r.width) return;
+    // fija los valores del cuadro (tamaño, cámara, tiempo, entrada) y devuelve [W, H]; dt suaviza las transiciones
+    // por tiempo y no por cuadro, así duran lo mismo aunque la máquina dibuje pocos cuadros por segundo
+    function prepara(dt) {
+      var r = lienzo.getBoundingClientRect(); if (!r.width) return null;
       var q = Math.min(window.devicePixelRatio || 1, 2) * calidad, W = Math.round(r.width * q), H = Math.round(r.height * q);
       if (lienzo.width !== W || lienzo.height !== H) { lienzo.width = W; lienzo.height = H; }
-      var vb = svg.viewBox.baseVal;
-      gl.viewport(0, 0, W, H);
+      var vb = svg.viewBox.baseVal, k = 1 - Math.pow(1 - .14, dt * 60);
       gl.uniform2f(U.uRes, W, H); gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C[0], C[1]);
       gl.uniform1f(U.uSC, SC * zoom); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uEx, ex); gl.uniform1f(U.uSal, sal); gl.uniform1f(U.uAg, 1); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL + (Math.sin(tiempo * .9) * .6 + Math.sin(tiempo * .37 + 1.3) * .4) * Math.PI / 180); /* tambaleo: menos de 1° */ gl.uniform1f(U.uPix, vb.width / W / (SC * zoom)); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
-      dim[0] += (dimMeta[0] - dim[0]) * .14; dim[1] += (dimMeta[1] - dim[1]) * .14; gl.uniform2f(U.uDim, dim[0], dim[1]);
-      hk += (hkMeta - hk) * .14; gl.uniform1f(U.uHk, hk); gl.uniform1f(U.uTD, tDisco(tiempo));
-      if (!bandas) { gl.drawArrays(gl.TRIANGLES, 0, 3); return; }
-      // (en prueba, ?ritmo=bandas) el mismo cuadro, con los mismos valores, en franjas horizontales de altura par: entre una
-      // y otra la GPU puede atender al resto del navegador. Cada píxel se calcula igual que en un solo dibujo
-      var nb = 6, alto = Math.ceil(H / nb / 2) * 2;
-      gl.enable(gl.SCISSOR_TEST);
-      for (var y0 = 0; y0 < H; y0 += alto) { gl.scissor(0, y0, W, Math.min(alto, H - y0)); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.flush(); }
-      gl.disable(gl.SCISSOR_TEST);
+      dim[0] += (dimMeta[0] - dim[0]) * k; dim[1] += (dimMeta[1] - dim[1]) * k; gl.uniform2f(U.uDim, dim[0], dim[1]);
+      hk += (hkMeta - hk) * k; gl.uniform1f(U.uHk, hk); gl.uniform1f(U.uTD, tDisco(tiempo));
+      return [W, H];
     }
-    var bandas = /[?&]ritmo=bandas/.test(location.search);
-    // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
-    var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, inicio = performance.now(), armT = null;
+    function pintar() {   // un cuadro entero de una vez (capturas fijas y navegadores sin WebGL2)
+      if (!listo) return;
+      var d = prepara(1 / 60); if (!d) return;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, d[0], d[1]); gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+    // ── dibujo por teselas: el cuadro se traza fuera de pantalla en franjas horizontales, unas pocas en cada
+    // vuelta del navegador, y se muestra entero solo cuando está completo. Cada píxel se calcula exactamente igual
+    // que en un solo dibujo (mismos valores para todo el cuadro, franjas de altura par para que las derivadas no
+    // cambien), así que la imagen es idéntica; lo que cambia es que la GPU nunca queda ocupada tanto rato que el
+    // navegador deje de responder. En una máquina rápida el cuadro entero cabe en una vuelta y es como antes
+    var gl2 = typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext && !/[?&]ritmo=entero/.test(location.search);
+    var fb = null, tx = null, fbW = 0, fbH = 0, enCurso = null, fila = 0, porVuelta = 64, cercas = [], ultT = 0;
+    var avisaPrimero; fig.bnPrimero = new Promise(function (ok) { avisaPrimero = ok; });
+    function lienzoFuera(W, H) {
+      if (fb && fbW === W && fbH === H) return;
+      if (!fb) { fb = gl.createFramebuffer(); tx = gl.createTexture(); }
+      gl.bindTexture(gl.TEXTURE_2D, tx); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fb); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tx, 0);
+      fbW = W; fbH = H;
+    }
+    function teselas(t) {
+      // a lo sumo dos tandas en la GPU: mientras una se dibuja la otra espera, así la GPU no se queda ociosa entre
+      // vueltas, pero nunca acumula tanto trabajo que el navegador deje de responder
+      for (var i = 0; i < cercas.length; i++) cercas[i][1]++;
+      while (cercas.length && gl.getSyncParameter(cercas[0][0], gl.SYNC_STATUS) === gl.SIGNALED) {
+        var c = cercas.shift(); gl.deleteSync(c[0]);
+        // cuántas filas caben por tanda: si la GPU la terminó pronto, se prueba con algo más; si tardó, con menos
+        if (c[1] <= 1) porVuelta = Math.min(porVuelta * 1.25 + 2, 8192); else if (c[1] > 2) porVuelta = Math.max(2, porVuelta * 2 / Math.min(c[1], 8));
+      }
+      if (cercas.length >= 2) return;
+      if (!enCurso) {
+        var dt = ultT ? Math.min((t - ultT) / 1000, .5) : 1 / 60; ultT = t;
+        var d = prepara(dt); if (!d) return;
+        lienzoFuera(d[0], d[1]); enCurso = d; fila = 0;
+      }
+      var W = enCurso[0], H = enCurso[1], n = Math.max(2, Math.round(porVuelta / 2) * 2), y1 = Math.min(H, fila + n);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fb); gl.viewport(0, 0, W, H);
+      gl.enable(gl.SCISSOR_TEST); gl.scissor(0, fila, W, y1 - fila); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.disable(gl.SCISSOR_TEST);
+      fila = y1;
+      if (fila >= H) {   // cuadro completo: se copia tal cual al lienzo visible
+        gl.bindFramebuffer(gl.READ_FRAMEBUFFER, fb); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+        gl.blitFramebuffer(0, 0, W, H, 0, 0, W, H, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        enCurso = null; window.__bnCuadros = (window.__bnCuadros || 0) + 1;
+        if (avisaPrimero) { avisaPrimero(); avisaPrimero = null; }
+      }
+      cercas.push([gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0), 0]); gl.flush();
+    }
+    // calidad: la resolución es siempre la completa
+    var calidad = 1, inicio = performance.now(), armT = null;
     // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
-    // ritmo «valla» (en prueba, ?ritmo=valla): un cuadro nuevo solo cuando la GPU terminó el anterior, sin cola
-    var valla = /[?&]ritmo=(valla|bandas)/.test(location.search) && typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext, cerca = null;
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
-      if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
-      if (valla && listo) {
-        if (cerca) { if (gl.getSyncParameter(cerca, gl.SYNC_STATUS) !== gl.SIGNALED) return; gl.deleteSync(cerca); cerca = null; }
-        pintar(); cerca = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0); gl.flush();
-        return;
-      }
-      // la resolución casi no baja: si la GPU va lenta se ajusta poco y se salta un cuadro
-      if (++cuadro % salto) return;
-      pintar();
-      // si va lento se pinta un cuadro de cada dos; la resolución no cambia nunca (si bajara, se pixelaría a mitad de la escena)
-      if (previo) { var d = (t - previo) / salto; lentos = d > 30 ? lentos + 1 : Math.max(0, lentos - 1);
-        if (lentos > 25) { lentos = 0; if (salto < 2) salto = 2; } }
-      previo = t;
+      if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { ultT = 0; enCurso = null; return; }
+      if (!listo) return;
+      if (gl2) teselas(t); else { pintar(); window.__bnCuadros = (window.__bnCuadros || 0) + 1; if (avisaPrimero) { avisaPrimero(); avisaPrimero = null; } }
     })(0);
     fig.bnT = function (t) { tiempo = t; };
     // ── salida hacia la página de Relatividad: la mancha de tinta se extiende hasta cubrir la pantalla, la cámara
@@ -266,7 +296,7 @@ var menu = function () {
     });
     // al volver con «atrás» desde la caché del navegador, la escena aparece como estaba
     window.addEventListener('pageshow', function (e) { if (!e.persisted) return; ex = 0; sal = 0; zoom = 1; var mc = fig.closest('.mc'); if (mc) mc.classList.remove('bn-sale'); });
-    fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; pintar(); };   // para capturas fijas
+    fig.bnPintar = function (q, a) { calidad = q; armT = a == null ? null : a; enCurso = null; pintar(); };   // para capturas fijas
     // ── capa SVG: zonas para las notas y radiación de Hawking
     var g = el('g', {}, svg);
     function anillo(r0, r1) { return 'M' + f(C[0] - r1) + ' ' + f(C[1]) + ' a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(2 * r1) + ' 0 a' + f(r1) + ' ' + f(r1) + ' 0 1 0 ' + f(-2 * r1) + ' 0' + (r0 ? ' M' + f(C[0] - r0) + ' ' + f(C[1]) + ' a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(2 * r0) + ' 0 a' + f(r0) + ' ' + f(r0) + ' 0 1 0 ' + f(-2 * r0) + ' 0' : ''); }
@@ -1594,16 +1624,17 @@ var menu = function () {
   // la escena visible se precalienta ya, bajo la hoja; las otras, a pedacitos cuando el navegador está libre
   // (si alguien pasa a una antes de que termine, se completa en ese momento)
   var faltan = mods.map(function (m, w) { return w >= 2 ? 900 : 1600; });
-  function calienta(w, n) { n = Math.min(n, faltan[w]); for (var k = 0; k < n; k++) mods[w].tick(1 / 60); faltan[w] -= n; }
-  // la escena visible se calienta en trozos de 200 pasos, uno por tarea (antes era un solo bloque de ~0,3 s)
+  // calienta(w, ms): pasos de la escena w hasta gastar ms milisegundos (al menos uno); los mismos pasos de siempre, en trozos cortos
+  function calienta(w, ms) { if (faltan[w] <= 0) return; var fin = performance.now() + ms; do { mods[w].tick(1 / 60); faltan[w]--; } while (faltan[w] > 0 && performance.now() < fin); }
+  // la escena visible se calienta en trozos de ~8 ms, uno por tarea: entre uno y otro el navegador atiende lo demás
   var calentado = new Promise(function (ok) {
-    (function trozo() { calienta(activo, 200); if (faltan[activo] > 0) setTimeout(trozo, 0); else ok(); })();
+    (function trozo() { calienta(activo, 8); if (faltan[activo] > 0) setTimeout(trozo, 0); else ok(); })();
   });
   var ocioso = window.requestIdleCallback || function (fn) { return setTimeout(function () { fn({ timeRemaining: function () { return 8; } }); }, 30); };
   (function sigue(plazo) {
     var w = faltan.findIndex(function (x) { return x > 0; }); if (w < 0) return;
-    if (plazo.didTimeout) calienta(w, 40);
-    while (w >= 0 && plazo.timeRemaining() > 3) { calienta(w, 40); w = faltan.findIndex(function (x) { return x > 0; }); }
+    if (plazo.didTimeout) calienta(w, 4);
+    while (w >= 0 && plazo.timeRemaining() > 3) { calienta(w, plazo.timeRemaining() - 2); w = faltan.findIndex(function (x) { return x > 0; }); }
     ocioso(sigue, { timeout: 300 });
   })({ timeRemaining: function () { return 0; } });
   var visible = true, ult = 0;
@@ -1618,7 +1649,7 @@ var menu = function () {
   // la hoja espera a que el trazador del agujero negro esté compilado (en segundo plano), a la franja de la región
   // de caída (trazada en un Worker) y al precalentado; luego dos cuadros más bajo la hoja: el agujero ya se dibujó antes de verse
   var f0 = escenas[0];
-  return Promise.all([f0.bnListo, f0.bnFranja, calentado]).then(function () {
+  return Promise.all([f0.bnListo, f0.bnFranja, calentado]).then(function () { return f0.bnPrimero; }).then(function () {
     return new Promise(function (ok) { requestAnimationFrame(function () { requestAnimationFrame(ok); }); });
   });
   }

@@ -1620,23 +1620,19 @@ var menu = function () {
   });
   elegir(0);
   if (quieto) { for (var w = 0; w < mods.length; w++) for (var k = 0; k < 400; k++) mods[w].tick(1 / 60); elegir(0); return; }
-  // precalienta cada escena para que no empiece vacía
-  // la escena visible se precalienta ya, bajo la hoja; las otras, a pedacitos cuando el navegador está libre
-  // (si alguien pasa a una antes de que termine, se completa en ese momento)
+  // precalienta cada escena para que no empiece vacía: todas bajo la hoja de carga, primero la visible, en trozos
+  // de ~8 ms (uno por tarea, entre uno y otro el navegador atiende lo demás). Así, al pasar de un curso a otro,
+  // la escena ya está lista y no hay que completarla de golpe
   var faltan = mods.map(function (m, w) { return w >= 2 ? 900 : 1600; });
-  // calienta(w, ms): pasos de la escena w hasta gastar ms milisegundos (al menos uno); los mismos pasos de siempre, en trozos cortos
+  // calienta(w, ms): pasos de la escena w hasta gastar ms milisegundos (al menos uno); los mismos pasos de siempre
   function calienta(w, ms) { if (faltan[w] <= 0) return; var fin = performance.now() + ms; do { mods[w].tick(1 / 60); faltan[w]--; } while (faltan[w] > 0 && performance.now() < fin); }
-  // la escena visible se calienta en trozos de ~8 ms, uno por tarea: entre uno y otro el navegador atiende lo demás
   var calentado = new Promise(function (ok) {
-    (function trozo() { calienta(activo, 8); if (faltan[activo] > 0) setTimeout(trozo, 0); else ok(); })();
+    (function trozo() {
+      var w = faltan[activo] > 0 ? activo : faltan.findIndex(function (x) { return x > 0; });
+      if (w < 0) { ok(); return; }
+      calienta(w, 40); setTimeout(trozo, 0);
+    })();
   });
-  var ocioso = window.requestIdleCallback || function (fn) { return setTimeout(function () { fn({ timeRemaining: function () { return 8; } }); }, 30); };
-  (function sigue(plazo) {
-    var w = faltan.findIndex(function (x) { return x > 0; }); if (w < 0) return;
-    if (plazo.didTimeout) calienta(w, 4);
-    while (w >= 0 && plazo.timeRemaining() > 3) { calienta(w, plazo.timeRemaining() - 2); w = faltan.findIndex(function (x) { return x > 0; }); }
-    ocioso(sigue, { timeout: 300 });
-  })({ timeRemaining: function () { return 0; } });
   var visible = true, ult = 0;
   if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(raiz);
   function bucle(t) {

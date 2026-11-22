@@ -132,7 +132,7 @@
     // ajuste del frente: t_i − ⟨retraso_i⟩ = t₀ + n̂·r_i / c + κ ρ_i² / 2c, con n̂ = eje + a ê₁ + b ê₂ (a, b pequeños)
     // y κ = 1/R la curvatura (ρ_i: distancia al eje por el punto de impacto). Mínimos cuadrados lineales con pesos 1/σ_i².
     // Error angular = ángulo entre n̂ ajustado y el eje simulado. PULL acumula (residuo/σ_i) para comprobar la calibración.
-    var PULL = { s: 0, n: 0 };
+    var PULL = { s: 0, n: 0, chi: [] };
     function ajusta(ts, guarda) {
       var N = 4, A = [], B = [0, 0, 0, 0], F = [], i, j, c;
       for (i = 0; i < N; i++) A.push([0, 0, 0, 0]);
@@ -147,8 +147,10 @@
         for (i = c + 1; i < N; i++) { var q = A[i][c] / A[c][c]; for (j = c; j < N; j++) A[i][j] -= q * A[c][j]; B[i] -= q * B[c]; }
       }
       var x = [0, 0, 0, 0]; for (c = N - 1; c >= 0; c--) { var sm = B[c]; for (j = c + 1; j < N; j++) sm -= A[c][j] * x[j]; x[c] = sm / A[c][c]; }
-      F.forEach(function (q, k) { var m = x[0] + x[1] * q[0][1] + x[2] * q[0][2] + x[3] * q[0][3], u = (q[1] - m) / q[2]; PULL.s += u * u; PULL.n++; if (guarda) { var d = VIVOS[k]; d.t = ts[k]; d.res = (q[1] - m) * 1000; } });
+      var chi = 0;
+      F.forEach(function (q, k) { var m = x[0] + x[1] * q[0][1] + x[2] * q[0][2] + x[3] * q[0][3], u = (q[1] - m) / q[2]; PULL.s += u * u; PULL.n++; chi += u * u; if (guarda) { var d = VIVOS[k]; d.t = ts[k]; d.res = (q[1] - m) * 1000; } });
       if (guarda) KAP = x[3];
+      if (PULL.chi.length < NMC) PULL.chi.push(chi / (F.length - N));
       return Math.atan(Math.hypot(x[1], x[2])) * 180 / Math.PI;
     }
     var KAP = 0;
@@ -170,9 +172,9 @@
     // escenario nominal (ambos efectos): ahora mismo, porque fija los tiempos que se dibujan
     var AJ = (function () {
       if (VIVOS.length < 4) return null;
-      PULL.s = PULL.n = 0;
-      var E = nuevoEsc(true, true, 97); paso(E, NMC); var C = cierra(E), pull = Math.sqrt(PULL.s / PULL.n), err = ajusta(C.tip, true);   // se muestra la realización más cercana a la mediana (declarado en la ficha)
-      return { err: err, mc: C.mc, med: C.med[0], p68: C.p68[0], dmed: C.med[1], dp68: C.p68[1], mal: C.mal, pull: pull, R: KAP > 0 ? 1 / KAP : 0, listo: false };
+      PULL.s = PULL.n = 0; PULL.chi = [];
+      var E = nuevoEsc(true, true, 97); paso(E, NMC); var C = cierra(E), pull = Math.sqrt(PULL.s / PULL.n), chi = PULL.chi.sort(function (a, b) { return a - b; })[PULL.chi.length >> 1]; PULL.chi = []; var err = ajusta(C.tip, true);   // se muestra la realización más cercana a la mediana (declarado en la ficha)
+      return { err: err, mc: C.mc, med: C.med[0], p68: C.p68[0], dmed: C.med[1], dp68: C.p68[1], mal: C.mal, pull: pull, chi: chi, R: KAP > 0 ? 1 / KAP : 0, listo: false };
     })();
     // sensibilidad (solo reloj, solo espesor y cinco generadores distintos): por tramos, después de arrancar la escena
     function sensibilidad(alFin) {
@@ -196,7 +198,7 @@
     for (var i = 0; i < 760; i++) {
       var sb = L_CRUCE * Math.pow(rnd(), 1.7) * .8, ph = rnd() * 2 * Math.PI;
       var rf = R_M * 1.25 * Math.sqrt(-2 * Math.log(rnd() + 1e-6)) * .55;
-      RAY.push({ sb: sb, c: Math.cos(ph), s: Math.sin(ph), th: rf / Math.max(.4, L_CRUCE - sb), a: rnd(), tr: .35 + rnd() * .9, oro: rnd() < .06, q: rnd() });
+      RAY.push({ sb: sb, c: Math.cos(ph), s: Math.sin(ph), th: rf / Math.max(.4, L_CRUCE - sb), a: rnd(), tr: .35 + rnd() * .9, oro: rnd() < .06, q: rnd(), nuc: rf < R_M * .35 });
     }
     // muones: pocos, rectos y poco desviados; nacen de los piones cargados y atraviesan todo el valle
     for (i = 0; i < 30; i++) {
@@ -341,14 +343,15 @@
       // tabla de sensibilidad: qué parte del error viene del reloj y cuál del frente
       var c1 = x0, c2 = x0 + 150, c3 = x0 + w0, yt = yh + 30;
       function fila(yy, a1, a2, a3, cls) { [[c1, a1, 'start'], [c2, a2, 'end'], [c3, a3, 'end']].forEach(function (q) { var t = el('text', { 'class': cls || 'rc-dk', x: f(q[0]), y: f(yy), 'text-anchor': q[2] }, g); t.textContent = q[1]; }); }
-      fila(yt, 'escenario', 'mediana', '68 % bajo');
-      el('line', { 'class': 'rc-deje', x1: c1, y1: yt + 5, x2: c3, y2: yt + 5 }, g);
-      if (!AJ.listo) { fila(yt + 18, 'ambos', coma(AJ.med, 2) + ' ± ' + coma(AJ.dmed, 2) + '°', coma(AJ.p68, 2) + ' ± ' + coma(AJ.dp68, 2) + '°', 'rc-dl rc-dch'); var uw = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 36) }, g); uw.textContent = 'calculando sensibilidad…'; return; }
-      fila(yt + 18, 'solo reloj (σ = 2 ns)', coma(AJ.reloj.med[0], 2) + '°', coma(AJ.reloj.p68[0], 2) + '°', 'rc-dl rc-dch');
-      fila(yt + 34, 'solo espesor del frente', coma(AJ.fis.med[0], 2) + '°', coma(AJ.fis.p68[0], 2) + '°', 'rc-dl rc-dch');
-      fila(yt + 50, 'ambos', coma(AJ.med, 2) + ' ± ' + coma(AJ.dmed, 2) + '°', coma(AJ.p68, 2) + ' ± ' + coma(AJ.dp68, 2) + '°', 'rc-dl rc-dch');
-      fila(yt + 66, 'generador distinto (5)', '', coma(AJ.sMin, 2) + '–' + coma(AJ.sMax, 2) + '°', 'rc-dl rc-dch');
-      var u5 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 84) }, g); u5.textContent = 'pull ' + coma(AJ.pull, 2) + ' · R ' + coma(AJ.R, 1) + ' km · fallidos ' + AJ.mal + '/' + 8 * NMC;
+      var nd = VIVOS.length - 4;
+      fila(yt, 'mediana nominal', '', coma(AJ.med, 2) + ' ± ' + coma(AJ.dmed, 2) + '°', 'rc-dl rc-dch');
+      fila(yt + 17, 'P68 nominal', '', coma(AJ.p68, 2) + ' ± ' + coma(AJ.dp68, 2) + '°', 'rc-dl rc-dch');
+      if (!AJ.listo) { var uw = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 36) }, g); uw.textContent = 'calculando sensibilidad…'; return; }
+      fila(yt + 34, 'P68 con generador distinto', '', coma(AJ.sMin, 2) + '–' + coma(AJ.sMax, 2) + '°', 'rc-dl rc-dch');
+      el('line', { 'class': 'rc-deje', x1: c1, y1: yt + 42, x2: c3, y2: yt + 42 }, g);
+      var u5 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 56) }, g); u5.textContent = 'medianas · solo reloj ' + coma(AJ.reloj.med[0], 2) + '° · solo frente ' + coma(AJ.fis.med[0], 2) + '°';
+      var u6 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 70) }, g); u6.textContent = 'χ²/ndf mediano ' + coma(AJ.chi, 2) + ' (ndf ' + nd + '; esperado ≈ ' + coma(Math.pow(1 - 2 / (9 * nd), 3), 2) + ')';
+      var u7 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 84) }, g); u7.textContent = 'R ajustado ' + coma(AJ.R, 1) + ' km · ' + AJ.mal + ' fallos de ' + 8 * NMC;
     }
 
     function dibAire(g, x, y, w, h) {   // densidad del aire (atmósfera estándar) contra altura
@@ -392,15 +395,15 @@
     ficha('ladera', { ancla: A_LAD, k: 'TAMBO · ladera de enfrente', tit: '5 000 unidades a 150 m', dib: dibMalla, dibH: 82,
       d: ['Detectores de partículas en malla triangular', 'sobre la ladera que mira a la montaña (diseño', 'nominal de 2025; se estudian tanques de agua', 'Cherenkov y centelleadores plásticos).', 'Busca neutrinos tau de 1 a 100 PeV.'] });
     function fichaHuella() { return ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento simulado', tit: 't_i = t₀ + n̂ · r_i / c + ρ_i² / 2Rc', dib: dibOrden, dibH: 280,
-      d: ['Se resta el retraso medio de cada estación y se', 'ajustan dirección y curvatura (pesos 1/σ_i²). Se', 'muestra la realización mediana. «Generador', 'distinto»: otro σ_t, exponente, forma o n_i, ajustado', 'con el nominal. No es la resolución de TAMBO.'] }); }
+      d: ['Se resta el retraso medio de cada estación y se', 'ajustan dirección y curvatura (pesos 1/σ_i²); se', 'muestra la realización mediana. χ²/ndf cerca de', 'lo esperado: errores calibrados. No es la', 'resolución de TAMBO.'] }); }
     fichaHuella();
     sensibilidad(function () { var vieja = fichas.huella, ver = vieja.ver; var n = fichaHuella(); capa.insertBefore(n.g, vieja.g); capa.removeChild(vieja.g); if (ver) n.pon(true); });
     ficha('valle', { ancla: A_VAL, k: 'Valle del Colca · Perú', tit: 'Un valle como detector', dib: dibAire, dibH: 92,
       d: ['≈ 1,5 km de profundidad y ≈ 4,5 km entre', 'laderas: una cara es blanco y la otra pantalla.', 'A ~3 km de altura el aire es 26 % menos denso', 'que al nivel del mar, y la cascada se estira.', 'Sección sintética inspirada en el Colca, no un', 'modelo de elevación real.'] });
     // estación: la que esté más cerca de 100 m del eje con al menos 10 partículas (frente ya grueso, pulso con estructura)
     var EST = VIVOS.filter(function (d) { return d.n >= 10; }).reduce(function (b, d) { return Math.abs(d.rp - 100) < Math.abs(b.rp - 100) ? d : b; }, VIVOS[0]), A_EST = Ps([EST.x, EST.y, EST.z]);
-    ficha('estacion', { ancla: [A_EST[0], A_EST[1] - 2], k: 'Una estación · tanque de agua', tit: 'Pulso de luz Cherenkov', dib: dibOnda, dibH: 96,
-      d: ['Cada partícula que entra al agua emite luz;', 'el fotomultiplicador ve pulsos que decaen en', '~60 ns. El disparo (línea) es el t_i del ajuste.', 'A ' + coma(EST.rp, 0) + ' m del eje el frente es grueso: las', 'partículas llegan repartidas en decenas de ns.', 'TAMBO aún elige entre agua y centelleadores.'] });
+    ficha('estacion', { ancla: [A_EST[0], A_EST[1] - 2], k: 'Estación ilustrativa · tanque de agua', tit: 'Pulso de luz Cherenkov', dib: dibOnda, dibH: 96,
+      d: ['Cada partícula que entra al agua emite luz;', 'el fotomultiplicador ve pulsos que decaen en', '~60 ns. El disparo (línea) es el t_i del ajuste.', 'A ' + coma(EST.rp, 0) + ' m del eje el frente es grueso: las', 'partículas llegan repartidas en decenas de ns.'] });
     ficha('llegadas', { ancla: [LT.x0 + 4, LT.y - 4], k: 'Registro del evento', tit: 'Tiempos de disparo', 
       d: ['Una marca por detector: su posición es el', 'tiempo de disparo desde el primero y su altura,', 'el logaritmo de las partículas. La ventana de', coma(T1H - T0H, 2) + ' µs no es la duración de la cascada: es', 'lo que tarda el frente en barrer la ladera,', 'inclinada respecto a él.'] });
     var EVT = [724, 758];
@@ -522,8 +525,8 @@
       c.fillStyle = 'rgba(226,208,180,.9)'; c.font = '700 11px "Space Mono", monospace'; c.textAlign = 'center';
       c.fillText('ORIGEN ASTROFÍSICO · NO A ESCALA', MED.x, MED.y - MED.r - 16); c.textAlign = 'start';
       // identificador del evento (su ficha aparece al pasar el mouse)
-      c.fillStyle = 'rgba(214,194,166,.7)'; c.font = '700 9px "Space Mono", monospace'; c.fillText('EVENTO SINTÉTICO 001 · MODELO ILUSTRATIVO', EVT[0], EVT[1]);
-      c.strokeStyle = 'rgba(214,194,166,.35)'; c.lineWidth = .6; c.beginPath(); c.moveTo(EVT[0], EVT[1] + 5); c.lineTo(EVT[0] + 240, EVT[1] + 5); c.stroke();
+      c.fillStyle = 'rgba(226,208,180,.9)'; c.font = '700 10px "Space Mono", monospace'; c.fillText('EVENTO SINTÉTICO 001 · MODELO ILUSTRATIVO', EVT[0], EVT[1]);
+      c.strokeStyle = 'rgba(214,194,166,.35)'; c.lineWidth = .6; c.beginPath(); c.moveTo(EVT[0], EVT[1] + 5); c.lineTo(EVT[0] + 266, EVT[1] + 5); c.stroke();
       // camino del neutrino (punteado tenue)
       c.strokeStyle = 'rgba(214,120,176,.3)'; c.lineWidth = .8; c.setLineDash([1.5, 4]); c.beginPath();
       caminoNu().forEach(function (q, k) { if (!k) c.moveTo(q[0], q[1]); else c.lineTo(q[0], q[1]); }); c.stroke(); c.setLineDash([]);
@@ -649,7 +652,7 @@
       var dens = .12 + .88 * suave((t - T_DEC - .25) / .85);   // semilla → abanico → fase madura
       LOTES.forEach(function (l) { l.length = 0; }); ESTELA.length = 0; CAB.length = 0; CABH.length = 0;
       RAY.forEach(function (R) {
-        if (sf < R.sb || R.q > dens) return;
+        if (sf < R.sb || R.q > (R.nuc ? .62 * dens : dens)) return;
         var s1 = Math.min(sf, R.fin), s0 = Math.max(R.sb, s1 - R.tr * L_CRUCE * (R.mu ? .45 : R.oro ? .1 : R.a > .82 ? .3 : .11)); if (s1 <= s0) return;
         var a = Ps(puntoRayo(R, s0)), b = Ps(puntoRayo(R, s1));
         if (s0 > R.sb && R.a < .5 && !R.mu) { var e0 = Ps(puntoRayo(R, R.sb)); ESTELA.push(e0[0], e0[1], a[0], a[1]); }
@@ -659,7 +662,7 @@
       var resalta = foco === 'cascada' ? 1.6 : 1;
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var al = Math.min(1, (k === 5 ? .62 : k === 4 ? .35 : .87 * (.035 + k * .025) * (k === 3 ? 1.3 : 1)) * fin * resalta);
+        var al = Math.min(1, (k === 5 ? .62 : k === 4 ? .35 : .87 * (.035 + k * .025) * (k === 3 ? 1.15 : 1)) * fin * resalta);
         ctx.strokeStyle = k === 5 ? 'rgba(192,165,240,' + al + ')' : k === 4 ? 'rgba(229,180,124,' + al + ')' : 'rgba(158,219,238,' + al + ')'; ctx.lineWidth = k === 5 ? 1.1 : k === 4 ? .6 : .5 + k * .15;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });

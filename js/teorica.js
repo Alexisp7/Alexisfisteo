@@ -155,23 +155,39 @@
     // 1000 repeticiones del mismo evento: solo reloj, solo espesor del frente, ambos; y cinco generadores distintos
     // del que asume el ajuste (desajuste de modelo). Intervalos de 68 % de la mediana y del P68 por estadística de orden.
     var NMC = 1000;
-    function escenario(fis, det, sem, G) {
-      var mc = [], r = semilla(sem), mal = 0, todas = [];
-      for (var k = 0; k < NMC; k++) { var ts = realiza(r, fis, det, G), e = ajusta(ts, false); if (isFinite(e) && e < 20) { mc.push(e); todas.push([e, ts]); } else mal++; }
-      mc.sort(function (a, b) { return a - b; });
-      var md = mc[Math.round(mc.length / 2)], tip = todas.reduce(function (b, q) { return Math.abs(q[0] - md) < Math.abs(b[0] - md) ? q : b; }, todas[0]);
-      var n = mc.length, q = function (p) { var s = Math.sqrt(n * p * (1 - p)); return [mc[Math.round(n * p)], (mc[Math.min(n - 1, Math.round(n * p + s))] - mc[Math.max(0, Math.round(n * p - s))]) / 2]; };
-      return { mc: mc, med: q(.5), p68: q(.68), mal: mal, tip: tip[1] };
+    // un escenario se puede calcular de una vez o por tramos (paso), para no bloquear el navegador
+    function nuevoEsc(fis, det, sem, G) { return { fis: fis, det: det, G: G, r: semilla(sem), mc: [], todas: [], mal: 0, k: 0 }; }
+    function paso(E, m) {
+      for (var j = 0; j < m && E.k < NMC; j++, E.k++) { var ts = realiza(E.r, E.fis, E.det, E.G), e = ajusta(ts, false); if (isFinite(e) && e < 20) { E.mc.push(e); if (!E.G && E.fis && E.det) E.todas.push([e, ts]); } else E.mal++; }
+      return E.k >= NMC;
     }
+    function cierra(E) {
+      var mc = E.mc.sort(function (a, b) { return a - b; }), n = mc.length, md = mc[Math.round(n / 2)];
+      var tip = E.todas.length ? E.todas.reduce(function (b, q) { return Math.abs(q[0] - md) < Math.abs(b[0] - md) ? q : b; }, E.todas[0])[1] : null;
+      var q = function (p) { var s = Math.sqrt(n * p * (1 - p)); return [mc[Math.round(n * p)], (mc[Math.min(n - 1, Math.round(n * p + s))] - mc[Math.max(0, Math.round(n * p - s))]) / 2]; };
+      E.todas = null; return { mc: mc, med: q(.5), p68: q(.68), mal: E.mal, tip: tip };
+    }
+    // escenario nominal (ambos efectos): ahora mismo, porque fija los tiempos que se dibujan
     var AJ = (function () {
       if (VIVOS.length < 4) return null;
       PULL.s = PULL.n = 0;
-      var C = escenario(true, true, 97), pull = Math.sqrt(PULL.s / PULL.n), err = ajusta(C.tip, true);   // se muestra la realización más cercana a la mediana (declarado en la ficha)
-      var VAR = [{ s0: .0016, b: 1.4, k: 2, fn: 1 }, { s0: .0016, b: 1.9, k: 2, fn: 1 }, { s0: .0024, b: 1.65, k: 2, fn: 1 }, { s0: .0016, b: 1.65, k: 1, fn: 1 }, { s0: .0016, b: 1.65, k: 2, fn: .5 }];
-      var mis = VAR.map(function (G, i) { return escenario(true, true, 211 + i, G); }), p68s = mis.map(function (m) { return m.p68[0]; });
-      return { err: err, mc: C.mc, med: C.med[0], p68: C.p68[0], dmed: C.med[1], dp68: C.p68[1], mal: C.mal + mis.reduce(function (a, m) { return a + m.mal; }, 0), pull: pull, R: KAP > 0 ? 1 / KAP : 0,
-        reloj: escenario(false, true, 131), fis: escenario(true, false, 173), sMin: Math.min.apply(null, p68s), sMax: Math.max.apply(null, p68s) };
+      var E = nuevoEsc(true, true, 97); paso(E, NMC); var C = cierra(E), pull = Math.sqrt(PULL.s / PULL.n), err = ajusta(C.tip, true);   // se muestra la realización más cercana a la mediana (declarado en la ficha)
+      return { err: err, mc: C.mc, med: C.med[0], p68: C.p68[0], dmed: C.med[1], dp68: C.p68[1], mal: C.mal, pull: pull, R: KAP > 0 ? 1 / KAP : 0, listo: false };
     })();
+    // sensibilidad (solo reloj, solo espesor y cinco generadores distintos): por tramos, después de arrancar la escena
+    function sensibilidad(alFin) {
+      if (!AJ) return;
+      var VAR = [{ s0: .0016, b: 1.4, k: 2, fn: 1 }, { s0: .0016, b: 1.9, k: 2, fn: 1 }, { s0: .0024, b: 1.65, k: 2, fn: 1 }, { s0: .0016, b: 1.65, k: 1, fn: 1 }, { s0: .0016, b: 1.65, k: 2, fn: .5 }];
+      var L = [nuevoEsc(false, true, 131), nuevoEsc(true, false, 173)].concat(VAR.map(function (G, i) { return nuevoEsc(true, true, 211 + i, G); })), i = 0;
+      (function tramo() {
+        var t0 = performance.now();
+        while (i < L.length && performance.now() - t0 < 8) { if (paso(L[i], 25)) i++; }
+        if (i < L.length) { setTimeout(tramo, 16); return; }
+        var R = L.map(cierra), p68s = R.slice(2).map(function (m) { return m.p68[0]; });
+        AJ.reloj = R[0]; AJ.fis = R[1]; AJ.sMin = Math.min.apply(null, p68s); AJ.sMax = Math.max.apply(null, p68s);
+        AJ.mal += R.reduce(function (a, m) { return a + m.mal; }, 0); AJ.listo = true; alFin();
+      })();
+    }
     VIVOS.sort(function (a, b) { return a.t - b.t; });
     T0H = VIVOS[0].t; T1H = VIVOS[VIVOS.length - 1].t;
 
@@ -327,11 +343,12 @@
       function fila(yy, a1, a2, a3, cls) { [[c1, a1, 'start'], [c2, a2, 'end'], [c3, a3, 'end']].forEach(function (q) { var t = el('text', { 'class': cls || 'rc-dk', x: f(q[0]), y: f(yy), 'text-anchor': q[2] }, g); t.textContent = q[1]; }); }
       fila(yt, 'escenario', 'mediana', '68 % bajo');
       el('line', { 'class': 'rc-deje', x1: c1, y1: yt + 5, x2: c3, y2: yt + 5 }, g);
+      if (!AJ.listo) { fila(yt + 18, 'ambos', coma(AJ.med, 2) + ' ± ' + coma(AJ.dmed, 2) + '°', coma(AJ.p68, 2) + ' ± ' + coma(AJ.dp68, 2) + '°', 'rc-dl rc-dch'); var uw = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 36) }, g); uw.textContent = 'calculando sensibilidad…'; return; }
       fila(yt + 18, 'solo reloj (σ = 2 ns)', coma(AJ.reloj.med[0], 2) + '°', coma(AJ.reloj.p68[0], 2) + '°', 'rc-dl rc-dch');
       fila(yt + 34, 'solo espesor del frente', coma(AJ.fis.med[0], 2) + '°', coma(AJ.fis.p68[0], 2) + '°', 'rc-dl rc-dch');
       fila(yt + 50, 'ambos', coma(AJ.med, 2) + ' ± ' + coma(AJ.dmed, 2) + '°', coma(AJ.p68, 2) + ' ± ' + coma(AJ.dp68, 2) + '°', 'rc-dl rc-dch');
       fila(yt + 66, 'generador distinto (5)', '', coma(AJ.sMin, 2) + '–' + coma(AJ.sMax, 2) + '°', 'rc-dl rc-dch');
-      var u5 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 84) }, g); u5.textContent = 'pull ' + coma(AJ.pull, 2) + ' · R ' + coma(AJ.R, 1) + ' km · fallidos ' + (AJ.mal + AJ.reloj.mal + AJ.fis.mal) + '/' + 8 * NMC;
+      var u5 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 84) }, g); u5.textContent = 'pull ' + coma(AJ.pull, 2) + ' · R ' + coma(AJ.R, 1) + ' km · fallidos ' + AJ.mal + '/' + 8 * NMC;
     }
 
     function dibAire(g, x, y, w, h) {   // densidad del aire (atmósfera estándar) contra altura
@@ -374,8 +391,10 @@
       d: ['e± y γ (cian), hadrones (ámbar) y muones', '(lavanda, ≈ ' + cient(Math.pow(E_CAS / 20e9, .85)) + ' según Matthews). X = ∫ρ ds:', '3,37 km de aire = ' + coma(X_IMP, 0) + ' g/cm², antes del máximo;', 'llegan ≈ ' + cient(N_IMP) + ' e±. Greisen, Heitler y Matthews', 'son estimaciones: no sustituyen una simulación', 'de transporte (CORSIKA).'] });
     ficha('ladera', { ancla: A_LAD, k: 'TAMBO · ladera de enfrente', tit: '5 000 unidades a 150 m', dib: dibMalla, dibH: 82,
       d: ['Detectores de partículas en malla triangular', 'sobre la ladera que mira a la montaña (diseño', 'nominal de 2025; se estudian tanques de agua', 'Cherenkov y centelleadores plásticos).', 'Busca neutrinos tau de 1 a 100 PeV.'] });
-    ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento simulado', tit: 't_i = t₀ + n̂ · r_i / c + ρ_i² / 2Rc', dib: dibOrden, dibH: 280,
-      d: ['Se resta el retraso medio de cada estación y se', 'ajustan dirección y curvatura (pesos 1/σ_i²). Se', 'muestra la realización mediana. «Generador', 'distinto»: otro σ_t, exponente, forma o n_i, ajustado', 'con el nominal. No es la resolución de TAMBO.'] });
+    function fichaHuella() { return ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento simulado', tit: 't_i = t₀ + n̂ · r_i / c + ρ_i² / 2Rc', dib: dibOrden, dibH: 280,
+      d: ['Se resta el retraso medio de cada estación y se', 'ajustan dirección y curvatura (pesos 1/σ_i²). Se', 'muestra la realización mediana. «Generador', 'distinto»: otro σ_t, exponente, forma o n_i, ajustado', 'con el nominal. No es la resolución de TAMBO.'] }); }
+    fichaHuella();
+    sensibilidad(function () { var vieja = fichas.huella, ver = vieja.ver; var n = fichaHuella(); capa.insertBefore(n.g, vieja.g); capa.removeChild(vieja.g); if (ver) n.pon(true); });
     ficha('valle', { ancla: A_VAL, k: 'Valle del Colca · Perú', tit: 'Un valle como detector', dib: dibAire, dibH: 92,
       d: ['≈ 1,5 km de profundidad y ≈ 4,5 km entre', 'laderas: una cara es blanco y la otra pantalla.', 'A ~3 km de altura el aire es 26 % menos denso', 'que al nivel del mar, y la cascada se estira.', 'Sección sintética inspirada en el Colca, no un', 'modelo de elevación real.'] });
     // estación: la que esté más cerca de 100 m del eje con al menos 10 partículas (frente ya grueso, pulso con estructura)

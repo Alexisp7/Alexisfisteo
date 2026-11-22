@@ -17,11 +17,11 @@
 .mc svg .rc-regla { stroke:#425564; stroke-width:.8; }
 .mc svg .rc-ficha text { opacity:0; transform:translateY(2px); transition:opacity .16s ease .04s, transform .2s cubic-bezier(.2,.8,.2,1) .04s; }
 .mc svg .rc-ficha.ver text { opacity:1; transform:none; }
-.mc svg .rc-k { font:700 8.5px 'Space Mono',monospace; letter-spacing:.22em; text-transform:uppercase; fill:#8FA3B3; }
+.mc svg .rc-k { font:700 8.5px 'Space Mono',monospace; letter-spacing:.22em; text-transform:uppercase; fill:#A9BAC6; }
 .mc svg .rc-tit { font:italic 500 22px 'Cormorant Garamond',serif; fill:#F1E9DC; }
 .mc svg .rc-d { font:400 13.5px Newsreader,Georgia,serif; fill:#C9D2D9; }
 /* dibujitos de las fichas */
-.mc svg .rc-dk { font:400 8.5px 'Space Mono',monospace; letter-spacing:.06em; fill:#8FA3B3; }
+.mc svg .rc-dk { font:400 8.5px 'Space Mono',monospace; letter-spacing:.06em; fill:#A9BAC6; }
 .mc svg .rc-dl { font:italic 500 13px 'Cormorant Garamond',serif; fill:#E6DCCB; }
 .mc svg .rc-dcaja { fill:none; stroke:rgba(200,215,230,.35); stroke-width:.6; }
 .mc svg .rc-deje { stroke:rgba(200,215,230,.45); stroke-width:.7; }

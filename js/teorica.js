@@ -103,11 +103,29 @@
     })();
     var VIVOS = DET.filter(function (d) { return d.n > 0; }).sort(function (a, b) { return a.t - b.t; });
     var T0H = VIVOS.length ? VIVOS[0].t : 0, T1H = VIVOS.length ? VIVOS[VIVOS.length - 1].t : 1;
+    var E1 = (function () { var a = [DIR[1], -DIR[0], 0], l = Math.hypot(a[0], a[1], a[2]); return [a[0] / l, a[1] / l, a[2] / l]; })();
+    var E2 = [DIR[1] * E1[2] - DIR[2] * E1[1], DIR[2] * E1[0] - DIR[0] * E1[2], DIR[0] * E1[1] - DIR[1] * E1[0]];
+    // ajuste de un frente plano a los tiempos (como haría el análisis): se busca la dirección n̂ que minimiza
+    // Σ (t_i − t₀ − n̂·r_i / c)², con t₀ despejado para cada n̂. Residuos = t − ajuste; error = ángulo entre n̂ y el eje real.
+    var AJ = (function () {
+      var n = VIVOS.length; if (n < 3) return null;
+      function dirDe(a, b) { var v = [DIR[0] + a * E1[0] + b * E2[0], DIR[1] + a * E1[1] + b * E2[1], DIR[2] + a * E1[2] + b * E2[2]], l = Math.hypot(v[0], v[1], v[2]); return [v[0] / l, v[1] / l, v[2] / l]; }
+      function costo(nv, res) {
+        var pr = VIVOS.map(function (d) { return d.t - (nv[0] * d.x + nv[1] * d.y + nv[2] * d.z) / C_KM; }), t0 = pr.reduce(function (s, v) { return s + v; }, 0) / n, c = 0;
+        pr.forEach(function (v, k) { c += (v - t0) * (v - t0); if (res) VIVOS[k].res = (v - t0) * 1000; }); return c;
+      }
+      var A = 0, B = 0, paso = .01;
+      for (var r = 0; r < 4; r++) {
+        var mA = A, mB = B, mc = Infinity;
+        for (var ia = -20; ia <= 20; ia++) for (var ib = -20; ib <= 20; ib++) { var c = costo(dirDe(A + ia * paso, B + ib * paso)); if (c < mc) { mc = c; mA = A + ia * paso; mB = B + ib * paso; } }
+        A = mA; B = mB; paso /= 20;
+      }
+      var nv = dirDe(A, B); costo(nv, true);
+      return { err: Math.acos(cl(nv[0] * DIR[0] + nv[1] * DIR[1] + nv[2] * DIR[2], -1, 1)) * 180 / Math.PI };
+    })();
 
     // ── cascada: rayos rectos que nacen a lo largo del eje ──
     var RAY = [], rnd = semilla(7);
-    var E1 = (function () { var a = [DIR[1], -DIR[0], 0], l = Math.hypot(a[0], a[1], a[2]); return [a[0] / l, a[1] / l, a[2] / l]; })();
-    var E2 = [DIR[1] * E1[2] - DIR[2] * E1[1], DIR[2] * E1[0] - DIR[0] * E1[2], DIR[0] * E1[1] - DIR[1] * E1[0]];
     for (var i = 0; i < 760; i++) {
       var sb = L_CRUCE * Math.pow(rnd(), 1.7) * .8, ph = rnd() * 2 * Math.PI;
       var rf = R_M * 1.25 * Math.sqrt(-2 * Math.log(rnd() + 1e-6)) * .55;
@@ -121,7 +139,7 @@
 
     // ── el bucle (s) ──
     var T_VTX = 2, T_CARA = 2.9, T_DEC = 4.2, T_LLEGA = 8.1, T_H0 = 8.2, T_H1 = 9.5, T_REC = 9.8, T_FUN = 12, LOOP = 13.4;
-    var T_SRC = 9.4;   // en el medallón: el choque p + γ; su ν sale y llega al borde al cerrar el bucle
+    var T_SRC = 9.2, V_SRC = 2.3;   // medallón: una sola secuencia (acelerada) que termina cuando su ν sale; antes, su estado final en reposo
     function frente(t) { if (t < T_DEC) return 0; var u = cl((t - T_DEC) / (T_LLEGA - T_DEC), 0, 1); return L_CRUCE * (.3 * u + .7 * u * u); }
     function tHit(d) { return T_H0 + (T_H1 - T_H0) * (T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0); }
     function microS(t) {
@@ -141,14 +159,14 @@
       var g = el('g', { 'class': 'rc-ficha' }, capa);
       var guia = el('path', { 'class': 'rc-guia', pathLength: 1 }, g);
       var pt = el('circle', { 'class': 'rc-pt', r: 2.4 }, g), aro = el('circle', { 'class': 'rc-aro', r: 2.4 }, g);
-      var hDib = o.dib ? o.dibH : 0, lineas = o.d, alto2 = 64 + hDib + lineas.length * 17.5 + 12;
+      var hDib = o.dib ? o.dibH : 0, lineas = o.d, alto2 = 66 + (hDib ? hDib + 10 : 0) + lineas.length * 19.5 + 12;
       el('rect', { 'class': 'rc-fondo', x: FX, y: FY, width: FW, height: f(alto2), rx: 8 }, g);
       var k = el('text', { 'class': 'rc-k', x: FX + 16, y: FY + 22 }, g); k.textContent = o.k;
       el('line', { 'class': 'rc-regla', x1: FX + 16, y1: FY + 30, x2: FX + FW - 16, y2: FY + 30 }, g);
       var t = el('text', { 'class': 'rc-tit', x: FX + 16, y: FY + 54 }, g); rico(t, o.tit);
-      if (o.dib) o.dib(el('g', { 'class': 'rc-dib' }, g), FX + 16, FY + 66, FW - 32, hDib - 8);
-      var d = el('text', { 'class': 'rc-d', x: FX + 16, y: FY + 80 + hDib }, g);
-      lineas.forEach(function (l, j) { var s = el('tspan', { x: FX + 16, dy: j ? 17.5 : 0 }, d); rico(s, l); });
+      if (o.dib) o.dib(el('g', { 'class': 'rc-dib' }, g), FX + 16, FY + 74, FW - 32, hDib - 14);
+      var d = el('text', { 'class': 'rc-d', x: FX + 16, y: FY + 84 + (hDib ? hDib + 10 : 0) }, g);
+      lineas.forEach(function (l, j) { var s = el('tspan', { x: FX + 16, dy: j ? 19.5 : 0 }, d); rico(s, l); });
       var n = { g: g, ancla: o.ancla, ver: false, abajo: FY + alto2 };
       n.pon = function (v) {
         if (v === n.ver) return; n.ver = v; g.classList.toggle('ver', v);
@@ -195,9 +213,9 @@
     function dibTau(g, x, y, w, h) {   // escala logarítmica de 10 m a 10 km
       var lx = function (m) { return x + (Math.log10(m) - 1) / 3 * w; }, yb = y + 26;
       el('rect', { 'class': 'rc-dbanda', x: f(lx(3000)), y: yb - 8, width: f(lx(10000) - lx(3000)), height: 16 }, g);
-      var tb = el('text', { 'class': 'rc-dk', x: f(lx(3000) - 6), y: yb - 12 }, g); tb.textContent = 'ancho del valle';
+      var tb = el('text', { 'class': 'rc-dk', x: f(lx(10000)), y: yb + 30, 'text-anchor': 'end' }, g); tb.textContent = 'banda: ancho útil de un valle (3–10 km)';
       el('line', { 'class': 'rc-deje', x1: x, y1: yb, x2: x + w, y2: yb }, g);
-      [10, 100, 1000, 10000].forEach(function (m) { el('line', { 'class': 'rc-deje', x1: f(lx(m)), y1: yb - 3, x2: f(lx(m)), y2: yb + 3 }, g); var t = el('text', { 'class': 'rc-dk', x: f(lx(m) - 8), y: yb + 16 }, g); t.textContent = m < 1000 ? m + ' m' : m / 1000 + ' km'; });
+      [10, 100, 1000, 10000].forEach(function (m) { el('line', { 'class': 'rc-deje', x1: f(lx(m)), y1: yb - 3, x2: f(lx(m)), y2: yb + 3 }, g); var t = el('text', { 'class': 'rc-dk', x: f(lx(m) - (m > 5000 ? 30 : 8)), y: yb + 16 }, g); t.textContent = m < 1000 ? m + ' m' : m / 1000 + ' km'; });
       [[1, '1 PeV'], [8, '8'], [100, '100 PeV']].forEach(function (q) { var m = q[0] * 1e15 / M_TAU * CTAU * 1e3; el('circle', { 'class': q[0] === 8 ? 'rc-dpto' : 'rc-dpt', cx: f(lx(m)), cy: yb, r: 3.2 }, g); var t = el('text', { 'class': 'rc-dl', x: f(lx(m) - 8), y: yb - 8 }, g); t.textContent = q[1]; });
     }
     function dibPerfil(g, x, y, w, h) {
@@ -222,35 +240,36 @@
       var t2 = el('text', { 'class': 'rc-dk', x: x + w - 46, y: y + 30 }, g); t2.textContent = '× 5 000';
     }
     function dibOrden(g, x, y, w, h) {   // residuos del ajuste con un plano: el frente real es curvo
-      var rM = 0, eM = 0; VIVOS.forEach(function (d) { rM = Math.max(rM, d.rp); eM = Math.max(eM, d.res); });
-      rM = Math.ceil(rM / 50) * 50 || 50; eM = Math.max(2, Math.ceil(eM * 1.15));
-      var x0 = x + 22, w0 = w - 30, yb = y + h - 14, h0 = h - 22, X = function (r) { return x0 + r / rM * w0; }, Y = function (e) { return yb - e / eM * h0; };
-      el('line', { 'class': 'rc-deje', x1: x0, y1: yb, x2: x0 + w0, y2: yb }, g); el('line', { 'class': 'rc-deje', x1: x0, y1: f(yb - h0), x2: x0, y2: yb }, g);
-      var a = L_CRUCE, dd = '';
-      for (var r = 0; r <= rM; r += rM / 40) { var e = (Math.sqrt(a * a + r * r / 1e6) - a) / C_KM * 1000; dd += (r ? ' L' : 'M') + f(X(r)) + ' ' + f(Y(Math.min(e, eM))); }
+      var rM = 0, eM = 0; VIVOS.forEach(function (d) { rM = Math.max(rM, d.rp); eM = Math.max(eM, Math.abs(d.res)); });
+      rM = Math.ceil(rM / 50) * 50 || 50; eM = Math.max(2, Math.ceil(eM * 1.2));
+      var x0 = x + 22, w0 = w - 30, ym = y + 4 + (h - 20) / 2, h0 = (h - 20) / 2, yb = y + h - 16, X = function (r) { return x0 + r / rM * w0; }, Y = function (e) { return ym - e / eM * h0; };
+      el('line', { 'class': 'rc-deje', x1: x0, y1: f(ym), x2: x0 + w0, y2: f(ym) }, g); el('line', { 'class': 'rc-deje', x1: x0, y1: f(ym - h0), x2: x0, y2: f(ym + h0) }, g);
+      var dd = '', VV = VIVOS.slice().sort(function (p, q) { return p.rp - q.rp; });
+      VV.forEach(function (d, i) { dd += (i ? ' L' : 'M') + f(X(d.rp)) + ' ' + f(Y(d.res)); });
       el('path', { 'class': 'rc-dcurva rc-dtrazo', d: dd }, g);
       VIVOS.forEach(function (d) { var k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0; el('circle', { cx: f(X(d.rp)), cy: f(Y(d.res)), r: 2.6, fill: 'rgb(' + paleta(k) + ')', stroke: '#18212B', 'stroke-width': .6 }, g); });
-      var t1 = el('text', { 'class': 'rc-dk', x: x0 + w0 - 74, y: yb + 11 }, g); t1.textContent = 'r al eje (m)';
-      var t2 = el('text', { 'class': 'rc-dk', x: x, y: f(yb - h0 + 3) }, g); t2.textContent = eM;
-      var t3 = el('text', { 'class': 'rc-dk', x: x + 8, y: yb + 3 }, g); t3.textContent = '0';
-      var t4 = el('text', { 'class': 'rc-dk', x: x0 + 8, y: f(yb - h0 + 3) }, g); t4.textContent = 'residuo Δt (ns)';
+      var t1 = el('text', { 'class': 'rc-dk', x: x0 + w0, y: f(ym + h0 + 12), 'text-anchor': 'end' }, g); t1.textContent = 'distancia al eje: 0 a ' + rM + ' m';
+      var t2 = el('text', { 'class': 'rc-dk', x: x, y: f(ym - h0 + 3) }, g); t2.textContent = '+' + eM;
+      var t3 = el('text', { 'class': 'rc-dk', x: x + 8, y: f(ym + 3) }, g); t3.textContent = '0';
+      var t5 = el('text', { 'class': 'rc-dk', x: x, y: f(ym + h0 + 3) }, g); t5.textContent = '−' + eM;
+      var t4 = el('text', { 'class': 'rc-dk', x: x0 + 8, y: f(ym - h0 + 3) }, g); t4.textContent = 't − ajuste plano (ns)';
     }
 
     var A_MED = [MED.x - MED.r * .55, MED.y + MED.r * .55], A_MON = Ps([3.6, .2, Z0]), A_VTX = Ps(VTX), A_TAU = Ps(sobre(CARA, L_TAU * .6)), A_CAS = Ps(sobre(DEC, L_CRUCE * .5)), A_LAD = Ps([-2.4, alto(-2.4, 2.6), 2.6]), A_IMP = Ps(IMP), A_VAL = Ps([.3, 0, 2.2]);
-    ficha('fuente', { ancla: A_MED, k: 'Rayo cósmico · fuente lejana', tit: 'p + γ → Δ⁺ → n + π⁺', dib: dibSabores, dibH: 80,
+    ficha('fuente', { ancla: A_MED, k: 'Rayo cósmico · fuente lejana', tit: 'p + γ → Δ⁺ → n + π⁺', dib: dibSabores, dibH: 86,
       d: ['Un protón de ~2 × 10¹⁷ eV choca con un fotón', 'de su entorno. Luego π⁺ → μ⁺ ν_μ y μ⁺ → e⁺ ν_e ν̄_μ:', 'cada neutrino se lleva ≈ 5 % de la energía.', 'Sin carga, viajan en línea recta; al oscilar', 'en el camino también llegan ν_τ.'] });
     ficha('monte', { ancla: A_MON, k: 'Blanco de roca', tit: 'Neutrinos rasantes',
       d: ['A 10 PeV un neutrino recorre en promedio', '~4 000 km de roca antes de interactuar: la', 'Tierra entera lo absorbe, pero uno casi', 'horizontal cruza kilómetros de montaña y', 'puede interactuar cerca de la cara del valle.'] });
     ficha('vertice', { ancla: A_VTX, k: 'Corriente cargada', tit: 'ν_τ + N → τ⁻ + X',
       d: ['El neutrino intercambia un bosón W con un', 'quark y se vuelve un tau, que se lleva ≈ 80 %', 'de la energía. El resto (X) es una lluvia de', 'hadrones que la roca absorbe. Debe ocurrir a', 'entre ~50 m y 5 km de la cara del valle.'] });
-    ficha('tau', { ancla: A_TAU, k: 'Leptón tau', tit: 'λ = γ c τ ≈ 49 m × E/PeV', dib: dibTau, dibH: 56,
+    ficha('tau', { ancla: A_TAU, k: 'Leptón tau', tit: 'λ = γ c τ ≈ 49 m × E/PeV', dib: dibTau, dibH: 72,
       d: ['m_τ = 1,777 GeV y cτ = 87 µm. A 8 PeV, γ ≈ 4,5 × 10⁶:', 'vuela en promedio ≈ 390 m (la distancia es', 'exponencial; aquí, un caso típico). Decae en', 'hadrones + ν_τ (≈ 65 %, este evento), e ν ν', '(≈ 18 %) o μ ν ν (≈ 17 %, casi sin cascada).'] });
-    ficha('cascada', { ancla: A_CAS, k: 'Cascada de partículas', tit: 'X_{máx} ≈ X₀ ln(E₀/E_c)', dib: dibPerfil, dibH: 80,
+    ficha('cascada', { ancla: A_CAS, k: 'Cascada de partículas', tit: 'X_{máx} ≈ X₀ ln(E₀/E_c) · Heitler', dib: dibPerfil, dibH: 104,
       d: ['Tras un decaimiento hadrónico, los π⁰ → γγ', 'inician la parte electromagnética: e± y γ', 'se duplican cada X₀ ln 2 (X₀ ≈ 37 g/cm²).', 'Mide de 3 a 10 km y solo ~200 m de ancho', '(radio de Molière ≈ 100 m). Llega a la ladera', 'antes del máximo, con ≈ ' + cient(N_IMP) + ' e±.'] });
-    ficha('ladera', { ancla: A_LAD, k: 'TAMBO · ladera de enfrente', tit: '5 000 unidades a 150 m', dib: dibMalla, dibH: 76,
+    ficha('ladera', { ancla: A_LAD, k: 'TAMBO · ladera de enfrente', tit: '5 000 unidades a 150 m', dib: dibMalla, dibH: 82,
       d: ['Detectores de partículas en malla triangular', 'sobre la ladera que mira a la montaña (diseño', 'nominal de 2025; se estudian tanques de agua', 'Cherenkov y centelleadores plásticos).', 'Busca neutrinos tau de 1 a 100 PeV.'] });
-    ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento ilustrativo', tit: 't_i = t₀ + n̂ · r_i / c + Δt_i', dib: dibOrden, dibH: 96,
-      d: ['Un plano ajustado a los tiempos de llegada da', 'la dirección (TAMBO estima menos de 1° en', 'simulación). El frente real es curvo: lejos del', 'eje llega unos ns tarde (Δt ≈ r²/2Lc). El número', 'de partículas da la energía. ≈ 6 ν en 10 años.'] });
+    ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento ilustrativo', tit: 't_i = t₀ + n̂ · r_i / c + Δt_i', dib: dibOrden, dibH: 102,
+      d: ['Un plano ajustado a los 13 tiempos da la', 'dirección; en este evento el error es de ' + coma(AJ ? AJ.err : 0, 2) + '°', '(TAMBO estima menos de 1° en simulación). El', 'frente real es curvo: quedan residuos de pocos', 'ns que cambian con la distancia al eje. El número', 'de partículas da la energía. ≈ 6 ν en 10 años.'] });
     ficha('valle', { ancla: A_VAL, k: 'Valle del Colca · Perú', tit: 'Un valle como detector',
       d: ['≈ 1,5 km de profundidad y ≈ 4,5 km entre', 'laderas. Una cara hace de blanco y la otra', 'de pantalla; si el valle mide de 3 a 10 km,', 'la cascada se desarrolla antes de llegar.'] });
 
@@ -360,10 +379,10 @@
       // medallón de la fuente: disco oscuro, aro dorado con marcas y rótulo
       var gm = c.createRadialGradient(MED.x - 20, MED.y - 24, 4, MED.x, MED.y, MED.r); gm.addColorStop(0, '#1C1D38'); gm.addColorStop(1, '#0B0C18');
       c.fillStyle = gm; c.beginPath(); c.arc(MED.x, MED.y, MED.r, 0, 2 * Math.PI); c.fill();
-      c.strokeStyle = 'rgba(201,162,122,.75)'; c.lineWidth = 1; c.stroke();
+      c.strokeStyle = 'rgba(201,162,122,.5)'; c.lineWidth = 1; c.stroke();
       c.strokeStyle = 'rgba(201,162,122,.35)'; c.lineWidth = .6; c.beginPath(); c.arc(MED.x, MED.y, MED.r + 5, 0, 2 * Math.PI); c.stroke();
       for (var m = 0; m < 72; m++) { var an = m / 72 * 2 * Math.PI, l = m % 6 ? 3 : 6; c.beginPath(); c.moveTo(MED.x + Math.cos(an) * (MED.r + 5), MED.y + Math.sin(an) * (MED.r + 5)); c.lineTo(MED.x + Math.cos(an) * (MED.r + 5 + l), MED.y + Math.sin(an) * (MED.r + 5 + l)); c.stroke(); }
-      c.fillStyle = 'rgba(205,183,154,.75)'; c.font = '700 7.5px "Space Mono", monospace'; c.textAlign = 'center';
+      c.fillStyle = 'rgba(205,183,154,.75)'; c.font = '700 10px "Space Mono", monospace'; c.textAlign = 'center';
       c.fillText('ORIGEN ASTROFÍSICO · NO A ESCALA', MED.x, MED.y - MED.r - 16); c.textAlign = 'start';
       // camino del neutrino (punteado tenue)
       c.strokeStyle = 'rgba(214,120,176,.3)'; c.lineWidth = .8; c.setLineDash([1.5, 4]); c.beginPath();
@@ -389,7 +408,7 @@
       ctx.save(); ctx.beginPath(); ctx.arc(MED.x, MED.y, MED.r - 1, 0, 2 * Math.PI); ctx.clip();
       var r = semilla(5);
       for (var i = 0; i < 26; i++) { var x = MED.x + (r() - .5) * MED.r * 1.8, y = MED.y + (r() - .5) * MED.r * 1.8; ctx.fillStyle = 'rgba(232,196,138,' + (.15 + .25 * (.5 + .5 * Math.sin(t * 2 + i))) + ')'; ctx.fillRect(x, y, 1.2, 1.2); }
-      var u = (t + LOOP - T_SRC) % (LOOP / 2), C = [MED.x - 14, MED.y - 2];
+      var u = t >= T_SRC ? (t - T_SRC) * V_SRC : 99, C = [MED.x - 14, MED.y - 2];
       var tc = 1.1;
       if (u < tc) {
         var v = u / tc, px = C[0] - 62 + 62 * v, py = C[1] - 20 + 20 * v;
@@ -402,7 +421,7 @@
         var w = u - tc;
         if (w < .8) { brillo(C[0], C[1], 34 * (1 - w / .8) + 8, '255,190,120', .7 * (1 - w / .8)); sprite(SPR.p, C[0], C[1], 8 + Math.sin(w * 40)); rotulo('Δ⁺', C[0] + 8, C[1] - 10, '#F0B49A', 14); }
         else {
-          var w2 = w - .8, al = 1 - suave((w2 - 3.6) / .8);
+          var w2 = w - .8, al = u > 90 ? .38 : 1 - .62 * suave((w2 - 3.8) / .6);
           ctx.globalAlpha = al;
           var nx = C[0] - 22 * Math.min(w2, 2.5), ny = C[1] + 11 * Math.min(w2, 2.5); sprite(SPR.n, nx, ny, 6); rotulo('n', nx - 14, ny + 4, '#D8CDBA', 13);
           var tp = .9, pw = Math.min(w2, tp), pix = C[0] + 30 * pw, piy = C[1] - 8 * pw;
@@ -479,7 +498,7 @@
       LOTES.forEach(function (l) { l.length = 0; }); ESTELA.length = 0; CAB.length = 0; CABH.length = 0;
       RAY.forEach(function (R) {
         if (sf < R.sb) return;
-        var s1 = Math.min(sf, R.fin), s0 = Math.max(R.sb, s1 - R.tr * L_CRUCE * (R.oro ? .1 : .13)); if (s1 <= s0) return;
+        var s1 = Math.min(sf, R.fin), s0 = Math.max(R.sb, s1 - R.tr * L_CRUCE * (R.oro ? .1 : R.a > .82 ? .3 : .11)); if (s1 <= s0) return;
         var a = Ps(puntoRayo(R, s0)), b = Ps(puntoRayo(R, s1));
         if (s0 > R.sb && R.a < .5) { var e0 = Ps(puntoRayo(R, R.sb)); ESTELA.push(e0[0], e0[1], a[0], a[1]); }
         LOTES[R.oro ? 4 : Math.min(3, Math.floor(R.a * 4))].push(a[0], a[1], b[0], b[1]);
@@ -488,7 +507,7 @@
       var resalta = foco === 'cascada' ? 1.6 : 1;
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var al = Math.min(1, (k === 4 ? .35 : .05 + k * .035) * fin * resalta);
+        var al = Math.min(1, (k === 4 ? .35 : (.035 + k * .025) * (k === 3 ? 1.6 : 1)) * fin * resalta);
         ctx.strokeStyle = k === 4 ? 'rgba(229,180,124,' + al + ')' : 'rgba(158,219,238,' + al + ')'; ctx.lineWidth = k === 4 ? .6 : .5 + k * .15;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });
@@ -525,6 +544,22 @@
         var p1 = Math.max(0, 1 - u / .7); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + (.8 * p1) + ')'; ctx.lineWidth = .7; ctx.beginPath(); ctx.ellipse(q[0], q[1] - .6, 2.4 + 6 * (1 - p1), 1.15 + 2.9 * (1 - p1), 0, 0, 2 * Math.PI); ctx.stroke(); }
         ctx.globalAlpha = 1;
       });
+    }
+    // línea de tiempos de llegada (registro del evento): una marca por detector, a su tiempo, en su color
+    var LT = { x0: 958, x1: 1148, y: 432 };
+    function llegadas(t) {
+      var a = suave((t - T_H0 + .3) / .5) * fade(t); if (a <= 0) return;
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = 'rgba(205,183,154,.4)'; ctx.lineWidth = .7; ctx.beginPath(); ctx.moveTo(LT.x0, LT.y); ctx.lineTo(LT.x1, LT.y); ctx.moveTo(LT.x0, LT.y - 3); ctx.lineTo(LT.x0, LT.y + 3); ctx.moveTo(LT.x1, LT.y - 3); ctx.lineTo(LT.x1, LT.y + 3); ctx.stroke();
+      VIVOS.forEach(function (d) {
+        var u = t - tHit(d); if (u < 0) return;
+        var k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, x = LT.x0 + (LT.x1 - LT.x0) * k, hb = 4 + 2.2 * Math.log10(1 + d.n);
+        ctx.strokeStyle = 'rgb(' + paleta(k) + ')'; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(x, LT.y - 1); ctx.lineTo(x, LT.y - 1 - hb * suave(u / .3)); ctx.stroke();
+      });
+      ctx.fillStyle = 'rgba(205,183,154,.75)'; ctx.font = '700 7.5px "Space Mono", monospace';
+      ctx.fillText('LLEGADAS', LT.x0, LT.y - 20); ctx.fillText('0', LT.x0 - 2, LT.y + 13);
+      ctx.textAlign = 'end'; ctx.fillText(coma(T1H - T0H, 2) + ' µs', LT.x1 + 2, LT.y + 13); ctx.textAlign = 'start';
+      ctx.globalAlpha = 1;
     }
     // inferencia (no partícula): eje ajustado en guiones, ±1° en dos contornos finos y el frente plano ajustado
     function reconstruye(t) {
@@ -574,7 +609,7 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(fondo, 0, 0);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
       rioVivo(t); condor(t); realce();
-      medallon(t); neutrino(t); tau(t); cascada(t); senales(t); reconstruye(t);
+      medallon(t); neutrino(t); tau(t); cascada(t); senales(t); llegadas(t); reconstruye(t);
     }
 
     function lecturas(t) {
@@ -583,8 +618,8 @@
       else if (t < T_CARA) salida('corriente cargada · nace un tau', 'τ ≈ 8 PeV · el resto queda en la roca');
       else if (t < T_DEC) salida('tau en el aire · ' + coma(L_TAU * 1000 * suave((t - T_CARA) / (T_DEC - T_CARA)), 0) + ' m', 't = ' + coma(us, 2) + ' µs');
       else if (t < T_LLEGA) { var X = frente(t) * 1e5 * RHO; salida('cascada · t = ' + coma(us, 1) + ' µs', 'X ≈ ' + coma(X, 0) + ' g/cm² · ' + cient(Math.max(1, greisen(X))) + ' e±'); }
-      else if (t < T_REC) { var k = VIVOS.filter(function (d) { return t >= tHit(d); }).length; salida('unidades con señal: ' + k + ' de ' + VIVOS.length, 't = ' + coma(us, 2) + ' µs'); }
-      else salida('dirección reconstruida · menos de 1°', VIVOS.length + ' unidades en ' + coma((T1H - T0H) * 1000, 0) + ' ns');
+      else if (t < T_REC) { var k = VIVOS.filter(function (d) { return t >= tHit(d); }).length; salida('detectores activados · ' + ('0' + k).slice(-2) + ' / ' + VIVOS.length, 'ventana de lectura · ' + coma((T1H - T0H) * cl((t - T_H0) / (T_H1 - T_H0), 0, 1), 3) + ' µs'); }
+      else salida('dirección reconstruida · error ' + coma(AJ ? AJ.err : 0, 2) + '°', VIVOS.length + ' detectores · ventana ' + coma(T1H - T0H, 3) + ' µs');
     }
 
     fig.rcFija = function (t) { T = t; fijo = true; }; fig.rcSuelta = function () { fijo = false; };

@@ -207,14 +207,21 @@ var menu = function () {
       gl.uniform1f(U.uSC, SC * zoom); gl.uniform1f(U.uRoll, ROLL); gl.uniform1f(U.uEx, ex); gl.uniform1f(U.uSal, sal); gl.uniform1f(U.uAg, 1); gl.uniform1f(U.uT, tiempo); gl.uniform1f(U.uIncl, INCL + (Math.sin(tiempo * .9) * .6 + Math.sin(tiempo * .37 + 1.3) * .4) * Math.PI / 180); /* tambaleo: menos de 1° */ gl.uniform1f(U.uPix, vb.width / W / (SC * zoom)); gl.uniform1f(U.uArm, armT != null ? armT : (performance.now() - inicio) / 1000);
       dim[0] += (dimMeta[0] - dim[0]) * .14; dim[1] += (dimMeta[1] - dim[1]) * .14; gl.uniform2f(U.uDim, dim[0], dim[1]);
       hk += (hkMeta - hk) * .14; gl.uniform1f(U.uHk, hk); gl.uniform1f(U.uTD, tDisco(tiempo));
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      if (!bandas) { gl.drawArrays(gl.TRIANGLES, 0, 3); return; }
+      // (en prueba, ?ritmo=bandas) el mismo cuadro, con los mismos valores, en franjas horizontales de altura par: entre una
+      // y otra la GPU puede atender al resto del navegador. Cada píxel se calcula igual que en un solo dibujo
+      var nb = 6, alto = Math.ceil(H / nb / 2) * 2;
+      gl.enable(gl.SCISSOR_TEST);
+      for (var y0 = 0; y0 < H; y0 += alto) { gl.scissor(0, y0, W, Math.min(alto, H - y0)); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.flush(); }
+      gl.disable(gl.SCISSOR_TEST);
     }
+    var bandas = /[?&]ritmo=bandas/.test(location.search);
     // calidad adaptativa: si la GPU no llega a ~30 fps, se baja la resolución del trazado
     var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, inicio = performance.now(), armT = null;
     // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     // ritmo «valla» (en prueba, ?ritmo=valla): un cuadro nuevo solo cuando la GPU terminó el anterior, sin cola
-    var valla = /[?&]ritmo=valla/.test(location.search) && typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext, cerca = null;
+    var valla = /[?&]ritmo=(valla|bandas)/.test(location.search) && typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext, cerca = null;
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
       if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }

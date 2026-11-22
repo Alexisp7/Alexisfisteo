@@ -8,7 +8,8 @@
 //  · El τ sale al aire del valle y se desintegra tras γcτ ≈ 49 m × E/PeV (≈ 390 m a 8 PeV).
 //  · La desintegración inicia una cascada (perfil de Greisen; aire a ~3 km, ρ ≈ 0,91 kg/m³) que cruza
 //    el valle a c y llega a la ladera de enfrente, a unidades de detección en una malla triangular de
-//    150 m (diseño nominal 2025). Señal: densidad lateral NKG; tiempo: frente plano perpendicular al eje.
+//    150 m (diseño nominal 2025). Señal: densidad lateral NKG; tiempo: frente
+//    curvo centrado en la desintegración (se ajusta con un plano y quedan residuos de pocos ns).
 // Datos de TAMBO: Argüelles et al., arXiv:2507.08070 (2025) y Thompson, ICRC 2023, arXiv:2308.09753.
 // Fondo fijo pintado una vez en un lienzo aparte; cada cuadro solo dibuja lo que se mueve (sin filtros).
 (function () {
@@ -97,7 +98,7 @@
         var r = Math.sqrt(Math.max(0, v[0] * v[0] + v[1] * v[1] + v[2] * v[2] - a * a)), u = Math.max(r, .004) / R_M;
         var rho = N_IMP / (R_M * R_M * 1e6) * CN * Math.pow(u, edad - 2) * Math.pow(1 + u, edad - 4.5);   // e±/m² (NKG)
         var nE = rho * A_UNI * 6;   // e± y fotones (γ/e± ≈ 5) en ~4 m²
-        if (nE >= 1) { d.t = a / C_KM; d.n = nE; }
+        if (nE >= 1) { var dist = Math.hypot(v[0], v[1], v[2]); d.t = dist / C_KM; d.n = nE; d.rp = r * 1000; d.res = (dist - a) / C_KM * 1000; }   // ns: frente curvo − plano
       });
     })();
     var VIVOS = DET.filter(function (d) { return d.n > 0; }).sort(function (a, b) { return a.t - b.t; });
@@ -119,7 +120,7 @@
     RAY.forEach(function (R) { var s = R.sb; while (s < L_CRUCE * 1.15) { var q = puntoRayo(R, s); if (q[0] < 0 && alto(q[0], q[2]) > q[1]) break; s += .01; } R.fin = s; });
 
     // ── el bucle (s) ──
-    var T_VTX = 1.5, T_CARA = 2.2, T_DEC = 3.3, T_LLEGA = 7.4, T_H0 = 7.5, T_H1 = 9, T_REC = 9.3, T_FUN = 11.7, LOOP = 13;
+    var T_VTX = 2, T_CARA = 2.9, T_DEC = 4.2, T_LLEGA = 8.1, T_H0 = 8.2, T_H1 = 9.5, T_REC = 9.8, T_FUN = 12, LOOP = 13.4;
     var T_SRC = 9.4;   // en el medallón: el choque p + γ; su ν sale y llega al borde al cerrar el bucle
     function frente(t) { if (t < T_DEC) return 0; var u = cl((t - T_DEC) / (T_LLEGA - T_DEC), 0, 1); return L_CRUCE * (.3 * u + .7 * u * u); }
     function tHit(d) { return T_H0 + (T_H1 - T_H0) * (T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0); }
@@ -141,7 +142,7 @@
       var guia = el('path', { 'class': 'rc-guia', pathLength: 1 }, g);
       var pt = el('circle', { 'class': 'rc-pt', r: 2.4 }, g), aro = el('circle', { 'class': 'rc-aro', r: 2.4 }, g);
       var hDib = o.dib ? o.dibH : 0, lineas = o.d, alto2 = 64 + hDib + lineas.length * 17.5 + 12;
-      el('rect', { 'class': 'rc-fondo', x: FX, y: FY, width: FW, height: f(alto2), rx: 2 }, g);
+      el('rect', { 'class': 'rc-fondo', x: FX, y: FY, width: FW, height: f(alto2), rx: 8 }, g);
       var k = el('text', { 'class': 'rc-k', x: FX + 16, y: FY + 22 }, g); k.textContent = o.k;
       el('line', { 'class': 'rc-regla', x1: FX + 16, y1: FY + 30, x2: FX + FW - 16, y2: FY + 30 }, g);
       var t = el('text', { 'class': 'rc-tit', x: FX + 16, y: FY + 54 }, g); rico(t, o.tit);
@@ -220,9 +221,19 @@
       var t = el('text', { 'class': 'rc-dk', x: cx + p + 6, y: yc + 3 }, g); t.textContent = '150 m · malla triangular';
       var t2 = el('text', { 'class': 'rc-dk', x: x + w - 46, y: y + 30 }, g); t2.textContent = '× 5 000';
     }
-    function dibOrden(g, x, y, w, h) {
-      for (var k = 0; k < 7; k++) el('circle', { cx: f(x + 8 + k * 24), cy: y + 12, r: 6, fill: 'rgb(' + paleta(k / 6) + ')' }, g);
-      var t = el('text', { 'class': 'rc-dk', x: x, y: y + 34 }, g); t.textContent = 'primera → última llegada: ' + coma((T1H - T0H) * 1000, 0) + ' ns';
+    function dibOrden(g, x, y, w, h) {   // residuos del ajuste con un plano: el frente real es curvo
+      var rM = 0, eM = 0; VIVOS.forEach(function (d) { rM = Math.max(rM, d.rp); eM = Math.max(eM, d.res); });
+      rM = Math.ceil(rM / 50) * 50 || 50; eM = Math.max(2, Math.ceil(eM * 1.15));
+      var x0 = x + 22, w0 = w - 30, yb = y + h - 14, h0 = h - 22, X = function (r) { return x0 + r / rM * w0; }, Y = function (e) { return yb - e / eM * h0; };
+      el('line', { 'class': 'rc-deje', x1: x0, y1: yb, x2: x0 + w0, y2: yb }, g); el('line', { 'class': 'rc-deje', x1: x0, y1: f(yb - h0), x2: x0, y2: yb }, g);
+      var a = L_CRUCE, dd = '';
+      for (var r = 0; r <= rM; r += rM / 40) { var e = (Math.sqrt(a * a + r * r / 1e6) - a) / C_KM * 1000; dd += (r ? ' L' : 'M') + f(X(r)) + ' ' + f(Y(Math.min(e, eM))); }
+      el('path', { 'class': 'rc-dcurva rc-dtrazo', d: dd }, g);
+      VIVOS.forEach(function (d) { var k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0; el('circle', { cx: f(X(d.rp)), cy: f(Y(d.res)), r: 2.6, fill: 'rgb(' + paleta(k) + ')', stroke: '#18212B', 'stroke-width': .6 }, g); });
+      var t1 = el('text', { 'class': 'rc-dk', x: x0 + w0 - 74, y: yb + 11 }, g); t1.textContent = 'r al eje (m)';
+      var t2 = el('text', { 'class': 'rc-dk', x: x, y: f(yb - h0 + 3) }, g); t2.textContent = eM;
+      var t3 = el('text', { 'class': 'rc-dk', x: x + 8, y: yb + 3 }, g); t3.textContent = '0';
+      var t4 = el('text', { 'class': 'rc-dk', x: x0 + 8, y: f(yb - h0 + 3) }, g); t4.textContent = 'residuo Δt (ns)';
     }
 
     var A_MED = [MED.x - MED.r * .55, MED.y + MED.r * .55], A_MON = Ps([3.6, .2, Z0]), A_VTX = Ps(VTX), A_TAU = Ps(sobre(CARA, L_TAU * .6)), A_CAS = Ps(sobre(DEC, L_CRUCE * .5)), A_LAD = Ps([-2.4, alto(-2.4, 2.6), 2.6]), A_IMP = Ps(IMP), A_VAL = Ps([.3, 0, 2.2]);
@@ -233,13 +244,13 @@
     ficha('vertice', { ancla: A_VTX, k: 'Corriente cargada', tit: 'ν_τ + N → τ⁻ + X',
       d: ['El neutrino intercambia un bosón W con un', 'quark y se vuelve un tau, que se lleva ≈ 80 %', 'de la energía. El resto (X) es una lluvia de', 'hadrones que la roca absorbe. Debe ocurrir a', 'entre ~50 m y 5 km de la cara del valle.'] });
     ficha('tau', { ancla: A_TAU, k: 'Leptón tau', tit: 'λ = γ c τ ≈ 49 m × E/PeV', dib: dibTau, dibH: 56,
-      d: ['m_τ = 1,777 GeV y cτ = 87 µm. A 8 PeV, γ ≈ 4,5 × 10⁶:', 'vuela ≈ 390 m y se desintegra en el aire. Así', 'en ≈ 65 % de los casos (hadrones + ν_τ); con', 'e ν ν (≈ 18 %) la cascada es electromagnética;', 'con μ ν ν (≈ 17 %) casi no hay cascada.'] });
+      d: ['m_τ = 1,777 GeV y cτ = 87 µm. A 8 PeV, γ ≈ 4,5 × 10⁶:', 'vuela en promedio ≈ 390 m (la distancia es', 'exponencial; aquí, un caso típico). Decae en', 'hadrones + ν_τ (≈ 65 %, este evento), e ν ν', '(≈ 18 %) o μ ν ν (≈ 17 %, casi sin cascada).'] });
     ficha('cascada', { ancla: A_CAS, k: 'Cascada de partículas', tit: 'X_{máx} ≈ X₀ ln(E₀/E_c)', dib: dibPerfil, dibH: 80,
-      d: ['e± radian fotones y los fotones crean pares:', 'el número se duplica cada X₀ ln 2 (X₀ ≈ 37 g/cm²).', 'Mide de 3 a 10 km y solo ~200 m de ancho', '(radio de Molière ≈ 100 m). Llega a la ladera', 'antes del máximo, con ≈ ' + cient(N_IMP) + ' e±.'] });
+      d: ['Tras un decaimiento hadrónico, los π⁰ → γγ', 'inician la parte electromagnética: e± y γ', 'se duplican cada X₀ ln 2 (X₀ ≈ 37 g/cm²).', 'Mide de 3 a 10 km y solo ~200 m de ancho', '(radio de Molière ≈ 100 m). Llega a la ladera', 'antes del máximo, con ≈ ' + cient(N_IMP) + ' e±.'] });
     ficha('ladera', { ancla: A_LAD, k: 'TAMBO · ladera de enfrente', tit: '5 000 unidades a 150 m', dib: dibMalla, dibH: 76,
       d: ['Detectores de partículas en malla triangular', 'sobre la ladera que mira a la montaña (diseño', 'nominal de 2025; se estudian tanques de agua', 'Cherenkov y centelleadores plásticos).', 'Busca neutrinos tau de 1 a 100 PeV.'] });
-    ficha('huella', { ancla: A_IMP, k: 'Reconstrucción', tit: 't_i = t₀ + r_i · n̂ / c', dib: dibOrden, dibH: 46,
-      d: ['El frente es casi un plano que avanza a c:', 'ajustando los tiempos de llegada sale la', 'dirección, con resolución bajo 1°; el número', 'de partículas por unidad da la energía. Con', 'el flujo de IceCube: ≈ 6 neutrinos en 10 años.'] });
+    ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento ilustrativo', tit: 't_i = t₀ + n̂ · r_i / c + Δt_i', dib: dibOrden, dibH: 96,
+      d: ['Un plano ajustado a los tiempos de llegada da', 'la dirección (TAMBO estima menos de 1° en', 'simulación). El frente real es curvo: lejos del', 'eje llega unos ns tarde (Δt ≈ r²/2Lc). El número', 'de partículas da la energía. ≈ 6 ν en 10 años.'] });
     ficha('valle', { ancla: A_VAL, k: 'Valle del Colca · Perú', tit: 'Un valle como detector',
       d: ['≈ 1,5 km de profundidad y ≈ 4,5 km entre', 'laderas. Una cara hace de blanco y la otra', 'de pantalla; si el valle mide de 3 a 10 km,', 'la cascada se desarrolla antes de llegar.'] });
 
@@ -313,7 +324,7 @@
             [[h00, h10, xa, za, xb, za], [h10, h11, xb, za, xb, zb], [h11, h01, xb, zb, xa, zb], [h01, h00, xa, zb, xa, za]].forEach(function (e) {
               if ((e[0] - L) * (e[1] - L) < 0) { var u = (L - e[0]) / (e[1] - e[0]); pts.push(P(e[2] + (e[4] - e[2]) * u, L, e[3] + (e[5] - e[3]) * u)); }
             });
-            if (pts.length >= 2) { c.strokeStyle = n % 2 ? 'rgba(232,206,160,.16)' : 'rgba(232,206,160,.3)'; c.lineWidth = n % 2 ? .45 : .7; c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); c.lineTo(pts[1][0], pts[1][1]); c.stroke(); }
+            if (pts.length >= 2) { c.strokeStyle = n % 2 ? 'rgba(148,126,137,.1)' : 'rgba(178,150,150,.2)'; c.lineWidth = .5; c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); c.lineTo(pts[1][0], pts[1][1]); c.stroke(); }
           }
         }
       }
@@ -325,7 +336,7 @@
       c.fillStyle = gR; c.fill(); c.clip();
       for (var e = 0; e < 26; e++) {
         var yE = 1.75 - e * .1;
-        c.strokeStyle = 'rgba(214,176,132,' + (.06 + .05 * ((e * 7) % 3)) + ')'; c.lineWidth = .6 + ((e * 5) % 3) * .35; c.beginPath();
+        if (e % 2) continue; c.strokeStyle = 'rgba(214,176,132,' + (.04 + .03 * ((e * 7) % 3)) + ')'; c.lineWidth = .5 + ((e * 5) % 3) * .3; c.beginPath();
         for (var xs = BX0; xs <= BX1 + .001; xs += .05) { var qs = P(xs, yE + .05 * Math.sin(xs * 2.3 + e) + .03 * xs, Z0); if (xs === BX0) c.moveTo(qs[0], qs[1]); else c.lineTo(qs[0], qs[1]); }
         c.stroke();
       }
@@ -340,13 +351,11 @@
       c.strokeStyle = 'rgba(120,170,190,.55)'; c.lineWidth = 2; c.beginPath();
       for (var z3 = Z0; z3 <= Z1; z3 += .05) { var q3 = rio(z3); if (z3 === Z0) c.moveTo(q3[0], q3[1]); else c.lineTo(q3[0], q3[1]); } c.stroke();
       // unidades (tanques) sobre la ladera
-      var rr = 2.6, hh = 2.2;
-      for (var j = DET.length - 1; j >= 0; j--) {
+      for (var j = DET.length - 1; j >= 0; j--) {   // unidades inactivas: puntos pequeños y tenues
         var d = DET[j], q5 = Ps([d.x, d.y, d.z]);
         if (q5[0] < vb.x - 10 || q5[0] > vb.x + vb.width + 10) continue;
-        c.fillStyle = 'rgba(44,46,68,.8)'; c.strokeStyle = 'rgba(200,210,235,.26)'; c.lineWidth = .5;
-        c.beginPath(); c.ellipse(q5[0], q5[1], rr, rr * .45, 0, 0, Math.PI); c.lineTo(q5[0] - rr, q5[1] - hh); c.ellipse(q5[0], q5[1] - hh, rr, rr * .45, 0, Math.PI, 0, true); c.closePath(); c.fill(); c.stroke();
-        c.fillStyle = 'rgba(140,190,210,.32)'; c.beginPath(); c.ellipse(q5[0], q5[1] - hh, rr, rr * .45, 0, 0, 2 * Math.PI); c.fill();
+        c.fillStyle = 'rgba(20,20,34,.55)'; c.beginPath(); c.ellipse(q5[0] + .5, q5[1] + .4, 1.9, .9, 0, 0, 2 * Math.PI); c.fill();
+        c.fillStyle = 'rgba(160,196,214,.42)'; c.beginPath(); c.ellipse(q5[0], q5[1] - .6, 1.4, .7, 0, 0, 2 * Math.PI); c.fill();
       }
       // medallón de la fuente: disco oscuro, aro dorado con marcas y rótulo
       var gm = c.createRadialGradient(MED.x - 20, MED.y - 24, 4, MED.x, MED.y, MED.r); gm.addColorStop(0, '#1C1D38'); gm.addColorStop(1, '#0B0C18');
@@ -355,10 +364,14 @@
       c.strokeStyle = 'rgba(201,162,122,.35)'; c.lineWidth = .6; c.beginPath(); c.arc(MED.x, MED.y, MED.r + 5, 0, 2 * Math.PI); c.stroke();
       for (var m = 0; m < 72; m++) { var an = m / 72 * 2 * Math.PI, l = m % 6 ? 3 : 6; c.beginPath(); c.moveTo(MED.x + Math.cos(an) * (MED.r + 5), MED.y + Math.sin(an) * (MED.r + 5)); c.lineTo(MED.x + Math.cos(an) * (MED.r + 5 + l), MED.y + Math.sin(an) * (MED.r + 5 + l)); c.stroke(); }
       c.fillStyle = 'rgba(205,183,154,.75)'; c.font = '700 7.5px "Space Mono", monospace'; c.textAlign = 'center';
-      c.fillText('FUENTE LEJANA · NO A ESCALA', MED.x, MED.y - MED.r - 16); c.textAlign = 'start';
+      c.fillText('ORIGEN ASTROFÍSICO · NO A ESCALA', MED.x, MED.y - MED.r - 16); c.textAlign = 'start';
       // camino del neutrino (punteado tenue)
       c.strokeStyle = 'rgba(214,120,176,.3)'; c.lineWidth = .8; c.setLineDash([1.5, 4]); c.beginPath();
       caminoNu().forEach(function (q, k) { if (!k) c.moveTo(q[0], q[1]); else c.lineTo(q[0], q[1]); }); c.stroke(); c.setLineDash([]);
+      var qo = caminoNu()[9]; c.fillStyle = 'rgba(205,183,154,.6)'; c.font = '700 7px "Space Mono", monospace'; c.textAlign = 'end';
+      c.fillText('OSCILA EN EL CAMINO', qo[0] - 12, qo[1] + 2); c.textAlign = 'start';
+      c.fillStyle = 'rgba(230,170,200,.75)'; var xo = qo[0] - 78;
+      [['ν', 14, 0], ['μ', 9.5, 3.5], [' → ν', 14, 0], ['τ', 9.5, 3.5]].forEach(function (q) { c.font = 'italic 500 ' + q[1] + 'px "Cormorant Garamond", serif'; c.fillText(q[0], xo, qo[1] + 17 + q[2]); xo += c.measureText(q[0]).width + .5; });
     }
 
     // ── dibujo por cuadro ──
@@ -418,7 +431,7 @@
     // el ν: recorre el camino punteado al cerrar el bucle y, ya en la roca, va hasta el vértice
     function neutrino(t) {
       var cn = caminoNu(), u0 = (t - (LOOP - 1.6)) / 1.6;
-      if (u0 > 0 && u0 < 1) { var q = cn[Math.min(cn.length - 1, Math.floor(u0 * (cn.length - 1)))]; brillo(q[0], q[1], 10, '214,120,176', .7); ctx.fillStyle = '#F2B8D8'; ctx.beginPath(); ctx.arc(q[0], q[1], 1.8, 0, 2 * Math.PI); ctx.fill(); }
+      if (u0 > 0 && u0 < 1) { var q = cn[Math.min(cn.length - 1, Math.floor(u0 * (cn.length - 1)))], mz = suave((u0 - .35) / .4), cc = [Math.round(140 + 74 * mz), Math.round(180 - 60 * mz), Math.round(230 - 54 * mz)].join(','); brillo(q[0], q[1], 10, cc, .7); ctx.fillStyle = 'rgb(' + cc + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 1.8, 0, 2 * Math.PI); ctx.fill(); }
       if (t > T_VTX + 2) return;
       var u = cl(t / T_VTX, 0, 1), a = Ps(sobre(VTX, -3.6)), cab = Ps(sobre(VTX, -3.6 + 3.6 * u)), al = t < T_VTX ? 1 : 1 - suave((t - T_VTX) / 1.8);
       ctx.globalAlpha = al;
@@ -448,7 +461,7 @@
       var ud = t - T_DEC;
       if (ud > 0) {
         var d = Ps(DEC);
-        if (ud < 1.3) brillo(d[0], d[1], 56 * (1 - ud / 1.3) + 6, '255,240,215', .95 * (1 - ud / 1.3));
+        if (ud < .9) { var fl = ud < .2 ? 1 : 1 - suave((ud - .2) / .7); brillo(d[0], d[1], 40 * fl + 6, '255,245,232', .9 * fl); }
         var nuF = Ps(sobre(DEC, Math.min(L_CRUCE * .95, ud * .9))), qn = [nuF[0], nuF[1] + 10];
         ctx.globalAlpha = al * Math.max(0, 1 - Math.max(0, ud - 2.5) / 2);
         trazo(d, qn, 'rgba(214,120,176,.65)', .8, [1.5, 3]); rotulo('ν_τ', qn[0] + 3, qn[1] + 12, '#E6A0C4', 13);
@@ -456,63 +469,80 @@
       ctx.globalAlpha = 1;
     }
 
-    var LOTES = [[], [], [], [], []];
+    // cascada: una población de partículas, no un haz. Componente electromagnética (e±, γ) en cian claro,
+    // trazas finas que nacen a lo largo del eje y se abren; hadrones/muones escasos, puntos ámbar más gruesos.
+    var LOTES = [[], [], [], [], []], ESTELA = [], CAB = [], CABH = [];
     function cascada(t) {
       if (t < T_DEC) return;
-      var sf = frente(t), crec = cl(sf / L_CRUCE, 0, 1), fin = (1 - .7 * suave((t - T_LLEGA) / 2.2)) * fade(t);
+      var sf = frente(t), crec = cl(sf / L_CRUCE, 0, 1), fin = (1 - .75 * suave((t - T_LLEGA) / 2)) * fade(t);
       if (fin <= 0) return;
-      LOTES.forEach(function (l) { l.length = 0; });
+      LOTES.forEach(function (l) { l.length = 0; }); ESTELA.length = 0; CAB.length = 0; CABH.length = 0;
       RAY.forEach(function (R) {
         if (sf < R.sb) return;
-        var s1 = Math.min(sf, R.fin), s0 = Math.max(R.sb, s1 - R.tr * L_CRUCE * .5); if (s1 <= s0) return;
+        var s1 = Math.min(sf, R.fin), s0 = Math.max(R.sb, s1 - R.tr * L_CRUCE * (R.oro ? .1 : .13)); if (s1 <= s0) return;
         var a = Ps(puntoRayo(R, s0)), b = Ps(puntoRayo(R, s1));
+        if (s0 > R.sb && R.a < .5) { var e0 = Ps(puntoRayo(R, R.sb)); ESTELA.push(e0[0], e0[1], a[0], a[1]); }
         LOTES[R.oro ? 4 : Math.min(3, Math.floor(R.a * 4))].push(a[0], a[1], b[0], b[1]);
+        if (s1 < R.fin) { if (R.oro) CABH.push(b[0], b[1], .8 + R.tr * .6); else if (R.a < .6) CAB.push(b[0], b[1]); }
       });
-      ctx.globalCompositeOperation = 'lighter';
-      var resalta = foco === 'cascada' ? 1.5 : 1;
+      var resalta = foco === 'cascada' ? 1.6 : 1;
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var al = (k === 4 ? .32 : .014 + k * .017) * fin * (.5 + .5 * crec) * resalta;
-        ctx.strokeStyle = k === 4 ? 'rgba(246,206,140,' + al + ')' : 'rgba(' + (k < 2 ? '150,170,255' : '214,226,255') + ',' + al + ')'; ctx.lineWidth = k === 4 ? .7 : .6 + k * .2;
+        var al = Math.min(1, (k === 4 ? .35 : .05 + k * .035) * fin * resalta);
+        ctx.strokeStyle = k === 4 ? 'rgba(229,180,124,' + al + ')' : 'rgba(158,219,238,' + al + ')'; ctx.lineWidth = k === 4 ? .6 : .5 + k * .15;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });
-      var c0 = Ps(sobre(DEC, Math.max(0, sf - L_CRUCE * .35))), c1 = Ps(sobre(DEC, Math.min(sf, L_CRUCE)));
-      var gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]); gl.addColorStop(0, 'rgba(180,200,255,0)'); gl.addColorStop(1, 'rgba(225,235,255,' + (.35 * fin) + ')');
-      ctx.strokeStyle = gl; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(c0[0], c0[1]); ctx.lineTo(c1[0], c1[1]); ctx.stroke();
+      if (ESTELA.length) { ctx.strokeStyle = 'rgba(158,219,238,' + (.012 * fin * resalta) + ')'; ctx.lineWidth = .5; ctx.beginPath(); for (var e = 0; e < ESTELA.length; e += 4) { ctx.moveTo(ESTELA[e], ESTELA[e + 1]); ctx.lineTo(ESTELA[e + 2], ESTELA[e + 3]); } ctx.stroke(); }
+      ctx.fillStyle = 'rgba(214,242,250,' + (.6 * fin) + ')';
+      for (var i = 0; i < CAB.length; i += 2) ctx.fillRect(CAB[i] - .5, CAB[i + 1] - .5, 1, 1);
+      ctx.fillStyle = 'rgba(229,180,124,' + (.9 * fin) + ')';
+      for (i = 0; i < CABH.length; i += 3) { ctx.beginPath(); ctx.arc(CABH[i], CABH[i + 1], CABH[i + 2] * .5 + .5, 0, 2 * Math.PI); ctx.fill(); }
+      // eje: tenue, para no leerse como un láser
+      var c0 = Ps(sobre(DEC, Math.max(0, sf - L_CRUCE * .3))), c1 = Ps(sobre(DEC, Math.min(sf, L_CRUCE)));
+      var gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]); gl.addColorStop(0, 'rgba(215,229,240,0)'); gl.addColorStop(1, 'rgba(215,229,240,' + (.3 * fin) + ')');
+      ctx.strokeStyle = gl; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(c0[0], c0[1]); ctx.lineTo(c1[0], c1[1]); ctx.stroke();
+      // el frente: un disco delgado (≈ 2 R_M) que avanza a c
       if (sf < L_CRUCE * 1.01) {
         var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), p1 = Ps([c[0] + E2[0] * rd, c[1] + E2[1] * rd, c[2] + E2[2] * rd]), p2 = Ps([c[0] + E1[0] * rd, c[1] + E1[1] * rd, c[2] + E1[2] * rd]);
         var rx = Math.max(2, Math.hypot(p2[0] - pc[0], p2[1] - pc[1])), ry = Math.max(2, Math.hypot(p1[0] - pc[0], p1[1] - pc[1]));
-        brillo(pc[0], pc[1], Math.max(rx, ry) * 2 + 8, '190,210,255', .3 * fin);
-        ctx.strokeStyle = 'rgba(246,214,150,' + (.85 * fin) + ')'; ctx.lineWidth = 1;
+        ctx.globalCompositeOperation = 'lighter'; brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '158,219,238', .16 * fin); ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = 'rgba(215,229,240,' + (.7 * fin) + ')'; ctx.lineWidth = .8;
         ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rx, ry, Math.atan2(p1[1] - pc[1], p1[0] - pc[0]) - Math.PI / 2, 0, 2 * Math.PI); ctx.stroke();
       }
-      ctx.globalCompositeOperation = 'source-over';
     }
 
+    // mediciones: cada unidad con señal se enciende a su tiempo, con una barra ∝ log del número de partículas
     function senales(t) {
-      var r = 2.6, hh = 2.2, al0 = fade(t);
+      var al0 = fade(t);
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
-        var a = Math.min(1, u / .2) * al0, rr = 4 + 3.2 * Math.log10(1 + d.n);
-        ctx.globalCompositeOperation = 'lighter';
-        brillo(q[0], q[1] - hh / 2, rr * 2, col, .75 * a);
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.globalAlpha = a; ctx.fillStyle = 'rgb(' + col + ')'; ctx.beginPath(); ctx.ellipse(q[0], q[1] - hh, r + .4, (r + .4) * .45, 0, 0, 2 * Math.PI); ctx.fill();
-        var p1 = Math.max(0, 1 - u / .9); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + p1 + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(q[0], q[1] - hh / 2, rr * (1 + 3 * (1 - p1)), rr * .45 * (1 + 3 * (1 - p1)), 0, 0, 2 * Math.PI); ctx.stroke(); }
+        var a = Math.min(1, u / .15) * al0, hb = (5 + 6 * Math.log10(1 + d.n)) * suave(u / .5);
+        ctx.globalCompositeOperation = 'lighter'; brillo(q[0], q[1] - .6, 5, col, .5 * a); ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = a;
+        ctx.strokeStyle = 'rgba(' + col + ',.85)'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(q[0], q[1] - 1.5); ctx.lineTo(q[0], q[1] - 1.5 - hb); ctx.stroke();
+        ctx.fillStyle = 'rgb(' + col + ')'; ctx.beginPath(); ctx.ellipse(q[0], q[1] - .6, 2.4, 1.15, 0, 0, 2 * Math.PI); ctx.fill();
+        var p1 = Math.max(0, 1 - u / .7); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + (.8 * p1) + ')'; ctx.lineWidth = .7; ctx.beginPath(); ctx.ellipse(q[0], q[1] - .6, 2.4 + 6 * (1 - p1), 1.15 + 2.9 * (1 - p1), 0, 0, 2 * Math.PI); ctx.stroke(); }
         ctx.globalAlpha = 1;
       });
     }
+    // inferencia (no partícula): eje ajustado en guiones, ±1° en dos contornos finos y el frente plano ajustado
     function reconstruye(t) {
       var u = suave((t - T_REC) / 1.2) * fade(t); if (u <= 0) return;
       var a = Ps(sobre(IMP, -1.3)), b = A_IMP, ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = Math.hypot(b[0] - a[0], b[1] - a[1]);
       var lv = L * suave((t - T_REC) / 1.4);
-      ctx.globalAlpha = u;
-      trazo([b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv], b, 'rgba(246,214,150,.95)', 1.3, [6, 4]);
-      ctx.fillStyle = 'rgba(246,214,150,.95)'; ctx.beginPath();
-      ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - 10 * Math.cos(ang - .35), b[1] - 10 * Math.sin(ang - .35)); ctx.lineTo(b[0] - 10 * Math.cos(ang + .35), b[1] - 10 * Math.sin(ang + .35)); ctx.closePath(); ctx.fill();
-      var dA = Math.PI / 180; ctx.strokeStyle = 'rgba(246,214,150,.35)'; ctx.lineWidth = .7; ctx.beginPath();
+      ctx.globalAlpha = u * .7;
+      trazo([b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv], b, '#E7C58F', 1, [5, 4]);
+      ctx.fillStyle = '#E7C58F'; ctx.beginPath();
+      ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - 8 * Math.cos(ang - .35), b[1] - 8 * Math.sin(ang - .35)); ctx.lineTo(b[0] - 8 * Math.cos(ang + .35), b[1] - 8 * Math.sin(ang + .35)); ctx.closePath(); ctx.fill();
+      var dA = Math.PI / 180; ctx.strokeStyle = 'rgba(215,174,132,.8)'; ctx.lineWidth = .6; ctx.beginPath();
       ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - lv * Math.cos(ang - dA), b[1] - lv * Math.sin(ang - dA)); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - lv * Math.cos(ang + dA), b[1] - lv * Math.sin(ang + dA)); ctx.stroke();
+      var uf = suave((t - T_REC - .5) / .8) * fade(t);
+      if (uf > 0) {
+        var h = .32 * uf, fa = Ps([IMP[0] + E2[0] * h, IMP[1] + E2[1] * h, IMP[2] + E2[2] * h]), fb = Ps([IMP[0] - E2[0] * h, IMP[1] - E2[1] * h, IMP[2] - E2[2] * h]);
+        ctx.globalAlpha = uf * .75; trazo(fa, fb, '#E7C58F', .8, [2, 3]);
+        ctx.fillStyle = 'rgba(231,197,143,.9)'; ctx.font = '700 7px "Space Mono", monospace'; ctx.fillText('FRENTE AJUSTADO', fa[0] + 6, fa[1] + 2);
+      }
       ctx.globalAlpha = 1;
     }
     // detalles: brillo del río y un cóndor que planea

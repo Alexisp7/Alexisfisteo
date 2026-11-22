@@ -42,7 +42,9 @@
 
   var esperas = [], revelar, yaRevelado = false;
   window.fxRevelado = new Promise(function (ok) { revelar = ok; });
-  window.fxEspera = function (p) { esperas.push(p); };
+  // tope: cuánto puede retener la hoja (7 s por omisión); una página pesada puede pedir más con el segundo argumento
+  var tope = 7000;
+  window.fxEspera = function (p, max) { esperas.push(p); if (max > tope) tope = max; };
 
   var guardado = null, fase = 0, modo = null;
   try { guardado = sessionStorage.getItem('fx-hoja'); fase = +sessionStorage.getItem('fx-fase') || 0; modo = sessionStorage.getItem('fx-modo'); sessionStorage.removeItem('fx-hoja'); sessionStorage.removeItem('fx-modo'); } catch (e) {}
@@ -70,7 +72,7 @@
     cargada.then(function () { return Promise.all([fuentes].concat(esperas)); }).then(pausa, pausa).then(retirar);
     // tope de seguridad: una página con escenas puede esperar más; ninguna se queda tapada
     setTimeout(function () { if (!esperas.length) retirar(); }, 2600 + extra);
-    setTimeout(retirar, 7000 + extra);
+    (function topeSeguridad() { var falta = t0 + tope + extra - performance.now(); if (falta > 0) setTimeout(topeSeguridad, falta); else retirar(); })();
   } else { raiz.classList.remove('fx-llega'); yaRevelado = true; revelar(); }
 
   var yendo = false;
@@ -132,5 +134,21 @@
     if (!e.persisted) return;
     yendo = false; Array.prototype.forEach.call(d.querySelectorAll('.fx-hoja, .fx-espacio'), function (n) { n.remove(); });
     raiz.classList.remove('fx-llega', 'fx-espera');
+  });
+
+  // precalentar el agujero negro: en las páginas que llevan a Cursos, cuando ya se ven y el navegador está libre,
+  // se compila su trazador en segundo plano (otro hilo, sin dibujar nada). El navegador guarda el resultado
+  // y Cursos lo encuentra listo en vez de compilarlo ~12 s bajo la hoja. Una vez por sesión
+  var PRECALIENTA = { 'index.html': 1, '': 1, 'proyectos.html': 1, 'contacto.html': 1 };
+  if (PRECALIENTA[archivo(location)]) window.fxRevelado.then(function () {
+    try { if (sessionStorage.getItem('fx-gl')) return; } catch (e) {}
+    var ocioso = window.requestIdleCallback || function (fn) { setTimeout(fn, 1); };
+    setTimeout(function () { ocioso(function () {
+      var s = d.createElement('script'); s.src = 'js/agujero-glsl.js'; s.async = true;
+      s.onload = function () {
+        if (window.precalientaAgujero) window.precalientaAgujero().then(function (ok) { if (ok) try { sessionStorage.setItem('fx-gl', '1'); } catch (e) {} });
+      };
+      d.head.appendChild(s);
+    }, { timeout: 4000 }); }, 2500);
   });
 })();

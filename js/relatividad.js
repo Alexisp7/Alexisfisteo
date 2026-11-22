@@ -83,8 +83,19 @@
 
   // ── agujero negro abajo: el mismo trazador que en Cursos, sin la mancha (uAg = 0)
   var lienzo = d.querySelector('.rg-agujero'), gl = window.GLSL_AGUJERO && lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false }), U = {}, pr = null;
-  if (gl) { gl.getExtension('OES_standard_derivatives'); pr = programa(gl, window.GLSL_AGUJERO); }
-  if (pr) ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk', 'uEx', 'uSal', 'uAg'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+  // el trazador se compila en segundo plano (compilaAgujero, js/agujero-glsl.js): la página no se congela mientras tanto
+  var prListo = Promise.resolve();
+  if (gl) {
+    gl.getExtension('OES_standard_derivatives');
+    prListo = window.compilaAgujero(gl).then(function (p) {
+      if (!p) return;
+      gl.useProgram(p);
+      var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      var lp = gl.getAttribLocation(p, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
+      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk', 'uEx', 'uSal', 'uAg'].forEach(function (k) { U[k] = gl.getUniformLocation(p, k); });
+      pr = p;
+    });
+  }
   var ROLL = 0, INCL = 80 * Math.PI / 180, t0 = performance.now(), tEntrada = null, zoom = 1;
   function geometria() {
     var w = innerWidth, h = innerHeight, ancho = w <= 900;
@@ -121,9 +132,9 @@
 
   // el fondo y el primer cuadro del agujero se preparan bajo el velo de carga
   var listo = new Promise(function (ok) {
-    requestAnimationFrame(function () { setTimeout(function () { pintarCosmos(); if (pr) pintar(performance.now()); ok(); }, 0); });
+    requestAnimationFrame(function () { setTimeout(function () { pintarCosmos(); prListo.then(function () { if (pr) pintar(performance.now()); ok(); }); }, 0); });
   });
-  if (window.fxEspera) window.fxEspera(listo);
+  if (window.fxEspera) window.fxEspera(listo, 30000);   // la primera vez, compilar el trazador puede tardar ~13 s
   addEventListener('resize', function () { clearTimeout(pintarCosmos.t); pintarCosmos.t = setTimeout(pintarCosmos, 200); });
   function armar() { tEntrada = performance.now(); raiz.classList.add('rg-armado'); }
   listo.then(function () {

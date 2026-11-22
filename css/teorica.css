@@ -21,7 +21,7 @@
 .mc svg .rc-tit { font:italic 500 22px 'Cormorant Garamond',serif; fill:#F1E9DC; }
 .mc svg .rc-d { font:400 13.5px Newsreader,Georgia,serif; fill:#C9D2D9; }
 /* dibujitos de las fichas */
-.mc svg .rc-dk { font:400 10px 'Space Mono',monospace; letter-spacing:.02em; fill:#A9BAC6; }
+.mc svg .rc-dk { font:400 10.5px 'Space Mono',monospace; letter-spacing:.02em; fill:#A9BAC6; }
 .mc svg .rc-dl { font:italic 500 13px 'Cormorant Garamond',serif; fill:#E6DCCB; }
 .mc svg .rc-dl.rc-dch { font-size:14px; }
 .mc svg .rc-dcaja { fill:none; stroke:rgba(200,215,230,.35); stroke-width:.6; }

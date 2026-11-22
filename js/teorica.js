@@ -156,7 +156,7 @@
     var KAP = 0;
     // 1000 repeticiones del mismo evento: solo reloj, solo espesor del frente, ambos; y cinco generadores distintos
     // del que asume el ajuste (desajuste de modelo). Intervalos de 68 % de la mediana y del P68 por estadística de orden.
-    var NMC = 1000;
+    var NMC = 1000, CHI90 = 14.684;   // cuantil 90 % de χ² con 9 grados de libertad
     // un escenario se puede calcular de una vez o por tramos (paso), para no bloquear el navegador
     function nuevoEsc(fis, det, sem, G) { return { fis: fis, det: det, G: G, r: semilla(sem), mc: [], todas: [], mal: 0, k: 0 }; }
     function paso(E, m) {
@@ -173,8 +173,8 @@
     var AJ = (function () {
       if (VIVOS.length < 4) return null;
       PULL.s = PULL.n = 0; PULL.chi = [];
-      var E = nuevoEsc(true, true, 97); paso(E, NMC); var C = cierra(E), pull = Math.sqrt(PULL.s / PULL.n), chi = PULL.chi.sort(function (a, b) { return a - b; })[PULL.chi.length >> 1]; PULL.chi = []; var err = ajusta(C.tip, true);   // se muestra la realización más cercana a la mediana (declarado en la ficha)
-      return { err: err, mc: C.mc, med: C.med[0], p68: C.p68[0], dmed: C.med[1], dp68: C.p68[1], mal: C.mal, pull: pull, chi: chi, R: KAP > 0 ? 1 / KAP : 0, listo: false };
+      var E = nuevoEsc(true, true, 97); paso(E, NMC); var C = cierra(E), pull = Math.sqrt(PULL.s / PULL.n), chi = PULL.chi.sort(function (a, b) { return a - b; })[PULL.chi.length >> 1], cob = PULL.chi.filter(function (v) { return v * (VIVOS.length - 4) > CHI90; }).length / PULL.chi.length; PULL.chi = []; var err = ajusta(C.tip, true);   // se muestra la realización más cercana a la mediana (declarado en la ficha)
+      return { err: err, mc: C.mc, med: C.med[0], p68: C.p68[0], dmed: C.med[1], dp68: C.p68[1], mal: C.mal, pull: pull, chi: chi, cob: cob, R: KAP > 0 ? 1 / KAP : 0, listo: false };
     })();
     // sensibilidad (solo reloj, solo espesor y cinco generadores distintos): por tramos, después de arrancar la escena
     function sensibilidad(alFin) {
@@ -316,7 +316,7 @@
       var t2 = el('text', { 'class': 'rc-dk', x: x + w - 46, y: y + 30 }, g); t2.textContent = '× 5 000';
     }
     function dibOrden(g, x, y, w, hT) {   // residuos del ajuste con un plano y, debajo, el error angular en 200 eventos
-      var h = hT - 168, rM = 0, eM = 0; VIVOS.forEach(function (d) { rM = Math.max(rM, d.rp); eM = Math.max(eM, Math.abs(d.res)); });
+      var h = hT - 194, rM = 0, eM = 0; VIVOS.forEach(function (d) { rM = Math.max(rM, d.rp); eM = Math.max(eM, Math.abs(d.res)); });
       rM = Math.ceil(rM / 50) * 50 || 50; eM = Math.min(60, Math.max(2, Math.ceil(eM * 1.2)));
       var x0 = x + 22, w0 = w - 30, ym = y + 4 + (h - 20) / 2, h0 = (h - 20) / 2, yb = y + h - 16, X = function (r) { return x0 + r / rM * w0; }, Y = function (e) { return ym - cl(e, -eM, eM) / eM * h0; };
       el('line', { 'class': 'rc-deje', x1: x0, y1: f(ym), x2: x0 + w0, y2: f(ym) }, g); el('line', { 'class': 'rc-deje', x1: x0, y1: f(ym - h0), x2: x0, y2: f(ym + h0) }, g);
@@ -330,7 +330,7 @@
       var t5 = el('text', { 'class': 'rc-dk', x: x, y: f(ym + h0 + 3) }, g); t5.textContent = '−' + eM;
       var t4 = el('text', { 'class': 'rc-dk', x: x0 + 8, y: f(ym - h0 + 3) }, g); t4.textContent = 't − frente ajustado (ns)';
       if (!AJ) return;
-      var yh = y + h + 46, hh = 26, NB = 24, top = AJ.mc[Math.floor(AJ.mc.length * .99)], mx = Math.max(.5, Math.ceil(top * 4) / 4), cnt = []; for (var i = 0; i < NB; i++) cnt.push(0);
+      var yh = y + h + 58, hh = 38, NB = 24, top = AJ.mc[Math.floor(AJ.mc.length * .99)], mx = Math.max(.5, Math.ceil(top * 4) / 4), cnt = []; for (var i = 0; i < NB; i++) cnt.push(0);
       AJ.mc.forEach(function (v) { if (v < mx) cnt[Math.floor(v / mx * NB)]++; });
       var cM = Math.max.apply(null, cnt), bw = w0 / NB;
       cnt.forEach(function (c, i) { if (c) el('rect', { x: f(x0 + i * bw + .5), y: f(yh - c / cM * hh), width: f(bw - 1), height: f(c / cM * hh), fill: 'rgba(158,219,238,.5)' }, g); });
@@ -349,9 +349,10 @@
       if (!AJ.listo) { var uw = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 36) }, g); uw.textContent = 'calculando sensibilidad…'; return; }
       fila(yt + 34, 'P68 con generador distinto', '', coma(AJ.sMin, 2) + '–' + coma(AJ.sMax, 2) + '°', 'rc-dl rc-dch');
       el('line', { 'class': 'rc-deje', x1: c1, y1: yt + 42, x2: c3, y2: yt + 42 }, g);
-      var u5 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 56) }, g); u5.textContent = 'medianas · solo reloj ' + coma(AJ.reloj.med[0], 2) + '° · solo frente ' + coma(AJ.fis.med[0], 2) + '°';
-      var u6 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 70) }, g); u6.textContent = 'χ²/ndf mediano ' + coma(AJ.chi, 2) + ' (ndf ' + nd + '; esperado ≈ ' + coma(Math.pow(1 - 2 / (9 * nd), 3), 2) + ')';
-      var u7 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 84) }, g); u7.textContent = 'R ajustado ' + coma(AJ.R, 1) + ' km · ' + AJ.mal + ' fallos de ' + 8 * NMC;
+      var u5 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 56) }, g); u5.textContent = 'reloj solo ' + coma(AJ.reloj.med[0], 2) + '° · frente solo ' + coma(AJ.fis.med[0], 2) + '° (med.)';
+      var u6 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 70) }, g); u6.textContent = 'χ²/ndf mediano ' + coma(AJ.chi, 2) + ' (esperado ' + coma(Math.pow(1 - 2 / (9 * nd), 3), 2) + ', ndf ' + nd + ')';
+      var u7 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 84) }, g); u7.textContent = 'χ² > cuantil 90 %: ' + coma(100 * AJ.cob, 1) + ' % (esperado 10 %)';
+      var u8 = el('text', { 'class': 'rc-dk', x: c1, y: f(yt + 98) }, g); u8.textContent = 'R ajustado ' + coma(AJ.R, 1) + ' km · ' + AJ.mal + ' fallos de ' + 8 * NMC;
     }
 
     function dibAire(g, x, y, w, h) {   // densidad del aire (atmósfera estándar) contra altura
@@ -377,7 +378,7 @@
       el('path', { 'class': 'rc-dcurva', d: d }, g);
       var td = 0; for (i = 0; i < nb; i++) if (S[i] > .08 * mx) { td = i * dtb; break; }
       var xd = x0 + td / T * w0; el('line', { 'class': 'rc-dguion', x1: f(xd), y1: yb + 2, x2: f(xd), y2: f(yb - h0 - 18) }, g);
-      var t1 = el('text', { 'class': 'rc-dk', x: f(xd + 4), y: f(yb - h0 - 8) }, g); t1.textContent = 'disparo (8 % del máximo)';
+      var t1 = el('text', { 'class': 'rc-dk', x: f(xd + 4), y: f(yb - h0 - 8) }, g); t1.textContent = 'umbral ilustrativo · 8 % del máx.';
       var t2 = el('text', { 'class': 'rc-dk', x: x0 + w0, y: yb + 12, 'text-anchor': 'end' }, g); t2.textContent = 't (ns) → 400';
       var t3 = el('text', { 'class': 'rc-dk', x: x0, y: yb + 12 }, g); t3.textContent = Math.round(EST.n) + ' partículas';
     }
@@ -394,8 +395,8 @@
       d: ['e± y γ (cian), hadrones (ámbar) y muones', '(lavanda, ≈ ' + cient(Math.pow(E_CAS / 20e9, .85)) + ' según Matthews). X = ∫ρ ds:', '3,37 km de aire = ' + coma(X_IMP, 0) + ' g/cm², antes del máximo;', 'llegan ≈ ' + cient(N_IMP) + ' e±. Greisen, Heitler y Matthews', 'son estimaciones: no sustituyen una simulación', 'de transporte (CORSIKA).'] });
     ficha('ladera', { ancla: A_LAD, k: 'TAMBO · ladera de enfrente', tit: '5 000 unidades a 150 m', dib: dibMalla, dibH: 82,
       d: ['Detectores de partículas en malla triangular', 'sobre la ladera que mira a la montaña (diseño', 'nominal de 2025; se estudian tanques de agua', 'Cherenkov y centelleadores plásticos).', 'Busca neutrinos tau de 1 a 100 PeV.'] });
-    function fichaHuella() { return ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento simulado', tit: 't_i = t₀ + n̂ · r_i / c + ρ_i² / 2Rc', dib: dibOrden, dibH: 280,
-      d: ['Se resta el retraso medio de cada estación y se', 'ajustan dirección y curvatura (pesos 1/σ_i²); se', 'muestra la realización mediana. χ²/ndf cerca de', 'lo esperado: errores calibrados. No es la', 'resolución de TAMBO.'] }); }
+    function fichaHuella() { return ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento simulado', tit: 't_i = t₀ + n̂ · r_i / c + ρ_i² / 2Rc', dib: dibOrden, dibH: 306,
+      d: ['Se resta el retraso medio de cada estación y se', 'ajustan dirección y curvatura (pesos 1/σ_i²); se', 'muestra la realización mediana. La cola de χ² algo', 'más pesada viene de la asimetría del primer', 'tiempo. No es la resolución de TAMBO.'] }); }
     fichaHuella();
     sensibilidad(function () { var vieja = fichas.huella, ver = vieja.ver; var n = fichaHuella(); capa.insertBefore(n.g, vieja.g); capa.removeChild(vieja.g); if (ver) n.pon(true); });
     ficha('valle', { ancla: A_VAL, k: 'Valle del Colca · Perú', tit: 'Un valle como detector', dib: dibAire, dibH: 92,
@@ -403,7 +404,7 @@
     // estación: la que esté más cerca de 100 m del eje con al menos 10 partículas (frente ya grueso, pulso con estructura)
     var EST = VIVOS.filter(function (d) { return d.n >= 10; }).reduce(function (b, d) { return Math.abs(d.rp - 100) < Math.abs(b.rp - 100) ? d : b; }, VIVOS[0]), A_EST = Ps([EST.x, EST.y, EST.z]);
     ficha('estacion', { ancla: [A_EST[0], A_EST[1] - 2], k: 'Estación ilustrativa · tanque de agua', tit: 'Pulso de luz Cherenkov', dib: dibOnda, dibH: 96,
-      d: ['Cada partícula que entra al agua emite luz;', 'el fotomultiplicador ve pulsos que decaen en', '~60 ns. El disparo (línea) es el t_i del ajuste.', 'A ' + coma(EST.rp, 0) + ' m del eje el frente es grueso: las', 'partículas llegan repartidas en decenas de ns.'] });
+      d: ['Cada partícula que entra al agua emite luz y el', 'fotomultiplicador suma pulsos de ~60 ns. El', 'disparo es el t_i del ajuste. A ' + coma(EST.rp, 0) + ' m del eje las', 'partículas llegan repartidas en decenas de ns.', 'Esquemático: sin modelo óptico ni electrónico.'] });
     ficha('llegadas', { ancla: [LT.x0 + 4, LT.y - 4], k: 'Registro del evento', tit: 'Tiempos de disparo', 
       d: ['Una marca por detector: su posición es el', 'tiempo de disparo desde el primero y su altura,', 'el logaritmo de las partículas. La ventana de', coma(T1H - T0H, 2) + ' µs no es la duración de la cascada: es', 'lo que tarda el frente en barrer la ladera,', 'inclinada respecto a él.'] });
     var EVT = [724, 758];
@@ -662,7 +663,7 @@
       var resalta = foco === 'cascada' ? 1.6 : 1;
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var al = Math.min(1, (k === 5 ? .62 : k === 4 ? .35 : .87 * (.035 + k * .025) * (k === 3 ? 1.15 : 1)) * fin * resalta);
+        var al = Math.min(1, (k === 5 ? .62 : k === 4 ? .35 : .87 * (.035 + k * .025) * (k === 3 ? 1.05 : 1)) * fin * resalta);
         ctx.strokeStyle = k === 5 ? 'rgba(192,165,240,' + al + ')' : k === 4 ? 'rgba(229,180,124,' + al + ')' : 'rgba(158,219,238,' + al + ')'; ctx.lineWidth = k === 5 ? 1.1 : k === 4 ? .6 : .5 + k * .15;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });

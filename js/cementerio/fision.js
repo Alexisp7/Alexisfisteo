@@ -44,7 +44,7 @@
     return c;
   }
 
-  window.escenaFision = function (svg, salida) {
+  window.cmFision = function (svg, salida) {
     var fig = svg.parentNode, raiz = fig.closest('.mc');
     var quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     var lienzo = document.createElement('canvas'); lienzo.className = 'fz-lienzo'; fig.insertBefore(lienzo, svg);
@@ -802,7 +802,7 @@
     // lienzos de la parte IV: la nube en WebGL encima del fondo y, delante, chispas y destello
     var lienzoN = document.createElement('canvas'); lienzoN.className = 'fz-lienzo fz-nube'; fig.insertBefore(lienzoN, svg);
     var lienzoF = document.createElement('canvas'); lienzoF.className = 'fz-lienzo fz-frente'; fig.insertBefore(lienzoF, svg);
-    var ctxF = lienzoF.getContext('2d'), NUBE = window.fzNube ? window.fzNube(lienzoN) : null, frenteSucio = false;
+    var ctxF = lienzoF.getContext('2d'), NUBE = window.cmFzNube ? window.cmFzNube(lienzoN) : null, frenteSucio = false;
     // la noche: la tinta nace en el punto de luz y, al final, se retira hacia él como un iris que se cierra
     function iris(t) { var pr = suave((t - T_P4 - .4) / 3.2), q = suave((t - FIN + .3) / 3.6); return (60 + pr * 2000) * Math.pow(1 - q, 1.6); }
     function noche(t) { return t < T_P4 + .4 ? 0 : cl((iris(t) - 450) / 300, 0, 1); }

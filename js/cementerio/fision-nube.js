@@ -124,7 +124,7 @@
     '}'
   ].join('\n');
 
-  window.fzNube = function (lienzo) {
+  window.cmFzNube = function (lienzo) {
     var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, alpha: true });
     if (!gl) return null;
     var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }'); gl.compileShader(vs);

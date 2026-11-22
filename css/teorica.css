@@ -37,7 +37,7 @@
 
 /* la escena es de noche: lectura en tinta clara y sin caja de papel */
 .mc.rc-noche .mc-lectura { background:none; color:#F4EEE3; transition:color .8s ease; }
-.mc.rc-noche .mc-l1 { color:#E7D6BF; font-size:12px; } .mc.rc-noche .mc-l2 { color:#B7A89A; font-size:11px; }
-.mc.rc-noche .mc-ec { opacity:.82; }
+.mc.rc-noche .mc-l1 { color:#F2E4CE; font-size:12px; } .mc.rc-noche .mc-l2 { color:#B7A89A; font-size:11px; margin-top:11px; }
+.mc.rc-noche .mc-ec { opacity:.79; }
 .mc[data-activo="3"] .mc-lectura { background:none; }
 @media (max-width:600px) { .mc svg .rc-ficha { display:none; } }

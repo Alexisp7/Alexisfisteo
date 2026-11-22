@@ -344,7 +344,7 @@
             [[h00, h10, xa, za, xb, za], [h10, h11, xb, za, xb, zb], [h11, h01, xb, zb, xa, zb], [h01, h00, xa, zb, xa, za]].forEach(function (e) {
               if ((e[0] - L) * (e[1] - L) < 0) { var u = (L - e[0]) / (e[1] - e[0]); pts.push(P(e[2] + (e[4] - e[2]) * u, L, e[3] + (e[5] - e[3]) * u)); }
             });
-            if (pts.length >= 2) { c.strokeStyle = n % 2 ? 'rgba(154,132,143,.08)' : 'rgba(154,132,143,.13)'; c.lineWidth = .5; c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); c.lineTo(pts[1][0], pts[1][1]); c.stroke(); }
+            if (pts.length >= 2) { var kL = xa < -.4 ? .65 : 1; c.strokeStyle = 'rgba(154,132,143,' + ((n % 2 ? .08 : .13) * kL).toFixed(3) + ')'; c.lineWidth = .5; c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); c.lineTo(pts[1][0], pts[1][1]); c.stroke(); }
           }
         }
       }
@@ -375,23 +375,23 @@
         var d = DET[j], q5 = Ps([d.x, d.y, d.z]);
         if (q5[0] < vb.x - 10 || q5[0] > vb.x + vb.width + 10) continue;
         c.fillStyle = 'rgba(20,20,34,.55)'; c.beginPath(); c.ellipse(q5[0] + .5, q5[1] + .4, 1.9, .9, 0, 0, 2 * Math.PI); c.fill();
-        c.fillStyle = 'rgba(160,196,214,.42)'; c.beginPath(); c.ellipse(q5[0], q5[1] - .6, 1.4, .7, 0, 0, 2 * Math.PI); c.fill();
+        c.fillStyle = 'rgba(122,135,148,.42)'; c.beginPath(); c.ellipse(q5[0], q5[1] - .6, 1.4, .7, 0, 0, 2 * Math.PI); c.fill();
       }
       // medallón de la fuente: disco oscuro, aro dorado con marcas y rótulo
       var gm = c.createRadialGradient(MED.x - 20, MED.y - 24, 4, MED.x, MED.y, MED.r); gm.addColorStop(0, '#1C1D38'); gm.addColorStop(1, '#0B0C18');
       c.fillStyle = gm; c.beginPath(); c.arc(MED.x, MED.y, MED.r, 0, 2 * Math.PI); c.fill();
-      c.strokeStyle = 'rgba(201,162,122,.5)'; c.lineWidth = 1; c.stroke();
+      c.strokeStyle = 'rgba(201,162,122,.43)'; c.lineWidth = 1; c.stroke();
       c.strokeStyle = 'rgba(201,162,122,.35)'; c.lineWidth = .6; c.beginPath(); c.arc(MED.x, MED.y, MED.r + 5, 0, 2 * Math.PI); c.stroke();
       for (var m = 0; m < 72; m++) { var an = m / 72 * 2 * Math.PI, l = m % 6 ? 3 : 6; c.beginPath(); c.moveTo(MED.x + Math.cos(an) * (MED.r + 5), MED.y + Math.sin(an) * (MED.r + 5)); c.lineTo(MED.x + Math.cos(an) * (MED.r + 5 + l), MED.y + Math.sin(an) * (MED.r + 5 + l)); c.stroke(); }
-      c.fillStyle = 'rgba(205,183,154,.75)'; c.font = '700 10px "Space Mono", monospace'; c.textAlign = 'center';
+      c.fillStyle = 'rgba(226,208,180,.9)'; c.font = '700 11px "Space Mono", monospace'; c.textAlign = 'center';
       c.fillText('ORIGEN ASTROFÍSICO · NO A ESCALA', MED.x, MED.y - MED.r - 16); c.textAlign = 'start';
       // camino del neutrino (punteado tenue)
       c.strokeStyle = 'rgba(214,120,176,.3)'; c.lineWidth = .8; c.setLineDash([1.5, 4]); c.beginPath();
       caminoNu().forEach(function (q, k) { if (!k) c.moveTo(q[0], q[1]); else c.lineTo(q[0], q[1]); }); c.stroke(); c.setLineDash([]);
-      var qo = caminoNu()[9]; c.fillStyle = 'rgba(205,183,154,.6)'; c.font = '700 7px "Space Mono", monospace'; c.textAlign = 'end';
-      c.fillText('OSCILA EN EL CAMINO', qo[0] - 12, qo[1] + 2); c.textAlign = 'start';
-      c.fillStyle = 'rgba(230,170,200,.75)'; var xo = qo[0] - 78;
-      [['ν', 14, 0], ['μ', 9.5, 3.5], [' → ν', 14, 0], ['τ', 9.5, 3.5]].forEach(function (q) { c.font = 'italic 500 ' + q[1] + 'px "Cormorant Garamond", serif'; c.fillText(q[0], xo, qo[1] + 17 + q[2]); xo += c.measureText(q[0]).width + .5; });
+      var qo = caminoNu()[9]; c.fillStyle = 'rgba(220,200,172,.85)'; c.font = '700 10px "Space Mono", monospace'; c.textAlign = 'end';
+      c.fillText('OSCILA EN EL CAMINO', qo[0] - 12, qo[1] + 1); c.textAlign = 'start';
+      c.fillStyle = 'rgba(240,184,214,.92)'; var xo = qo[0] - 86;
+      [['ν', 16, 0], ['μ', 11, 4], [' → ν', 16, 0], ['τ', 11, 4]].forEach(function (q) { c.font = 'italic 500 ' + q[1] + 'px "Cormorant Garamond", serif'; c.fillText(q[0], xo, qo[1] + 20 + q[2]); xo += c.measureText(q[0]).width + .5; });
     }
 
     // ── dibujo por cuadro ──
@@ -552,16 +552,16 @@
     function llegadas(t) {
       var a = suave((t - T_H0 + .3) / .5) * fade(t); if (a <= 0) return;
       ctx.globalAlpha = a;
-      ctx.strokeStyle = 'rgba(205,183,154,.4)'; ctx.lineWidth = .7; ctx.beginPath(); ctx.moveTo(LT.x0, LT.y); ctx.lineTo(LT.x1, LT.y); ctx.moveTo(LT.x0, LT.y - 3); ctx.lineTo(LT.x0, LT.y + 3); ctx.moveTo(LT.x1, LT.y - 3); ctx.lineTo(LT.x1, LT.y + 3); ctx.stroke();
+      ctx.strokeStyle = 'rgba(205,183,154,.55)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(LT.x0, LT.y); ctx.lineTo(LT.x1, LT.y); ctx.moveTo(LT.x0, LT.y - 3); ctx.lineTo(LT.x0, LT.y + 3); ctx.moveTo(LT.x1, LT.y - 3); ctx.lineTo(LT.x1, LT.y + 3); ctx.stroke();
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, x = LT.x0 + (LT.x1 - LT.x0) * k, hb = 5 + 2.4 * Math.log10(1 + d.n);
         ctx.strokeStyle = 'rgb(' + paleta(k) + ')'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, LT.y - 1); ctx.lineTo(x, LT.y - 1 - hb * suave(u / .3)); ctx.stroke();
       });
-      ctx.strokeStyle = 'rgba(160,180,200,.32)'; ctx.lineWidth = .6; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(LT.x0 + 30, LT.y + 22); ctx.lineTo(A_IMP[0] + 6, A_IMP[1] - 30); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(232,214,186,.92)'; ctx.font = '700 9px "Space Mono", monospace';
+      ctx.strokeStyle = 'rgba(160,180,200,.32)'; ctx.lineWidth = .6; ctx.setLineDash([1.5, 2]); ctx.beginPath(); ctx.moveTo(LT.x0 + 30, LT.y + 22); ctx.lineTo(A_IMP[0] + 6, A_IMP[1] - 30); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(240,226,204,.96)'; ctx.font = '700 10px "Space Mono", monospace';
       ctx.fillText('LLEGADAS A LOS DETECTORES', LT.x0, LT.y - 26);
-      ctx.fillStyle = 'rgba(205,183,154,.8)'; ctx.font = '400 10px "Space Mono", monospace';
+      ctx.fillStyle = 'rgba(214,194,166,.85)'; ctx.font = '400 11px "Space Mono", monospace';
       ctx.fillText('0', LT.x0 - 3, LT.y + 15); ctx.textAlign = 'end'; ctx.fillText(coma(T1H - T0H, 2) + ' µs', LT.x1 + 3, LT.y + 15); ctx.textAlign = 'start';
       ctx.globalAlpha = 1;
     }
@@ -623,7 +623,7 @@
       else if (t < T_DEC) salida('tau en el aire · ' + coma(L_TAU * 1000 * suave((t - T_CARA) / (T_DEC - T_CARA)), 0) + ' m', 't = ' + coma(us, 2) + ' µs');
       else if (t < T_LLEGA) { var X = frente(t) * 1e5 * RHO; salida('cascada · t = ' + coma(us, 1) + ' µs', 'X ≈ ' + coma(X, 0) + ' g/cm² · ' + cient(Math.max(1, greisen(X))) + ' e±'); }
       else if (t < T_REC) { var k = VIVOS.filter(function (d) { return t >= tHit(d); }).length; salida('detectores activados · ' + ('0' + k).slice(-2) + ' / ' + VIVOS.length, 'ventana de lectura · ' + coma((T1H - T0H) * cl((t - T_H0) / (T_H1 - T_H0), 0, 1), 3) + ' µs'); }
-      else salida('dirección reconstruida · error angular del evento ' + coma(AJ ? AJ.err : 0, 2) + '°', VIVOS.length + ' detectores activados · ventana ' + coma(T1H - T0H, 3) + ' µs');
+      else salida('dirección reconstruida · error angular del evento simulado ' + coma(AJ ? AJ.err : 0, 2) + '°', VIVOS.length + ' detectores activados · ventana ' + coma(T1H - T0H, 3) + ' µs');
     }
 
     fig.rcFija = function (t) { T = t; fijo = true; }; fig.rcSuelta = function () { fijo = false; };

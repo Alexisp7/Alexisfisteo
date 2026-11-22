@@ -213,9 +213,16 @@ var menu = function () {
     var calidad = 1, previo = 0, lentos = 0, cuadro = 0, salto = 1, inicio = performance.now(), armT = null;
     // entrada: cada vez que la escena se enciende, el dibujo se rehace desde cero (ver uArm en el shader)
     new MutationObserver(function () { var on = fig.classList.contains('on'); if (on && !fig.bnOn) inicio = performance.now(); fig.bnOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
+    // ritmo «valla» (en prueba, ?ritmo=valla): un cuadro nuevo solo cuando la GPU terminó el anterior, sin cola
+    var valla = /[?&]ritmo=valla/.test(location.search) && typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext, cerca = null;
     (function bucleGL(t) {
       requestAnimationFrame(bucleGL);
       if (!fig.classList.contains('on') || document.hidden || window.__bnPausa) { previo = 0; return; }
+      if (valla && listo) {
+        if (cerca) { if (gl.getSyncParameter(cerca, gl.SYNC_STATUS) !== gl.SIGNALED) return; gl.deleteSync(cerca); cerca = null; }
+        pintar(); cerca = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0); gl.flush();
+        return;
+      }
       // la resolución casi no baja: si la GPU va lenta se ajusta poco y se salta un cuadro
       if (++cuadro % salto) return;
       pintar();

@@ -621,7 +621,7 @@
       c.font = '400 9px "Space Mono", monospace'; c.fillStyle = 'rgba(92,70,54,.75)'; c.fillText('red de detectores en la ladera', TMB[0], TMB[1] + 13);
     }
     // la maqueta se disuelve hacia la izquierda, como la de Stern–Gerlach: empieza en la cordillera, sin corte duro
-    var DIF0 = 572, DIF1 = 805, DIFR0 = 1230, DIFR1 = 1415, DIFY = 340;
+    var DIF0 = 452, DIF1 = 685, DIFR0 = 1230, DIFR1 = 1415, DIFY = 340;
     function difumina(c, der) {
       var D0 = DIF0, D1 = DIF1;
       c.save(); c.globalCompositeOperation = 'destination-out';

@@ -70,7 +70,7 @@
       pi: esfera('#D6C4F2', '#8A66C4', '#46307A', 'rgba(30,20,50,.6)'), mu: esfera('#C4E0EC', '#5A8EA8', '#28495A', 'rgba(20,30,40,.6)') };
 
     // ── cámara fija, oblicua: x a lo ancho, y arriba, z hacia el fondo del valle ──
-    var KZ = .12, KY = .42, CAM = { cx: 900, cy: 712, s: 84 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
+    var KZ = .12, KY = .42, CAM = { cx: 948, cy: 758, s: 96 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
     function P(x, y, z) { return [CAM.cx + CAM.s * (x + KZ * z), CAM.cy - CAM.s * (y + KY * z)]; }
     function Ps(p) { return P(p[0], p[1], p[2]); }
 
@@ -427,7 +427,6 @@
       zona('huella', circulo(A_IMP[0], A_IMP[1], 24));
       zona('estacion', circulo(A_EST[0], A_EST[1] - 2, 9));
       zona('llegadas', poli([[LT.x0 - 10, LT.y - 40], [LT.x1 + 12, LT.y - 40], [LT.x1 + 12, LT.y + 22], [LT.x0 - 10, LT.y + 22]]));
-      zona('evento', poli([[EVT[0] - 6, EVT[1] - 14], [EVT[0] + 250, EVT[1] - 14], [EVT[0] + 250, EVT[1] + 6], [EVT[0] - 6, EVT[1] + 6]]));
       zona('fuente', circulo(MED.x, MED.y, MED.r + 6));
     })();
 
@@ -531,15 +530,12 @@
       // a la izquierda de la recta del ν, sin tocarla
       var yO = OR.C[1] + 84, xO = OR.D1[0] + (yO - OR.D1[1]) * (OR.E[0] - OR.D1[0]) / (OR.E[1] - OR.D1[1]) - 18;
       texto(c, 'ORIGEN ASTROFÍSICO · NO A ESCALA', xO, yO, 'rgba(92,70,54,.9)', '700 11px "Space Mono", monospace', 'end');
-      // identificador del evento (su ficha aparece al pasar el mouse)
-      c.fillStyle = 'rgba(92,70,54,.85)'; c.font = '700 10px "Space Mono", monospace'; c.fillText('EVENTO SINTÉTICO 001 · MODELO ILUSTRATIVO', EVT[0], EVT[1]);
       // rótulo mínimo del observatorio sobre la ladera instrumentada
       c.fillStyle = 'rgba(70,54,42,.95)'; c.font = '700 11px "Space Mono", monospace'; c.fillText('TAMBO', TMB[0], TMB[1]);
       c.font = '400 9px "Space Mono", monospace'; c.fillStyle = 'rgba(92,70,54,.75)'; c.fillText('red de detectores en la ladera', TMB[0], TMB[1] + 13);
-      c.strokeStyle = 'rgba(92,70,54,.3)'; c.lineWidth = .6; c.beginPath(); c.moveTo(EVT[0], EVT[1] + 5); c.lineTo(EVT[0] + 266, EVT[1] + 5); c.stroke();
     }
     // la maqueta se disuelve hacia la izquierda, como la de Stern–Gerlach: empieza en la cordillera, sin corte duro
-    var DIF0 = 587, DIF1 = 820, DIFR0 = 1133, DIFR1 = 1308, DIFY = 340;
+    var DIF0 = 572, DIF1 = 805, DIFR0 = 1230, DIFR1 = 1415, DIFY = 340;
     function difumina(c, der) {
       var D0 = DIF0, D1 = DIF1;
       c.save(); c.globalCompositeOperation = 'destination-out';
@@ -650,7 +646,10 @@
       if (t < T_PAS) return;
       var uu = cl((t - T_PAS) / (T_VTX - T_PAS), 0, 1), a = Ps(sobre(VTX, -1.55)), cab = Ps(sobre(VTX, -1.55 + 1.55 * uu)), al = fade(t);
       ctx.globalAlpha = al;
-      trazoB(a, cab, 'rgba(170,55,125,.95)', 1.4, [5, 4]);
+      // la traza que queda nace desvanecida a la derecha: no pasa bajo la ecuación de la página
+      var gw = ctx.createLinearGradient(1222, 0, 1186, 0), gc = ctx.createLinearGradient(1222, 0, 1186, 0);
+      gw.addColorStop(0, 'rgba(255,253,248,0)'); gw.addColorStop(1, 'rgba(255,253,248,.95)'); gc.addColorStop(0, 'rgba(170,55,125,0)'); gc.addColorStop(1, 'rgba(170,55,125,.95)');
+      trazo(a, cab, gw, 3.6, [5, 4]); trazo(a, cab, gc, 1.4, [5, 4]);
       if (t < T_VTX) { brillo(cab[0], cab[1], 14, '170,55,125', .6); ctx.fillStyle = '#B23C82'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2, 0, 2 * Math.PI); ctx.fill(); rotulo('ν_τ', cab[0] - 4, cab[1] - 12, '#9C2F6E', 20); }
       ctx.globalAlpha = 1;
     }

@@ -71,7 +71,7 @@
 
     // ── cámara fija, oblicua: x a lo ancho, y arriba, z hacia el fondo del valle ──
     var VAR = ((/[?&]v=([abc])/i.exec(location.search) || [])[1] || 'A').toUpperCase();   // zona de barras: A elegida por Andreé (B y C quedan para comparar)
-    var KZ = .12, KY = .42, CAM = { cx: 904.3, cy: 772, s: 111.24 }   /* +8 % hacia la izquierda: borde derecho (x = 1440) fijo */, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
+    var KZ = .12, KY = .42, CAM = { cx: 877.5, cy: 772, s: 116.8 }   /* +13,4 % (8 % y luego 5 %) hacia la izquierda: borde derecho (x = 1440) fijo */, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
     function P(x, y, z) { return [CAM.cx + CAM.s * (x + KZ * z), CAM.cy - CAM.s * (y + KY * z)]; }
     function Ps(p) { return P(p[0], p[1], p[2]); }
 
@@ -304,7 +304,7 @@
     function comido(d, t) { if (!d.lleg) return 0; var c = 0, s = 0; d.lleg.forEach(function (R) { c += tramoLleg(R, t)[2] * R.Lk; s += R.Lk; }); return c / s; }
 
     // ── medallón de la fuente (arriba a la derecha) ──
-    var MED = { x: 1083.6, y: 188, r: 118.8 };   // +8 % con el mismo borde derecho fijo
+    var MED = { x: 1065.8, y: 188, r: 124.7 };   // +13,4 % con el mismo borde derecho fijo
     var LT = { x0: 905, x1: 1105, y: 428 };   // línea de llegadas
 
     // ── zonas al pasar el mouse y su ficha ──
@@ -466,7 +466,7 @@
     var A_FUE = [MED.x - 20, MED.y - 18];   // vértice p + γ → Δ⁺ (donde queda su fantasma)
     ficha('fuente', { ancla: A_FUE, k: 'Rayo cósmico · fuente lejana', tit: 'p + γ → Δ⁺ → n + π⁺', dib: dibSabores, dibH: 86,
       d: ['Un protón de ~2 × 10¹⁷ eV choca con un fotón', 'de su entorno. Luego π⁺ → μ⁺ ν_μ y μ⁺ → e⁺ ν_e ν̄_μ:', 'cada neutrino se lleva ≈ 5 % de la energía.', 'Sin carga, viajan en línea recta; al oscilar', 'en el camino también llegan ν_τ.'] });
-    var A_OSC = (function () { var C = [MED.x - 20, MED.y - 18], A = [C[0] + .8 / Math.hypot(.8, .5) * 52, C[1] + .5 / Math.hypot(.8, .5) * 52], B = Ps(sobre(VTX, -1.55)); return [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3]; })();
+    var A_OSC = (function () { var C = [MED.x - 20, MED.y - 18], A = [C[0] + .8 / Math.hypot(.8, .5) * 54.6, C[1] + .5 / Math.hypot(.8, .5) * 54.6], B = Ps(sobre(VTX, -1.55)); return [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3]; })();
     ficha('oscila', { ancla: A_OSC, k: 'Oscilación de sabor', tit: 'P(ν_μ→ν_τ) = sin²2θ · sin²(1,27 Δm²L/E)',
       d: ['Un ν_μ es una mezcla de dos estados de masa', 'con Δm² ≈ 2,5 × 10⁻³ eV² y mezcla casi máxima.', 'Su desfase cambia el sabor: a 10 PeV un ciclo', 'completo mide ≈ 10¹⁰ km (unas 66 UA).', 'Tras megapársecs se promedia y llegan', 'ν_e : ν_μ : ν_τ ≈ 1 : 1 : 1. (Viñeta no a escala.)'] });
     ficha('monte', { ancla: A_MON, k: 'Blanco de roca', tit: 'Neutrinos rasantes',
@@ -677,9 +677,9 @@
     // p (rayo cósmico, láser celeste) + γ → Δ⁺ → n + π⁺;  π⁺ → μ⁺ + ν_μ;  μ⁺ → e⁺ + ν_e + ν̄_μ;  n → p + e⁻ + ν̄_e.
     // El ν_μ que nos importa sale recto hacia la montaña y oscila en el camino a ν_τ (no a escala).
     var OR = (function () {
-      var C = [MED.x - 20, MED.y - 18], S = [C[0] - 410, C[1] - 93], G = [C[0] + 162, C[1] + 28];
+      var C = [MED.x - 20, MED.y - 18], S = [C[0] - 430.5, C[1] - 97.7], G = [C[0] + 170.1, C[1] + 29.4];
       function pt(a, d, L) { var l = Math.hypot(d[0], d[1]); return [a[0] + d[0] / l * L, a[1] + d[1] / l * L]; }
-      var D1 = pt(C, [.8, .5], 52), D2 = pt(D1, [1, -.05], 67), N1 = pt(C, [1, -.42], 127);
+      var D1 = pt(C, [.8, .5], 54.6), D2 = pt(D1, [1, -.05], 70.4), N1 = pt(C, [1, -.42], 133.4);
       var E = Ps(sobre(VTX, -1.55));
       // cada traza: desde, hasta, t de inicio, t de fin, color, ancho, guion, rótulo
       var T = [

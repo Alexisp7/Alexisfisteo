@@ -1,8 +1,17 @@
 {
+  "framework": null,
+  "installCommand": "echo sitio estatico",
+  "buildCommand": "echo sin compilacion",
+  "outputDirectory": ".",
   "headers": [
     {
       "source": "/img/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
     }
   ]
 }

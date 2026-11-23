@@ -229,7 +229,7 @@
     var LLEG = [], rL = semilla(29);
     (function () {
       var gs = VIVOS.map(function (v) { return Math.log(grosor(v.rp)); }), g0 = Math.min.apply(null, gs), g1 = Math.max.apply(null, gs);
-      function sale() { var s0 = L_CRUCE * (.55 + .33 * rL()), c = sobre(DEC, s0), r = R_M * .5 * rL(), ph = rL() * 2 * Math.PI; return { S: [c[0] + r * (Math.cos(ph) * E1[0] + Math.sin(ph) * E2[0]), c[1] + r * (Math.cos(ph) * E1[1] + Math.sin(ph) * E2[1]), c[2] + r * (Math.cos(ph) * E1[2] + Math.sin(ph) * E2[2])], ts: tFrente(s0) }; }
+      function sale() { var s0 = L_CRUCE * (.02 + .16 * rL()), c = sobre(DEC, s0), r = R_M * .12 * rL(), ph = rL() * 2 * Math.PI; return { S: [c[0] + r * (Math.cos(ph) * E1[0] + Math.sin(ph) * E2[0]), c[1] + r * (Math.cos(ph) * E1[1] + Math.sin(ph) * E2[1]), c[2] + r * (Math.cos(ph) * E1[2] + Math.sin(ph) * E2[2])], ts: tFrente(s0) }; }
       function tipo() { var x = rL(); return x < .1 ? 2 : x < .24 ? 1 : 0; }   // 0 e±/γ, 1 hadrón, 2 muón
       VIVOS.forEach(function (d, i) {
         var m = Math.round(4 + 7 * Math.log10(1 + d.n)), dur = .35 + 1.3 * (g1 > g0 ? (gs[i] - g0) / (g1 - g0) : .5);
@@ -247,10 +247,11 @@
         var nv = VIVOS.reduce(function (m, v) { var dd = Math.hypot(v.x - x, v.z - z); return dd < m[0] ? [dd, v] : m; }, [9, VIVOS[0]])[1];
         LLEG.push({ S: o.S, T: [x, alto(x, z) + .004, z], ts: o.ts, ta: tHit(nv) + .1 + .9 * rL(), k: tipo() });
       }
-      LLEG.forEach(function (R) { R.D = Math.hypot(R.T[0] - R.S[0], R.T[1] - R.S[1], R.T[2] - R.S[2]); R.ta = Math.max(R.ta, R.ts + .5); R.cola = .38; });
+      LLEG.forEach(function (R) { R.D = Math.hypot(R.T[0] - R.S[0], R.T[1] - R.S[1], R.T[2] - R.S[2]); R.ta = Math.max(R.ta, R.ts + .5); R.cola = .3; });
     })();
     // posición del trazo en t: cabeza h y cola h − cola (en fracción del recorrido); comido = cuánto de la cola ya entró
-    function tramoLleg(R, t) { var h = (t - R.ts) / (R.ta - R.ts); return [Math.max(0, h - R.cola), Math.min(1, h), cl((h - 1) / R.cola, 0, 1)]; }
+    // la cabeza acelera como el frente: una sola ráfaga desde el decaimiento
+    function tramoLleg(R, t) { var u = (t - R.ts) / (R.ta - R.ts), h = u < 1 ? .3 * u + .7 * u * u : 1 + 1.7 * (u - 1); return [Math.max(0, h - R.cola), Math.min(1, h), cl((h - 1) / R.cola, 0, 1)]; }
     function comido(d, t) { if (!d.lleg) return 0; var c = 0; d.lleg.forEach(function (R) { c += tramoLleg(R, t)[2]; }); return c / d.lleg.length; }
 
     // ── medallón de la fuente (arriba a la derecha) ──
@@ -729,9 +730,9 @@
       if (ud > 0) {
         var d = Ps(DEC);
         if (ud < .45) { var fl = ud < .1 ? ud / .1 : 1 - suave((ud - .1) / .3); brillo(d[0], d[1], 40 * fl + 4, '255,170,60', .9 * fl); brillo(d[0], d[1], 14 * fl + 2, '255,248,239', fl); ctx.strokeStyle = 'rgba(242,154,56,' + (.55 * (1 - ud / .45)) + ')'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(d[0], d[1], 5 + 60 * ud, 0, 2 * Math.PI); ctx.stroke(); }
-        var nuF = Ps(sobre(DEC, Math.min(L_CRUCE * .95, ud * .9))), qn = [nuF[0], nuF[1] + 10];
-        // el ν_τ del decaimiento no deja traza: solo su cabeza, que se apaga apenas sale
-        var aV = al * (1 - suave(ud / .6));
+        var nuF = Ps(sobre(DEC, Math.min(L_CRUCE * .97, frente(t) + .06))), qn = [nuF[0], nuF[1] + 10];   // viaja con el frente, un poco adelante
+        // el ν_τ del decaimiento no deja traza: solo su cabeza, que acompaña a la cascada hasta casi los detectores
+        var aV = al * (1 - suave((t - T_LLEGA + .45) / .4));
         if (aV > 0) { ctx.globalAlpha = aV; ctx.fillStyle = '#A33F7C'; ctx.beginPath(); ctx.arc(qn[0], qn[1], 1.6, 0, 2 * Math.PI); ctx.fill(); rotulo('ν_τ', qn[0] + 3, qn[1] + 12, '#A33F7C', 13); }
       }
       ctx.globalAlpha = 1;

@@ -70,7 +70,7 @@
       pi: esfera('#D6C4F2', '#8A66C4', '#46307A', 'rgba(30,20,50,.6)'), mu: esfera('#C4E0EC', '#5A8EA8', '#28495A', 'rgba(20,30,40,.6)') };
 
     // ── cámara fija, oblicua: x a lo ancho, y arriba, z hacia el fondo del valle ──
-    var KZ = .12, KY = .42, CAM = { cx: 914, cy: 754, s: 103 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
+    var KZ = .12, KY = .42, CAM = { cx: 944, cy: 772, s: 103 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
     function P(x, y, z) { return [CAM.cx + CAM.s * (x + KZ * z), CAM.cy - CAM.s * (y + KY * z)]; }
     function Ps(p) { return P(p[0], p[1], p[2]); }
 
@@ -212,7 +212,7 @@
     RAY.forEach(function (R) { var s = R.sb; while (s < L_CRUCE * 1.15) { var q = puntoRayo(R, s); if (q[0] < 0 && alto(q[0], q[2]) > q[1]) break; s += .01; } R.fin = s; });
 
     // ── el bucle (s) ──
-    var T_VTX = 2, T_CARA = 2.9, T_DEC = 4.2, T_LLEGA = 7.7, T_H0 = 7.8, T_H1 = 9.2, T_REC = 9.4, T_FUN = 12.4, LOOP = 13.4;
+    var T_VTX = 2.8, T_CARA = 3.7, T_DEC = 5, T_LLEGA = 8.5, T_H0 = 8.6, T_H1 = 10, T_REC = 10.2, T_FUN = 13.2, LOOP = 14.2;   // la caída del ν dura 0,8 s más
     function frente(t) { if (t < T_DEC) return 0; var u = cl((t - T_DEC) / (T_LLEGA - T_DEC), 0, 1); return L_CRUCE * (.3 * u + .7 * u * u); }
     function tHit(d) { return T_H0 + (T_H1 - T_H0) * (T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0); }
     function microS(t) {
@@ -303,7 +303,7 @@
     function comido(d, t) { if (!d.lleg) return 0; var c = 0, s = 0; d.lleg.forEach(function (R) { c += tramoLleg(R, t)[2] * R.Lk; s += R.Lk; }); return c / s; }
 
     // ── medallón de la fuente (arriba a la derecha) ──
-    var MED = { x: 1110, y: 200, r: 110 };
+    var MED = { x: 1110, y: 188, r: 110 };
     var LT = { x0: 905, x1: 1105, y: 428 };   // línea de llegadas
 
     // ── zonas al pasar el mouse y su ficha ──
@@ -687,7 +687,7 @@
       ];
       return { C: C, S: S, D1: D1, D2: D2, N1: N1, E: E, T: T };
     })();
-    var T_OFIN = 3.95;   // las trazas del origen quedan medio transparentes hasta aquí y luego se desvanecen juntas
+    var T_OFIN = 4.75;   // las trazas del origen quedan medio transparentes hasta aquí y luego se desvanecen juntas
     function medallon(t) {
       var fd = fade(t), r = semilla(5);
       for (var i = 0; i < 30; i++) { var ra = MED.r * Math.sqrt(r()) * 1.1, an = r() * 2 * Math.PI, x = OR.C[0] + ra * Math.cos(an), y = OR.C[1] + ra * Math.sin(an) * .7; ctx.fillStyle = 'rgba(185,140,70,' + (.15 + .25 * (.5 + .5 * Math.sin(t * 2 + i))) + ')'; ctx.fillRect(x, y, 1.2, 1.2); }
@@ -712,7 +712,7 @@
 
     // el ν_μ que importa: una recta desde la desintegración del π⁺ hasta la roca; cambia de azul (ν_μ) a magenta (ν_τ)
     // por la oscilación y su trayectoria queda dibujada. Ya en la roca va hasta el vértice.
-    var T_PAS = 1.4, T_NU0 = .75, U_SUELO = null;
+    var T_PAS = 2.2, T_NU0 = .75, U_SUELO = null;
     // dónde toca la recta del ν el suelo de los Andes (en pantalla): ahí termina su hilo celeste
     function sueloNu(A, B) {
       for (var u = 0; u <= 1; u += .005) {
@@ -728,24 +728,25 @@
       [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); rayo(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 1); } });
       ctx.globalAlpha = 1;
       if (t > T_NU0 && fd > 0) {
-        var u = cl((t - T_NU0) / (T_PAS - T_NU0), 0, 1), cn = u < .55 ? [50 + 70 * u / .55, 120 - 40 * u / .55, 190 - 20 * u / .55] : [120 + 50 * (u - .55) / .45, 80 - 25 * (u - .55) / .45, 170 - 45 * (u - .55) / .45];
+        if (U_SUELO === null) U_SUELO = sueloNu(A, B);
+        var up = cl((t - T_NU0) / (T_PAS - T_NU0), 0, 1), u = up * U_SUELO, cn = up < .55 ? [50 + 70 * up / .55, 120 - 40 * up / .55, 190 - 20 * up / .55] : [120 + 50 * (up - .55) / .45, 80 - 25 * (up - .55) / .45, 170 - 45 * (up - .55) / .45];
         cn = cn.map(Math.round).join(',');
         var hN = [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u];
-        if (U_SUELO === null) U_SUELO = sueloNu(A, B);
         var hS = [A[0] + (B[0] - A[0]) * Math.min(u, U_SUELO), A[1] + (B[1] - A[1]) * Math.min(u, U_SUELO)];
         ctx.globalAlpha = fd; rayo(A, hS, 1);   // su recorrido queda como un hilo celeste muy tenue
         var aN = (1 - suave((t - T_PAS) / .3)) * fd;
         if (aN > 0) { ctx.globalAlpha = aN; var q = cometa(A, B, u, 70, cn, 1.6, 1); brillo(q[0], q[1], 12, cn, .8); ctx.fillStyle = 'rgb(' + cn + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 2.2, 0, 2 * Math.PI); ctx.fill(); }
-        if (u > .5) {
+        if (up > .5) {
           var m = [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3];
-          ctx.globalAlpha = fd * suave((u - .5) / .3) * (1 - suave((t - T_VTX - .6) / .8));
+          ctx.globalAlpha = fd * suave((up - .5) / .3) * (1 - suave((t - T_VTX - .6) / .8));
           texto(ctx, 'OSCILA EN EL CAMINO', m[0] + 16, m[1] - 4, 'rgba(92,70,54,.95)', '700 10px "Space Mono", monospace');
           rotulo('ν_μ → ν_τ', m[0] + 16, m[1] + 15, '#963270', 16);
         }
         ctx.globalAlpha = 1;
       }
       if (t < T_PAS) return;
-      var uu = cl((t - T_PAS) / (T_VTX - T_PAS), 0, 1), a = Ps(sobre(VTX, -1.55)), cab = Ps(sobre(VTX, -1.55 + 1.55 * uu)), al = fade(t);
+      if (U_SUELO === null) U_SUELO = sueloNu(OR.D1, OR.E);
+      var uu = cl((t - T_PAS) / (T_VTX - T_PAS), 0, 1), a = [OR.D1[0] + (OR.E[0] - OR.D1[0]) * U_SUELO, OR.D1[1] + (OR.E[1] - OR.D1[1]) * U_SUELO], cab = [a[0] + (A_VTX[0] - a[0]) * uu, a[1] + (A_VTX[1] - a[1]) * uu], al = fade(t);   // en la roca: desde donde entra a la tierra hasta el vértice
       ctx.globalAlpha = al;
       // la traza que queda nace desvanecida a la derecha: no pasa bajo la ecuación de la página
       var gw = ctx.createLinearGradient(1222, 0, 1186, 0), gc = ctx.createLinearGradient(1222, 0, 1186, 0);

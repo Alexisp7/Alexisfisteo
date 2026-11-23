@@ -755,8 +755,21 @@
         }
       });
     }
+    // elipse del frente: se dibuja sobre tanques y barras; al terminar queda como referencia del área de impacto
+    var ELI = null;
+    function elipseFrente() {
+      // el frente: un disco delgado (≈ 2 R_M) que avanza a c
+      if (ELI) {
+        var sf = ELI.sf, crec = ELI.crec, fin = ELI.fin, lleg = suave((ELI.t - T_LLEGA) / .5);   // al llegar queda fija en la ladera: referencia de dónde cae la cascada
+        var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), p1 = Ps([c[0] + E2[0] * rd, c[1] + E2[1] * rd, c[2] + E2[2] * rd]), p2 = Ps([c[0] + E1[0] * rd, c[1] + E1[1] * rd, c[2] + E1[2] * rd]);
+        var rx = Math.max(2, Math.hypot(p2[0] - pc[0], p2[1] - pc[1])), ry = Math.max(2, Math.hypot(p1[0] - pc[0], p1[1] - pc[1]));
+        ctx.globalCompositeOperation = 'source-over'; brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '176,40,96', .09 * fin * (1 - lleg)); ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = 'rgba(128,30,74,' + ((.5 + .35 * lleg) * fin) + ')'; ctx.lineWidth = .8 + .5 * lleg;
+        ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rx, ry, Math.atan2(p1[1] - pc[1], p1[0] - pc[0]) - Math.PI / 2, 0, 2 * Math.PI); ctx.stroke();
+      }
+    }
     function cascada(t) {
-      LL_AL = 0;
+      LL_AL = 0; ELI = null;
       if (t < T_DEC) return;
       var sf = frenteV(t), crec = cl(sf / L_CRUCE, 0, 1), fin = fade(t), sfx = t > T_LLEGA ? L_CRUCE + 1.7 * L_CRUCE / (T_LLEGA - T_DEC) * (t - T_LLEGA) : sf;   // tras llegar, el frente sigue y cada trazo se consume en el suelo
       if (fin <= 0) return;
@@ -789,14 +802,7 @@
       var c0 = Ps(sobre(DEC, Math.max(0, sf - L_CRUCE * .3))), c1 = Ps(sobre(DEC, Math.min(sf, L_CRUCE)));
       var gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]); gl.addColorStop(0, 'rgba(128,30,74,0)'); gl.addColorStop(1, 'rgba(128,30,74,' + (.18 * fin) + ')');
       ctx.strokeStyle = gl; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(c0[0], c0[1]); ctx.lineTo(c1[0], c1[1]); ctx.stroke();
-      // el frente: un disco delgado (≈ 2 R_M) que avanza a c
-      if (sf < L_CRUCE * 1.01) {
-        var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), p1 = Ps([c[0] + E2[0] * rd, c[1] + E2[1] * rd, c[2] + E2[2] * rd]), p2 = Ps([c[0] + E1[0] * rd, c[1] + E1[1] * rd, c[2] + E1[2] * rd]);
-        var rx = Math.max(2, Math.hypot(p2[0] - pc[0], p2[1] - pc[1])), ry = Math.max(2, Math.hypot(p1[0] - pc[0], p1[1] - pc[1]));
-        ctx.globalCompositeOperation = 'source-over'; brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '176,40,96', .09 * fin); ctx.globalCompositeOperation = 'source-over';
-        ctx.strokeStyle = 'rgba(128,30,74,' + (.5 * fin) + ')'; ctx.lineWidth = .8;
-        ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rx, ry, Math.atan2(p1[1] - pc[1], p1[0] - pc[0]) - Math.PI / 2, 0, 2 * Math.PI); ctx.stroke();
-      }
+      ELI = { sf: sf, crec: crec, fin: fin, t: t };
     }
 
     // mediciones: cada unidad con señal se enciende a su tiempo, con una barra ∝ log del número de partículas
@@ -992,7 +998,7 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
       rioVivo(t); realce();
-      medallon(t); neutrino(t); tau(t); cascada(t); senales(t); llegadas(t); tramosEncima(t); reconstruye(t);
+      medallon(t); neutrino(t); tau(t); cascada(t); senales(t); llegadas(t); elipseFrente(); tramosEncima(t); reconstruye(t);
       difumina(ctx);
     }
 

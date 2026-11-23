@@ -11,7 +11,7 @@
     'mecanica-cuantica.html': 'Mecánica Cuántica', 'fisica-teorica.html': 'Física Teórica', 'problemas.html': 'Problemas de física', 'bitacora.html': 'Bitácora', 'cementerio.html': 'Bitácora' };
   // lo que cada página pesada pide al cargar: se precarga junto con la página al acercar el cursor a su enlace
   var RECURSOS = {
-    'cursos.html': ['js/fision-nube.js', 'js/fision.js', 'js/canon.js', 'js/momento.js', 'js/agujero-glsl.js', 'js/cursos-escenas.js', 'css/fision.css', 'css/momento.css'],
+    'cursos.html': ['js/teorica.js', 'js/canon.js', 'js/momento.js', 'js/agujero-glsl.js', 'js/cursos-escenas.js', 'css/teorica.css', 'css/momento.css'],
     'index.html': ['js/qubits.js?v=20261105d'], '': ['js/qubits.js?v=20261105d'],
     'quantumquipu.html': ['js/orcopampa-iconos.js', 'js/red-orcopampa.js', 'img/quantumquipu/titulo.webp', 'img/quantumquipu/qubo.webp'],
     'contacto.html': ['img/alexis-perfil.webp'],

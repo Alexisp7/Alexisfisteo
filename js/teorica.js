@@ -226,33 +226,33 @@
     // tanques con señal (más trazos cuantas más partículas recibe) y otros a puntos entre tanques. Al llegar,
     // la cola sigue avanzando hasta el punto: el trazo se «consume» ahí. Lo que consume cada tanque es su barra.
     function tFrente(s) { var u = (-.3 + Math.sqrt(.09 + 2.8 * s / L_CRUCE)) / 1.4; return T_DEC + cl(u, 0, 1) * (T_LLEGA - T_DEC); }
-    var LLEG = [], rL = semilla(29);
+    var LLEG = [], rL = semilla(29), V_FIN = 1.7 * L_CRUCE / (T_LLEGA - T_DEC);   // velocidad del frente al llegar (km por s de animación)
+    function fx(t) { return t <= T_LLEGA ? frente(t) : L_CRUCE + V_FIN * (t - T_LLEGA); }   // frente extendido más allá del suelo
+    function fxInv(D) { return D <= L_CRUCE ? tFrente(D) : T_LLEGA + (D - L_CRUCE) / V_FIN; }
+    // cascada lineal: cada trazo es un tramo del continuo que nace en el decaimiento del τ y viaja hacia su tanque;
+    // su largo es proporcional a la barra que deja (lo que el tanque se come es exactamente lo que mide)
     (function () {
-      var gs = VIVOS.map(function (v) { return Math.log(grosor(v.rp)); }), g0 = Math.min.apply(null, gs), g1 = Math.max.apply(null, gs);
-      function sale() { return { S: DEC.slice(), ts: T_DEC }; }   // cascada lineal: todos los trazos nacen en el decaimiento del τ
       function tipo() { var x = rL(); return x < .1 ? 2 : x < .24 ? 1 : 0; }   // 0 e±/γ, 1 hadrón, 2 muón
-      VIVOS.forEach(function (d, i) {
-        var m = Math.round(4 + 7 * Math.log10(1 + d.n)), dur = .35 + 1.3 * (g1 > g0 ? (gs[i] - g0) / (g1 - g0) : .5);
+      function pon(R) { R.S = DEC.slice(); R.ts = T_DEC; R.D = Math.hypot(R.T[0] - R.S[0], R.T[1] - R.S[1], R.T[2] - R.S[2]); R.kv = (fxInv(R.D) - T_DEC) / Math.max(.3, R.ta - T_DEC); LLEG.push(R); return R; }
+      VIVOS.forEach(function (d) {
+        var hb = 18 + 11 * Math.log10(1 + d.n), m = Math.round(2 + 3 * Math.log10(1 + d.n)), ws = [];
+        for (var j = 0; j < m; j++) ws.push(.45 + 1.1 * rL());
         d.lleg = [];
-        for (var j = 0; j < m; j++) {
-          var o = sale(), y = -Math.log((rL() + 1e-9) * (rL() + 1e-9)) / 4.7;   // retraso gamma (k = 2) dentro de la duración de la estación
-          var R = { S: o.S, T: [d.x, d.y + .012, d.z], ts: o.ts, ta: tHit(d) + .12 * rL(), te: .3 + dur * Math.min(1.6, y), k: tipo() };
-          LLEG.push(R); d.lleg.push(R);
-        }
+        for (j = 0; j < m; j++) d.lleg.push(pon({ T: [d.x, d.y + .012, d.z], ta: tHit(d) + .1 * rL(), Lk: .022 * hb * ws[j], k: tipo() }));
       });
-      // puntos entre tanques: suelo de la huella, desplazado media malla de un tanque al azar cercano al impacto
-      var cerca = DET.filter(function (d) { return Math.hypot(d.x - IMP[0], d.y - IMP[1], d.z - IMP[2]) < .62; });
-      for (var j = 0; j < 190 && cerca.length; j++) {
-        var b = cerca[Math.floor(rL() * cerca.length)], x = b.x + (rL() - .5) * PASO, z = b.z + (rL() - .5) * PASO, o = sale();
+      // pocos tramos cortos al suelo, solo junto al núcleo del impacto
+      for (var j = 0; j < 26; j++) {
+        var ph = rL() * 2 * Math.PI, rr = .06 + .16 * Math.sqrt(rL()), x = IMP[0] + rr * Math.cos(ph), z = IMP[2] + rr * Math.sin(ph);
         var nv = VIVOS.reduce(function (m, v) { var dd = Math.hypot(v.x - x, v.z - z); return dd < m[0] ? [dd, v] : m; }, [9, VIVOS[0]])[1];
-        LLEG.push({ S: o.S, T: [x, alto(x, z) + .004, z], ts: o.ts, ta: tHit(nv) + .3 * rL(), te: .4 + .6 * rL(), k: tipo() });
+        if (Math.hypot(nv.x - x, nv.z - z) < .04) continue;
+        pon({ T: [x, alto(x, z) + .004, z], ta: tHit(nv) + .2 * rL(), Lk: .08 + .12 * rL(), k: tipo() });
       }
-      LLEG.forEach(function (R) { R.D = Math.hypot(R.T[0] - R.S[0], R.T[1] - R.S[1], R.T[2] - R.S[2]); R.ta = Math.max(R.ta, R.ts + .5); R.cola = .3; });
     })();
-    // tramo visible [cola, cabeza] en fracción del recorrido; comido = cuánto del trazo ya entró al detector
-    // la cabeza avanza como el frente; los trazos son siempre los mismos, de principio a fin
-    function tramoLleg(R, t) { var c = t < R.ta ? 0 : cl((t - R.ta) / R.te, 0, 1); return [c, cl(frente(t) / R.D, 0, 1), c]; }   // la cola queda en el τ hasta que la cabeza llega; luego el detector (o el suelo) se come el trazo
-    function comido(d, t) { if (!d.lleg) return 0; var c = 0; d.lleg.forEach(function (R) { c += tramoLleg(R, t)[2]; }); return c / d.lleg.length; }
+    var KV = LLEG.reduce(function (m, R) { return Math.max(m, R.kv); }, 0);   // el frente y el ν van con los tramos más rápidos
+    function frenteV(t) { return t < T_DEC ? 0 : Math.min(L_CRUCE, fx(T_DEC + (t - T_DEC) * KV)); }
+    // tramo visible [cola, cabeza] en fracción del recorrido, y fracción ya comida en la llegada
+    function tramoLleg(R, t) { var p = fx(T_DEC + (t - T_DEC) * R.kv); return [Math.max(0, p - R.Lk) / R.D, Math.min(p, R.D) / R.D, cl((p - R.D) / R.Lk, 0, 1)]; }
+    function comido(d, t) { if (!d.lleg) return 0; var c = 0, s = 0; d.lleg.forEach(function (R) { c += tramoLleg(R, t)[2] * R.Lk; s += R.Lk; }); return c / s; }
 
     // ── medallón de la fuente (arriba a la derecha) ──
     var MED = { x: 1110, y: 200, r: 110 };
@@ -730,9 +730,9 @@
       if (ud > 0) {
         var d = Ps(DEC);
         if (ud < .45) { var fl = ud < .1 ? ud / .1 : 1 - suave((ud - .1) / .3); brillo(d[0], d[1], 40 * fl + 4, '255,170,60', .9 * fl); brillo(d[0], d[1], 14 * fl + 2, '255,248,239', fl); ctx.strokeStyle = 'rgba(242,154,56,' + (.55 * (1 - ud / .45)) + ')'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(d[0], d[1], 5 + 60 * ud, 0, 2 * Math.PI); ctx.stroke(); }
-        var nuF = Ps(sobre(DEC, Math.min(L_CRUCE * .97, frente(t) + .06))), qn = [nuF[0], nuF[1] + 10];   // viaja con el frente, un poco adelante
+        var nuF = Ps(sobre(DEC, Math.min(L_CRUCE * .97, frenteV(t) + .06))), qn = [nuF[0], nuF[1] + 10];   // viaja con el frente, un poco adelante
         // el ν_τ del decaimiento no deja traza: solo su cabeza, que acompaña a la cascada hasta casi los detectores
-        var aV = al * (1 - suave((t - T_LLEGA + .45) / .4));
+        var aV = al * (1 - suave((frenteV(t) / L_CRUCE - .85) / .12));
         if (aV > 0) { ctx.globalAlpha = aV; ctx.fillStyle = '#A33F7C'; ctx.beginPath(); ctx.arc(qn[0], qn[1], 1.6, 0, 2 * Math.PI); ctx.fill(); rotulo('ν_τ', qn[0] + 3, qn[1] + 12, '#A33F7C', 13); }
       }
       ctx.globalAlpha = 1;
@@ -744,7 +744,7 @@
     var LOTES = [[], [], [], [], [], []], LL = [[], [], []], ESTELA = [], CAB = [], CABH = [];
     function cascada(t) {
       if (t < T_DEC) return;
-      var sf = frente(t), crec = cl(sf / L_CRUCE, 0, 1), fin = fade(t), sfx = t > T_LLEGA ? L_CRUCE + 1.7 * L_CRUCE / (T_LLEGA - T_DEC) * (t - T_LLEGA) : sf;   // tras llegar, el frente sigue y cada trazo se consume en el suelo
+      var sf = frenteV(t), crec = cl(sf / L_CRUCE, 0, 1), fin = fade(t), sfx = t > T_LLEGA ? L_CRUCE + 1.7 * L_CRUCE / (T_LLEGA - T_DEC) * (t - T_LLEGA) : sf;   // tras llegar, el frente sigue y cada trazo se consume en el suelo
       if (fin <= 0) return;
       var dens = .2 + .8 * suave((t - T_DEC - .5) / 1.4);   // semilla → abanico → fase madura
       LOTES.forEach(function (l) { l.length = 0; }); LL.forEach(function (l) { l.length = 0; }); ESTELA.length = 0; CAB.length = 0; CABH.length = 0;

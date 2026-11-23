@@ -1024,8 +1024,8 @@
         var AX = [], GR = [];
         for (var k3 = 0; k3 <= 14; k3++) { var q3 = sobre(IMP, -1.75 * ue * k3 / 14); AX.push(Ps(q3)); GR.push(Ps([q3[0], Math.min(q3[1], alto(q3[0], q3[2])), q3[2]])); }
         ctx.globalAlpha = ue; ctx.beginPath(); AX.forEach(function (q, j) { if (j) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); for (k3 = GR.length - 1; k3 >= 0; k3--) ctx.lineTo(GR[k3][0], GR[k3][1]); ctx.closePath();
-        var vF = VAR === 'A' ? 0 : VAR === 'B' ? .1 : VAR === 'C' ? 0 : .26, vT = VAR === 'A' ? .6 : VAR === 'B' ? 0 : VAR === 'C' ? .45 : .95, vD = VAR === 'A' ? .45 : VAR ? 0 : .85;
-        if (vF) { ctx.fillStyle = 'rgba(120,116,112,' + vF + ')'; ctx.fill(); }
+        var vF = VAR === 'A' ? .5 : VAR === 'B' ? .1 : VAR === 'C' ? 0 : .26, vT = VAR === 'A' ? .6 : VAR === 'B' ? 0 : VAR === 'C' ? .45 : .95, vD = VAR === 'A' ? .45 : VAR ? 0 : .85;
+        if (vF) { ctx.fillStyle = 'rgba(98,94,91,' + vF + ')'; ctx.fill(); }   // gris medio, notable pero no negro
         if (vT) { ctx.strokeStyle = 'rgba(100,96,92,' + vT + ')'; ctx.lineWidth = VAR ? 1 : 1.4; ctx.setLineDash([3, 3]); ctx.beginPath(); GR.forEach(function (q, j) { if (j) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.stroke(); ctx.setLineDash([]); }
         if (vD) { ctx.strokeStyle = 'rgba(100,96,92,' + vD + ')'; ctx.lineWidth = VAR ? .7 : 1; ctx.beginPath(); for (k3 = VAR ? 5 : 2; k3 <= 14; k3 += VAR ? 4 : 3) { ctx.moveTo(AX[k3][0], AX[k3][1]); ctx.lineTo(GR[k3][0], GR[k3][1]); } ctx.stroke(); }
         var e0b = [b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv]; trazo(e0b, b, 'rgba(255,253,248,.9)', 4.4, [6, 3]); trazo(e0b, b, '#181415', 2.2, [6, 3]);   // el eje va encima del velo

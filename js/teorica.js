@@ -698,8 +698,9 @@
         var d = Ps(DEC);
         if (ud < .45) { var fl = ud < .1 ? ud / .1 : 1 - suave((ud - .1) / .3); brillo(d[0], d[1], 40 * fl + 4, '255,170,60', .9 * fl); brillo(d[0], d[1], 14 * fl + 2, '255,248,239', fl); ctx.strokeStyle = 'rgba(242,154,56,' + (.55 * (1 - ud / .45)) + ')'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(d[0], d[1], 5 + 60 * ud, 0, 2 * Math.PI); ctx.stroke(); }
         var nuF = Ps(sobre(DEC, Math.min(L_CRUCE * .95, ud * .9))), qn = [nuF[0], nuF[1] + 10];
-        ctx.globalAlpha = al * Math.max(0, 1 - Math.max(0, ud - 1) / .8);   // se va antes de que la cascada alcance su rótulo
-        trazoB(d, qn, 'rgba(170,55,125,.8)', .9, [1.5, 3]); rotulo('ν_τ', qn[0] + 3, qn[1] + 12, '#A33F7C', 13);
+        // el ν_τ del decaimiento no deja traza: solo su cabeza, que se apaga apenas sale
+        var aV = al * (1 - suave(ud / .6));
+        if (aV > 0) { ctx.globalAlpha = aV; ctx.fillStyle = '#A33F7C'; ctx.beginPath(); ctx.arc(qn[0], qn[1], 1.6, 0, 2 * Math.PI); ctx.fill(); rotulo('ν_τ', qn[0] + 3, qn[1] + 12, '#A33F7C', 13); }
       }
       ctx.globalAlpha = 1;
     }
@@ -751,6 +752,14 @@
     }
 
     // mediciones: cada unidad con señal se enciende a su tiempo, con una barra ∝ log del número de partículas
+    // la barra crece mientras siguen llegando partículas: fracción acumulada de un retraso gamma (k = 2),
+    // F(x) = 1 − (1 + x) e^(−x); su duración en la animación crece con el espesor del frente en esa estación
+    var G_MIN = null, G_MAX = null;
+    function llena(d, u) {
+      if (G_MIN === null) { var gs = VIVOS.map(function (v) { return Math.log(grosor(v.rp)); }); G_MIN = Math.min.apply(null, gs); G_MAX = Math.max.apply(null, gs); }
+      var dur = .35 + 1.3 * (G_MAX > G_MIN ? (Math.log(grosor(d.rp)) - G_MIN) / (G_MAX - G_MIN) : .5), x = 4.7 * Math.max(0, u) / dur;
+      return Math.min(1, (1 - (1 + x) * Math.exp(-x)) / .95);
+    }
     function senales(t) {
       var al0 = fade(t);
       // jerarquía local: la malla inactiva cercana baja ~12 % de contraste mientras se mide (sin círculo visible)
@@ -759,7 +768,7 @@
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
-        var a = Math.min(1, u / .15) * al0, hb = (18 + 11 * Math.log10(1 + d.n)) * suave(u / .5);   // barras altas: la reconstrucción negra se dibuja encima de ellas
+        var a = Math.min(1, u / .15) * al0, hb = (18 + 11 * Math.log10(1 + d.n)) * llena(d, u);   // barras altas: la reconstrucción negra se dibuja encima de ellas
         var y0 = q[1] - 5.6, rx = 4.1, ry = 1.6;
         ctx.globalAlpha = a;
         // como al señalar la ladera: solo la tapita se pinta, del color de su tiempo de llegada

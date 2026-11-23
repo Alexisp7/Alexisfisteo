@@ -1438,7 +1438,7 @@ var menu = function () {
   var activo = 0;
   function salida(i) { return function (a, b) { if (i === activo) { lect1.textContent = a; lect2.textContent = b; } }; }
   // las cuatro escenas se arman por partes, una por tarea: entre una y otra el navegador respira y la hoja sigue animada
-  var fabricas = [escenaRelatividad, escenaSternGerlach, window.escenaMomento || escenaProblemas, window.escenaFision || escenaProblemas], mods = [];
+  var fabricas = [escenaRelatividad, escenaSternGerlach, window.escenaMomento || escenaProblemas, window.escenaTeorica || escenaProblemas], mods = [];
   return new Promise(function (fin) {
     (function parte(i) {
       if (i === fabricas.length) { fin(resto()); return; }

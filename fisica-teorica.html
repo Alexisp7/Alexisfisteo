@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Física Teórica — Alexis R. Salvatierra</title>
+  <meta name="description" content="Física Teórica: sílabo y notas de curso, del cuanto de Planck a las cascadas atmosféricas de neutrinos tau."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/curso-teorica.css"/>
+  <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
+  <link rel="stylesheet" href="css/efectos.css"/>
+</head>
+<body>
+  <script src="js/carga.js"></script>
+
+  <nav class="ac-nav"><a href="index.html">Inicio</a><span>·</span><a href="cursos.html" class="active">Cursos</a><span>·</span><a href="proyectos.html">Proyectos</a><span>·</span><a href="contacto.html">Contacto</a></nav>
+
+  <main class="ac">
+    <header class="ac-cab">
+      <h1>Física Teórica</h1>
+      <dl class="ac-meta ac-meta-1"><div><dt>Estado</dt><dd>Clase 1 publicada</dd></div></dl>
+    </header>
+
+    <section class="ac-sec" id="clase-1">
+      <ul class="ac-pdfs">
+        <li>
+          <button type="button" class="ac-pdf" data-abrir="arch/avances/Radiacion_de_cuerpo_negro.pdf">
+            <svg viewBox="0 0 28 34" aria-hidden="true"><path d="M2 1h17l7 7v25H2z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M19 1v7h7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="14" y="25" text-anchor="middle" font-size="7" font-family="Space Mono, monospace" font-weight="700" fill="currentColor">PDF</text></svg>
+            <span><b>Radiación de cuerpo negro</b><small>R. A. Salvatierra Baldeón · Termodinámica, UNMSM · 2024 · 9 págs.</small></span>
+          </button>
+          <a class="ac-desc" href="arch/avances/Radiacion_de_cuerpo_negro.pdf" download>Descargar</a>
+        </li>
+      </ul>
+
+      <div class="ac-ecu">ρ(ν,T) =&nbsp;<span class="fr"><span>8πhν³</span><span>c³</span></span><span class="fr"><span>1</span><span>e<sup>hν/k<sub>B</sub>T</sup> − 1</span></span><span class="num">(1)</span></div>
+
+      <figure class="ac-fig">
+        <canvas id="ftPlanck" aria-label="Densidad espectral de Planck y aproximación de Rayleigh–Jeans"></canvas>
+        <div class="ac-ctrl"><label for="ftTemp">Temperatura</label><input id="ftTemp" type="range" min="2500" max="12000" step="1" value="5772"/><output id="ftT">5 772 K</output></div>
+        <div class="ac-pres"><button type="button" data-t="2700">Filamento, 2 700 K</button><button type="button" data-t="3500">Betelgeuse, 3 500 K</button><button type="button" data-t="5772" class="on">Sol, 5 772 K</button><button type="button" data-t="9940">Sirio, 9 940 K</button></div>
+        <figcaption><b>Figura 1.</b> Densidad espectral de energía ρ(ν,T) de la ecuación (1), en trazo continuo, frente a la predicción clásica de Rayleigh–Jeans 8πν²k<sub>B</sub>T/c³, en trazo discontinuo. Ambas coinciden a baja frecuencia (hν ≪ k<sub>B</sub>T); a alta frecuencia la clásica diverge. La franja inferior marca el espectro visible. Escala vertical normalizada al máximo de cada curva.</figcaption>
+        <table class="ac-val">
+          <tr><td>Máximo en frecuencia, ν<sub>máx</sub> = 5,879 × 10¹⁰ Hz/K · T</td><td id="ftNu">339 THz</td></tr>
+          <tr><td>Máximo en longitud de onda, λ<sub>máx</sub> = 2,898 × 10⁻³ m·K / T</td><td id="ftLa">502 nm</td></tr>
+          <tr><td>Densidad de energía total, u = aT⁴</td><td id="ftU">0,84 J/m³</td></tr>
+        </table>
+        <p style="font-size:14.5px;color:var(--tinta-2)">Los dos máximos no corresponden a la misma radiación: c/ν<sub>máx</sub> ≠ λ<sub>máx</sub>, porque ρ por unidad de frecuencia y por unidad de longitud de onda difieren en el factor dν/dλ.</p>
+      </figure>
+    </section>
+
+    <section class="ac-sec">
+      <h2><span>1</span>Evaluación sugerida</h2>
+      <p>Cada unidad cierra con un conjunto de problemas cortos, del tipo que aparece en exámenes de admisión a posgrado, y un problema largo que conecta la unidad con el fenómeno central del curso.</p>
+    </section>
+
+    <section class="ac-sec">
+      <h2><span>2</span>Bibliografía</h2>
+      <ol class="ac-bib">
+        <li>M. Planck, «Ueber das Gesetz der Energieverteilung im Normalspectrum», <i>Annalen der Physik</i> <b>309</b>, 553–563 (1901).</li>
+        <li>H. Goldstein, C. Poole y J. Safko, <i>Classical Mechanics</i>, 3.ª ed., Addison-Wesley (2002).</li>
+        <li>D. J. Griffiths, <i>Introduction to Elementary Particles</i>, 2.ª ed., Wiley-VCH (2008).</li>
+        <li>C. Giunti y C. W. Kim, <i>Fundamentals of Neutrino Physics and Astrophysics</i>, Oxford University Press (2007).</li>
+        <li>T. K. Gaisser, R. Engel y E. Resconi, <i>Cosmic Rays and Particle Physics</i>, 2.ª ed., Cambridge University Press (2016).</li>
+        <li>K. Greisen, «Cosmic ray showers», <i>Annual Review of Nuclear Science</i> <b>10</b>, 63–108 (1960).</li>
+        <li>A. Romero-Wolf <i>et al.</i>, «An Andean Deep-Valley Detector for High-Energy Tau Neutrinos», arXiv:2002.06475 (2020).</li>
+      </ol>
+    </section>
+
+    <footer class="ac-pie"><span>© 2025 Alexis R. Salvatierra</span><span>Física Teórica · notas de curso</span></footer>
+  </main>
+
+  <div class="ac-visor" role="dialog" aria-modal="true" aria-label="Clase 1 en PDF">
+    <div class="barra"><span>Clase 1 · Radiación de cuerpo negro</span><button type="button" data-cerrar aria-label="Cerrar">×</button></div>
+    <iframe title="Clase 1: Radiación de cuerpo negro"></iframe>
+  </div>
+
+  <script src="js/curso-teorica.js"></script>
+</body>
+</html>

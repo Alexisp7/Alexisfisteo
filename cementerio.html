@@ -1310,6 +1310,7 @@
   <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
   <link rel="stylesheet" href="css/efectos.css"/>
   <link rel="stylesheet" href="css/cementerio/escena.css"/>
+  <link rel="stylesheet" href="css/cementerio/fision.css"/>
 </head>
 <body>
   <script src="js/carga.js"></script>
@@ -1326,6 +1327,7 @@
     <div class="mc-escenas" aria-hidden="true">
       <figure class="mc-escena on" data-i="2" data-n="0"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"></svg></figure>
       <figure class="mc-escena" data-i="2" data-n="1"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"></svg></figure>
+      <figure class="mc-escena" data-i="3" data-n="2"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"></svg></figure>
     </div>
     <div class="mc-velo" aria-hidden="true"></div>
     <div class="cm-panel">
@@ -1348,10 +1350,19 @@
             <span class="cm-d">El primer prototipo: la segunda ley de Kepler como capítulo II, con una órbita de excentricidad 0,6. Ese mismo día la órbita se quitó y después entró el sistema de tres masas.</span>
           </button>
         </li>
+        <li class="cm-item">
+          <button class="cm-b" type="button" data-n="2">
+            <span class="cm-n">III</span>
+            <span class="cm-t">Física nuclear, <em>fisión del uranio-235</em></span>
+            <span class="cm-f">5 nov 2026 · 22 nov 2026</span>
+            <span class="cm-d">Captura de un neutrón lento, escisión, reacción en cadena y escala: del núcleo de 10⁻¹⁴ m a la nube de un kilómetro. Física nuclear dio paso a Física teórica.</span>
+          </button>
+        </li>
       </ol>
     </div>
     <div class="mc-lectura" aria-live="off">
       <span class="mc-ec" data-ec="2"><b>L</b> = <b>r</b> × <b>p</b></span>
+      <span class="mc-ec" data-ec="3" style="display:none">n + <sup>235</sup>U → <sup>236</sup>U<sup>*</sup></span>
       <span class="mc-l1"></span>
       <span class="mc-l2"></span>
     </div>
@@ -1367,16 +1378,22 @@
   <script src="js/cementerio/canon.js"></script>
   <script src="js/cementerio/momento-cinco.js"></script>
   <script src="js/cementerio/momento-kepler.js"></script>
+  <script src="js/cementerio/fision-nube.js"></script>
+  <script src="js/cementerio/fision.js"></script>
   <script>
   (function () {
     var raiz = document.querySelector('.mc'), figs = raiz.querySelectorAll('.mc-escena'), items = raiz.querySelectorAll('.cm-item');
     var l1 = raiz.querySelector('.mc-l1'), l2 = raiz.querySelector('.mc-l2'), activo = 0;
     function salida(i) { return function (a, b) { if (i === activo) { l1.textContent = a; l2.textContent = b; } }; }
-    var mods = [window.cmMomentoCinco, window.cmMomentoKepler].map(function (fn, i) { return fn(figs[i].querySelector('svg'), salida(i)); });
+    var ecs = raiz.querySelectorAll('.mc-ec');
+    var mods = [window.cmMomentoCinco, window.cmMomentoKepler, window.cmFision].map(function (fn, i) { return fn(figs[i].querySelector('svg'), salida(i)); });
     function elige(n) {
       if (n === activo) return; activo = n;
       figs.forEach(function (f, k) { f.classList.toggle('on', k === n); });
       items.forEach(function (it, k) { it.classList.toggle('on', k === n); });
+      var di = figs[n].dataset.i; raiz.setAttribute('data-activo', di);
+      ecs.forEach(function (e) { e.style.display = e.dataset.ec === di ? '' : 'none'; });
+      l1.textContent = ''; l2.textContent = '';
     }
     raiz.querySelectorAll('.cm-b').forEach(function (b) { b.addEventListener('click', function () { elige(+b.dataset.n); }); });
     var t0 = 0;

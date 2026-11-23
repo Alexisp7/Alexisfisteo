@@ -505,11 +505,11 @@
       for (var j = DET.length - 1; j >= 0; j--) {
         var d = DET[j], q5 = Ps([d.x, d.y, d.z]);
         if (q5[0] < vb.x - 10 || q5[0] > vb.x + vb.width + 10) continue;
-        c.fillStyle = 'rgba(60,44,30,.25)'; c.beginPath(); c.ellipse(q5[0] + 3, q5[1] + 1, 6.6, 2.4, 0, 0, 2 * Math.PI); c.fill();
-        c.fillStyle = '#C3C9CB'; c.fillRect(q5[0] - 5.1, q5[1] - 6.6, 10.2, 6.6);
-        c.fillStyle = '#D9DEDF'; c.fillRect(q5[0] - 5.1, q5[1] - 6.6, 3.6, 6.6);
-        c.fillStyle = '#A9B1B5'; c.beginPath(); c.ellipse(q5[0], q5[1], 5.1, 2, 0, 0, Math.PI); c.fill();
-        c.fillStyle = '#F2F4F1'; c.beginPath(); c.ellipse(q5[0], q5[1] - 6.6, 5.1, 2, 0, 0, 2 * Math.PI); c.fill();
+        c.fillStyle = 'rgba(60,44,30,.25)'; c.beginPath(); c.ellipse(q5[0] + 2.3, q5[1] + .8, 5, 1.8, 0, 0, 2 * Math.PI); c.fill();
+        c.fillStyle = '#C3C9CB'; c.fillRect(q5[0] - 3.9, q5[1] - 5.6, 7.8, 5.6);
+        c.fillStyle = '#D9DEDF'; c.fillRect(q5[0] - 3.9, q5[1] - 5.6, 2.8, 5.6);
+        c.fillStyle = '#A9B1B5'; c.beginPath(); c.ellipse(q5[0], q5[1], 3.9, 1.5, 0, 0, Math.PI); c.fill();
+        c.fillStyle = '#F2F4F1'; c.beginPath(); c.ellipse(q5[0], q5[1] - 5.6, 3.9, 1.5, 0, 0, 2 * Math.PI); c.fill();
         c.strokeStyle = 'rgba(70,80,88,.4)'; c.lineWidth = .4; c.stroke();
       }
       difumina(c, true);
@@ -525,9 +525,9 @@
       c.strokeStyle = 'rgba(92,70,54,.3)'; c.lineWidth = .6; c.beginPath(); c.moveTo(EVT[0], EVT[1] + 5); c.lineTo(EVT[0] + 266, EVT[1] + 5); c.stroke();
     }
     // la maqueta se disuelve hacia la izquierda, como la de Stern–Gerlach: empieza en la cordillera, sin corte duro
-    var DIF0 = 700, DIF1 = 950, DIFR0 = 1105, DIFR1 = 1280, DIFY = 340;
+    var DIF0 = 672, DIF1 = 905, DIFR0 = 1105, DIFR1 = 1280, DIFY = 340;
     function difumina(c, der) {
-      var D0 = der ? DIF0 : 600, D1 = der ? DIF1 : 720;
+      var D0 = DIF0, D1 = DIF1;
       c.save(); c.globalCompositeOperation = 'destination-out';
       var g = c.createLinearGradient(D0, 0, D1, 0); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(.3, 'rgba(0,0,0,.8)'); g.addColorStop(.65, 'rgba(0,0,0,.35)'); g.addColorStop(1, 'rgba(0,0,0,0)');
       c.fillStyle = g; c.fillRect(D0 - 400, -50, D1 - D0 + 400, 1100);
@@ -722,7 +722,7 @@
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
         var a = Math.min(1, u / .15) * al0, hb = (5 + 6 * Math.log10(1 + d.n)) * suave(u / .5);
-        var y0 = q[1] - 6.6, rx = 5.3, ry = 2.1;
+        var y0 = q[1] - 5.6, rx = 4.1, ry = 1.6;
         ctx.globalAlpha = a;
         // como al señalar la ladera: solo la tapita se pinta, del color de su tiempo de llegada
         ctx.fillStyle = 'rgb(' + col + ')'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
@@ -804,7 +804,7 @@
         var x = BX0 + .05 + r() * (BX1 - BX0 - .1), z = Z0 + .03 + r() * (Z1 - Z0 - .06), y = alto(x, z);
         if (y > 1.45 && r() < .6) continue;
         if (y < .06 && Math.abs(x - .05 - .12 * Math.sin(z * 1.9)) < .075) continue;   // deja libre el cauce
-        var q = Ps([x, y, z]); if (cerca(q, 64)) continue;
+        var q = Ps([x, y, z]); if (cerca(q, 40)) continue;
         var prof = (z - Z0) / (Z1 - Z0), seco = cl((y - .1) / .5, 0, 1) * (.75 + .25 * r());
         MATAS.push({ x: q[0], y: q[1], l: (2.6 + 3.6 * r()) * (1 - .35 * prof), lean: (r() - .5) * 1.4, c: seco < .3 ? 0 : seco < .55 ? 1 : seco < .8 ? 2 : 3, s: r(), f: r() < .025 });
       }
@@ -840,7 +840,7 @@
       });
     }
     function realce() {
-      if (foco === 'ladera') { ctx.fillStyle = '#5BB4E6'; ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = .9; DET.forEach(function (d) { var q = Ps([d.x, d.y, d.z]); ctx.beginPath(); ctx.ellipse(q[0], q[1] - 6.6, 5.1, 2, 0, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); }); }
+      if (foco === 'ladera') { ctx.fillStyle = '#5BB4E6'; ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = .9; DET.forEach(function (d) { var q = Ps([d.x, d.y, d.z]); ctx.beginPath(); ctx.ellipse(q[0], q[1] - 5.6, 3.9, 1.5, 0, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); }); }
       if (foco === 'valle') { ctx.strokeStyle = 'rgba(50,130,180,.7)'; ctx.lineWidth = 2.6; ctx.beginPath(); for (var z = Z0; z <= Z1; z += .05) { var q = rio(z); if (z === Z0) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]); } ctx.stroke(); }
     }
 

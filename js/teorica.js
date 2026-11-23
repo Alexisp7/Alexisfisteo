@@ -278,26 +278,22 @@
       var poly = [], N = 72, e = 0;
       for (var k2 = 0; k2 < N; k2++) { var dd = per * k2 / N; while (L[e + 1] < dd) e++; var h0 = hull[e], h1 = hull[(e + 1) % hull.length], f = (dd - L[e]) / Math.max(1e-6, L[e + 1] - L[e]); poly.push([h0[0] + (h1[0] - h0[0]) * f, h0[1] + (h1[1] - h0[1]) * f]); }
       var cx = 0, cy = 0; poly.forEach(function (q) { cx += q[0] / N; cy += q[1] / N; });
-      // sombra del frente: proyección del disco a lo largo del eje sobre la ladera (centrada en el impacto),
-      // escalada para cubrir la misma área que los tanques con señal
-      var U = [IMP[0] - DEC[0], IMP[1] - DEC[1], IMP[2] - DEC[2]], uL = Math.hypot(U[0], U[1], U[2]); U = U.map(function (x) { return x / uL; });
-      var r0 = R_M * 1.4 + .02, SH = [];
-      for (i = 0; i < N; i++) {
-        var an = i / N * 2 * Math.PI, Q = [0, 1, 2].map(function (k) { return IMP[k] + r0 * (Math.cos(an) * E1[k] + Math.sin(an) * E2[k]); });
-        var lo2 = -3, hi2 = 3; for (var it = 0; it < 40; it++) { var md = (lo2 + hi2) / 2, X2 = Q[0] + md * U[0], Y2 = Q[1] + md * U[1], Z2 = Q[2] + md * U[2]; if (Y2 > alto(X2, Z2)) lo2 = md; else hi2 = md; }
-        SH.push(Ps([Q[0] + lo2 * U[0], Q[1] + lo2 * U[1] + .006, Q[2] + lo2 * U[2]]));
+      // sombra del frente: cada punto del disco (perpendicular al eje) sigue avanzando a lo largo del eje hasta tocar la ladera.
+      // El disco toca primero en un punto (s_c); desde ahí su sombra se extiende sobre el suelo. El radio se elige para que
+      // la sombra cubra la misma área que los tanques encendidos.
+      function sombraDe(r) {
+        var hs = [], pts = [];
+        for (var j = 0; j < N; j++) {
+          var an = j / N * 2 * Math.PI, O3 = [0, 1, 2].map(function (k) { return r * (Math.cos(an) * E1[k] + Math.sin(an) * E2[k]); });
+          var lo2 = 0, hi2 = L_CRUCE * 2; for (var it = 0; it < 40; it++) { var md = (lo2 + hi2) / 2, q = sobre(DEC, md); if (q[1] + O3[1] > alto(q[0] + O3[0], q[2] + O3[2])) lo2 = md; else hi2 = md; }
+          var qh = sobre(DEC, lo2); hs.push(lo2); pts.push(Ps([qh[0] + O3[0], qh[1] + O3[1] + .006, qh[2] + O3[2]]));
+        }
+        return { r: r, h: hs, p: pts };
       }
-      // huella frambuesa: elipse con la orientación de esa sombra, centrada y ceñida a los tanques que se encienden;
-      // cada punto conserva el ángulo del punto del disco que lo proyecta (para unir ambos con rayos)
-      var sx0 = 0, sy0 = 0; SH.forEach(function (q) { sx0 += q[0] / N; sy0 += q[1] / N; });
-      var s11 = 0, s22 = 0, s12 = 0; SH.forEach(function (q) { var dx = q[0] - sx0, dy = q[1] - sy0; s11 += dx * dx; s22 += dy * dy; s12 += dx * dy; });
-      var ts = .5 * Math.atan2(2 * s12, s11 - s22), e1 = [Math.cos(ts), Math.sin(ts)], e2 = [-Math.sin(ts), Math.cos(ts)], a0 = 0, b0 = 0;
-      SH.forEach(function (q) { var dx = q[0] - sx0, dy = q[1] - sy0; a0 = Math.max(a0, Math.abs(dx * e1[0] + dy * e1[1])); b0 = Math.max(b0, Math.abs(dx * e2[0] + dy * e2[1])); });
-      var f1 = [ca, sa], f2 = [-sa, ca];   // ejes propios de los tanques encendidos: la elipse más angosta que los contiene
-      var AA = 0, BB = 0; P.forEach(function (q) { var dx = q[0] - mx, dy = q[1] - my; AA = Math.max(AA, Math.abs(dx * f1[0] + dy * f1[1])); BB = Math.max(BB, Math.abs(dx * f2[0] + dy * f2[1])); });
-      AA += 4.5; BB += 3; var kk = 1; P.forEach(function (q) { var dx = q[0] - mx, dy = q[1] - my, u = (dx * f1[0] + dy * f1[1]) / AA, w = (dx * f2[0] + dy * f2[1]) / BB; kk = Math.max(kk, Math.hypot(u, w)); });
-      AA = AA * kk + 3; BB = BB * kk + 2.5;
-      HUE.sombra = SH.map(function (q) { var dx = q[0] - sx0, dy = q[1] - sy0, th2 = Math.atan2((dx * e2[0] + dy * e2[1]) / b0, (dx * e1[0] + dy * e1[1]) / a0); return [mx + AA * Math.cos(th2) * f1[0] + BB * Math.sin(th2) * f2[0], my + AA * Math.cos(th2) * f1[1] + BB * Math.sin(th2) * f2[1]]; });
+      function area(pl) { var a = 0; for (var j = 0; j < pl.length; j++) { var p1 = pl[j], p2 = pl[(j + 1) % pl.length]; a += p1[0] * p2[1] - p2[0] * p1[1]; } return Math.abs(a / 2); }
+      var SB = sombraDe(R_M * 1.4 + .02);
+      for (var it2 = 0; it2 < 3; it2++) SB = sombraDe(SB.r * Math.sqrt(area(poly) / Math.max(1, area(SB.p))));
+      HUE.sombra = SB.p; HUE.hs = SB.h; HUE.rF = SB.r; HUE.sc = Math.min.apply(null, SB.h); HUE.smax = Math.max.apply(null, SB.h);
       HUE.poly = HUE.sombra; HUE.cx = cx; HUE.cy = cy;
       return HUE;
     }
@@ -811,44 +807,31 @@
     var ELI = null;
     function elipseFrente() {
       if (!ELI) return;
-      var sf = ELI.sf, crec = ELI.crec, fin = ELI.fin, t = ELI.t, lleg = suave((t - (T_DEC + (T_LLEGA - T_DEC) / KV) + .1) / .3);   // llegada del frente a la ladera
-      var H = huella(), N = H.poly.length, i;
-      // el frente en el aire: disco delgado (≈ 2 R_M) perpendicular al eje, proyectado punto a punto; viaja con las partículas.
-      // Su sombra a lo largo del eje cae sobre la ladera: aparece al acercarse y crece con él; al tocar el suelo el disco
-      // desaparece y la sombra queda como la huella
-      var rd = R_M * 1.4 * crec + .02;
+      var H = huella(), N = H.sombra.length, fin = ELI.fin, t = ELI.t, i;
+      var su = ELI.sfu, sd = Math.min(su, H.sc), rd = (H.rF - .02) * cl(sd / L_CRUCE, 0, 1) + .02, c = sobre(DEC, sd);
+      var toca = cl((su - H.sc) / Math.max(.05, H.smax - H.sc), 0, 1), lleg = suave((su - H.smax) / (V_FIN * KV * .5));   // 0 → 1 medio segundo tras completar la sombra
+      // disco del frente (perpendicular al eje): viaja con las partículas hasta tocar la ladera y ahí se detiene
+      var D = [];
+      for (i = 0; i < N; i++) { var an = i / N * 2 * Math.PI, ca = Math.cos(an) * rd, sa = Math.sin(an) * rd; D.push([c[0] + ca * E1[0] + sa * E2[0], c[1] + ca * E1[1] + sa * E2[1], c[2] + ca * E1[2] + sa * E2[2]]); }
+      var D2 = D.map(Ps);
       if (lleg < 1) {
-        var c = sobre(DEC, sf), m = suave((sf / L_CRUCE - .45) / .4), D = [];
-        for (i = 0; i < N; i++) { var an = i / N * 2 * Math.PI, ca = Math.cos(an) * rd, sa = Math.sin(an) * rd; D.push(Ps([c[0] + ca * E1[0] + sa * E2[0], c[1] + ca * E1[1] + sa * E2[1], c[2] + ca * E1[2] + sa * E2[2]])); }
-        if (m > 0) {
-          // la huella fija en la ladera y los rayos de proyección que la unen con el disco
-          ctx.beginPath(); for (i = 0; i <= N; i++) { var sq = H.sombra[i % N]; if (i) ctx.lineTo(sq[0], sq[1]); else ctx.moveTo(sq[0], sq[1]); }
-          ctx.fillStyle = 'rgba(206,32,104,' + (.08 * m * fin * (1 - lleg)) + ')'; ctx.fill(); ctx.strokeStyle = 'rgba(176,34,92,' + (.6 * m * fin) + ')'; ctx.lineWidth = 1; ctx.stroke();
-          ctx.strokeStyle = 'rgba(176,34,92,' + (.45 * m * fin * (1 - lleg)) + ')'; ctx.lineWidth = .7; ctx.setLineDash([3, 3]); ctx.beginPath();
-          for (i = 0; i < N; i += N / 12) { ctx.moveTo(D[i][0], D[i][1]); ctx.lineTo(H.sombra[i][0], H.sombra[i][1]); }
-          ctx.stroke(); ctx.setLineDash([]);
-        }
-        ctx.beginPath(); for (i = 0; i <= N; i++) { var dq = D[i % N]; if (i) ctx.lineTo(dq[0], dq[1]); else ctx.moveTo(dq[0], dq[1]); }
-        ctx.fillStyle = 'rgba(206,32,104,' + (.06 * fin * (1 - lleg)) + ')'; ctx.fill();
-        ctx.strokeStyle = 'rgba(128,30,74,' + (.6 * fin * (1 - lleg)) + ')'; ctx.lineWidth = .9; ctx.stroke();
+        ctx.beginPath(); for (i = 0; i <= N; i++) { var dq = D2[i % N]; if (i) ctx.lineTo(dq[0], dq[1]); else ctx.moveTo(dq[0], dq[1]); }
+        ctx.fillStyle = 'rgba(206,32,104,' + (.07 * fin * (1 - lleg)) + ')'; ctx.fill();
+        ctx.strokeStyle = 'rgba(128,30,74,' + (.75 * fin * (1 - lleg)) + ')'; ctx.lineWidth = 1.1; ctx.stroke();
       }
-      if (lleg <= 0) return;
-      // huella en la ladera: contorno ceñido a los tanques que reciben partículas; queda como referencia
-      ctx.strokeStyle = 'rgba(176,34,92,' + (.85 * lleg * fin) + ')'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]); ctx.beginPath();
-      for (i = 0; i <= N; i++) { var q = H.poly[i % N]; if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }
+      if (toca <= 0) return;
+      // proyección: desde el punto de contacto, cada punto del disco sigue a lo largo del eje hasta la ladera;
+      // los rayos punteados unen el disco con su sombra, y el borde de la sombra se va trazando sobre el suelo
+      var U = [IMP[0] - DEC[0], IMP[1] - DEC[1], IMP[2] - DEC[2]], uL = Math.hypot(U[0], U[1], U[2]);
+      var S2 = D.map(function (q, j) { var k = Math.min(su, H.hs[j]) - H.sc; return k >= H.hs[j] - H.sc - 1e-6 ? H.sombra[j] : Ps([q[0] + U[0] / uL * k, q[1] + U[1] / uL * k, q[2] + U[2] / uL * k]); });
+      ctx.strokeStyle = 'rgba(96,30,80,' + (.55 * fin * (1 - lleg)) + ')'; ctx.lineWidth = .7; ctx.setLineDash([2, 3]); ctx.beginPath();
+      for (i = 0; i < N; i += N / 12) { ctx.moveTo(D2[i][0], D2[i][1]); ctx.lineTo(S2[i][0], S2[i][1]); }
+      ctx.stroke();
+      // sombra: borde punteado morado oscuro; queda en la ladera como la huella
+      ctx.strokeStyle = 'rgba(96,30,80,' + (.85 * fin) + ')'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]); ctx.beginPath();
+      for (i = 0; i <= N; i++) { var q2 = S2[i % N]; if (i) ctx.lineTo(q2[0], q2[1]); else ctx.moveTo(q2[0], q2[1]); }
       ctx.stroke(); ctx.setLineDash([]);
-      // el frente sobre el suelo: recta donde el frente inclinado corta la ladera; barre la huella mientras llegan las señales
-      var g = Math.hypot(H.b, H.c); if (g < 1e-9) return;
-      var sw = suave((t - T_H0 + .3) / .3) * (1 - suave((t - T_H1 - .3) / .4)); if (sw <= 0) return;
-      var nx = H.b / g, ny = H.c / g, dd = (t - H.a) / g, bx = H.mx + dd * nx, by = H.my + dd * ny, px = -ny, py = nx, s1 = 1e9, s2 = -1e9;
-      for (i = 0; i < N; i++) {   // corte de la recta con el contorno
-        var a0 = H.poly[i], a1 = H.poly[(i + 1) % N], ex = a1[0] - a0[0], ey = a1[1] - a0[1], den = px * ey - py * ex; if (Math.abs(den) < 1e-9) continue;
-        var u = ((a0[0] - bx) * ey - (a0[1] - by) * ex) / den, v = ((a0[0] - bx) * py - (a0[1] - by) * px) / den;
-        if (v >= 0 && v <= 1) { s1 = Math.min(s1, u); s2 = Math.max(s2, u); }
-      }
-      if (s2 <= s1) return;
-      ctx.strokeStyle = 'rgba(206,32,104,' + (.85 * sw * fin) + ')'; ctx.lineWidth = 1.8; ctx.beginPath();
-      ctx.moveTo(bx + s1 * px, by + s1 * py); ctx.lineTo(bx + s2 * px, by + s2 * py); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,' + (.16 * toca * fin) + ')'; ctx.fill();
     }
     function cascada(t) {
       LL_AL = 0; ELI = null;
@@ -884,7 +867,7 @@
       var c0 = Ps(sobre(DEC, Math.max(0, sf - L_CRUCE * .3))), c1 = Ps(sobre(DEC, Math.min(sf, L_CRUCE)));
       var gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]); gl.addColorStop(0, 'rgba(128,30,74,0)'); gl.addColorStop(1, 'rgba(128,30,74,' + (.18 * fin) + ')');
       ctx.strokeStyle = gl; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(c0[0], c0[1]); ctx.lineTo(c1[0], c1[1]); ctx.stroke();
-      ELI = { sf: sf, crec: crec, fin: fin, t: t };
+      ELI = { sf: sf, sfu: t < T_DEC ? 0 : fx(T_DEC + (t - T_DEC) * KV), crec: crec, fin: fin, t: t };
     }
 
     // mediciones: cada unidad con señal se enciende a su tiempo, con una barra ∝ log del número de partículas

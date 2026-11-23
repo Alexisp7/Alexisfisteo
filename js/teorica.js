@@ -70,7 +70,7 @@
       pi: esfera('#D6C4F2', '#8A66C4', '#46307A', 'rgba(30,20,50,.6)'), mu: esfera('#C4E0EC', '#5A8EA8', '#28495A', 'rgba(20,30,40,.6)') };
 
     // ── cámara fija, oblicua: x a lo ancho, y arriba, z hacia el fondo del valle ──
-    var VAR = ((/[?&]v=([abc])/i.exec(location.search) || [])[1] || '').toUpperCase();   // propuestas de limpieza en la zona de barras (A, B, C)
+    var VAR = ((/[?&]v=([abc])/i.exec(location.search) || [])[1] || 'A').toUpperCase();   // zona de barras: A elegida por Andreé (B y C quedan para comparar)
     var KZ = .12, KY = .42, CAM = { cx: 944, cy: 772, s: 103 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
     function P(x, y, z) { return [CAM.cx + CAM.s * (x + KZ * z), CAM.cy - CAM.s * (y + KY * z)]; }
     function Ps(p) { return P(p[0], p[1], p[2]); }
@@ -479,7 +479,7 @@
       d: ['e± y γ (cian), hadrones (ámbar) y muones', '(lavanda, ≈ ' + cient(Math.pow(E_CAS / 20e9, .85)) + ' según Matthews). X = ∫ρ ds:', '3,37 km de aire = ' + coma(X_IMP, 0) + ' g/cm², antes del máximo;', 'llegan ≈ ' + cient(N_IMP) + ' e±. Greisen, Heitler y Matthews', 'son estimaciones: no sustituyen una simulación', 'de transporte (CORSIKA).'] });
     ficha('ladera', { ancla: A_LAD, k: 'TAMBO · ladera de enfrente', tit: '5 000 unidades a 150 m', dib: dibMalla, dibH: 82,
       d: ['Detectores de partículas en malla triangular', 'sobre la ladera que mira a la montaña (diseño', 'nominal de 2025; se estudian tanques de agua', 'Cherenkov y centelleadores plásticos).', 'Busca neutrinos tau de 1 a 100 PeV.'] });
-    var G_HUE = VAR === 'A' || VAR === 'C' ? [A_IMP[0] - 4, A_IMP[1] + 48] : A_IMP;
+    var G_HUE = VAR === 'A' || VAR === 'C' ? (function () { var h = .5, a = Ps([IMP[0] + E2[0] * h, IMP[1] + E2[1] * h, IMP[2] + E2[2] * h]), b = Ps([IMP[0] - E2[0] * h, IMP[1] - E2[1] * h, IMP[2] - E2[2] * h]), lo = a[1] > b[1] ? a : b; return [lo[0] + 12, lo[1] + 10]; })() : A_IMP;   // Δt junto al extremo bajo del frente ajustado
     function fichaHuella() { return ficha('huella', { ancla: G_HUE, k: 'Reconstrucción · evento simulado', tit: 't_i = t₀ + n̂ · r_i / c + ρ_i² / 2Rc', dib: dibOrden, dibH: 306,
       d: ['Se resta el retraso medio de cada estación y se', 'ajustan dirección y curvatura (pesos 1/σ_i²); se', 'muestra la realización mediana. La cola de χ² algo', 'más pesada viene de la asimetría del primer', 'tiempo. No es la resolución de TAMBO.'] }); }
     fichaHuella();

@@ -70,6 +70,7 @@
       pi: esfera('#D6C4F2', '#8A66C4', '#46307A', 'rgba(30,20,50,.6)'), mu: esfera('#C4E0EC', '#5A8EA8', '#28495A', 'rgba(20,30,40,.6)') };
 
     // ── cámara fija, oblicua: x a lo ancho, y arriba, z hacia el fondo del valle ──
+    var VAR = ((/[?&]v=([abc])/i.exec(location.search) || [])[1] || '').toUpperCase();   // propuestas de limpieza en la zona de barras (A, B, C)
     var KZ = .12, KY = .42, CAM = { cx: 944, cy: 772, s: 103 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
     function P(x, y, z) { return [CAM.cx + CAM.s * (x + KZ * z), CAM.cy - CAM.s * (y + KY * z)]; }
     function Ps(p) { return P(p[0], p[1], p[2]); }
@@ -478,7 +479,8 @@
       d: ['e± y γ (cian), hadrones (ámbar) y muones', '(lavanda, ≈ ' + cient(Math.pow(E_CAS / 20e9, .85)) + ' según Matthews). X = ∫ρ ds:', '3,37 km de aire = ' + coma(X_IMP, 0) + ' g/cm², antes del máximo;', 'llegan ≈ ' + cient(N_IMP) + ' e±. Greisen, Heitler y Matthews', 'son estimaciones: no sustituyen una simulación', 'de transporte (CORSIKA).'] });
     ficha('ladera', { ancla: A_LAD, k: 'TAMBO · ladera de enfrente', tit: '5 000 unidades a 150 m', dib: dibMalla, dibH: 82,
       d: ['Detectores de partículas en malla triangular', 'sobre la ladera que mira a la montaña (diseño', 'nominal de 2025; se estudian tanques de agua', 'Cherenkov y centelleadores plásticos).', 'Busca neutrinos tau de 1 a 100 PeV.'] });
-    function fichaHuella() { return ficha('huella', { ancla: A_IMP, k: 'Reconstrucción · evento simulado', tit: 't_i = t₀ + n̂ · r_i / c + ρ_i² / 2Rc', dib: dibOrden, dibH: 306,
+    var G_HUE = VAR === 'A' || VAR === 'C' ? [A_IMP[0] - 4, A_IMP[1] + 48] : A_IMP;
+    function fichaHuella() { return ficha('huella', { ancla: G_HUE, k: 'Reconstrucción · evento simulado', tit: 't_i = t₀ + n̂ · r_i / c + ρ_i² / 2Rc', dib: dibOrden, dibH: 306,
       d: ['Se resta el retraso medio de cada estación y se', 'ajustan dirección y curvatura (pesos 1/σ_i²); se', 'muestra la realización mediana. La cola de χ² algo', 'más pesada viene de la asimetría del primer', 'tiempo. No es la resolución de TAMBO.'] }); }
     fichaHuella();
     sensibilidad(function () { var vieja = fichas.huella, ver = vieja.ver; var n = fichaHuella(); capa.insertBefore(n.g, vieja.g); capa.removeChild(vieja.g); if (ver) n.pon(true); });
@@ -486,7 +488,8 @@
       d: ['≈ 1,5 km de profundidad y ≈ 4,5 km entre', 'laderas: una cara es blanco y la otra pantalla.', 'A ~3 km de altura el aire es 26 % menos denso', 'que al nivel del mar, y la cascada se estira.', 'Sección sintética inspirada en el Colca, no un', 'modelo de elevación real.'] });
     // estación: la que esté más cerca de 100 m del eje con al menos 10 partículas (frente ya grueso, pulso con estructura)
     var EST = VIVOS.filter(function (d) { return d.n >= 10; }).reduce(function (b, d) { return Math.abs(d.rp - 100) < Math.abs(b.rp - 100) ? d : b; }, VIVOS[0]), A_EST = Ps([EST.x, EST.y, EST.z]);
-    ficha('estacion', { ancla: [A_EST[0], A_EST[1] - 2], k: 'Estación ilustrativa · tanque de agua', tit: 'Pulso de luz Cherenkov', dib: dibOnda, dibH: 96,
+    var G_EST = VAR === 'A' ? [A_EST[0] + 44, A_EST[1] + 26] : [A_EST[0], A_EST[1] - 2];
+    ficha('estacion', { ancla: G_EST, k: 'Estación ilustrativa · tanque de agua', tit: 'Pulso de luz Cherenkov', dib: dibOnda, dibH: 96,
       d: ['Cada partícula que entra al agua emite luz y el', 'fotomultiplicador suma pulsos de ~60 ns. El', 'disparo es el t_i del ajuste. A ' + coma(EST.rp, 0) + ' m del eje las', 'partículas llegan repartidas en decenas de ns.', 'Esquemático: sin modelo óptico ni electrónico.'] });
     ficha('llegadas', { ancla: [LT.x0 + 4, LT.y - 4], k: 'Registro del evento', tit: 'Tiempos de disparo', 
       d: ['Una marca por detector: su posición es el', 'tiempo de disparo desde el primero y su altura,', 'el logaritmo de las partículas. La ventana de', coma(T1H - T0H, 2) + ' µs no es la duración de la cascada: es', 'lo que tarda el frente en barrer la ladera,', 'inclinada respecto a él.'] });
@@ -510,6 +513,8 @@
       zona('vertice', circulo(A_VTX[0], A_VTX[1], 20));
       zona('huella', circulo(A_IMP[0], A_IMP[1], 24));
       zona('estacion', circulo(A_EST[0], A_EST[1] - 2, 9));
+      if (G_HUE !== A_IMP) zona('huella', circulo(G_HUE[0], G_HUE[1], 12));
+      if (VAR === 'A') zona('estacion', circulo(G_EST[0], G_EST[1], 10));
       zona('llegadas', poli([[LT.x0 - 10, LT.y - 40], [LT.x1 + 12, LT.y - 40], [LT.x1 + 12, LT.y + 22], [LT.x0 - 10, LT.y + 22]]));
       zona('oscila', circulo(A_OSC[0], A_OSC[1], 18));
       zona('fuente', circulo(MED.x, MED.y, MED.r + 6));
@@ -807,8 +812,13 @@
     // para poder pasar el mouse en cualquier momento del bucle
     function fantasmas(t) {
       var res = 'rgba(255,253,248,.95)', lat = .86 + .1 * Math.sin(t * 2.4);
-      [[A_FUE, '45,150,200', 'Δ⁺'], [A_OSC, null, ''], [A_VTX, '181,106,30', 'τ⁻'], [A_TAU, '181,106,30', ''], [A_CAS, '206,32,104', 'e± γ'], [A_IMP, '96,30,80', 'Δt'], [[A_EST[0], A_EST[1] - 2], '45,150,200', '']].forEach(function (g) {
+      [[A_FUE, '45,150,200', 'Δ⁺'], [A_OSC, null, ''], [A_VTX, '181,106,30', 'τ⁻'], [A_TAU, '181,106,30', ''], [A_CAS, '206,32,104', 'e± γ'], [G_HUE, '96,30,80', 'Δt', A_IMP], [G_EST, '45,150,200', '', [A_EST[0], A_EST[1] - 2]]].forEach(function (g) {
         var p = g[0]; if (foco && fichas[foco] && fichas[foco].ancla === p) return;
+        if (g[3]) {   // huella y estación: según la propuesta
+          if (VAR === 'C' && g[0] === G_EST) return;
+          if (VAR === 'B' && t > T_H0 - .2 && t < T_FUN) return;
+          if (p !== g[3] && (p[0] !== g[3][0] || p[1] !== g[3][1])) { ctx.globalAlpha = .55; ctx.strokeStyle = 'rgba(96,90,84,.8)'; ctx.lineWidth = .7; ctx.setLineDash([1.5, 2.5]); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(g[3][0], g[3][1]); ctx.stroke(); ctx.setLineDash([]); }
+        }
         ctx.globalAlpha = 1; brillo(p[0], p[1], 16, '255,252,240', .75); if (g[1]) brillo(p[0], p[1], 12, g[1], .22 * lat);   // halo desvanecido: se nota sobre la roca o el pasto
         ctx.globalAlpha = lat;
         ctx.fillStyle = res; ctx.beginPath(); ctx.arc(p[0], p[1], 6, 0, 2 * Math.PI); ctx.fill();
@@ -945,8 +955,8 @@
     function senales(t) {
       var al0 = fade(t);
       // jerarquía local: la malla inactiva cercana baja ~12 % de contraste mientras se mide (sin círculo visible)
-      var vel = suave((t - 8) / .25) * (1 - suave((t - 11.4) / .25)) * al0;
-      if (vel > 0) brillo(A_IMP[0] + 10, A_IMP[1] - 6, 95, '244,240,232', (.5 - .125 * suave((t - 9.4) / .25)) * vel);
+      var vel = suave((t - T_H0 - .2) / .25) * (1 - suave((t - T_FUN + 1) / .25)) * al0;
+      if (vel > 0) brillo(A_IMP[0] + 10, A_IMP[1] - 6, 95, '244,240,232', (.5 - .125 * suave((t - T_REC) / .25)) * vel);
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
@@ -959,8 +969,8 @@
         ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(q[0] - rx * .25, y0 - ry * .2, rx * .45, ry * .4, 0, 0, 2 * Math.PI); ctx.fill();
         // barra de tiempo con borde blanco
         // el borde blanco solo arriba: donde la barra toca su tapita no lleva delineado
-        if (hb > 4) { ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 4.4; ctx.beginPath(); ctx.moveTo(q[0], y0 - 4); ctx.lineTo(q[0], y0 - hb); ctx.stroke(); ctx.lineCap = 'butt'; }
-        ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(q[0], y0); ctx.lineTo(q[0], y0 - hb); ctx.stroke();
+        if (hb > 4) { ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = VAR ? 5.4 : 4.4; ctx.beginPath(); ctx.moveTo(q[0], y0 - 4); ctx.lineTo(q[0], y0 - hb); ctx.stroke(); ctx.lineCap = 'butt'; }
+        ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = VAR ? 3 : 2; ctx.beginPath(); ctx.moveTo(q[0], y0); ctx.lineTo(q[0], y0 - hb); ctx.stroke();
         if (u < .12) { ctx.strokeStyle = 'rgba(255,255,255,' + (1 - u / .12) + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(q[0], y0, rx * 1.35, ry * 1.35, 0, 0, 2 * Math.PI); ctx.stroke(); }
         var p1 = Math.max(0, 1 - u / .7); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + (.85 * p1) + ')'; ctx.lineWidth = .8; ctx.beginPath(); ctx.ellipse(q[0], y0, rx + 8 * (1 - p1), ry + 3.4 * (1 - p1), 0, 0, 2 * Math.PI); ctx.stroke(); }
         ctx.globalAlpha = 1;
@@ -1014,9 +1024,10 @@
         var AX = [], GR = [];
         for (var k3 = 0; k3 <= 14; k3++) { var q3 = sobre(IMP, -1.75 * ue * k3 / 14); AX.push(Ps(q3)); GR.push(Ps([q3[0], Math.min(q3[1], alto(q3[0], q3[2])), q3[2]])); }
         ctx.globalAlpha = ue; ctx.beginPath(); AX.forEach(function (q, j) { if (j) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); for (k3 = GR.length - 1; k3 >= 0; k3--) ctx.lineTo(GR[k3][0], GR[k3][1]); ctx.closePath();
-        ctx.fillStyle = 'rgba(120,116,112,.26)'; ctx.fill();
-        ctx.strokeStyle = 'rgba(100,96,92,.95)'; ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]); ctx.beginPath(); GR.forEach(function (q, j) { if (j) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.stroke(); ctx.setLineDash([]);
-        ctx.strokeStyle = 'rgba(100,96,92,.85)'; ctx.lineWidth = 1; ctx.beginPath(); for (k3 = 2; k3 <= 14; k3 += 3) { ctx.moveTo(AX[k3][0], AX[k3][1]); ctx.lineTo(GR[k3][0], GR[k3][1]); } ctx.stroke();
+        var vF = VAR === 'A' ? 0 : VAR === 'B' ? .1 : VAR === 'C' ? 0 : .26, vT = VAR === 'A' ? .6 : VAR === 'B' ? 0 : VAR === 'C' ? .45 : .95, vD = VAR === 'A' ? .45 : VAR ? 0 : .85;
+        if (vF) { ctx.fillStyle = 'rgba(120,116,112,' + vF + ')'; ctx.fill(); }
+        if (vT) { ctx.strokeStyle = 'rgba(100,96,92,' + vT + ')'; ctx.lineWidth = VAR ? 1 : 1.4; ctx.setLineDash([3, 3]); ctx.beginPath(); GR.forEach(function (q, j) { if (j) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.stroke(); ctx.setLineDash([]); }
+        if (vD) { ctx.strokeStyle = 'rgba(100,96,92,' + vD + ')'; ctx.lineWidth = VAR ? .7 : 1; ctx.beginPath(); for (k3 = VAR ? 5 : 2; k3 <= 14; k3 += VAR ? 4 : 3) { ctx.moveTo(AX[k3][0], AX[k3][1]); ctx.lineTo(GR[k3][0], GR[k3][1]); } ctx.stroke(); }
         var e0b = [b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv]; trazo(e0b, b, 'rgba(255,253,248,.9)', 4.4, [6, 3]); trazo(e0b, b, '#181415', 2.2, [6, 3]);   // el eje va encima del velo
         if (ue > .9) texto(ctx, 'EJE RECONSTRUIDO', b[0] - L * Math.cos(ang) * .62, b[1] - L * Math.sin(ang) * .62 - 12, '#22201E', '700 9px "Space Mono", monospace');
       }

@@ -526,10 +526,6 @@
         }
       }
       difumina(c, true);
-      // origen astrofísico: sin viñeta, en el espacio sobre la maqueta (solo su rótulo es fijo)
-      // a la izquierda de la recta del ν, sin tocarla
-      var yO = OR.C[1] + 84, xO = OR.D1[0] + (yO - OR.D1[1]) * (OR.E[0] - OR.D1[0]) / (OR.E[1] - OR.D1[1]) - 18;
-      texto(c, 'ORIGEN ASTROFÍSICO · NO A ESCALA', xO, yO, 'rgba(92,70,54,.9)', '700 11px "Space Mono", monospace', 'end');
       // rótulo mínimo del observatorio sobre la ladera instrumentada
       c.fillStyle = 'rgba(70,54,42,.95)'; c.font = '700 11px "Space Mono", monospace'; c.fillText('TAMBO', TMB[0], TMB[1]);
       c.font = '400 9px "Space Mono", monospace'; c.fillStyle = 'rgba(92,70,54,.75)'; c.fillText('red de detectores en la ladera', TMB[0], TMB[1] + 13);
@@ -605,12 +601,13 @@
       ];
       return { C: C, S: S, D1: D1, D2: D2, N1: N1, E: E, T: T };
     })();
+    var T_OFIN = 3.95;   // las trazas del origen quedan medio transparentes hasta aquí y luego se desvanecen juntas
     function medallon(t) {
       var fd = fade(t), r = semilla(5);
       for (var i = 0; i < 30; i++) { var ra = MED.r * Math.sqrt(r()) * 1.1, an = r() * 2 * Math.PI, x = OR.C[0] + ra * Math.cos(an), y = OR.C[1] + ra * Math.sin(an) * .7; ctx.fillStyle = 'rgba(185,140,70,' + (.15 + .25 * (.5 + .5 * Math.sin(t * 2 + i))) + ')'; ctx.fillRect(x, y, 1.2, 1.2); }
       OR.T.forEach(function (q) {
         if (t < q.t0) return;
-        var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - q.t1 - 1.6) / .6)) * fd;
+        var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - T_OFIN) / .6)) * fd;   // todas las trazas se van juntas
         if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = .35 * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.2 : q.w * .8, q.g); }
         var al = (1 - suave((t - q.t1) / .35)) * fd; if (al <= 0) { ctx.globalAlpha = 1; return; }
         ctx.globalAlpha = al;
@@ -620,7 +617,7 @@
         if (u > .25) rotulo(q.lab, b[0] + 5, b[1] - 5, 'rgba(' + q.col + ',1)', 14);
         ctx.globalAlpha = 1;
       });
-      ctx.globalAlpha = .9 * fd; texto(ctx, 'RAYO CÓSMICO · PROTÓN DE ~10¹⁷ eV', OR.S[0] + 110, OR.S[1] + 8, 'rgba(30,120,160,1)', '700 9px "Space Mono", monospace'); ctx.globalAlpha = 1;
+      ctx.globalAlpha = .9 * fd * suave(t / .25) * (1 - suave((t - T_OFIN) / .6)); if (ctx.globalAlpha > 0) texto(ctx, 'RAYO CÓSMICO · PROTÓN DE ~10¹⁷ eV', OR.S[0] + 110, OR.S[1] + 8, 'rgba(30,120,160,1)', '700 9px "Space Mono", monospace'); ctx.globalAlpha = 1;
       // vértices: destellos breves al dividirse
       [[OR.C, .55, 'Δ⁺'], [OR.D1, .75], [OR.D2, 1.05], [OR.N1, 1.25]].forEach(function (v) { var w = t - v[1]; if (w > 0 && w < .5) { brillo(v[0][0], v[0][1], 26 * (1 - w / .5) + 4, '240,150,70', .9 * (1 - w / .5)); if (v[2]) rotulo(v[2], v[0][0] - 14, v[0][1] + 20, '#A84A2E', 14); } });
     }
@@ -830,6 +827,22 @@
         q = Ps([x, y, z]); if (cerca(q, 90)) continue;
         PIEDRAS.push({ x: q[0], y: q[1], w: (3 + 5 * r() * r()) * (1 - .3 * (z - Z0) / (Z1 - Z0)), h: .55 + .2 * r(), a: (r() - .5) * .4 });
       }
+      // rocas grandes en el cerro de la derecha (blanco de roca): bloques facetados, como afloramientos reales
+      for (n = 0; n < 900 && PIEDRAS.length < 34 + 15; n++) {
+        x = 1.15 + r() * 3.4; z = Z0 + .15 + r() * (Z1 - Z0 - .3); y = alto(x, z);
+        if (y < .2) continue;
+        q = Ps([x, y, z]);
+        if (PIEDRAS.some(function (o) { return o.g && Math.abs(o.x - q[0]) < 46 && Math.abs(o.y - q[1]) < 20; })) continue;
+        PIEDRAS.push({ x: q[0], y: q[1], w: (20 + 20 * r()) * (1 - .3 * (z - Z0) / (Z1 - Z0)), h: .45 + .3 * r(), a: 0, g: true });
+      }
+      // forma de cada piedra: contorno superior irregular (6–8 vértices) y una arista desde la cumbre
+      PIEDRAS.forEach(function (p) {
+        var k = 5 + Math.floor(r() * 3), v = [];
+        for (var i = 0; i <= k; i++) { var an = Math.PI * (1 - i / k), rr = .78 + .32 * r(); v.push([Math.cos(an) * rr * .5, -Math.max(.12, Math.sin(an)) * rr * p.h * (i === 0 || i === k ? .25 : 1)]); }
+        var pk = 1; v.forEach(function (q, i) { if (q[1] < v[pk][1]) pk = i; }); if (pk === 0) pk = 1; if (pk === k) pk = k - 1;
+        p.v = v; p.pk = pk; p.b = .05 + .2 * r(); p.gr = r() < .6 ? [.1 + .3 * r(), .2 + .4 * r()] : null;
+      });
+      PIEDRAS.sort(function (a, b) { return a.y - b.y; });
     })();
     var COL_PASTO = [['rgba(84,122,56,.85)', 'rgba(110,146,66,.85)'], ['rgba(132,150,70,.85)', 'rgba(150,160,78,.85)'], ['rgba(184,156,82,.88)', 'rgba(198,170,94,.88)'], ['rgba(170,134,70,.88)', 'rgba(150,118,62,.85)']];
     function pintaPasto(c) {
@@ -847,11 +860,21 @@
       B.forEach(function (Q, k) { if (!Q.length) return; c.strokeStyle = COL_PASTO[k >> 1][k & 1]; c.beginPath(); for (var j = 0; j < Q.length; j += 6) { c.moveTo(Q[j], Q[j + 1]); c.quadraticCurveTo(Q[j + 2], Q[j + 3], Q[j + 4], Q[j + 5]); } c.stroke(); });
       c.lineCap = 'butt';
       for (var j = 0; j < flores.length; j += 3) { c.fillStyle = flores[j + 2] > 1 ? '#E2B63E' : '#A866BE'; c.beginPath(); c.arc(flores[j], flores[j + 1], 1.3, 0, 2 * Math.PI); c.fill(); }
-      PIEDRAS.forEach(function (p) {   // piedra: sombra, cuerpo gris cálido, cara iluminada arriba a la derecha
-        c.fillStyle = 'rgba(60,44,30,.25)'; c.beginPath(); c.ellipse(p.x + p.w * .25, p.y + .8, p.w * 1.05, p.w * .32, 0, 0, 2 * Math.PI); c.fill();
-        c.fillStyle = '#8E8679'; c.beginPath(); c.ellipse(p.x, p.y - p.w * p.h * .45, p.w, p.w * p.h * .6, p.a, 0, 2 * Math.PI); c.fill();
-        c.fillStyle = '#B5AD9F'; c.beginPath(); c.ellipse(p.x + p.w * .2, p.y - p.w * p.h * .62, p.w * .6, p.w * p.h * .3, p.a, 0, 2 * Math.PI); c.fill();
-        c.strokeStyle = 'rgba(60,52,44,.45)'; c.lineWidth = .5; c.beginPath(); c.ellipse(p.x, p.y - p.w * p.h * .45, p.w, p.w * p.h * .6, p.a, 0, 2 * Math.PI); c.stroke();
+      PIEDRAS.forEach(function (p) {   // piedra facetada: la luz viene de la derecha (cara clara), la izquierda en sombra
+        var W = p.g ? p.w : p.w * 2, X = function (q) { return p.x + q[0] * W; }, Y = function (q) { return p.y + q[1] * W; }, v = p.v, k = v.length - 1, B = [p.b, 0];
+        c.fillStyle = 'rgba(60,44,30,.28)'; c.beginPath(); c.ellipse(p.x - W * .12, p.y + .6, W * .62, W * .14 + 1, 0, 0, 2 * Math.PI); c.fill();
+        function cara(desde, hasta, col) { c.beginPath(); c.moveTo(X(B), Y(B)); for (var i = desde; i <= hasta; i++) c.lineTo(X(v[i]), Y(v[i])); c.closePath(); c.fillStyle = col; c.fill(); }
+        cara(0, p.pk, p.g ? '#7C7367' : '#857C70');
+        cara(p.pk, k, p.g ? '#B4AB9C' : '#ADA496');
+        // cara superior: un triángulo claro junto a la cumbre
+        var m = [(v[p.pk][0] + v[Math.min(k, p.pk + 1)][0]) / 2, (v[p.pk][1] + v[Math.min(k, p.pk + 1)][1]) / 2 + .08 * p.h];
+        c.fillStyle = '#CFC6B6'; c.beginPath(); c.moveTo(X(v[p.pk]), Y(v[p.pk])); c.lineTo(X(v[Math.min(k, p.pk + 1)]), Y(v[Math.min(k, p.pk + 1)])); c.lineTo(X(m), Y(m)); c.closePath(); c.fill();
+        c.strokeStyle = 'rgba(58,50,42,.6)'; c.lineWidth = p.g ? .7 : .5; c.lineJoin = 'round';
+        c.beginPath(); c.moveTo(X(v[0]), Y(v[0])); for (var i = 1; i <= k; i++) c.lineTo(X(v[i]), Y(v[i])); c.closePath(); c.stroke();
+        c.strokeStyle = 'rgba(58,50,42,.35)'; c.beginPath(); c.moveTo(X(v[p.pk]), Y(v[p.pk])); c.lineTo(X(B), Y(B)); c.stroke();
+        if (p.g && p.gr) { c.strokeStyle = 'rgba(58,50,42,.3)'; c.lineWidth = .5; c.beginPath(); var g0 = [p.b + .12, -p.gr[0] * p.h]; c.moveTo(X(g0), Y(g0)); c.lineTo(X([g0[0] + .14, g0[1] - .1 * p.h]), Y([g0[0] + .14, g0[1] - .1 * p.h])); c.lineTo(X([g0[0] + .2, g0[1] + .04]), Y([g0[0] + .2, g0[1] + .04])); c.stroke(); }
+        // un par de matas al pie de las grandes
+        if (p.g) { c.strokeStyle = 'rgba(176,150,78,.95)'; c.lineWidth = .7; c.lineCap = 'round'; c.beginPath(); [-.42, .38].forEach(function (o, i) { var bx = p.x + o * W, by = p.y + .5; for (var h = -1; h <= 1; h++) { c.moveTo(bx + h * .5, by); c.quadraticCurveTo(bx + h * .4, by - 2.5, bx + h * 1.4, by - 4.2 - i); } }); c.stroke(); c.lineCap = 'butt'; }
       });
     }
     function realce() {

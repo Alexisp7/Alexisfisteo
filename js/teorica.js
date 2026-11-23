@@ -266,7 +266,7 @@
     }
     function poli(pts) { return 'M' + pts.map(function (p) { return f(p[0]) + ' ' + f(p[1]); }).join(' L') + 'Z'; }
     function paleta(k) {
-      var A = [[240, 170, 0], [244, 100, 20], [220, 30, 80], [120, 40, 220]], x = cl(k, 0, 1) * (A.length - 1), i = Math.min(A.length - 2, Math.floor(x)), w = x - i;
+      var A = [[210, 138, 27], [217, 90, 26], [182, 51, 58], [111, 74, 207]], x = cl(k, 0, 1) * (A.length - 1), i = Math.min(A.length - 2, Math.floor(x)), w = x - i;
       return [0, 1, 2].map(function (c) { return Math.round(A[i][c] + (A[i + 1][c] - A[i][c]) * w); }).join(',');
     }
 
@@ -681,14 +681,14 @@
       ctx.stroke();
       var sT = t < T_CARA ? L_ROCA * suave(ui / (T_CARA - T_VTX)) : L_ROCA + L_TAU * suave((t - T_CARA) / (T_DEC - T_CARA));
       var q1 = Ps(sobre(VTX, Math.min(sT, L_ROCA)));
-      trazoB(vt, q1, 'rgba(196,120,40,.95)', 1.6);
+      trazoB(vt, q1, 'rgba(181,106,30,.95)', 1.8);
       var cab = q1;
-      if (sT > L_ROCA) { cab = Ps(sobre(VTX, sT)); trazoB(q1, cab, 'rgba(196,120,40,.95)', 1.7); }
+      if (sT > L_ROCA) { cab = Ps(sobre(VTX, sT)); trazoB(q1, cab, 'rgba(181,106,30,.95)', 1.8); }
       if (t < T_DEC) { brillo(cab[0], cab[1], 12, '220,110,60', .7); ctx.fillStyle = '#B8641E'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2.2, 0, 2 * Math.PI); ctx.fill(); rotulo('τ⁻', cab[0] - 4, cab[1] - 11, '#9A4E16', 20); }
       var ud = t - T_DEC;
       if (ud > 0) {
         var d = Ps(DEC);
-        if (ud < .9) { var fl = ud < .16 ? 1 : 1 - suave((ud - .16) / .6); brillo(d[0], d[1], 46 * fl + 6, '255,170,60', .95 * fl); brillo(d[0], d[1], 16 * fl + 3, '255,255,240', fl); ctx.strokeStyle = 'rgba(236,124,16,' + (.8 * (1 - ud / .9)) + ')'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(d[0], d[1], 6 + 40 * ud, 0, 2 * Math.PI); ctx.stroke(); }
+        if (ud < .45) { var fl = ud < .1 ? ud / .1 : 1 - suave((ud - .1) / .3); brillo(d[0], d[1], 40 * fl + 4, '255,170,60', .9 * fl); brillo(d[0], d[1], 14 * fl + 2, '255,248,239', fl); ctx.strokeStyle = 'rgba(242,154,56,' + (.55 * (1 - ud / .45)) + ')'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(d[0], d[1], 5 + 60 * ud, 0, 2 * Math.PI); ctx.stroke(); }
         var nuF = Ps(sobre(DEC, Math.min(L_CRUCE * .95, ud * .9))), qn = [nuF[0], nuF[1] + 10];
         ctx.globalAlpha = al * Math.max(0, 1 - Math.max(0, ud - 2.5) / 2);
         trazoB(d, qn, 'rgba(170,55,125,.8)', .9, [1.5, 3]); rotulo('ν_τ', qn[0] + 3, qn[1] + 12, '#A33F7C', 13);
@@ -715,17 +715,17 @@
       });
       var resalta = foco === 'cascada' ? 1.6 : 1;
       // halo claro bajo la cascada: la separa del pasto y de los tanques sin cambiar sus colores
-      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 10 + 26 * crec * (1 - hk / 12), '255,252,240', .32 * fin * (1 - hk / 11)); }
+      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', .2 * fin * (1 - hk / 11)); }
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var al = Math.min(1, (k === 5 ? .8 : k === 4 ? .8 : 2.4 * (.035 + k * .025) * (k === 3 ? 1.05 : 1)) * fin * resalta);
-        ctx.strokeStyle = k === 5 ? 'rgba(130,60,240,' + al + ')' : k === 4 ? 'rgba(236,124,16,' + al + ')' : 'rgba(0,112,224,' + al + ')'; ctx.lineWidth = k === 5 ? 1.1 : k === 4 ? .6 : .5 + k * .15;
+        var al = Math.min(1, (k === 5 ? .45 : k === 4 ? .7 : 3.3 * (.035 + k * .025) * (k === 3 ? 1.05 : 1)) * fin * resalta);
+        ctx.strokeStyle = k === 5 ? 'rgba(123,76,226,' + al + ')' : k === 4 ? 'rgba(229,110,17,' + al + ')' : 'rgba(0,109,204,' + al + ')'; ctx.lineWidth = k === 5 ? .9 : k === 4 ? .9 : .5 + k * .13;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });
       if (ESTELA.length) { ctx.strokeStyle = 'rgba(40,120,165,' + (.012 * fin * resalta) + ')'; ctx.lineWidth = .5; ctx.beginPath(); for (var e = 0; e < ESTELA.length; e += 4) { ctx.moveTo(ESTELA[e], ESTELA[e + 1]); ctx.lineTo(ESTELA[e + 2], ESTELA[e + 3]); } ctx.stroke(); }
-      ctx.fillStyle = 'rgba(0,150,255,' + (.8 * fin * (1 - .4 * crec)) + ')';
+      ctx.fillStyle = 'rgba(0,109,204,' + (.85 * fin * (1 - .4 * crec)) + ')';
       for (var i = 0; i < CAB.length; i += 2) ctx.fillRect(CAB[i] - .7, CAB[i + 1] - .7, 1.4, 1.4);
-      ctx.fillStyle = 'rgba(236,124,16,' + (.95 * fin) + ')';
+      ctx.fillStyle = 'rgba(229,110,17,' + (.85 * fin) + ')';
       for (i = 0; i < CABH.length; i += 3) { ctx.beginPath(); ctx.arc(CABH[i], CABH[i + 1], CABH[i + 2] * .5 + .5, 0, 2 * Math.PI); ctx.fill(); }
       // eje: tenue, para no leerse como un láser
       var c0 = Ps(sobre(DEC, Math.max(0, sf - L_CRUCE * .3))), c1 = Ps(sobre(DEC, Math.min(sf, L_CRUCE)));
@@ -747,16 +747,17 @@
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
-        var a = Math.min(1, u / .15) * al0, hb = (5 + 6 * Math.log10(1 + d.n)) * suave(u / .5);
+        var a = Math.min(1, u / .15) * al0, hb = (8 + 6 * Math.log10(1 + d.n)) * suave(u / .5);
         var y0 = q[1] - 5.6, rx = 4.1, ry = 1.6;
         ctx.globalAlpha = a;
         // como al señalar la ladera: solo la tapita se pinta, del color de su tiempo de llegada
-        ctx.fillStyle = 'rgb(' + col + ')'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
+        brillo(q[0], y0, 7, '255,255,255', .3 * a * (1 - suave(u / .2)));
+        ctx.fillStyle = 'rgb(' + col + ')'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = .9; ctx.stroke();
         ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(q[0] - rx * .25, y0 - ry * .2, rx * .45, ry * .4, 0, 0, 2 * Math.PI); ctx.fill();
         // barra de tiempo con borde blanco
         // el borde blanco solo arriba: donde la barra toca su tapita no lleva delineado
         if (hb > 4) { ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 4.4; ctx.beginPath(); ctx.moveTo(q[0], y0 - 4); ctx.lineTo(q[0], y0 - hb); ctx.stroke(); ctx.lineCap = 'butt'; }
-        ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(q[0], y0); ctx.lineTo(q[0], y0 - hb); ctx.stroke();
+        ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(q[0], y0); ctx.lineTo(q[0], y0 - hb); ctx.stroke();
         var p1 = Math.max(0, 1 - u / .7); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + (.85 * p1) + ')'; ctx.lineWidth = .8; ctx.beginPath(); ctx.ellipse(q[0], y0, rx + 8 * (1 - p1), ry + 3.4 * (1 - p1), 0, 0, 2 * Math.PI); ctx.stroke(); }
         ctx.globalAlpha = 1;
       });
@@ -781,29 +782,29 @@
     // inferencia (no partícula), en tres tiempos: primero el frente ajustado a las llegadas, luego el eje
     // reconstruido que sale de él y al final el cono que contiene el 68 % de las repeticiones
     function reconstruye(t) {
-      var fd = fade(t), uf = suave((t - T_REC - .2) / .6) * fd; if (uf <= 0) return;
+      var fd = fade(t), uf = suave((t - T_REC) / .5) * fd; if (uf <= 0) return;
       var a = Ps(sobre(IMP, -1.75)), b = A_IMP, ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = Math.hypot(b[0] - a[0], b[1] - a[1]);
       var h = .5 * uf, fa = Ps([IMP[0] + E2[0] * h, IMP[1] + E2[1] * h, IMP[2] + E2[2] * h]), fb = Ps([IMP[0] - E2[0] * h, IMP[1] - E2[1] * h, IMP[2] - E2[2] * h]);
-      ctx.globalAlpha = uf; trazoB(fa, fb, '#22201E', 1.4, [4, 2.5]);
+      ctx.globalAlpha = uf; ctx.globalAlpha = uf * .85; trazo(fa, fb, 'rgba(255,255,255,.7)', 3.2, [5, 4]); trazo(fa, fb, '#231F20', 1.6, [5, 4]); ctx.globalAlpha = uf;
       [fa, fb].forEach(function (p) { ctx.fillStyle = 'rgba(255,253,248,.95)'; ctx.beginPath(); ctx.arc(p[0], p[1], 2.6, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = '#22201E'; ctx.beginPath(); ctx.arc(p[0], p[1], 1.5, 0, 2 * Math.PI); ctx.fill(); });
       // rótulo: separado del frente, hacia el lado contrario al eje (la cascada llega por la derecha)
       var lo = fa[0] < fb[0] ? fa : fb, ex = fa[0] - fb[0], ey = fa[1] - fb[1], el = Math.hypot(ex, ey) || 1;
       texto(ctx, 'FRENTE AJUSTADO', lo[0] - 7, lo[1] + 13, '#22201E', '700 9px "Space Mono", monospace', 'end');
-      var ue = suave((t - T_REC - .8) / .5) * fd;
+      var ue = suave((t - T_REC - .5) / .5) * fd;
       if (ue > 0) {
         var lv = L * ue;
         ctx.globalAlpha = ue;
-        trazoB([b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv], b, '#22201E', 1.3, [6, 3]);
+        trazoB([b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv], b, '#1E1A1B', 2, [6, 3]);
         ctx.beginPath(); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - 9 * Math.cos(ang - .35), b[1] - 9 * Math.sin(ang - .35)); ctx.lineTo(b[0] - 9 * Math.cos(ang + .35), b[1] - 9 * Math.sin(ang + .35)); ctx.closePath();
         ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 2.2; ctx.lineJoin = 'round'; ctx.stroke(); ctx.fillStyle = '#22201E'; ctx.fill();
         if (ue > .9) texto(ctx, 'EJE RECONSTRUIDO', b[0] - L * Math.cos(ang) * .62, b[1] - L * Math.sin(ang) * .62 - 12, '#22201E', '700 9px "Space Mono", monospace');
       }
-      var uc = suave((t - T_REC - 1.3) / .4) * fd;
+      var uc = suave((t - T_REC - 1) / .4) * fd;
       if (uc > 0 && AJ) {
         var dA = AJ.p68 * Math.PI / 180;
         ctx.globalAlpha = uc; ctx.beginPath();
         ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - L * Math.cos(ang - dA), b[1] - L * Math.sin(ang - dA)); ctx.lineTo(b[0] - L * Math.cos(ang + dA), b[1] - L * Math.sin(ang + dA)); ctx.closePath();
-        ctx.fillStyle = 'rgba(34,32,30,.16)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,253,248,.8)'; ctx.lineWidth = .8; ctx.stroke();
+        ctx.fillStyle = 'rgba(42,37,38,.3)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,253,248,.85)'; ctx.lineWidth = .7; ctx.stroke();
       }
       ctx.globalAlpha = 1;
     }

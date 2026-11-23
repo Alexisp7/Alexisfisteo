@@ -711,7 +711,7 @@
     var LOTES = [[], [], [], [], [], []], ESTELA = [], CAB = [], CABH = [];
     function cascada(t) {
       if (t < T_DEC) return;
-      var sf = frente(t), crec = cl(sf / L_CRUCE, 0, 1), fin = (1 - .75 * suave((t - T_LLEGA) / 2)) * fade(t);
+      var sf = frente(t), crec = cl(sf / L_CRUCE, 0, 1), fin = (1 - .75 * suave((t - T_H1) / 1.2)) * fade(t);   // las líneas se quedan depositadas mientras se encienden los tanques
       if (fin <= 0) return;
       var dens = .2 + .8 * suave((t - T_DEC - .5) / 1.4);   // semilla → abanico → fase madura
       LOTES.forEach(function (l) { l.length = 0; }); ESTELA.length = 0; CAB.length = 0; CABH.length = 0;
@@ -725,10 +725,10 @@
       });
       var resalta = foco === 'cascada' ? 1.6 : 1;
       // halo claro bajo la cascada: la separa del pasto y de los tanques sin cambiar sus colores
-      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', (t > T_DEC + 1.3 ? .14 : .2) * fin * (1 - suave((t - 7.5) / 1)) * (1 - hk / 11)); }
+      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', (t > T_DEC + 1.3 ? .14 : .2) * fin * (1 - suave((t - T_H1) / 1)) * (1 - hk / 11)); }
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var cede = 1 - .88 * suave((t - (k === 5 ? 7.65 : 7.5)) / 1);
+        var cede = 1 - .88 * suave((t - (k === 5 ? T_H1 + .15 : T_H1)) / 1);
         var al = cede * Math.min(1, (k === 5 ? .45 : k === 4 ? .7 : Math.max(3.3 * (.035 + k * .025) * (k === 3 ? 1.05 : 1) * (k >= 2 && t > T_DEC + 1.3 ? .88 : 1), .18 * (1 - crec) + .11 * crec)) * fin * resalta);
         ctx.strokeStyle = k === 5 ? 'rgba(123,76,226,' + al + ')' : k === 4 ? 'rgba(229,110,17,' + al + ')' : 'rgba(0,109,204,' + al + ')'; ctx.lineWidth = k === 5 ? .9 : k === 4 ? .9 : .5 + k * .13;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();

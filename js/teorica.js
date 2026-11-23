@@ -624,12 +624,24 @@
 
     // el ν_μ que importa: una recta desde la desintegración del π⁺ hasta la roca; cambia de azul (ν_μ) a magenta (ν_τ)
     // por la oscilación y su trayectoria queda dibujada. Ya en la roca va hasta el vértice.
-    var T_PAS = 1.4, T_NU0 = .75;
+    var T_PAS = 1.4, T_NU0 = .75, U_SUELO = null;
+    // dónde toca la recta del ν el suelo de los Andes (en pantalla): ahí termina su hilo celeste
+    function sueloNu(A, B) {
+      for (var u = 0; u <= 1; u += .005) {
+        var sx = A[0] + (B[0] - A[0]) * u, sy = A[1] + (B[1] - A[1]) * u;
+        for (var z = Z0; z <= Z1; z += .05) { var x3 = (sx - CAM.cx) / CAM.s - KZ * z; if (x3 < BX0 || x3 > BX1) continue; if (sy >= CAM.cy - CAM.s * (alto(x3, z) + KY * z)) return u; }
+      }
+      return 1;
+    }
     function neutrino(t) {
       var fd = fade(t), A = OR.D1, B = OR.E;
       if (t > T_NU0 && fd > 0) {
         var u = cl((t - T_NU0) / (T_PAS - T_NU0), 0, 1), cn = u < .55 ? [50 + 70 * u / .55, 120 - 40 * u / .55, 190 - 20 * u / .55] : [120 + 50 * (u - .55) / .45, 80 - 25 * (u - .55) / .45, 170 - 45 * (u - .55) / .45];
         cn = cn.map(Math.round).join(',');
+        var hN = [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u];
+        if (U_SUELO === null) U_SUELO = sueloNu(A, B);
+        var hS = [A[0] + (B[0] - A[0]) * Math.min(u, U_SUELO), A[1] + (B[1] - A[1]) * Math.min(u, U_SUELO)];
+        ctx.globalAlpha = fd; trazo(A, hS, 'rgba(90,180,225,.22)', 1.1);   // su recorrido queda como un hilo celeste muy tenue
         var aN = (1 - suave((t - T_PAS) / .3)) * fd;
         if (aN > 0) { ctx.globalAlpha = aN; var q = cometa(A, B, u, 70, cn, 1.6, 1); brillo(q[0], q[1], 12, cn, .8); ctx.fillStyle = 'rgb(' + cn + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 2.2, 0, 2 * Math.PI); ctx.fill(); }
         if (u > .5) {
@@ -835,10 +847,19 @@
         if (PIEDRAS.some(function (o) { return o.g && Math.abs(o.x - q[0]) < 46 && Math.abs(o.y - q[1]) < 20; })) continue;
         PIEDRAS.push({ x: q[0], y: q[1], w: (20 + 20 * r()) * (1 - .3 * (z - Z0) / (Z1 - Z0)), h: .45 + .3 * r(), a: 0, g: true });
       }
+      // arriba del cerro: más y más grandes (afloramientos), algunas en grupo
+      for (n = 0; n < 1500 && PIEDRAS.length < 34 + 15 + 16; n++) {
+        x = 1.6 + r() * 3.2; z = Z0 + .2 + r() * (Z1 - Z0 - .4); y = alto(x, z);
+        if (y < .95) continue;
+        q = Ps([x, y, z]);
+        if (PIEDRAS.some(function (o) { return o.g && Math.abs(o.x - q[0]) < 40 && Math.abs(o.y - q[1]) < 16; })) continue;
+        PIEDRAS.push({ x: q[0], y: q[1], w: (28 + 26 * r()) * (1 - .3 * (z - Z0) / (Z1 - Z0)), h: .38 + .3 * r(), a: 0, g: true });
+        if (r() < .5) PIEDRAS.push({ x: q[0] + 14 + 10 * r(), y: q[1] + 3 + 3 * r(), w: 10 + 8 * r(), h: .5 + .2 * r(), a: 0, g: true });
+      }
       // forma de cada piedra: contorno superior irregular (6–8 vértices) y una arista desde la cumbre
       PIEDRAS.forEach(function (p) {
-        var k = 5 + Math.floor(r() * 3), v = [];
-        for (var i = 0; i <= k; i++) { var an = Math.PI * (1 - i / k), rr = .78 + .32 * r(); v.push([Math.cos(an) * rr * .5, -Math.max(.12, Math.sin(an)) * rr * p.h * (i === 0 || i === k ? .25 : 1)]); }
+        var k = (p.g ? 6 : 5) + Math.floor(r() * 3), v = [], sesgo = (r() - .5) * .5;
+        for (var i = 0; i <= k; i++) { var an = Math.PI * (1 - i / k), rr = .72 + .4 * r(); v.push([Math.cos(an) * rr * .5, -Math.max(.12, Math.sin(an + sesgo * Math.sin(an))) * rr * p.h * (i === 0 || i === k ? .2 + .2 * r() : 1)]); }
         var pk = 1; v.forEach(function (q, i) { if (q[1] < v[pk][1]) pk = i; }); if (pk === 0) pk = 1; if (pk === k) pk = k - 1;
         p.v = v; p.pk = pk; p.b = .05 + .2 * r(); p.gr = r() < .6 ? [.1 + .3 * r(), .2 + .4 * r()] : null;
       });

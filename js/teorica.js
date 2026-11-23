@@ -684,7 +684,7 @@
       trazoB(vt, q1, 'rgba(181,106,30,.95)', 1.8);
       var cab = q1;
       if (sT > L_ROCA) { cab = Ps(sobre(VTX, sT)); trazoB(q1, cab, 'rgba(181,106,30,.95)', 1.8); }
-      if (t < T_DEC) { brillo(cab[0], cab[1], 12, '220,110,60', .7); ctx.fillStyle = '#B8641E'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2.2, 0, 2 * Math.PI); ctx.fill(); rotulo('τ⁻', cab[0] - 4, cab[1] - 11, '#9A4E16', 20); }
+      if (t < T_DEC) { brillo(cab[0], cab[1], 12, '220,110,60', .55); ctx.fillStyle = 'rgba(244,210,165,.3)'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 3.5, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = '#B8641E'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2.2, 0, 2 * Math.PI); ctx.fill(); rotulo('τ⁻', cab[0] - 6, cab[1] - 14, '#9A4E16', 20); }
       var ud = t - T_DEC;
       if (ud > 0) {
         var d = Ps(DEC);
@@ -715,10 +715,10 @@
       });
       var resalta = foco === 'cascada' ? 1.6 : 1;
       // halo claro bajo la cascada: la separa del pasto y de los tanques sin cambiar sus colores
-      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', .2 * fin * (1 - hk / 11)); }
+      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', (t > T_DEC + 1.3 ? .14 : .2) * fin * (1 - hk / 11)); }
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var al = Math.min(1, (k === 5 ? .45 : k === 4 ? .7 : Math.max(3.3 * (.035 + k * .025) * (k === 3 ? 1.05 : 1), .18 * (1 - crec) + .11 * crec)) * fin * resalta);
+        var al = Math.min(1, (k === 5 ? .45 : k === 4 ? .7 : Math.max(3.3 * (.035 + k * .025) * (k === 3 ? 1.05 : 1) * (k >= 2 && t > T_DEC + 1.3 ? .88 : 1), .18 * (1 - crec) + .11 * crec)) * fin * resalta);
         ctx.strokeStyle = k === 5 ? 'rgba(123,76,226,' + al + ')' : k === 4 ? 'rgba(229,110,17,' + al + ')' : 'rgba(0,109,204,' + al + ')'; ctx.lineWidth = k === 5 ? .9 : k === 4 ? .9 : .5 + k * .13;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });
@@ -758,6 +758,7 @@
         // el borde blanco solo arriba: donde la barra toca su tapita no lleva delineado
         if (hb > 4) { ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 4.4; ctx.beginPath(); ctx.moveTo(q[0], y0 - 4); ctx.lineTo(q[0], y0 - hb); ctx.stroke(); ctx.lineCap = 'butt'; }
         ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(q[0], y0); ctx.lineTo(q[0], y0 - hb); ctx.stroke();
+        if (u < .12) { ctx.strokeStyle = 'rgba(255,255,255,' + (1 - u / .12) + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(q[0], y0, rx * 1.35, ry * 1.35, 0, 0, 2 * Math.PI); ctx.stroke(); }
         var p1 = Math.max(0, 1 - u / .7); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + (.85 * p1) + ')'; ctx.lineWidth = .8; ctx.beginPath(); ctx.ellipse(q[0], y0, rx + 8 * (1 - p1), ry + 3.4 * (1 - p1), 0, 0, 2 * Math.PI); ctx.stroke(); }
         ctx.globalAlpha = 1;
       });
@@ -771,7 +772,7 @@
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, x = LT.x0 + (LT.x1 - LT.x0) * k, hb = 9 + 2.2 * Math.log10(1 + d.n);
-        ctx.strokeStyle = 'rgb(' + paleta(k) + ')'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, LT.y - 1); ctx.lineTo(x, LT.y - 1 - hb * suave(u / .3)); ctx.stroke();
+        ctx.strokeStyle = 'rgb(' + paleta(k) + ')'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, LT.y - 1); ctx.lineTo(x, LT.y - 1 - (2 + (hb - 2) * suave(u / .12))); ctx.stroke();
       });
       ctx.strokeStyle = 'rgba(80,100,120,.32)'; ctx.lineWidth = .6; ctx.setLineDash([1.5, 2]); ctx.beginPath(); ctx.moveTo(LT.x0 + 30, LT.y + 22); ctx.lineTo(A_IMP[0] + 6, A_IMP[1] - 30); ctx.stroke(); ctx.setLineDash([]);
       ctx.fillStyle = '#201B1C'; ctx.font = '700 10px "Space Mono", monospace';
@@ -786,7 +787,7 @@
       var fd = fade(t), uf = suave((t - T_REC) / .5) * fd; if (uf <= 0) return;
       var a = Ps(sobre(IMP, -1.75)), b = A_IMP, ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = Math.hypot(b[0] - a[0], b[1] - a[1]);
       var h = .5 * uf, fa = Ps([IMP[0] + E2[0] * h, IMP[1] + E2[1] * h, IMP[2] + E2[2] * h]), fb = Ps([IMP[0] - E2[0] * h, IMP[1] - E2[1] * h, IMP[2] - E2[2] * h]);
-      ctx.globalAlpha = uf; ctx.globalAlpha = uf * .78; trazo(fa, fb, 'rgba(255,255,255,.6)', 3.2, [5, 4]); trazo(fa, fb, '#231F20', 1.6, [5, 4]); ctx.globalAlpha = uf;
+      ctx.globalAlpha = uf; ctx.globalAlpha = uf * .72; trazo(fa, fb, 'rgba(255,255,255,.6)', 3, [5, 4]); trazo(fa, fb, '#231F20', 1.4, [5, 4]); ctx.globalAlpha = uf;
       [fa, fb].forEach(function (p) { ctx.fillStyle = 'rgba(255,253,248,.95)'; ctx.beginPath(); ctx.arc(p[0], p[1], 2.6, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = '#22201E'; ctx.beginPath(); ctx.arc(p[0], p[1], 1.5, 0, 2 * Math.PI); ctx.fill(); });
       // rótulo: separado del frente, hacia el lado contrario al eje (la cascada llega por la derecha)
       var lo = fa[0] < fb[0] ? fa : fb, ex = fa[0] - fb[0], ey = fa[1] - fb[1], el = Math.hypot(ex, ey) || 1;

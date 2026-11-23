@@ -9,7 +9,7 @@
 // todo se arma detrás de la hoja de carga (js/carga.js): la hoja se pinta primero, luego se construyen las escenas,
 // se precalientan, se mide la GPU y se pintan los primeros cuadros; solo entonces la hoja se retira
 var avisar, armado = new Promise(function (ok) { avisar = ok; });
-if (window.fxEspera) window.fxEspera(armado, 30000);   // la primera vez, compilar el trazador puede tardar ~13 s: la hoja espera hasta 30 s
+if (window.fxEspera) window.fxEspera(armado);
 var menu = function () {
   var raiz = document.querySelector('[data-cursos-menu]');
   if (!raiz) return;
@@ -183,17 +183,17 @@ var menu = function () {
     // ── WebGL
     var gl = lienzo.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true }), U = {}, listo = false;
     if (gl) gl.getExtension('OES_standard_derivatives');
-    // el trazador se compila en segundo plano (ver compilaAgujero en js/agujero-glsl.js): la página no se congela
-    // mientras tanto y la hoja de carga espera a fig.bnListo antes de retirarse
-    fig.bnListo = (gl ? window.compilaAgujero(gl, GLSL_AGUJERO) : Promise.resolve(null)).then(function (pr) {
-      if (pr) {
-        gl.useProgram(pr);
-        var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-        var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
-        ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk', 'uEx', 'uSal', 'uAg'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
-        listo = true; inicio = performance.now();   // la entrada del dibujo cuenta desde que el trazador está listo, como antes
-      } else fig.classList.add('bn-sin-gl');
-    });
+    if (gl) {
+      var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }'); gl.compileShader(vs);
+      var fs = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(fs, GLSL_AGUJERO); gl.compileShader(fs);
+      if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(fs));
+      var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); gl.useProgram(pr);
+      var bf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, bf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
+      ['uRes', 'uVB', 'uC', 'uSC', 'uRoll', 'uT', 'uIncl', 'uPix', 'uArm', 'uDim', 'uTD', 'uHk', 'uEx', 'uSal', 'uAg'].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+      listo = gl.getProgramParameter(pr, gl.LINK_STATUS);
+    }
+    if (!listo) fig.classList.add('bn-sin-gl');
     var tiempo = 0, dim = [1, 1], dimMeta = [1, 1], hk = 0, hkMeta = 0, ex = 0, sal = 0, zoom = 1;
     // el disco gira en un bucle perfecto de 40 s (ver patron/disco en el shader)
     function tDisco(t) { return ((t % 40) + 40) % 40; }
@@ -711,37 +711,18 @@ var menu = function () {
           que: 'Entre el borde interno del disco (la órbita estable más interna, ISCO, en 3 rₛ) y el horizonte ya no hay órbitas estables: el gas se precipita en espiral. En la literatura se llama plunging region. Dentro está la esfera de fotones, en 1,5 rₛ, donde la luz puede orbitar.',
           dibujo: 'la franja resaltada entre la sombra y el disco, deformada por la lente. Su borde interior es el anillo de fotones: la luz que rozó la esfera de fotones (1,5 rₛ) antes de escapar.',
           extra: function (n) {
-            // se pinta la franja misma: su forma real (deformada por la lente y cortada por el disco que pasa delante) sale de clasifica().
-            // Son unos 12 000 rayos trazados en JS (~0,3–0,5 s): se trazan en un hilo aparte (Worker) con el mismo código de
-            // clasifica(), así el resultado es idéntico y la página no se congela mientras tanto
-            function trazaFranja() {
-              var M2 = 240, tramos = [], cur = null;
-              for (var k = 0; k <= M2; k++) {
-                var ang = -Math.PI + 2 * Math.PI * k / M2, ri = -1, ro = -1;
-                for (var rr = RSH * .98; rr <= RSH * 1.7; rr += .75) { var q = polar(ang, rr); if (clasifica(q[0], q[1]) === 'caida') { if (ri < 0) ri = rr; ro = rr; } else if (ri >= 0) break; }
-                if (ri > 0 && ro - ri > 5) { if (!cur) { cur = []; tramos.push(cur); } cur.push([ang, ri, ro]); } else cur = null;
-              }
-              if (tramos.length > 1 && tramos[0][0][0] === -Math.PI && cur === tramos[tramos.length - 1]) { var u = tramos.pop(); tramos[0] = u.concat(tramos[0]); }   // une el corte en ±π
-              return tramos;
+            // se pinta la franja misma: su forma real (deformada por la lente y cortada por el disco que pasa delante) sale de clasifica()
+            var M2 = 240, tramos = [], cur = null;
+            for (var k = 0; k <= M2; k++) {
+              var ang = -Math.PI + 2 * Math.PI * k / M2, ri = -1, ro = -1;
+              for (var rr = RSH * .98; rr <= RSH * 1.7; rr += .75) { var q = polar(ang, rr); if (clasifica(q[0], q[1]) === 'caida') { if (ri < 0) ri = rr; ro = rr; } else if (ri >= 0) break; }
+              if (ri > 0 && ro - ri > 5) { if (!cur) { cur = []; tramos.push(cur); } cur.push([ang, ri, ro]); } else cur = null;
             }
-            function dibuja(tramos) {
-              tramos.filter(function (T) { return T.length > 8; }).forEach(function (T) {
-                var fuera = T.map(function (e) { return polar(e[0], e[2]); }), dentro = T.map(function (e) { return polar(e[0], e[1]); }).reverse();
-                el('path', { 'class': 'bn-franja', d: poligono(fuera.concat(dentro)) }, n);
-                el('path', { 'class': 'bn-rs bn-rs-ecu', d: 'M' + fuera.map(function (q) { return f(q[0]) + ' ' + f(q[1]); }).join(' L'), pathLength: 40 }, n);
-              });
-            }
-            fig.bnFranja = new Promise(function (ok) {
-              var w = null;
-              try {
-                var codigo = 'var C = ' + JSON.stringify(C) + ', SC = ' + SC + ', ROLL = ' + ROLL + ', INCL = ' + INCL + ', BC = ' + BC + ', RSH = ' + RSH + ';\n' +
-                  polar.toString() + '\n' + clasifica.toString() + '\n' + trazaFranja.toString() + '\npostMessage(trazaFranja());';
-                var url = URL.createObjectURL(new Blob([codigo], { type: 'text/javascript' }));
-                w = new Worker(url); URL.revokeObjectURL(url);
-              } catch (e) { w = null; }
-              if (!w) { dibuja(trazaFranja()); ok(); return; }
-              w.onmessage = function (e) { w.terminate(); dibuja(e.data); ok(); };
-              w.onerror = function (e) { e.preventDefault(); w.terminate(); dibuja(trazaFranja()); ok(); };
+            if (tramos.length > 1 && tramos[0][0][0] === -Math.PI && cur === tramos[tramos.length - 1]) { var u = tramos.pop(); tramos[0] = u.concat(tramos[0]); }   // une el corte en ±π
+            tramos.filter(function (T) { return T.length > 8; }).forEach(function (T) {
+              var fuera = T.map(function (e) { return polar(e[0], e[2]); }), dentro = T.map(function (e) { return polar(e[0], e[1]); }).reverse();
+              el('path', { 'class': 'bn-franja', d: poligono(fuera.concat(dentro)) }, n);
+              el('path', { 'class': 'bn-rs bn-rs-ecu', d: 'M' + fuera.map(function (q) { return f(q[0]) + ' ' + f(q[1]); }).join(' L'), pathLength: 40 }, n);
             });
           } });
         nota(null, { k: 'disco', breve: 'Gas que orbita, pierde momento angular por viscosidad y entra en espiral. Se calienta y brilla; el lado que se acerca, más (Doppler).',  ancla: buscar('disco', 2.3, RSH * 1.15, RSH * 2.4), rotulo: [C[0] - RSH * 1.55, C[1] + RSH * 1.9], lado: 'izq', titulo: 'Disco de acreción', med: 'disco', dim: [1, .3],
@@ -1582,10 +1563,7 @@ var menu = function () {
   // (si alguien pasa a una antes de que termine, se completa en ese momento)
   var faltan = mods.map(function (m, w) { return w >= 2 ? 900 : 1600; });
   function calienta(w, n) { n = Math.min(n, faltan[w]); for (var k = 0; k < n; k++) mods[w].tick(1 / 60); faltan[w] -= n; }
-  // la escena visible se calienta en trozos de 200 pasos, uno por tarea (antes era un solo bloque de ~0,3 s)
-  var calentado = new Promise(function (ok) {
-    (function trozo() { calienta(activo, 200); if (faltan[activo] > 0) setTimeout(trozo, 0); else ok(); })();
-  });
+  calienta(activo, Infinity);
   var ocioso = window.requestIdleCallback || function (fn) { return setTimeout(function () { fn({ timeRemaining: function () { return 8; } }); }, 30); };
   (function sigue(plazo) {
     var w = faltan.findIndex(function (x) { return x > 0; }); if (w < 0) return;
@@ -1601,13 +1579,9 @@ var menu = function () {
     if (!visible || document.hidden) return;
     mods[activo].tick(dt);
   }
-  calentado.then(function () { requestAnimationFrame(bucle); });
-  // la hoja espera a que el trazador del agujero negro esté compilado (en segundo plano), a la franja de la región
-  // de caída (trazada en un Worker) y al precalentado; luego dos cuadros más bajo la hoja: el agujero ya se dibujó antes de verse
-  var f0 = escenas[0];
-  return Promise.all([f0.bnListo, f0.bnFranja, calentado]).then(function () {
-    return new Promise(function (ok) { requestAnimationFrame(function () { requestAnimationFrame(ok); }); });
-  });
+  requestAnimationFrame(bucle);
+  // dos cuadros más bajo la hoja: el agujero negro ya dibujó (y compiló) antes de que se vea
+  return new Promise(function (ok) { requestAnimationFrame(function () { requestAnimationFrame(ok); }); });
   }
 };
 requestAnimationFrame(function () { setTimeout(function () {

@@ -7,7 +7,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const preferenciaMovimiento = matchMedia('(prefers-reduced-motion: reduce)');
+let reducido = preferenciaMovimiento.matches;
+const MARGEN_RENDER = { arriba: 0.5, lados: 0.12, abajo: 0.08 };
 
 // abajo a la izquierda, donde antes estaba «Evolución de la colonia», mirando hacia el mapa.
 // Coordenadas de la imagen de la maqueta (1774×887); baja un poco más allá del borde, sobre una franja propia.
@@ -21,6 +23,10 @@ caja.setAttribute('aria-hidden', 'true');
 caja.style.cssText = `left:${(100 * ZONA.x / 1774).toFixed(3)}%;top:${(100 * ZONA.y / 887).toFixed(3)}%;width:${(100 * ZONA.w / 1774).toFixed(3)}%;height:${(100 * ZONA.h / 887).toFixed(3)}%`;
 // plataforma biomecánica de Andreé bajo los pies (detrás del personaje); los orbes laten
 caja.insertAdjacentHTML('afterbegin', '<img class="mq-plataforma" src="maqueta2/plataforma.webp" alt="" draggable="false"><img class="mq-plataforma mq-plat-orbes" src="maqueta2/plataforma-orbes.webp" alt="" draggable="false">');
+const frente = document.createElement('div');
+frente.className = 'colonia-personaje-fijo';
+frente.setAttribute('aria-hidden', 'true');
+frente.appendChild(caja);
 
 // maquetaDraw() rehace el HTML de #maqueta: volvemos a meter la caja tras la capa de objetos
 function colocar() {
@@ -28,11 +34,11 @@ function colocar() {
   if (!st) return;
   escenario.hidden = st.hidden;
   if (st.nextSibling !== escenario) st.after(escenario);
-  const obj = st.querySelector(':scope > .mq-objetos');
-  if (obj) { if (obj.nextSibling !== caja) obj.after(caja); }
-  else if (caja.parentNode !== st) st.appendChild(caja);
+  // El personaje pertenece al encuadre, fuera del mundo que se desplaza.
+  if (frente.parentNode !== st) st.appendChild(frente);
+  if (caja.parentNode !== frente) frente.appendChild(caja);
 }
-new MutationObserver(colocar).observe(document.body, { childList: true, subtree: true });
+
 
 const render = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
 render.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
@@ -50,10 +56,10 @@ const MIRA = new THREE.Vector3(0, 0.56, 0);
 camara.position.set(0, 0.95, 3.2);
 camara.lookAt(MIRA);
 
-escena.add(new THREE.HemisphereLight(0xe6d8ff, 0x220a2a, 0.6));
+escena.add(new THREE.HemisphereLight(0xf1f3e9, 0x191b17, 0.8));
 const clave = new THREE.DirectionalLight(0xfff0e0, 2.4); clave.position.set(-2, 3.5, 3); escena.add(clave);
-const contra = new THREE.DirectionalLight(0xc44aff, 5.0); contra.position.set(2.4, 2, -3); escena.add(contra);
-const contra2 = new THREE.DirectionalLight(0x9228e8, 2.2); contra2.position.set(-2.6, 1.2, -2.5); escena.add(contra2);
+const contra = new THREE.DirectionalLight(0xe6ede0, 2.2); contra.position.set(2.4, 2, -3); escena.add(contra);
+const contra2 = new THREE.DirectionalLight(0xd4c9af, 1.3); contra2.position.set(-2.6, 1.2, -2.5); escena.add(contra2);
 const verde = new THREE.PointLight(0xb8f52d, 0.5, 2.5, 2); verde.position.set(0, 0.25, 1.2); escena.add(verde);
 
 const pulso = { value: 0.5 };
@@ -73,20 +79,19 @@ function piel(m) {
       .replace('#include <map_fragment>', `#include <map_fragment>
         // bolsas verdes: más verde y un líquido que se mueve por dentro
         float verdor = smoothstep(0.03, 0.16, diffuseColor.g - max(diffuseColor.r, diffuseColor.b));
+        // Neutralizar también el violeta que ya está pintado en la textura de quitina.
+        float violeta = smoothstep(0.012, 0.09, min(diffuseColor.r, diffuseColor.b) - diffuseColor.g);
+        float gris = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(gris) * vec3(0.98, 1.0, 0.94), violeta * (1.0 - verdor));
         vec3 q = vPosL * 60.0;
         float flujo = 0.5 + 0.5 * ruido(q + vec3(0.0, uTiempo * 1.6, 0.0));
         float vetas = smoothstep(0.55, 0.95, 0.5 + 0.5 * ruido(q * 1.8 - vec3(uTiempo * 1.2, 0.0, uTiempo * 0.8)));
         vec3 liquido = mix(vec3(0.16, 0.55, 0.03), vec3(0.62, 1.0, 0.16), flujo) + vetas * vec3(0.35, 0.45, 0.1);
-        diffuseColor.rgb = mix(diffuseColor.rgb, liquido, verdor * 0.95);
-        // quitina: tinte violeta como la plataforma y el circuito, y venas rosadas finas que brillan
-        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.2, 0.8, 1.4) + vec3(0.03, 0.0, 0.05), (1.0 - verdor) * 0.7);
-        float venas = smoothstep(0.9, 0.99, 0.5 + 0.5 * ruido(vPosL * 150.0 + vec3(uTiempo * 0.15)));`)
+        diffuseColor.rgb = mix(diffuseColor.rgb, liquido, verdor * 0.95);`)
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
-        totalEmissiveRadiance += liquido * verdor * (1.0 + 0.9 * flujo + 0.8 * uPulso);
-        float borde = smoothstep(0.8, 1.0, 1.0 - abs(dot(normalize(normal), normalize(vViewPosition))));
-        totalEmissiveRadiance += vec3(0.75, 0.2, 0.95) * borde * 0.18 * (1.0 - verdor);
-        totalEmissiveRadiance += vec3(1.0, 0.35, 0.95) * venas * (0.35 + 0.25 * uPulso) * (1.0 - verdor);`)
-      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n        roughnessFactor = mix(roughnessFactor * 0.85, 0.12, verdor);')
+        totalEmissiveRadiance *= verdor;
+        totalEmissiveRadiance += liquido * verdor * (1.2 + 0.9 * flujo + 0.8 * uPulso);`)
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n        roughnessFactor = mix(roughnessFactor, 0.12, verdor);')
       .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n        metalnessFactor = mix(metalnessFactor, 0.0, verdor);');
   };
   m.needsUpdate = true;
@@ -116,25 +121,37 @@ function animar(t) {
     H[k].scale.setScalar(p);
   }
 }
-const t0 = performance.now();
+let tiempoAnimado=0,ultimoCuadro=0,bucleActivo=false;
+const medida={w:0,h:0};
+new ResizeObserver(([entry])=>{
+  medida.w=Math.round(entry.contentRect.width);medida.h=Math.round(entry.contentRect.height);
+  actualizarActividad();
+}).observe(caja);
 
 function tamano() {
-  const r = caja.getBoundingClientRect();
-  if (!r.width || !r.height) return false;
-  const w = Math.round(r.width), h = Math.round(r.height), c = render.domElement, pr = render.getPixelRatio();
-  if (c.width !== Math.round(w * pr) || c.height !== Math.round(h * pr)) {
-    render.setSize(w, h, false); camara.aspect = w / h; camara.updateProjectionMatrix();
+  if(!medida.w||!medida.h)return false;
+  const w=medida.w,h=medida.h,c=render.domElement,pr=render.getPixelRatio();
+  const lateral=Math.ceil(w*MARGEN_RENDER.lados),arriba=Math.ceil(h*MARGEN_RENDER.arriba),abajo=Math.ceil(h*MARGEN_RENDER.abajo);
+  const ancho=w+lateral*2,alto=h+arriba+abajo;
+  if (tamano.w!==w || tamano.h!==h || c.width!==Math.round(ancho*pr) || c.height!==Math.round(alto*pr)) {
+    render.setSize(ancho, alto, false);
+    Object.assign(c.style,{position:'absolute',left:-lateral+'px',top:(30-arriba)+'px',width:ancho+'px',height:alto+'px'});
+    // Extender el encuadre sin reducir el modelo ni mover sus pies en la plataforma.
+    camara.setViewOffset(w,h,-lateral,-arriba,ancho,alto);
+    tamano.w=w;tamano.h=h;
   }
   return true;
 }
 
 const mira = { x: 0, y: 0, tx: 0, ty: 0 };
-addEventListener('pointermove', (ev) => { mira.tx = ev.clientX / innerWidth * 2 - 1; mira.ty = ev.clientY / innerHeight * 2 - 1; });
-function cuadro() {
+addEventListener('pointermove', (ev) => { if(reducido||ev.pointerType!=='mouse')return; mira.tx = ev.clientX / innerWidth * 2 - 1; mira.ty = ev.clientY / innerHeight * 2 - 1; },{passive:true});
+function cuadro(ahora=performance.now()) {
   if (!modelo || !visible || !caja.isConnected || !tamano()) return;
-  const t = (performance.now() - t0) / 1000;
+  const dt=ultimoCuadro?Math.min(.05,(ahora-ultimoCuadro)/1000):1/60;ultimoCuadro=ahora;
+  if(!reducido)tiempoAnimado+=dt;
+  const t=tiempoAnimado;
   // de tres cuartos, mirando al mapa; el mouse lo gira un poco en 3D (profundidad real)
-  if (!reducido) { mira.x += (mira.tx - mira.x) * 0.05; mira.y += (mira.ty - mira.y) * 0.05; }
+  if (!reducido) { const suavidad=1-Math.exp(-dt/.22);mira.x += (mira.tx - mira.x) * suavidad; mira.y += (mira.ty - mira.y) * suavidad; }
   modelo.rotation.y = reducido ? 0.55 : 0.55 + Math.sin(t * 0.22) * 0.2 + mira.x * 0.35;
   modelo.rotation.x = reducido ? 0 : mira.y * 0.08;
   const resp = reducido ? 0 : Math.sin(t * 1.2);
@@ -145,7 +162,20 @@ function cuadro() {
   verde.intensity = 0.3 + pulso.value * 0.5;
   render.render(escena, camara);
 }
-document.addEventListener('visibilitychange', () => { visible = !document.hidden; });
+function actualizarActividad(){
+  const st=document.getElementById('maqueta');
+  visible=!document.hidden&&ancho.matches&&!!st&&!st.hidden&&document.getElementById('v-hive')?.classList.contains('on');
+  caja.dataset.renderEstado=!modelo?'cargando':!visible?'suspendido':reducido?'estatico':'animando';
+  if(!modelo||!visible||reducido){
+    if(bucleActivo){render.setAnimationLoop(null);bucleActivo=false;}
+    ultimoCuadro=0;
+    if(modelo&&visible)cuadro();
+    return;
+  }
+  if(!bucleActivo){ultimoCuadro=0;bucleActivo=true;render.setAnimationLoop(cuadro);}
+}
+document.addEventListener('visibilitychange',actualizarActividad);
+preferenciaMovimiento.addEventListener('change',()=>{reducido=preferenciaMovimiento.matches;actualizarActividad();});
 
 colocar();
 // solo en pantallas anchas, donde está la maqueta (en móvil no se descarga)
@@ -166,7 +196,18 @@ function cargar() {
     escena.add(modelo);
     caja.classList.add('listo');
     window.__personaje = { render, escena, camara, cuadro, modelo, H, animar, tiempo, pulso };
-    render.setAnimationLoop(cuadro);
+    actualizarActividad();
   });
 }
-cargar(); ancho.addEventListener('change', cargar);
+let maquetaObservada=null;
+const cambiosMaqueta=new MutationObserver(()=>{colocar();actualizarActividad();});
+function vincularEscena(){
+  const st=document.getElementById('maqueta');
+  if(st&&st!==maquetaObservada){
+    cambiosMaqueta.disconnect();cambiosMaqueta.observe(st,{childList:true,attributes:true,attributeFilter:['hidden']});maquetaObservada=st;
+  }
+  colocar();actualizarActividad();
+}
+new MutationObserver(vincularEscena).observe(document.getElementById('swarm'),{childList:true});
+new MutationObserver(actualizarActividad).observe(document.getElementById('v-hive'),{attributes:true,attributeFilter:['class','hidden']});
+vincularEscena();cargar();ancho.addEventListener('change',()=>{cargar();actualizarActividad();});

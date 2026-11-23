@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "nombre": "Fondo biológico — red de conexiones vivas",
+  "version": "1.0",
+  "tipo": "especificacion_visual_descriptiva",
+  "advertencia": "Este JSON describe cómo recrear o extender el fondo visualmente; no es una extracción exacta de capas, vectores ni geometría editable de la imagen rasterizada.",
+  "archivo_imagen": "fondo_biologico_sin_elementos.png",
+  "lienzo": {
+    "ancho_px": 1722,
+    "alto_px": 913,
+    "relacion_aspecto": 1.8861,
+    "fondo_opaco": true,
+    "orientacion": "horizontal panorámica"
+  },
+  "estilo": {
+    "tema": "red biomecánica alienígena, membranas mutantes vivas y filamentos sinápticos",
+    "acabado": "render orgánico 3D de alta definición, material húmedo y semitranslúcido, luz bioluminiscente, contraste alto",
+    "paleta_hex": {
+      "casi_negro": "#09050E",
+      "ciruela_profundo": "#220C26",
+      "violeta_oscuro": "#581148",
+      "magenta_membrana": "#BD308C",
+      "rosa_fibra": "#EA67C2",
+      "oro_bioluminiscente": "#E5BD45",
+      "verde_acido": "#A4BC39"
+    },
+    "iluminacion": "nodos de luz interna amarilla-verde, reflejos magenta, fondo oscuro profundo, sin iluminación uniforme"
+  },
+  "capas": [
+    {
+      "id": "L0",
+      "nombre": "Vacío profundo",
+      "tipo": "fondo",
+      "descripcion": "base carbón casi negra con matices ciruela muy sutiles",
+      "opacidad": 1.0
+    },
+    {
+      "id": "L1",
+      "nombre": "Red secundaria tenue",
+      "tipo": "malla",
+      "descripcion": "arcos orgánicos desenfocados y filamentos morados profundos alrededor de cavidades grandes",
+      "opacidad_aproximada": 0.33
+    },
+    {
+      "id": "L2",
+      "nombre": "Membranas estructurales",
+      "tipo": "malla",
+      "descripcion": "mallas tensadas de color magenta-violeta, gruesas en uniones, finas en los bordes; cavidades ovaladas irregulares",
+      "opacidad_aproximada": 0.92
+    },
+    {
+      "id": "L3",
+      "nombre": "Fibras nerviosas",
+      "tipo": "filamentos",
+      "descripcion": "filamentos dorados y verde-amarillentos que recorren las membranas, con ramificaciones capilares",
+      "opacidad_aproximada": 0.85
+    },
+    {
+      "id": "L4",
+      "nombre": "Nódulos bioluminiscentes",
+      "tipo": "particulas",
+      "descripcion": "esferas translúcidas de distintos tamaños con brillo interno ámbar o verde ácido y reflejo superficial",
+      "opacidad_aproximada": 1.0
+    },
+    {
+      "id": "L5",
+      "nombre": "Destellos",
+      "tipo": "luz",
+      "descripcion": "puntos especulares finos y un núcleo radiante más intenso cerca de la zona superior central",
+      "opacidad_aproximada": 0.75
+    }
+  ],
+  "composicion": {
+    "patron": "red de cavidades irregulares entrelazadas, bordes abiertos en todos los lados para ampliación",
+    "densidad_relativa": "media-alta en bordes de las cavidades; oscuro y vacío dentro de ellas",
+    "escala_cavidades": {
+      "grandes": "16-28% del ancho de la imagen",
+      "medianas": "8-15%",
+      "pequenas": "2-7%"
+    },
+    "nodo_principal_aproximado": {
+      "x_norm": 0.515,
+      "y_norm": 0.28
+    },
+    "nodos_destacados_aproximados": [
+      {
+        "x": 0.185,
+        "y": 0.855,
+        "tamano": "mediano"
+      },
+      {
+        "x": 0.295,
+        "y": 0.27,
+        "tamano": "mediano"
+      },
+      {
+        "x": 0.37,
+        "y": 0.395,
+        "tamano": "mediano"
+      },
+      {
+        "x": 0.46,
+        "y": 0.685,
+        "tamano": "grande"
+      },
+      {
+        "x": 0.515,
+        "y": 0.275,
+        "tamano": "radiante"
+      },
+      {
+        "x": 0.59,
+        "y": 0.25,
+        "tamano": "mediano"
+      },
+      {
+        "x": 0.82,
+        "y": 0.235,
+        "tamano": "grande"
+      },
+      {
+        "x": 0.85,
+        "y": 0.48,
+        "tamano": "mediano"
+      },
+      {
+        "x": 0.765,
+        "y": 0.925,
+        "tamano": "pequeno"
+      },
+      {
+        "x": 0.56,
+        "y": 0.77,
+        "tamano": "mediano"
+      }
+    ],
+    "nota_coordenadas": "Coordenadas normalizadas y aproximadas a partir de la composición visual, no segmentación de píxeles."
+  },
+  "catalogo_para_extender": [
+    {
+      "id": "conector_puente",
+      "forma": "arco curvado con cavidades",
+      "puertos": 2,
+      "uso": "unir dos células separadas"
+    },
+    {
+      "id": "conector_y",
+      "forma": "ramificación de tres brazos",
+      "puertos": 3,
+      "uso": "división de un conducto en dos"
+    },
+    {
+      "id": "nexo_estelar",
+      "forma": "núcleo bulboso y cuatro a seis filamentos radiales",
+      "puertos": 5,
+      "uso": "intersecciones principales"
+    },
+    {
+      "id": "membrana_ancha",
+      "forma": "lámina porosa asimétrica con grandes huecos",
+      "puertos": 4,
+      "uso": "cubrir superficies amplias y construir continuidad"
+    },
+    {
+      "id": "filamento_capilar",
+      "forma": "cordón fino nervioso con puntos de luz",
+      "puertos": 2,
+      "uso": "conectar detalles distantes"
+    },
+    {
+      "id": "nodo_orbe",
+      "forma": "vesícula esférica brillante incrustada en la trama",
+      "puertos": 3,
+      "uso": "acento de luz y unión secundaria"
+    }
+  ],
+  "reglas_de_extension": [
+    "No repetir un patrón geométrico idéntico: variar grosor, curvatura y escala.",
+    "Continuar membranas y filamentos fuera de los cuatro bordes del lienzo.",
+    "Conservar cavidades negras suficientemente grandes para ubicar texto o células encima.",
+    "Conectar los arcos mediante nodos compartidos y venas luminosas, evitando segmentos flotantes.",
+    "Evitar convertir la red en cables metálicos o líneas eléctricas rectas; debe parecer tejido vivo.",
+    "Mantener iluminaciones puntuales, no un resplandor homogéneo en toda la imagen."
+  ],
+  "prompt_para_generacion": "Fondo panorámico biomecánico alienígena en forma de red viva continua: entramado de membranas semitranslúcidas violeta y magenta, tejido fibroso húmedo con poros y cavidades orgánicas negras ovaladas, filamentos nerviosos dorados y verde ácido, vesículas esféricas internas amarillas luminosas, nodos brillantes dispersos y un foco radiante cerca de la parte superior central, capas de profundidad y sombras ciruela, brillo especular delicado, detalle 3D nítido, misma densidad y paleta a lo largo del lienzo, extendible por los bordes, sin ninguna célula individual, personaje, etiqueta ni interfaz.",
+  "negative_prompt": "texto, números, personaje, monstruos, células sueltas, iconos, menús, marcos, paneles, cables rígidos, metal pulido, circuitos electrónicos, líneas rectas uniformes, geometría repetitiva, plástico plano, textura borrosa, watermark, objetos aislados",
+  "exportacion": {
+    "formato_visual": "PNG",
+    "color": "RGB",
+    "alpha": false,
+    "capas_editables": false
+  }
+}

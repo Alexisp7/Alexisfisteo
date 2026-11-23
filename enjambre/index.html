@@ -839,6 +839,12 @@ body.con-maqueta #swarm,html:has(body.con-maqueta),body.con-maqueta{background:#
 body.con-maqueta:has(#v-hive.on) #maqueta .mq-zocalo{top:min(43.1vw,calc(100vh - 6.95vw + .5vw))}
 @media (prefers-reduced-motion:reduce){#maqueta .mq-hilos-medio,#maqueta .mq-hilo{animation:none}}
 </style>
+<link rel="stylesheet" href="colonia.css">
+<link rel="stylesheet" href="colonia-red-viva.css">
+<script src="colonia-red.js"></script>
+<script src="colonia-tejido.js"></script>
+<script src="colonia-distribucion.js"></script>
+<script src="colonia-movimiento.js"></script>
 <script type="importmap">{"imports":{"three":"../taller/lib/three/three.module.min.js","three/addons/":"../taller/lib/three/addons/"}}</script>
 </head>
 <body>
@@ -1561,55 +1567,60 @@ function tejidoDraw(t){
 const MQ={W:1774,H:887,R:{circ:56,cal:47,vrel:32,mcirc:50,elec:50,gauss:47,mag:44,ene:50,grav:50,ter1:56,din:56,tmp:50,cin:41,mom:47,rot:50,osc:48,ter2:50,flu:54,equi:38,ato:41,vcom:45},
   pos:{circ:[620,170,242],cal:[330,195,258],vrel:[700,320,369],mcirc:[900,250,316],elec:[1130,180,246],gauss:[1360,165,228],mag:[1585,160,220],ene:[1300,330,396],grav:[1480,320,386],ter1:[120,310,382],din:[1010,430,502],tmp:[450,370,436],cin:[790,480,538],mom:[1460,480,543],rot:[1230,500,566],osc:[1110,660,725],ter2:[230,450,517],flu:[900,660,731],equi:[1300,620,675],ato:[1645,480,537],vcom:[1680,310,380]},
   tabs:[['hive',333,100],['list',440,90],['inv',537,90],['data',614,34]]};
+// Distribución irregular y compacta, con espacio reservado para la plataforma original.
+const COLONIA_POS={cal:[330,185],tmp:[525,245],ter1:[290,375],ter2:[500,440],
+  circ:[675,140],elec:[895,200],gauss:[1120,150],mag:[1320,205],
+  cin:[710,350],din:[925,405],ene:[1135,325],grav:[1340,405],
+  vrel:[800,550],mcirc:[1000,615],mom:[1200,540],rot:[1490,705],
+  flu:[850,735],osc:[1080,800],equi:[1285,730],ato:[1525,310],vcom:[1570,495]};
+Object.entries(COLONIA_POS).forEach(([id,[x,y]])=>{MQ.pos[id]=[x,y,y+70];});
+function coloniaFocus(){
+  const st=document.getElementById('maqueta'); if(!st) return;
+  const anteriores=new Set(),ramas=new Set(),afines=new Set();
+  st.classList.toggle('tiene-foco',!!selected);
+  coloniaRelaciones(DB.topics,COLONIA_POS).forEach(({a,b,afin})=>{
+    const entra=b===selected,sale=a===selected;
+    if(selected&&(entra||sale)){const grupo=afin?afines:entra?anteriores:ramas;grupo.add(entra?a:b);}
+  });
+  st.querySelectorAll('.colonia-nodo').forEach(el=>{
+    const id=el.dataset.id;
+    el.setAttribute('aria-pressed',String(id===selected));
+    el.classList.toggle('predecesor',anteriores.has(id));el.classList.toggle('rama',ramas.has(id));el.classList.toggle('afin',afines.has(id));
+    el.classList.toggle('ajeno',!!selected&&id!==selected&&!anteriores.has(id)&&!ramas.has(id)&&!afines.has(id));
+    const relacion=id===selected?'seleccionado':anteriores.has(id)?'predecesor':ramas.has(id)?'rama':afines.has(id)?'afinidad':'';
+    el.querySelector('.colonia-relacion').textContent=relacion;
+  });
+}
 function maquetaDraw(){
   const sw=document.getElementById('swarm'); if(!sw) return;
   const on=innerWidth>760; document.body.classList.toggle('con-maqueta',on);
   let st=document.getElementById('maqueta');
-  if(!on){ if(st) st.hidden=true; const su=document.getElementById('mq-suelo'); if(su) su.hidden=true; return; }
-  if(!st){ st=document.createElement('div'); st.id='maqueta'; sw.appendChild(st); }
+  if(!on){if(st) st.hidden=true; return;}
+  if(!st){st=document.createElement('div');st.id='maqueta';sw.appendChild(st);}
   st.hidden=false;
+  const desplazamiento=st.querySelector('.colonia-ventana')?.scrollLeft||0;
   const X=x=>(100*x/MQ.W).toFixed(3)+'%', Y=y=>(100*y/MQ.H).toFixed(3)+'%';
-  const xs=studyOrder(), done=xs.filter(x=>(x.state||0)>=2).length, e=nextExercise(), t=e&&T(primTopic(e));
-  const L=LAY||layout(), awake=DB.topics.filter(q=>mastery(q.id).n).length, pct=Math.round(L.g*100);
-  const cnt=id=>{ const all=DB.exercises.filter(x=>x.topics.includes(id)); return [all.filter(x=>(x.state||0)>=2).length, all.length]; };
-  let h=`<img class="mq-fondo" src="maqueta2/fondo2-4k.png" alt="" draggable="false"><div class="mq-capsula" style="left:${X(268)};top:${Y(3)};width:${X(1496)};height:${Y(41)}"></div>${MQ_VIVO}`;
-  // barra superior pintada: zonas activas sobre las pestañas y el emblema
-  h+=`<a class="mq-hot mq-logo" href="../bitacora.html" title="Físicas · volver a la bitácora" style="left:${X(20)};top:0;width:${X(250)};height:${Y(46)}"></a>`;
-  for(const [v,x,w] of MQ.tabs) h+=`<button class="mq-hot" data-tab="${v}" title="${v==='data'?'Datos y ajustes':''}" style="left:${X(x-w/2)};top:0;width:${X(w)};height:${Y(46)}"></button>`;
-  // pulso de luz en los núcleos y conteos reales
-  for(const [id,[x,y,ly]] of Object.entries(MQ.pos)){ const tp=T(id); if(!tp) continue; const [d,n]=cnt(id), r=Math.round((MQ.R[id]||50)*0.9);
-    h+=`<button class="mq-hot mq-org" data-id="${id}" aria-label="${esc(tp.name)}: ${d} de ${n}" style="left:${X(x-r)};top:${Y(y-r)};width:${X(2*r)};height:${Y(2*r)}"></button>`; }
-  // los temas que no salen en la maqueta: huevos latentes sobre el suelo
-  const resto=DB.topics.filter(q=>!MQ.pos[q.id]);
-  // los huevos latentes (temas sin célula) se mudaron a Invasión: la portada entra en una sola pantalla
-  const su=document.getElementById('mq-suelo'); if(su) su.remove();
-  // el panel «sigue por aquí» se quitó a pedido de Andreé (2026-11-15): el marco queda limpio
-  // abajo: «Tu Tutor» y «Tu progreso» (el personaje va a la izquierda, ver personaje.js); arriba a la derecha, el contador
-
-  // progreso: el reloj orgánico de Andreé; el tubo verde se llena en sentido horario desde las 12 según lo resuelto y la aguja marca el avance
-  const fr=xs.length?done/xs.length:0, gr=(360*fr).toFixed(2);
-  h+=`<div class="mq-progreso mq-reloj" style="left:${X(1314)};top:${Y(650)};width:${X(460)};height:${Y(300)}">
-      <div class="mq-rel" role="img" aria-label="Progreso: ${done} de ${xs.length} ejercicios resueltos">
-        <img src="maqueta2/reloj4.webp" alt="" draggable="false">
-        <img class="mq-rel-verde" src="maqueta2/reloj4-verde.webp" alt="" draggable="false" style="-webkit-mask-image:conic-gradient(from 0deg at 69.1% 40.13%,#000 ${gr}deg,transparent 0);mask-image:conic-gradient(from 0deg at 69.1% 40.13%,#000 ${gr}deg,transparent 0)">
-        <img class="mq-rel-aguja" src="maqueta2/reloj4-aguja.webp" alt="" draggable="false" style="transform:rotate(${gr}deg)">
-      </div>
-      <div class="mq-adnt" aria-hidden="true">Progreso<b>${done} / ${xs.length}</b></div></div>`;
-  // suelo en primera línea entre el personaje y el reloj: las garras del marco de Andreé, en espejo
-  h+=`<img class="mq-zocalo" src="maqueta2/suelo-garras.webp" alt="" draggable="false" style="left:${X(640)};width:${X(860)}">`;
-  h+=`<div class="mq-gema" style="left:${X(1530)};top:${Y(10)};width:${X(90)};height:${Y(34)}" title="Ejercicios resueltos"><i></i>${done}</div>`;
+  let h='<div class="colonia-sustrato" aria-hidden="true"></div>';
+  h+='<div class="colonia-barra"><a href="../bitacora.html" class="colonia-marca">ENJAMBRE <small>física</small></a><nav aria-label="Navegación de Enjambre"><button data-tab="hive" class="on" aria-current="page">Colmena</button><button data-tab="list">Estudiar</button><button data-tab="inv">Invasión</button><button data-tab="data">Datos y ajustes</button></nav><span class="colonia-guardado">Guardado local</span></div>';
+  h+='<div class="colonia-ventana" tabindex="0" role="region" aria-label="Mapa de organismos. Usa la rueda o las flechas para explorar horizontalmente."><div class="colonia-mundo"><div class="colonia-tejido-pintado" aria-hidden="true"></div><div class="mq-objetos colonia-organismos">';
+  for(const [id,[x,y]] of Object.entries(COLONIA_POS)){
+    const tp=T(id);if(!tp)continue;
+    const all=DB.exercises.filter(e=>e.topics.includes(id)),d=all.filter(e=>(e.state||0)>=2).length,f=3;
+    const imagen=id==='ter1'?'organismos/ter1-3-completo.png':'organismos/'+id+'-'+f+'.png';
+    h+='<button class="colonia-nodo fase-'+f+'" data-id="'+id+'" aria-pressed="'+(selected===id)+'" aria-label="'+esc(tp.name)+': '+d+' de '+all.length+' ejercicios resueltos" style="left:'+X(x)+';top:'+Y(y)+'"><span class="colonia-cuerpo"><img src="'+imagen+'" alt="" draggable="false" decoding="async"><span class="colonia-vida" aria-hidden="true"><img src="'+imagen+'" alt="" draggable="false" decoding="async"></span></span><span class="colonia-nombre">'+esc(tp.name)+'</span><span class="colonia-cuenta">'+d+' <span>/ '+all.length+'</span></span><span class="colonia-relacion"></span></button>';
+  }
+  h+='</div></div></div>';
+  h+='<div class="colonia-bruma-personaje" aria-hidden="true"></div><div class="colonia-bruma-entrada" aria-hidden="true"></div><div class="colonia-bruma-derecha" aria-hidden="true"></div>';
   st.innerHTML=h;
-  st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab); renderAll();});
-  st.parentNode.querySelectorAll('.mq-org,.mq-huevos button').forEach(b=>b.onclick=()=>{selected=selected===b.dataset.id?null:b.dataset.id; applyFocus(); drawSide();});
-  bindCommon(st);
-  st.insertAdjacentHTML('beforeend',objetosMaqueta(st));
-  larvasMaqueta(st);
-  if(!st.dataset.paralaje){ st.dataset.paralaje=1; // profundidad: capas que se desplazan distinto según el mouse
-    st.addEventListener('pointermove',ev=>{ const b=st.getBoundingClientRect(); st.style.setProperty('--px',((ev.clientX-b.left)/b.width*2-1).toFixed(3)); st.style.setProperty('--py',((ev.clientY-b.top)/b.height*2-1).toFixed(3)); });
-    st.addEventListener('pointerleave',()=>{ st.style.setProperty('--px',0); st.style.setProperty('--py',0); }); }
-  const fit=()=>{ const k=(st.clientWidth/MQ.W).toFixed(4); st.style.setProperty('--s',k); }; fit();
+  st.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{show(b.dataset.tab);renderAll();});
+  st.querySelectorAll('.colonia-nodo').forEach(b=>b.onclick=()=>{selected=selected===b.dataset.id?null:b.dataset.id;applyFocus();drawSide();});
+  coloniaFocus();st.style.setProperty('--s',(st.clientWidth/MQ.W).toFixed(4));
+  coloniaAcomodar(st);
+  coloniaDesplazamiento(st,desplazamiento);
+  coloniaIniciarMovimiento(st);
+  if(document.fonts?.status==='loading')document.fonts.ready.then(()=>coloniaAcomodar(st));
 }
-addEventListener('resize',()=>{ clearTimeout(MQ.rz); MQ.rz=setTimeout(maquetaDraw,180); });
+
 // ── la maqueta viva: se anima la propia pintura (respiración, remolino de los núcleos, líquido) ──
 // ── la maqueta por objetos: cada pieza de la pintura es su propio recorte (maqueta/objetos/*.webp, objetos.json) ──
 // [id, tipo, x, y, ancho, alto, centro x, centro y, radio, padre] en píxeles de la maqueta (1774×887)
@@ -1796,11 +1807,11 @@ function cytoDraw(t){
     c.strokeStyle=`rgba(255,140,198,${(.35*(1-u)).toFixed(3)})`; c.beginPath(); c.arc(r.x*sx,r.y,r.r*sx+u*110,0,6.283); c.stroke(); }
 }
 function loop(){
-  raf=0; if(document.hidden || !document.getElementById('v-hive').classList.contains('on')) return;
+  raf=0; if(document.hidden || document.body.classList.contains('con-maqueta') || !document.getElementById('v-hive').classList.contains('on')) return;
   if(!document.body.classList.contains('con-maqueta')){ paint(); tejidoDraw(performance.now()); } raf=requestAnimationFrame(loop);
 }
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden && !RMs && !raf) raf=requestAnimationFrame(loop); });
-let rzT=0; addEventListener('resize',()=>{clearTimeout(rzT); rzT=setTimeout(()=>{ if(document.getElementById('v-hive').classList.contains('on')) drawHive(); },160);});
+let rzT=0; addEventListener('resize',()=>{clearTimeout(rzT); rzT=setTimeout(()=>{ if(document.getElementById('v-hive').classList.contains('on')) {const st=document.getElementById('maqueta');if(innerWidth>760&&document.body.classList.contains('con-maqueta')&&st){st.style.setProperty('--s',(st.clientWidth/MQ.W).toFixed(4));coloniaAcomodar(st);}else drawHive();} },160);});
 function bindSwarm(svg){
   swarmEls.nodes.forEach(n=>{
     n.g.onpointerenter=()=>{hoverId=n.id; applyFocus();};
@@ -1817,6 +1828,7 @@ function applyFocus(){
   swarmEls.nodes.forEach(n=>{n.g.classList.toggle('sel',n.id===selected); n.g.classList.toggle('dim',!!focus&&!near.has(n.id));});
   swarmEls.vs.forEach(v=>{const hot=!!focus&&(v.dataset.a===focus||v.dataset.b===focus); v.classList.toggle('hot',hot); v.classList.toggle('dim',!!focus&&!hot);});
   document.getElementById('floors')?.classList.toggle('hide',!!selected);
+  coloniaFocus();
 }
 function nextExercise(){ return studyOrder().find(e=>(e.state||0)<2); }
 function drawResume(){
@@ -1890,24 +1902,28 @@ function drawFloors(){
 function stateBtn(e){return `<button type="button" class="state st${e.state||0}" data-st="${e.id}" title="${STATES[e.state||0]} (clic para avanzar)">${['','·','✓','✓'][e.state||0]}</button>`}
 function drawSide(){
   const el=document.getElementById('side');
-  if(!selected){ el.hidden=true; el.innerHTML=''; return;
+  if(!selected){ el.dataset.coloniaTema=''; el.hidden=true; el.innerHTML=''; coloniaAcomodar(document.getElementById('maqueta')); return;
   } else {
     const t=T(selected), m=mastery(t.id), a=AREAS[t.area];
     const exs=DB.exercises.filter(e=>e.topics.includes(t.id)).sort((x,y)=>(y.pillar-x.pillar)||prioW(y.prio)-prioW(x.prio));
     const unlocks=DB.topics.filter(x=>x.pre.includes(t.id));
-    el.innerHTML=`<div class="row" style="justify-content:space-between"><span class="pill" style="color:${a.hex}">${a.n}</span><button class="btn ghost sm" id="closeSide">✕</button></div>
-      <h2>${esc(t.name)}</h2>
+    el.innerHTML=`<div class="row" style="justify-content:space-between"><span class="pill" style="color:${a.hex}">${a.n}</span><button class="btn ghost sm" id="closeSide" aria-label="Cerrar tema">✕</button></div>
+      <h2 id="colonia-titulo-tema">${esc(t.name)}</h2>
       <div class="bar ${m.p>=.999?'full':''}"><span style="width:${m.p*100}%"></span></div>
       <div class="pill">${Math.round(m.p*100)}% dominado · ${m.n} ejercicio(s)</div>
-      <div class="h">Necesita</div><div class="chips">${t.pre.map(p=>T(p)?`<span class="chip" data-go="${p}">${esc(T(p).name)} · ${Math.round(mastery(p).p*100)}%</span>`:'').join('')||'<span class="pill">Es una raíz.</span>'}</div>
-      <div class="h">Abre</div><div class="chips">${unlocks.map(u=>`<span class="chip" data-go="${u.id}">${esc(u.name)}</span>`).join('')||'<span class="pill">Nada todavía.</span>'}</div>
+      <div class="h">Necesita</div><div class="chips">${t.pre.map(p=>T(p)?`<button type="button" class="chip" data-go="${p}">${esc(T(p).name)} · ${Math.round(mastery(p).p*100)}%</button>`:'').join('')||'<span class="pill">Es una raíz.</span>'}</div>
+      <div class="h">Abre</div><div class="chips">${unlocks.map(u=>`<button type="button" class="chip" data-go="${u.id}">${esc(u.name)}</button>`).join('')||'<span class="pill">Nada todavía.</span>'}</div>
       <div class="h">Ejercicios</div>
-      ${exs.map(e=>`<div class="ri" data-study="${e.id}" style="padding:7px 6px"><span class="dot s${e.state||0}"></span><span class="num">${esc(e.num||'')}</span><span class="tt">${esc(e.title)}</span></div>`).join('')||'<div class="pill">Sin ejercicios aún.</div>'}
+      ${exs.map(e=>`<button type="button" class="ri" data-study="${e.id}" style="padding:7px 6px"><span class="dot s${e.state||0}"></span><span class="num">${esc(e.num||'')}</span><span class="tt">${esc(e.title)}</span></button>`).join('')||'<div class="pill">Sin ejercicios aún.</div>'}
       <div class="row" style="margin-top:10px"><button class="tiny" data-edtopic="${t.id}">editar tema</button></div>`;
     el.hidden=false;
-    el.querySelector('#closeSide').onclick=()=>{selected=null;applyFocus();drawSide();};
+    el.setAttribute('aria-labelledby','colonia-titulo-tema');
+    coloniaAnimarPanel(el,t.id);
+    el.querySelector('#closeSide').onclick=()=>{const volver=selected;selected=null;applyFocus();drawSide();document.querySelector('.colonia-nodo[data-id="'+volver+'"]')?.focus({preventScroll:true});};
   }
   bindCommon(el);
+  coloniaAcomodar(document.getElementById('maqueta'));
+  coloniaRevelarSeleccion(document.getElementById('maqueta'));
 }
 
 /* ============ figura: el nido (estructura orgánica original, isométrica) ============ */

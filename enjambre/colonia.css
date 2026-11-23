@@ -1,0 +1,105 @@
+/* Quitina, tejido ceniza y bioluminiscencia contenida. Solo la portada de la colmena. */
+body.con-maqueta:has(#v-hive.on) #swarm,html:has(body.con-maqueta #v-hive.on),body.con-maqueta:has(#v-hive.on){background:#100f13!important}
+body.con-maqueta:has(#v-hive.on) #swarm{height:100svh;background:#100f13!important}
+body.con-maqueta #maqueta{height:100svh;aspect-ratio:auto;background:radial-gradient(ellipse at 65% 40%,#25212a 0,#18161d 46%,#100f13 82%)!important;isolation:isolate}
+#maqueta .colonia-sustrato{inset:0;z-index:-1;background:url(maqueta2/fondo-tejido.webp) center/cover;filter:grayscale(.9) brightness(.42);opacity:.2;pointer-events:none}
+#maqueta .colonia-barra{position:absolute;inset:0 0 auto;height:62px;display:flex;align-items:center;gap:40px;padding:0 32px;border-bottom:1px solid #ffffff12;background:#100f13e6;z-index:7}
+.colonia-marca{color:#e1d9cd;text-decoration:none;letter-spacing:.16em;font-size:19px;font-weight:600}
+.colonia-marca small{font-size:12px;letter-spacing:.03em;color:#969181;margin-left:5px;font-weight:500}
+.colonia-barra nav{gap:8px;height:100%;align-items:stretch}
+.colonia-barra nav button{color:#a6a1a9;border-radius:0;padding:0 16px;font-size:14px;background:none;box-shadow:none;border-bottom:2px solid transparent}
+body.con-maqueta #maqueta .colonia-barra nav button.on{color:#ded5c7;border-color:#999b77;background:none;box-shadow:none}
+.colonia-barra nav button:hover{color:#fff;background:#ffffff05}
+.colonia-barra button:focus-visible,.colonia-marca:focus-visible{outline:1px solid #c6c7a4;outline-offset:-5px}
+.colonia-guardado{margin-left:auto;color:#8c898e;font-size:12px;white-space:nowrap}
+#maqueta .colonia-intro{left:3%;top:9%;pointer-events:none}
+.colonia-intro>span,.colonia-familia,.colonia-avance>span{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#9b958d}
+.colonia-intro h1{font-size:clamp(21px,2vw,34px);font-weight:500;letter-spacing:-.02em;margin:7px 0;color:#ded6ca;line-height:1.1}
+.colonia-intro p{font-size:clamp(12px,.88vw,15px);color:#a19ba4;margin:9px 0;line-height:1.5}
+#maqueta .colonia-familia{pointer-events:none;font-size:10px;color:#8e858d}
+.familia-ter{left:6%;top:19.4%}.familia-em{left:52%;top:9.8%}
+#maqueta .colonia-familia{display:none}
+#maqueta .colonia-red{inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.colonia-vinculo{opacity:.88;transition:none}
+.conexion-dibujada{filter:saturate(.22) brightness(.87);pointer-events:none}
+.colonia-vinculo.activo .conexion-dibujada{filter:saturate(.35) brightness(1.25)}
+.cordon-sombra{fill:#100e14;opacity:.85}
+.cordon-corteza{fill:#514052;stroke:#776476;stroke-width:.6}
+.cordon-musculo{fill:#796477;opacity:.52}
+.cordon-nervio{fill:#b8a6b2;opacity:.5}
+.cordon-sutura{fill:none;stroke:#221b28;stroke-width:1.4;opacity:.9}
+.cordon-espina{fill:#554456;stroke:#8e7787;stroke-width:.5}
+.colonia-vinculo.afin{opacity:.45}
+.colonia-vinculo.indirecto .cordon-nervio{opacity:.2}
+.tiene-foco .colonia-vinculo{opacity:.12}
+.tiene-foco .colonia-vinculo.activo{opacity:1}
+.colonia-vinculo.entrada.activo .cordon-corteza{fill:#796a65;stroke:#b9aaa1}
+.colonia-vinculo.entrada.activo .cordon-musculo{fill:#c0a994;opacity:.8}
+.colonia-vinculo.salida.activo .cordon-corteza{fill:#606447;stroke:#a4ad85}
+.colonia-vinculo.salida.activo .cordon-musculo{fill:#a1aa7d;opacity:.8}
+.colonia-vinculo.activo .cordon-nervio{fill:#e4dfb9;opacity:.85}
+.colonia-vinculo.activo .cordon-espina{fill:#77705d;stroke:#b6b499}
+#maqueta .colonia-organismos{inset:0;mask:none;-webkit-mask:none;transform:none;transition:none;overflow:visible}
+.colonia-nodo{position:absolute;translate:-50% -50%;width:clamp(120px,11.2vw,210px);height:clamp(118px,10vw,180px);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;border:0;padding:0;background:none;color:#dbd2c8;cursor:pointer;pointer-events:auto;isolation:isolate;transition:opacity .25s ease}
+.colonia-cuerpo{display:grid;place-items:center;width:100%;height:70%;flex:none;position:relative}
+.colonia-cuerpo::before{content:"";position:absolute;inset:5% 12%;border-radius:50%;background:radial-gradient(ellipse,#4f455333,transparent 68%);z-index:-1}
+.colonia-cuerpo img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;filter:saturate(.28) brightness(.78);transition:filter .2s ease,transform .25s ease;user-select:none}
+/* La tira sobrante está en los primeros 18 px del PNG, por encima de la silueta. */
+.colonia-nodo[data-id="equi"].fase-3 .colonia-cuerpo img{height:auto;top:50%;bottom:auto;translate:0 -50%;clip-path:inset(6.1% 0 0)}
+.colonia-nombre{font-size:clamp(11px,.88vw,16px);line-height:1.12;font-weight:500;max-width:100%;text-align:center;margin-top:4px;text-shadow:0 2px 4px #100f13}
+.colonia-cuenta{font-family:var(--mono);font-size:clamp(9px,.65vw,12px);color:#b4ba8f;margin-top:5px;line-height:1}
+.colonia-cuenta>span{color:#88818d}
+.colonia-nodo:hover img,.colonia-nodo:focus-visible img,.colonia-nodo[aria-pressed=true] img{filter:saturate(.5) brightness(1.05);transform:none}
+.colonia-nodo:focus-visible{outline:1px solid #a6ad83;outline-offset:6px;border-radius:45% 45% 12px 12px}
+.colonia-nodo[aria-pressed=true] .colonia-nombre{color:#e4e9bc}
+.colonia-nodo[aria-pressed=true] .colonia-cuerpo::before{background:radial-gradient(ellipse,#afb77930,transparent 70%)}
+.colonia-nodo.ajeno{opacity:.32}
+.colonia-nodo.predecesor img,.colonia-nodo.rama img,.colonia-nodo.afin img{filter:saturate(.4) brightness(1.05)}
+.colonia-nodo.predecesor .colonia-nombre{color:#ddc8b5}
+.colonia-nodo.rama .colonia-nombre{color:#cad3aa}
+.colonia-relacion{font-size:9px;line-height:1.2;letter-spacing:.08em;text-transform:uppercase;color:#b2aa9e;margin-top:6px;min-height:11px}
+.colonia-nodo.ajeno .colonia-relacion{visibility:hidden}
+body.con-maqueta:has(#v-hive.on) #maqueta .mq-personaje{transform:none;filter:drop-shadow(0 0 22px #17141b);left:var(--personaje-izquierda)!important;top:var(--personaje-arriba)!important;width:var(--personaje-ancho)!important;height:var(--personaje-alto)!important}
+#maqueta .colonia-ventana{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior:contain;touch-action:pan-x;scrollbar-width:thin;scrollbar-color:#6d626d #161319}
+#maqueta .colonia-mundo{position:relative;height:100%;min-width:100%;overflow:hidden}
+#maqueta .colonia-organismos{position:absolute;inset:0}
+#maqueta .colonia-barra{z-index:8}
+#maqueta .colonia-personaje-fijo{position:absolute;inset:0;z-index:5;pointer-events:none;mask-image:linear-gradient(to bottom,#000 calc(100% - 50px),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 50px),transparent 100%)}
+/* El alfa del propio arte define el halo: se conservan sus puntas, huecos y curvas. */
+#maqueta .colonia-bruma-personaje{position:absolute;left:var(--plataforma-izquierda);top:var(--plataforma-arriba);width:var(--plataforma-ancho);height:var(--plataforma-alto);z-index:4;pointer-events:none;filter:blur(16px)}
+.colonia-bruma-personaje::before{content:"";position:absolute;inset:0;background:#17141be6;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);mask-image:url(maqueta2/plataforma.webp);mask-size:100% 100%;mask-repeat:no-repeat;-webkit-mask-image:url(maqueta2/plataforma.webp);-webkit-mask-size:100% 100%;-webkit-mask-repeat:no-repeat}
+#maqueta .colonia-bruma-entrada{position:absolute;left:0;top:62px;bottom:12px;width:65px;z-index:4;pointer-events:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);background:linear-gradient(to right,#15121999,transparent);mask-image:linear-gradient(to right,#000,transparent);-webkit-mask-image:linear-gradient(to right,#000,transparent)}
+#maqueta .colonia-bruma-derecha{position:absolute;right:var(--mapa-inset-derecho,0px);top:62px;bottom:12px;width:clamp(65px,7vw,120px);z-index:4;pointer-events:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:linear-gradient(to right,transparent,#151219e6);mask-image:linear-gradient(to right,transparent,#000 65%);-webkit-mask-image:linear-gradient(to right,transparent,#000 65%)}
+body.con-maqueta:has(#v-hive.on) #swarm{overflow:hidden!important}
+.colonia-ventana:focus-visible{outline:1px solid #a5aa87;outline-offset:-3px}
+.colonia-ventana .colonia-nodo{transition:none}
+.anatomia-membrana{fill:#51444d;fill-opacity:.55;stroke:#7e7074;stroke-width:.55}
+.anatomia-tendon{fill:none;stroke:#75636c;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round}
+.anatomia-reflejo{fill:none;stroke:#b0a096;stroke-opacity:.5;stroke-width:.6}
+.anatomia-fibra{fill:none;stroke:#8d7d7b;stroke-opacity:.5;stroke-width:.75}
+.colonia-vinculo.activo .anatomia-tendon{stroke:#c0bd9f;stroke-width:3}
+.colonia-vinculo.activo .anatomia-membrana{fill:#77755a;stroke:#cac8aa}
+.anatomia-dibujo{filter:saturate(.24) brightness(.86)}
+.colonia-vinculo.activo .anatomia-dibujo{filter:saturate(.35) brightness(1.18)}
+#maqueta .colonia-leyenda{left:3%;bottom:18px;display:flex;gap:20px;color:#9e959e;font-size:11px;align-items:center;z-index:6}
+.colonia-leyenda>span{display:inline-flex;gap:7px;align-items:center}
+.colonia-leyenda i{width:24px;border-top:1px solid #8f7a8b}
+.colonia-leyenda i.afin{border-top-style:dashed}
+#maqueta .colonia-avance{right:3%;bottom:18px;width:190px;z-index:6}
+.colonia-avance>span{font-size:9px;letter-spacing:.1em}
+.colonia-avance>b{display:block;font-size:26px;line-height:1.2;font-weight:500;color:#d8d4c5;margin:7px 0}
+.colonia-avance b small{font-size:16px;color:#89818d;font-weight:400}
+.colonia-avance [role=progressbar]{height:3px;background:#ffffff13}
+.colonia-avance [role=progressbar] i{display:block;height:100%;background:#aab486}
+.colonia-avance>small{display:block;font-size:10px;color:#8d868e;margin-top:6px}
+body.con-maqueta #side{top:78px;right:24px;max-height:calc(100svh - 105px);background:#1d1a21;color:#ddd4ca;border:1px solid #645363;box-shadow:0 18px 60px #0009;backdrop-filter:none;scrollbar-color:#625867 #1d1a21;scrollbar-width:thin}
+body.con-maqueta #side h2{color:#e4dccf}
+body.con-maqueta #side .btn{background:#2a2630;color:#e5dece;border-color:#68586c}
+body.con-maqueta #side .pill,body.con-maqueta #side .num,body.con-maqueta #side .h{color:#b5acba!important}
+body.con-maqueta #side .chip{background:#302a35;color:#d6cdd8;border:1px solid #5d5063}
+body.con-maqueta #side .bar{background:#37303b}
+body.con-maqueta #side .bar span{background:#a2ad82}
+body.con-maqueta #side .ri:hover{background:#302a35}
+body.con-maqueta #side .tiny{color:#beb2c8}
+@media(max-width:1100px) and (min-width:761px){.colonia-barra{gap:16px!important;padding:0 18px!important}.colonia-barra nav button{padding:0 10px}.colonia-guardado{display:none}.colonia-intro p{max-width:220px}.colonia-nodo{width:clamp(115px,12vw,132px);height:120px}.colonia-leyenda{gap:12px!important;font-size:9px!important}.colonia-leyenda>span:last-child{display:none}.colonia-avance{width:150px!important}}
+@media(prefers-reduced-motion:reduce){.colonia-cuerpo img,.colonia-nodo,.colonia-vinculo{transition:none!important}.colonia-nodo:hover img,.colonia-nodo:focus-visible img{transform:none}}

@@ -161,43 +161,4 @@ window.GLSL_AGUJERO = [
   '  float a1 = c1.a + a2 * (1.0 - c1.a); vec3 k1 = (c1.rgb * c1.a + k2 * a2 * (1.0 - c1.a)) / max(a1, 1e-4);',
   '  gl_FragColor = vec4(k1, a1); }'
 ].join('\n');
-// compilación en segundo plano. En Windows (ANGLE sobre Direct3D) este trazador tarda ~12 s en compilarse;
-// preguntar LINK_STATUS enseguida congelaba la página todo ese tiempo. Con KHR_parallel_shader_compile el driver
-// compila en otro hilo y aquí solo se consulta COMPLETION_STATUS en cada cuadro, así la página sigue respondiendo.
-// El shader es el mismo: no cambia nada de lo que se dibuja. Devuelve una promesa con el programa (o null).
-var VS_AGUJERO = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
-window.compilaAgujero = function (gl, fuente) {
-  fuente = fuente || window.GLSL_AGUJERO;
-  var vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, VS_AGUJERO); gl.compileShader(vs);
-  var fs = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(fs, fuente); gl.compileShader(fs);
-  var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
-  var par = gl.getExtension('KHR_parallel_shader_compile');
-  function fin() {
-    if (gl.getProgramParameter(pr, gl.LINK_STATUS)) return pr;
-    if (!gl.isContextLost()) console.error(gl.getShaderInfoLog(fs) || gl.getProgramInfoLog(pr));
-    return null;
-  }
-  if (!par) return Promise.resolve(fin());
-  return new Promise(function (ok) {
-    // con la pestaña oculta requestAnimationFrame se detiene: entonces se consulta con setTimeout
-    (function espera() {
-      if (gl.isContextLost() || gl.getProgramParameter(pr, par.COMPLETION_STATUS_KHR)) { ok(fin()); return; }
-      if (document.hidden) setTimeout(espera, 50); else requestAnimationFrame(espera);
-    })();
-  });
-};
-// el navegador guarda el shader ya compilado: si se compila una vez (en cualquier página del sitio), la siguiente
-// vez que se abra Cursos o Relatividad sale de esa caché en milisegundos
-window.precalientaAgujero = function () {
-  try {
-    var c = document.createElement('canvas'); c.width = c.height = 1;
-    var gl = c.getContext('webgl', { antialias: false, premultipliedAlpha: false });
-    if (!gl || !gl.getExtension('KHR_parallel_shader_compile')) return Promise.resolve(false);
-    gl.getExtension('OES_standard_derivatives');
-    return window.compilaAgujero(gl).then(function (pr) {
-      var x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext();
-      return !!pr;
-    });
-  } catch (e) { return Promise.resolve(false); }
-};
 })();

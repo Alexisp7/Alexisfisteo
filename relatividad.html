@@ -1,142 +1,64 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Archivo académico de Teoría General de la Relatividad: prácticas calificadas, exámenes y exposición. UNMSM, segundo semestre de 2025.">
+  <meta name="theme-color" content="#080b10">
   <title>Teoría General de la Relatividad — Alexis R. Salvatierra</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <style>
-    /* Relatividad: una sola pantalla de espacio profundo. Arriba el curso; abajo, el agujero negro trazado en vivo.
-       Capas: cosmos (nebulosas y supercúmulos, pintado una vez) → agujero negro (WebGL, cada cuadro) → contenido */
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    :root { --oro:#C8A96E; --oro-claro:#E8D5A3; --oro-hondo:#8C6D33; --crema:#F1E6CF; --noche:#05060A; --tinta:rgba(241,230,207,.62); --ease:cubic-bezier(.16,1,.3,1); }
-    html, body { background:var(--noche); }
-    html.fx-llega body::after { background:var(--noche) !important; }
-    body { min-height:100vh; color:var(--crema); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-
-    .rg-cosmos, .rg-agujero { position:fixed; inset:0; width:100%; height:100%; display:block; pointer-events:none; }
-    .rg-cosmos-c { position:fixed; inset:-3%; pointer-events:none; animation:rgDeriva 90s ease-in-out infinite alternate; will-change:transform; }
-    .rg-cosmos { position:absolute; inset:0; opacity:0; transition:opacity 1.6s ease; }
-    .rg-cosmos.listo { opacity:1; }
-    @keyframes rgDeriva { from { transform:translate3d(0,0,0) scale(1); } to { transform:translate3d(-1.2%,.8%,0) scale(1.035); } }
-    .rg-agujero { z-index:1; }
-    /* sombra suave bajo el contenido para que el texto se lea sobre las nebulosas */
-    .rg-velo { position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(ellipse 70% 52% at 50% 30%, rgba(3,3,6,.6), rgba(3,3,6,0) 70%); }
-
-    /* barra de navegación: la misma cápsula ahumada de Cursos */
-    .header { position:absolute; top:0; left:0; right:0; z-index:5; padding:20px 24px; }
-    nav.main-nav { display:flex; align-items:center; width:max-content; margin:0 auto; padding:5px 8px; border-radius:999px; background:rgba(16,12,16,.72);
-      border:1px solid rgba(194,154,98,.2); box-shadow:inset 0 1px 0 rgba(255,240,220,.06), 0 10px 30px -14px rgba(0,0,0,.7); }
-    nav.main-nav a { position:relative; font:700 10px 'Space Mono',monospace; letter-spacing:.18em; text-transform:uppercase; color:#C29A62; text-decoration:none; padding:8px 20px; transition:color .25s ease; }
-    nav.main-nav a::before { content:''; position:absolute; bottom:3px; left:20px; right:20px; height:1px; background:#B39BF0; box-shadow:0 0 8px rgba(168,139,235,.75); transform:scaleX(0); transition:transform .28s cubic-bezier(.4,0,.2,1); }
-    nav.main-nav a:hover, nav.main-nav a.active { color:#E0BE8C; }
-    nav.main-nav a:hover::before, nav.main-nav a.active::before { transform:scaleX(1); }
-    nav.main-nav .nav-sep { color:#C29A62; opacity:.3; font-size:11px; }
-
-    /* ── contenido */
-    .rg { position:relative; z-index:2; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:clamp(96px,14vh,140px) 24px 46vh; }
-    .rg-cab { text-align:center; }
-    .rg-k { display:inline-flex; align-items:center; gap:14px; font:700 9.5px 'Space Mono',monospace; letter-spacing:.34em; text-transform:uppercase; color:var(--oro); text-decoration:none; }
-    .rg-k::before, .rg-k::after { content:''; width:28px; height:1px; background:linear-gradient(90deg, transparent, rgba(200,169,110,.7)); }
-    .rg-k::after { transform:scaleX(-1); }
-    .rg-k:hover { color:var(--oro-claro); }
-    .rg-t { margin-top:18px; font:300 clamp(40px,5.4vw,76px)/1.02 'Cormorant Garamond',serif; letter-spacing:.01em; color:var(--crema); text-shadow:0 0 40px rgba(232,180,110,.18); }
-    .rg-t em { font-style:italic; font-weight:400; background:linear-gradient(100deg, #D9B57A 0%, #F6E7C4 45%, #E7A15A 70%, #D9B57A 100%); background-size:220% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:rgBrillo 9s ease-in-out infinite; }
-    @keyframes rgBrillo { 0%,100% { background-position:0% 0; } 50% { background-position:100% 0; } }
-    .rg-sub { margin-top:16px; font:400 10.5px 'Space Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:var(--tinta); }
-    /* filo con rombo: la regla de oro del sitio */
-    .rg-filo { position:relative; width:min(520px,70vw); height:1px; margin:34px auto 0; background:linear-gradient(90deg, transparent, rgba(200,169,110,.55) 30%, rgba(200,169,110,.55) 70%, transparent); }
-    .rg-filo i { position:absolute; left:50%; top:-3.5px; width:8px; height:8px; margin-left:-4px; transform:rotate(45deg); background:var(--noche); border:1px solid var(--oro); box-shadow:0 0 10px rgba(232,213,163,.6); }
-
-    /* tres paneles de cristal oscuro con esquinas cortadas */
-    .rg-lista { list-style:none; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:18px; width:min(1080px,100%); margin-top:44px; }
-    .rg-u { --c:14px; position:relative; padding:26px 26px 24px; min-height:176px;
-      clip-path:polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
-      background:linear-gradient(160deg, rgba(22,18,26,.82), rgba(10,9,14,.62) 60%, rgba(30,14,14,.55)); transition:transform .5s var(--ease); }
-    /* borde de oro fino dibujado con una máscara (el clip-path no admite border) */
-    .rg-u::before { content:''; position:absolute; inset:0; padding:1px; background:linear-gradient(160deg, rgba(200,169,110,.55), rgba(200,169,110,.12) 45%, rgba(200,90,50,.35));
-      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; clip-path:inherit; pointer-events:none; transition:opacity .4s ease; }
-    /* destello que recorre el panel al pasar el cursor */
-    .rg-u::after { content:''; position:absolute; inset:0; background:linear-gradient(105deg, transparent 35%, rgba(246,231,196,.09) 50%, transparent 65%); background-size:250% 100%; background-position:120% 0; transition:background-position 1s var(--ease); pointer-events:none; }
-    .rg-u:hover { transform:translateY(-4px); }
-    .rg-u:hover::after { background-position:-20% 0; }
-    .rg-u-cab { display:flex; align-items:baseline; gap:14px; }
-    .rg-num { font:italic 400 30px/1 'Cormorant Garamond',serif; color:var(--oro); min-width:30px; }
-    .rg-titulo { font:500 25px/1.15 'Cormorant Garamond',serif; color:var(--crema); }
-    .rg-regla { height:1px; margin:16px 0 14px; background:linear-gradient(90deg, rgba(200,169,110,.45), transparent); }
-    .rg-links { display:flex; flex-direction:column; gap:7px; }
-    .rg-links a { position:relative; display:inline-flex; align-items:center; gap:10px; width:max-content; max-width:100%; font-size:13.5px; color:var(--tinta); text-decoration:none; padding:2px 0; transition:color .25s ease, transform .35s var(--ease); }
-    .rg-links a::before { content:''; width:5px; height:5px; flex:none; transform:rotate(45deg); border:1px solid rgba(200,169,110,.6); transition:background .25s ease, box-shadow .25s ease; }
-    .rg-links a:hover, .rg-links a:focus-visible { color:var(--crema); transform:translateX(3px); outline:none; }
-    .rg-links a:hover::before, .rg-links a:focus-visible::before { background:var(--oro); box-shadow:0 0 8px rgba(232,213,163,.9); }
-
-    .rg-pie { position:fixed; left:24px; bottom:16px; z-index:2; font:400 9.5px 'Space Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:rgba(241,230,207,.32); pointer-events:none; }
-
-    /* entrada: el título ya está en el centro (velo de la transición); al retirarse el velo, el curso se arma de arriba abajo */
-    .rg-in { opacity:0; transform:translateY(14px); filter:blur(3px); }
-    .rg-armado .rg-in { opacity:1; transform:none; filter:none; transition:opacity .9s ease var(--d,0s), transform 1.1s var(--ease) var(--d,0s), filter .9s ease var(--d,0s); }
-    .rg-filo.rg-in { transform:scaleX(0); filter:none; }
-    .rg-armado .rg-filo.rg-in { transform:none; transition:opacity .6s ease var(--d), transform 1.2s var(--ease) var(--d); }
-
-    @media (max-width:900px) {
-      .rg-lista { grid-template-columns:1fr; max-width:520px; }
-      .rg { padding-bottom:52vh; }
-      nav.main-nav a { padding:8px 11px; letter-spacing:.12em; }
-      nav.main-nav a::before { left:11px; right:11px; }
-    }
-    @media (prefers-reduced-motion:reduce) {
-      .rg-cosmos-c, .rg-t em { animation:none; }
-      .rg-in { opacity:1; transform:none; filter:none; }
-    }
-  </style>
-  <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
-  <link rel="stylesheet" href="css/efectos.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="img/relatividad/espacio-editorial.webp">
+  <link rel="stylesheet" href="css/efectos.css">
+  <link rel="stylesheet" href="css/relatividad-academica.css">
 </head>
 <body>
   <script src="js/carga.js"></script>
-
-  <div class="rg-cosmos-c" aria-hidden="true"><canvas class="rg-cosmos"></canvas></div>
-  <canvas class="rg-agujero" aria-hidden="true"></canvas>
-  <div class="rg-velo" aria-hidden="true"></div>
-
-  <header class="header">
-    <nav class="main-nav">
-      <a href="index.html">Inicio</a><span class="nav-sep">|</span><a href="cursos.html" class="active">Cursos</a><span class="nav-sep">|</span><a href="proyectos.html">Proyectos</a><span class="nav-sep">|</span><a href="contacto.html">Contacto</a>
-    </nav>
-  </header>
-
-  <main class="rg">
-    <header class="rg-cab">
-      <a class="rg-k rg-in" style="--d:.05s" href="cursos.html">Cursos</a>
-      <h1 class="rg-t rg-in" style="--d:.15s">Teoría General de la <em>Relatividad</em></h1>
-      <p class="rg-sub rg-in" style="--d:.3s">UNMSM · Segundo semestre 2025</p>
-      <div class="rg-filo rg-in" style="--d:.4s"><i></i></div>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <div class="space" aria-hidden="true"><img src="img/relatividad/espacio-editorial.webp" alt="" fetchpriority="high" decoding="async"></div>
+  <div class="page">
+    <header class="site-header">
+      <a class="identity" href="index.html">Alexis R. Salvatierra<span>Física · UNMSM</span></a>
+      <nav aria-label="Navegación principal">
+        <a href="index.html">Inicio</a><a href="cursos.html" aria-current="page">Cursos</a><a href="proyectos.html">Proyectos</a><a href="contacto.html">Contacto</a>
+      </nav>
     </header>
-
-    <ol class="rg-lista">
-      <li class="rg-u rg-in" style="--d:.55s">
-        <div class="rg-u-cab"><span class="rg-num">I</span><h2 class="rg-titulo">Prácticas calificadas</h2></div>
-        <div class="rg-regla"></div>
-        <p class="rg-links"><a href="arch/relatividad/PC1_Relatividad.pdf" target="_blank" rel="noopener">Práctica 1</a><a href="arch/relatividad/PC2_Relatividad.pdf" target="_blank" rel="noopener">Práctica 2</a><a href="arch/relatividad/PC3_Relatividad.pdf" target="_blank" rel="noopener">Práctica 3</a><a href="arch/relatividad/PC4_Relatividad.pdf" target="_blank" rel="noopener">Práctica 4</a></p>
-      </li>
-      <li class="rg-u rg-in" style="--d:.67s">
-        <div class="rg-u-cab"><span class="rg-num">II</span><h2 class="rg-titulo">Exámenes</h2></div>
-        <div class="rg-regla"></div>
-        <p class="rg-links"><a href="arch/relatividad/Examen_parcial_Relatividad.pdf" target="_blank" rel="noopener">Examen parcial</a><a href="arch/relatividad/Examen_final_Relatividad.pdf" target="_blank" rel="noopener">Examen final</a></p>
-      </li>
-      <li class="rg-u rg-in" style="--d:.79s">
-        <div class="rg-u-cab"><span class="rg-num">III</span><h2 class="rg-titulo">Exposición</h2></div>
-        <div class="rg-regla"></div>
-        <p class="rg-links"><a href="arch/relatividad/Exposicion_Modificacion_gravitacional_unificada.pdf" target="_blank" rel="noopener">Modificación gravitacional unificada</a></p>
-      </li>
-    </ol>
-  </main>
-
-  <p class="rg-pie">© 2025 Alexis R. Salvatierra</p>
-
-  <script src="js/agujero-glsl.js"></script>
-  <script src="js/relatividad.js"></script>
+    <main id="contenido">
+      <div class="breadcrumb"><a href="cursos.html">← Todos los cursos</a><span>Archivo académico</span></div>
+      <header class="course-heading">
+        <p class="eyebrow">Universidad Nacional Mayor de San Marcos</p>
+        <h1>Teoría General<br>de la <em>Relatividad</em></h1>
+        <p class="intro">Prácticas, evaluaciones y una exposición reunidas en un archivo de estudio del curso.</p>
+      </header>
+      <section class="archive" aria-labelledby="archivo-titulo">
+        <header class="archive-heading"><div><p class="eyebrow">Material del curso</p><h2 id="archivo-titulo">Documentos académicos</h2></div><p>7 documentos <span aria-hidden="true">·</span> Formato PDF</p></header>
+        <div class="archive-grid">
+          <section class="document-group" aria-labelledby="practicas"><h3 id="practicas">Prácticas calificadas</h3><p class="group-note">Cuatro entregas del curso</p><ul>
+            <li><a href="arch/relatividad/PC1_Relatividad.pdf"><span>Práctica 1</span></a></li>
+            <li><a href="arch/relatividad/PC2_Relatividad.pdf"><span>Práctica 2</span></a></li>
+            <li><a href="arch/relatividad/PC3_Relatividad.pdf"><span>Práctica 3</span></a></li>
+            <li><a href="arch/relatividad/PC4_Relatividad.pdf"><span>Práctica 4</span></a></li>
+          </ul></section>
+          <section class="document-group" aria-labelledby="examenes"><h3 id="examenes">Exámenes</h3><p class="group-note">Evaluaciones del semestre</p><ul>
+            <li><a href="arch/relatividad/Examen_parcial_Relatividad.pdf"><span>Examen parcial</span></a></li>
+            <li><a href="arch/relatividad/Examen_final_Relatividad.pdf"><span>Examen final</span></a></li>
+          </ul></section>
+          <section class="document-group" aria-labelledby="exposicion"><h3 id="exposicion">Exposición</h3><p class="group-note">Presentación del curso</p><ul>
+            <li><a href="arch/relatividad/Exposicion_Modificacion_gravitacional_unificada.pdf"><span>Modificación gravitacional unificada</span></a></li>
+          </ul></section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <dialog class="pdf-viewer" id="pdf-viewer" aria-labelledby="pdf-title">
+    <header class="pdf-toolbar">
+      <div><span class="pdf-caption">Documento del curso</span><h2 id="pdf-title">Documento PDF</h2></div>
+      <button type="button" data-pdf-close autofocus aria-label="Cerrar visor y volver a los documentos">Cerrar <span aria-hidden="true">×</span></button>
+    </header>
+    <iframe src="about:blank" title="Visor PDF" class="pdf-frame"></iframe>
+    <div class="pdf-footer"><p>Si el visor de tu navegador no muestra el documento, <a data-pdf-direct href="#">abre el PDF aquí</a>.</p><a href="#" download>Descargar PDF ↓</a></div>
+  </dialog>
+  <script src="js/relatividad-pdf.js" defer></script>
 </body>
 </html>

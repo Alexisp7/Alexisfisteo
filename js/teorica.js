@@ -287,9 +287,17 @@
         var lo2 = -3, hi2 = 3; for (var it = 0; it < 40; it++) { var md = (lo2 + hi2) / 2, X2 = Q[0] + md * U[0], Y2 = Q[1] + md * U[1], Z2 = Q[2] + md * U[2]; if (Y2 > alto(X2, Z2)) lo2 = md; else hi2 = md; }
         SH.push(Ps([Q[0] + lo2 * U[0], Q[1] + lo2 * U[1] + .006, Q[2] + lo2 * U[2]]));
       }
-      function area(pl) { var a = 0; for (var j = 0; j < pl.length; j++) { var p1 = pl[j], p2 = pl[(j + 1) % pl.length]; a += p1[0] * p2[1] - p2[0] * p1[1]; } return Math.abs(a / 2); }
-      var kS = Math.sqrt(area(poly) / Math.max(1, area(SH))), O = Ps(IMP);
-      HUE.sombra = SH.map(function (q) { return [O[0] + (q[0] - O[0]) * kS, O[1] + (q[1] - O[1]) * kS]; }); HUE.O = O; HUE.r0 = r0;
+      // huella frambuesa: elipse con la orientación de esa sombra, centrada y ceñida a los tanques que se encienden;
+      // cada punto conserva el ángulo del punto del disco que lo proyecta (para unir ambos con rayos)
+      var sx0 = 0, sy0 = 0; SH.forEach(function (q) { sx0 += q[0] / N; sy0 += q[1] / N; });
+      var s11 = 0, s22 = 0, s12 = 0; SH.forEach(function (q) { var dx = q[0] - sx0, dy = q[1] - sy0; s11 += dx * dx; s22 += dy * dy; s12 += dx * dy; });
+      var ts = .5 * Math.atan2(2 * s12, s11 - s22), e1 = [Math.cos(ts), Math.sin(ts)], e2 = [-Math.sin(ts), Math.cos(ts)], a0 = 0, b0 = 0;
+      SH.forEach(function (q) { var dx = q[0] - sx0, dy = q[1] - sy0; a0 = Math.max(a0, Math.abs(dx * e1[0] + dy * e1[1])); b0 = Math.max(b0, Math.abs(dx * e2[0] + dy * e2[1])); });
+      var f1 = [ca, sa], f2 = [-sa, ca];   // ejes propios de los tanques encendidos: la elipse más angosta que los contiene
+      var AA = 0, BB = 0; P.forEach(function (q) { var dx = q[0] - mx, dy = q[1] - my; AA = Math.max(AA, Math.abs(dx * f1[0] + dy * f1[1])); BB = Math.max(BB, Math.abs(dx * f2[0] + dy * f2[1])); });
+      AA += 4.5; BB += 3; var kk = 1; P.forEach(function (q) { var dx = q[0] - mx, dy = q[1] - my, u = (dx * f1[0] + dy * f1[1]) / AA, w = (dx * f2[0] + dy * f2[1]) / BB; kk = Math.max(kk, Math.hypot(u, w)); });
+      AA = AA * kk + 3; BB = BB * kk + 2.5;
+      HUE.sombra = SH.map(function (q) { var dx = q[0] - sx0, dy = q[1] - sy0, th2 = Math.atan2((dx * e2[0] + dy * e2[1]) / b0, (dx * e1[0] + dy * e1[1]) / a0); return [mx + AA * Math.cos(th2) * f1[0] + BB * Math.sin(th2) * f2[0], my + AA * Math.cos(th2) * f1[1] + BB * Math.sin(th2) * f2[1]]; });
       HUE.poly = HUE.sombra; HUE.cx = cx; HUE.cy = cy;
       return HUE;
     }
@@ -810,13 +818,17 @@
       // desaparece y la sombra queda como la huella
       var rd = R_M * 1.4 * crec + .02;
       if (lleg < 1) {
-        var c = sobre(DEC, sf), m = suave((sf / L_CRUCE - .45) / .5), ks = rd / H.r0;
+        var c = sobre(DEC, sf), m = suave((sf / L_CRUCE - .45) / .4), D = [];
+        for (i = 0; i < N; i++) { var an = i / N * 2 * Math.PI, ca = Math.cos(an) * rd, sa = Math.sin(an) * rd; D.push(Ps([c[0] + ca * E1[0] + sa * E2[0], c[1] + ca * E1[1] + sa * E2[1], c[2] + ca * E1[2] + sa * E2[2]])); }
         if (m > 0) {
-          ctx.beginPath(); for (i = 0; i <= N; i++) { var sq = H.sombra[i % N], x = H.O[0] + (sq[0] - H.O[0]) * ks, y = H.O[1] + (sq[1] - H.O[1]) * ks; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
-          ctx.fillStyle = 'rgba(206,32,104,' + (.12 * m * fin) + ')'; ctx.fill(); ctx.strokeStyle = 'rgba(176,34,92,' + (.5 * m * fin) + ')'; ctx.lineWidth = .8; ctx.stroke();
+          // la huella fija en la ladera y los rayos de proyección que la unen con el disco
+          ctx.beginPath(); for (i = 0; i <= N; i++) { var sq = H.sombra[i % N]; if (i) ctx.lineTo(sq[0], sq[1]); else ctx.moveTo(sq[0], sq[1]); }
+          ctx.fillStyle = 'rgba(206,32,104,' + (.08 * m * fin * (1 - lleg)) + ')'; ctx.fill(); ctx.strokeStyle = 'rgba(176,34,92,' + (.6 * m * fin) + ')'; ctx.lineWidth = 1; ctx.stroke();
+          ctx.strokeStyle = 'rgba(176,34,92,' + (.45 * m * fin * (1 - lleg)) + ')'; ctx.lineWidth = .7; ctx.setLineDash([3, 3]); ctx.beginPath();
+          for (i = 0; i < N; i += N / 12) { ctx.moveTo(D[i][0], D[i][1]); ctx.lineTo(H.sombra[i][0], H.sombra[i][1]); }
+          ctx.stroke(); ctx.setLineDash([]);
         }
-        ctx.beginPath();
-        for (i = 0; i <= N; i++) { var an = i / N * 2 * Math.PI, ca = Math.cos(an) * rd, sa = Math.sin(an) * rd, dq = Ps([c[0] + ca * E1[0] + sa * E2[0], c[1] + ca * E1[1] + sa * E2[1], c[2] + ca * E1[2] + sa * E2[2]]); if (i) ctx.lineTo(dq[0], dq[1]); else ctx.moveTo(dq[0], dq[1]); }
+        ctx.beginPath(); for (i = 0; i <= N; i++) { var dq = D[i % N]; if (i) ctx.lineTo(dq[0], dq[1]); else ctx.moveTo(dq[0], dq[1]); }
         ctx.fillStyle = 'rgba(206,32,104,' + (.06 * fin * (1 - lleg)) + ')'; ctx.fill();
         ctx.strokeStyle = 'rgba(128,30,74,' + (.6 * fin * (1 - lleg)) + ')'; ctx.lineWidth = .9; ctx.stroke();
       }

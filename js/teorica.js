@@ -753,7 +753,7 @@
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
-        var a = Math.min(1, u / .15) * al0, hb = (10 + 6 * Math.log10(1 + d.n)) * suave(u / .5);
+        var a = Math.min(1, u / .15) * al0, hb = (18 + 11 * Math.log10(1 + d.n)) * suave(u / .5);   // barras altas: la reconstrucción negra se dibuja encima de ellas
         var y0 = q[1] - 5.6, rx = 4.1, ry = 1.6;
         ctx.globalAlpha = a;
         // como al señalar la ladera: solo la tapita se pinta, del color de su tiempo de llegada

@@ -22,7 +22,7 @@ a:hover { border-bottom-color:var(--acento); }
 .ac { width:min(780px,100%); margin:0 auto; padding:0 16px 80px; }
 
 /* encabezado */
-.ac-cab { padding:64px 0 34px; border-bottom:1px solid var(--tinta); text-align:center; }
+.ac-cab { padding:64px 0 30px; border-bottom:1px solid var(--tinta); text-align:center; }
 .ac-serie { font:700 10px 'Space Mono',monospace; letter-spacing:.3em; text-transform:uppercase; color:var(--tinta-3); }
 .ac-serie a { color:inherit; border:0; }
 .ac-cab h1 { margin-top:18px; font:400 clamp(40px,6vw,60px)/1.05 'Cormorant Garamond',serif; letter-spacing:.005em; }
@@ -83,6 +83,20 @@ a:hover { border-bottom-color:var(--acento); }
 .ac-val { width:100%; margin-top:14px; border-collapse:collapse; font-size:14.5px; }
 .ac-val td { padding:6px 0; border-bottom:1px solid var(--regla); }
 .ac-val td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+
+.ac-meta-1 { grid-template-columns:1fr; width:min(240px,100%); margin-left:auto; margin-right:auto; }
+.ac-meta-1 div { text-align:center; }
+
+/* lista de clases en PDF: título a la izquierda, descargar al costado */
+.ac-pdfs { list-style:none; margin-top:-28px; }
+.ac-pdfs li { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:18px 0; border-bottom:1px solid var(--regla); }
+.ac-pdf { display:flex; align-items:center; gap:18px; background:none; border:0; padding:0; cursor:pointer; text-align:left; color:var(--tinta); font:inherit; min-width:0; }
+.ac-pdf svg { width:28px; height:34px; flex:none; color:var(--acento); }
+.ac-pdf b { display:block; font:500 24px/1.2 'Cormorant Garamond',serif; transition:color .2s ease; }
+.ac-pdf small { display:block; margin-top:3px; font:400 10.5px 'Space Mono',monospace; letter-spacing:.06em; color:var(--tinta-3); }
+.ac-pdf:hover b { color:var(--acento); }
+.ac-desc { flex:none; font:700 10px 'Space Mono',monospace; letter-spacing:.16em; text-transform:uppercase; padding:9px 14px; border:1px solid rgba(122,31,61,.45); }
+.ac-desc:hover { background:rgba(122,31,61,.07); border-color:var(--acento); }
 
 /* bibliografía */
 .ac-bib { margin-top:16px; list-style:none; counter-reset:ref; font-size:15px; }

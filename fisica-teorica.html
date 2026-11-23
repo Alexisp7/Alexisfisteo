@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Física Teórica — Alexis R. Salvatierra</title>
+  <meta name="description" content="Física teórica: del cuanto de Planck a las cascadas de rayos cósmicos que mide TAMBO en el valle del Colca."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&family=Newsreader:opsz,wght@6..72,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/curso-teorica.css"/>
+  <script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("fx-llega")}catch(e){}</script>
+  <link rel="stylesheet" href="css/efectos.css"/>
+</head>
+<body>
+  <script src="js/carga.js"></script>
+
+  <canvas class="ft-cielo" aria-hidden="true"></canvas>
+  <div class="ft-velo" aria-hidden="true"></div>
+  <div class="ft-luz" aria-hidden="true"></div>
+
+  <header class="header">
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a><span class="nav-sep">|</span><a href="cursos.html" class="active">Cursos</a><span class="nav-sep">|</span><a href="proyectos.html">Proyectos</a><span class="nav-sep">|</span><a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <main class="ft">
+    <section class="ft-portada">
+      <a class="ft-k ft-in" style="--d:.05s" href="cursos.html">Cursos · IV</a>
+      <h1 class="ft-t" data-letras>Física <em>teórica</em></h1>
+      <p class="ft-sub ft-in" style="--d:.9s">Del cuanto de Planck a la cascada de partículas que un neutrino tau desata sobre el valle del Colca.</p>
+      <div class="ft-filo ft-in" style="--d:1.05s"><i></i></div>
+      <p class="ft-estado ft-in" style="--d:1.2s"><b></b>Curso en preparación · Clase 1 disponible</p>
+      <a class="ft-baja ft-in" style="--d:1.5s" href="#clase-1">Bajar<i></i></a>
+    </section>
+
+    <!-- I · Clase 1 -->
+    <section class="ft-sec" id="clase-1">
+      <div class="ft-cab ft-ap"><span class="n">I</span><h2>Primera clase</h2><span class="r"></span></div>
+
+      <article class="ft-panel ft-clase ft-ap" style="--d:.1s" data-inclina>
+        <div class="ft-clase-txt">
+          <span class="ft-eti">Clase 01 · PDF</span>
+          <h3>Radiación de <em>cuerpo negro</em></h3>
+          <p class="ft-autor">Ronaldo Alexis Salvatierra Baldeón · UNMSM · Termodinámica 2024</p>
+          <p class="d">Por qué Planck tuvo que abandonar la energía continua. Se cuentan los modos estacionarios que caben en una caja, se ve cómo la equipartición clásica predice energía infinita en el ultravioleta y se llega a la fórmula de 1900 que dio origen a la mecánica cuántica.</p>
+          <div class="ft-ecu">ρ(ν,T) = <span class="fr"><span>8πhν³</span><span>c³</span></span> <span class="fr"><span>1</span><span>e<sup>hν/k<sub>B</sub>T</sup> − 1</span></span>
+            <small>Ley de Planck · densidad espectral de energía</small></div>
+          <ul class="ft-temas"><li>Ondas estacionarias</li><li>N(ν) = 8πν²/c³</li><li>Rayleigh–Jeans</li><li>Catástrofe ultravioleta</li><li>Cuanto ε = hν</li></ul>
+          <div class="ft-acc">
+            <button class="ft-btn" type="button" data-abrir="arch/avances/Radiacion_de_cuerpo_negro.pdf" data-iman>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 8s2.6-5 7-5 7 5 7 5-2.6 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2.2"/></svg>Leer la clase</button>
+            <a class="ft-btn sec" href="arch/avances/Radiacion_de_cuerpo_negro.pdf" download data-iman>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5v9M4 7l4 4 4-4M2 14.5h12"/></svg>Descargar</a>
+          </div>
+        </div>
+
+        <div class="ft-esp">
+          <div class="ft-esp-cab"><span>Espectro en vivo</span><output id="ftT">5 772 K</output></div>
+          <canvas id="ftPlanck" aria-label="Espectro de Planck y aproximación de Rayleigh–Jeans para la temperatura elegida"></canvas>
+          <div class="ft-ctrl"><label for="ftTemp">Temperatura</label><input id="ftTemp" type="range" min="2500" max="12000" step="1" value="5772"/></div>
+          <div class="ft-pres">
+            <button type="button" data-t="2700">Foco · 2 700 K</button><button type="button" data-t="3500">Betelgeuse · 3 500 K</button><button type="button" data-t="5772" class="on">Sol · 5 772 K</button><button type="button" data-t="9940">Sirio · 9 940 K</button>
+          </div>
+          <div class="ft-lect">
+            <div><span>Pico ν<sub>máx</sub></span><b id="ftNu">339 THz</b></div>
+            <div><span>Pico λ<sub>máx</sub></span><b id="ftLa">502 nm</b></div>
+            <div><span>u = aT⁴</span><b id="ftU">0,84 J/m³</b></div>
+          </div>
+          <div class="ft-ley"><span><i></i>Planck</span><span><i class="rj"></i>Rayleigh–Jeans (clásica)</span></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- II · Programa -->
+    <section class="ft-sec" id="programa">
+      <div class="ft-cab ft-ap"><span class="n">II</span><h2>Programa</h2><span class="r"></span></div>
+      <ol class="ft-prog">
+        <span class="hilo" aria-hidden="true"></span>
+        <li class="ft-u ft-ap"><span class="num">Unidad 01</span><h4>El nacimiento del cuanto <span class="marca ya">Disponible</span></h4>
+          <p>Cuerpo negro, conteo de modos y la hipótesis de Planck. El punto donde la física clásica deja de bastar.</p><span class="eq">ε = hν</span></li>
+        <li class="ft-u ft-ap"><span class="num">Unidad 02</span><h4>Mecánica analítica <span class="marca">En preparación</span></h4>
+          <p>Lagrange, Hamilton y el teorema de Noether: cada simetría continua trae consigo una cantidad conservada.</p><span class="eq">δ ∫ L(q, q̇, t) dt = 0</span></li>
+        <li class="ft-u ft-ap"><span class="num">Unidad 03</span><h4>Relatividad especial y cinemática de partículas <span class="marca">En preparación</span></h4>
+          <p>Cuadrivectores, invariantes y umbrales de reacción: lo necesario para seguir a un tau de 8 PeV hasta que decae.</p><span class="eq">E² = (pc)² + (mc²)²</span></li>
+        <li class="ft-u ft-ap"><span class="num">Unidad 04</span><h4>Neutrinos que cambian de sabor <span class="marca">En preparación</span></h4>
+          <p>Estados de masa y de sabor, la matriz de mezcla y por qué un ν<sub>μ</sub> cósmico llega a la Tierra convertido en ν<sub>τ</sub>.</p><span class="eq">P(ν<sub>μ</sub>→ν<sub>τ</sub>) = sin²2θ · sin²(1,27 Δm² L/E)</span></li>
+        <li class="ft-u ft-ap"><span class="num">Unidad 05</span><h4>Cascadas atmosféricas <span class="marca">En preparación</span></h4>
+          <p>Modelo de Heitler, perfil longitudinal de Greisen y distribución lateral NKG: cómo una sola partícula se convierte en cientos de miles.</p><span class="eq">X<sub>máx</sub> = X₀ ln(E₀ / E<sub>c</sub>)</span></li>
+        <li class="ft-u ft-ap"><span class="num">Unidad 06</span><h4>TAMBO: medir el cielo desde el Colca <span class="marca">En preparación</span></h4>
+          <p>Detectores en la ladera del valle, tiempos de llegada y reconstrucción de la dirección con un frente plano.</p><span class="eq">c · t<sub>i</sub> = c · t₀ + r<sub>i</sub> · n̂</span></li>
+      </ol>
+    </section>
+
+    <!-- III · Laboratorio -->
+    <section class="ft-sec" id="laboratorio">
+      <div class="ft-cab ft-ap"><span class="n">III</span><h2>Laboratorio</h2><span class="r"></span></div>
+      <div class="ft-panel ft-lab ft-ap" style="--d:.1s">
+        <canvas id="ftHeitler" aria-label="Árbol de la cascada de Heitler para la energía elegida"></canvas>
+        <div class="ft-lab-txt">
+          <span class="ft-eti">Modelo de Heitler</span>
+          <h3 style="margin-top:14px">Una partícula, cien mil</h3>
+          <p>Cada longitud de división X₀ ln 2 las partículas se duplican y reparten su energía. Cuando la energía por partícula baja a la crítica E<sub>c</sub>, la cascada deja de crecer: ahí está su máximo.</p>
+          <div class="ft-ctrl" style="margin-top:20px"><label for="ftE">Energía E₀</label><input id="ftE" type="range" min="11" max="17" step="0.01" value="15.6"/></div>
+          <div class="ft-lect">
+            <div><span>E₀</span><b id="hE">4 PeV</b></div>
+            <div><span>Generaciones</span><b id="hG">25</b></div>
+            <div><span>N<sub>máx</sub> = E₀/E<sub>c</sub></span><b id="hN">4,6 × 10⁷</b></div>
+            <div><span>X<sub>máx</sub></span><b id="hX">648 g/cm²</b></div>
+          </div>
+          <p class="ft-nota">Aire: X₀ = 36,7 g/cm², E<sub>c</sub> = 87 MeV. El árbol dibuja las 7 primeras generaciones; el resto se resume en la nube. Heitler sobrestima N<sub>máx</sub>: la forma de Greisen da unas diez veces menos.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ft-pie">© 2025 Alexis R. Salvatierra · Física teórica</footer>
+
+  <div class="ft-visor" role="dialog" aria-modal="true" aria-label="Clase 1 en PDF">
+    <div class="caja ft-panel">
+      <div class="barra"><span>Clase 01 · Radiación de cuerpo negro</span><button type="button" data-cerrar aria-label="Cerrar">×</button></div>
+      <iframe title="Clase 1: Radiación de cuerpo negro"></iframe>
+    </div>
+  </div>
+
+  <script src="js/curso-teorica.js"></script>
+</body>
+</html>

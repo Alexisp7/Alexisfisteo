@@ -8,7 +8,7 @@
   var quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var SECCION = { 'index.html': 'Inicio', '': 'Inicio', 'cursos.html': 'Cursos', 'proyectos.html': 'Proyectos', 'contacto.html': 'Contacto',
     'quantumquipu.html': 'QuantumQuipu', 'blackscholes.html': 'Black–Scholes cuántico', 'relatividad.html': 'Relatividad General',
-    'mecanica-cuantica.html': 'Mecánica Cuántica', 'problemas.html': 'Problemas de física', 'bitacora.html': 'Bitácora', 'cementerio.html': 'Bitácora' };
+    'mecanica-cuantica.html': 'Mecánica Cuántica', 'fisica-teorica.html': 'Física Teórica', 'problemas.html': 'Problemas de física', 'bitacora.html': 'Bitácora', 'cementerio.html': 'Bitácora' };
   // lo que cada página pesada pide al cargar: se precarga junto con la página al acercar el cursor a su enlace
   var RECURSOS = {
     'cursos.html': ['js/fision-nube.js', 'js/fision.js', 'js/canon.js', 'js/momento.js', 'js/agujero-glsl.js', 'js/cursos-escenas.js', 'css/fision.css', 'css/momento.css'],

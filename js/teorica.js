@@ -747,7 +747,7 @@
       var al0 = fade(t);
       // jerarquía local: la malla inactiva cercana baja ~12 % de contraste mientras se mide (sin círculo visible)
       var vel = suave((t - 8) / .25) * (1 - suave((t - 11.4) / .25)) * al0;
-      if (vel > 0) brillo(A_IMP[0] + 10, A_IMP[1] - 6, 95, '244,240,232', .5 * vel);
+      if (vel > 0) brillo(A_IMP[0] + 10, A_IMP[1] - 6, 95, '244,240,232', (.5 - .125 * suave((t - 9.4) / .25)) * vel);
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
@@ -800,7 +800,7 @@
       if (ue > 0) {
         var lv = L * ue;
         ctx.globalAlpha = ue;
-        trazoB([b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv], b, '#181415', 2.2, [6, 3]);
+        var e0 = [b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv]; trazo(e0, b, 'rgba(255,253,248,.9)', 4.4, [6, 3]); trazo(e0, b, '#181415', 2.2, [6, 3]);
         ctx.beginPath(); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - 9 * Math.cos(ang - .35), b[1] - 9 * Math.sin(ang - .35)); ctx.lineTo(b[0] - 9 * Math.cos(ang + .35), b[1] - 9 * Math.sin(ang + .35)); ctx.closePath();
         ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 2.2; ctx.lineJoin = 'round'; ctx.stroke(); ctx.fillStyle = '#22201E'; ctx.fill();
         if (ue > .9) texto(ctx, 'EJE RECONSTRUIDO', b[0] - L * Math.cos(ang) * .62, b[1] - L * Math.sin(ang) * .62 - 12, '#22201E', '700 9px "Space Mono", monospace');

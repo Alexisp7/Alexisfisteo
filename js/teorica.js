@@ -70,7 +70,7 @@
       pi: esfera('#D6C4F2', '#8A66C4', '#46307A', 'rgba(30,20,50,.6)'), mu: esfera('#C4E0EC', '#5A8EA8', '#28495A', 'rgba(20,30,40,.6)') };
 
     // ── cámara fija, oblicua: x a lo ancho, y arriba, z hacia el fondo del valle ──
-    var KZ = .12, KY = .42, CAM = { cx: 1012, cy: 697, s: 72 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
+    var KZ = .12, KY = .42, CAM = { cx: 932, cy: 697, s: 72 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
     function P(x, y, z) { return [CAM.cx + CAM.s * (x + KZ * z), CAM.cy - CAM.s * (y + KY * z)]; }
     function Ps(p) { return P(p[0], p[1], p[2]); }
 
@@ -223,12 +223,12 @@
     }
 
     // ── medallón de la fuente (arriba a la derecha) ──
-    var MED = { x: 1190, y: 200, r: 110 };
-    var LT = { x0: 985, x1: 1185, y: 428 };   // línea de llegadas
+    var MED = { x: 1110, y: 200, r: 110 };
+    var LT = { x0: 905, x1: 1105, y: 428 };   // línea de llegadas
 
     // ── zonas al pasar el mouse y su ficha ──
     var foco = null, fichas = {};
-    var FX = 712, FY = 98, FW = 338;
+    var FX = 632, FY = 98, FW = 338;
     function ficha(id, o) {
       var g = el('g', { 'class': 'rc-ficha' }, capa);
       var guia = el('path', { 'class': 'rc-guia', pathLength: 1 }, g);
@@ -406,8 +406,8 @@
       d: ['Cada partícula que entra al agua emite luz y el', 'fotomultiplicador suma pulsos de ~60 ns. El', 'disparo es el t_i del ajuste. A ' + coma(EST.rp, 0) + ' m del eje las', 'partículas llegan repartidas en decenas de ns.', 'Esquemático: sin modelo óptico ni electrónico.'] });
     ficha('llegadas', { ancla: [LT.x0 + 4, LT.y - 4], k: 'Registro del evento', tit: 'Tiempos de disparo', 
       d: ['Una marca por detector: su posición es el', 'tiempo de disparo desde el primero y su altura,', 'el logaritmo de las partículas. La ventana de', coma(T1H - T0H, 2) + ' µs no es la duración de la cascada: es', 'lo que tarda el frente en barrer la ladera,', 'inclinada respecto a él.'] });
-    var EVT = [800, 812];
-    var TMB = [790, 446];
+    var EVT = [720, 812];
+    var TMB = [710, 446];
     ficha('evento', { ancla: [EVT[0] + 4, EVT[1] - 10], k: 'Evento sintético 001 · ficha técnica', tit: 'Qué es simulado y qué no',
       d: ['E_ν 10 PeV · y 0,2 · E_τ 8 PeV · τ → hadrones', 'τ ' + coma(L_TAU * 1000, 0) + ' m · aire ' + coma(L_CRUCE, 2) + ' km · X ' + coma(X_IMP, 0) + ' g/cm²', 'llegan ' + cient(N_IMP) + ' e± · ' + VIVOS.length + ' estaciones', 'Calculado: λ_τ, Greisen, NKG, umbral, ajuste.', 'Parametrizado: Linsley y Matthews (extrapolados).', 'Ilustrativo: valle, medallón y trazas.', 'No son datos de TAMBO.'] });
 
@@ -489,10 +489,18 @@
       // el valle hace un corte: agua en el fondo, visible en la cara frontal
       // río
       pintaPasto(c);
-      c.beginPath(); for (var z3 = Z0; z3 <= Z1; z3 += .04) { var q3 = rio(z3); if (z3 === Z0) c.moveTo(q3[0], q3[1]); else c.lineTo(q3[0], q3[1]); }
-      c.lineCap = 'round'; c.strokeStyle = 'rgba(232,240,236,.9)'; c.lineWidth = 4.8; c.stroke();
-      c.strokeStyle = '#2F7FB8'; c.lineWidth = 3; c.stroke();
-      c.strokeStyle = 'rgba(190,228,250,.85)'; c.lineWidth = 1; c.translate(-.6, -.5); c.stroke(); c.translate(.6, .5); c.lineCap = 'butt';
+      // río: una cinta de agua que se ensancha y se angosta, con orillas de arena y reflejos
+      function cinta(ext) {
+        var izq = [], der = [];
+        for (var z3 = Z0; z3 <= Z1 + .001; z3 += .04) { var x3 = .05 + .12 * Math.sin(z3 * 1.9), a3 = (.055 + .022 * Math.sin(z3 * 3.1 + 1)) + ext; izq.push(P(x3 - a3, 0, z3)); der.push(P(x3 + a3, 0, z3)); }
+        c.beginPath(); izq.forEach(function (q, i) { if (i) c.lineTo(q[0], q[1]); else c.moveTo(q[0], q[1]); }); for (var i = der.length - 1; i >= 0; i--) c.lineTo(der[i][0], der[i][1]); c.closePath();
+      }
+      cinta(.03); c.fillStyle = 'rgba(214,200,164,.95)'; c.fill();
+      cinta(0); var gA = c.createLinearGradient(0, P(0, 0, Z1)[1], 0, P(0, 0, Z0)[1]); gA.addColorStop(0, '#5FA6CF'); gA.addColorStop(1, '#2C74AE'); c.fillStyle = gA; c.fill();
+      c.strokeStyle = 'rgba(30,80,120,.5)'; c.lineWidth = .5; c.stroke();
+      c.save(); cinta(0); c.clip(); c.strokeStyle = 'rgba(225,244,255,.75)'; c.lineWidth = .7; c.lineCap = 'round';
+      for (var zr = Z0 + .1; zr < Z1; zr += .17) { var xr = .05 + .12 * Math.sin(zr * 1.9) + .02 * Math.sin(zr * 7), r0 = P(xr - .025, 0, zr), r1 = P(xr + .02, 0, zr + .05); c.beginPath(); c.moveTo(r0[0], r0[1]); c.lineTo(r1[0], r1[1]); c.stroke(); }
+      c.restore();
       // unidades (tanques de agua) sobre la ladera: cilindros blancos con su sombra
       for (var j = DET.length - 1; j >= 0; j--) {
         var d = DET[j], q5 = Ps([d.x, d.y, d.z]);
@@ -517,7 +525,7 @@
       difumina(c, true);
     }
     // la maqueta se disuelve hacia la izquierda, como la de Stern–Gerlach: empieza en la cordillera, sin corte duro
-    var DIF0 = 688, DIF1 = 870, DIFR0 = 1185, DIFR1 = 1360, DIFY = 340;
+    var DIF0 = 608, DIF1 = 790, DIFR0 = 1105, DIFR1 = 1280, DIFY = 340;
     function difumina(c, der) {
       c.save(); c.globalCompositeOperation = 'destination-out';
       var g = c.createLinearGradient(DIF0, 0, DIF1, 0); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(.55, 'rgba(0,0,0,.45)'); g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -591,7 +599,9 @@
       for (var i = 0; i < 30; i++) { var ra = MED.r * Math.sqrt(r()) * 1.1, an = r() * 2 * Math.PI, x = OR.C[0] + ra * Math.cos(an), y = OR.C[1] + ra * Math.sin(an) * .7; ctx.fillStyle = 'rgba(185,140,70,' + (.15 + .25 * (.5 + .5 * Math.sin(t * 2 + i))) + ')'; ctx.fillRect(x, y, 1.2, 1.2); }
       OR.T.forEach(function (q) {
         if (t < q.t0) return;
-        var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), al = (1 - suave((t - q.t1) / .35)) * fd; if (al <= 0) return;
+        var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - q.t1) / 1.1)) * fd;
+        if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = .4 * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.2 : q.w * .8, q.g); }
+        var al = (1 - suave((t - q.t1) / .35)) * fd; if (al <= 0) { ctx.globalAlpha = 1; return; }
         ctx.globalAlpha = al;
         var b = cometa(q.a, q.b, u, q.laser ? 120 : 34, q.col, q.laser ? 2 : q.w + .3, 1);
         if (q.laser) { var b2 = cometa(q.a, q.b, u, 60, '225,248,255', .7, .9); }
@@ -711,16 +721,18 @@
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
         var a = Math.min(1, u / .15) * al0, hb = (5 + 6 * Math.log10(1 + d.n)) * suave(u / .5);
-        var cr = 1 + .3 * suave(u / .25), rx = 3.4 * cr, ry = 1.35 * cr, hh = 4.4 * cr, y0 = q[1] - hh;
+        var cr = 1 + .45 * suave(u / .25), rx = 3.4 * cr, ry = 1.35 * cr, hh = 4.4 * cr, y0 = q[1] - hh;
         brillo(q[0], y0, 13, '255,252,240', .6 * a);
         ctx.globalAlpha = a;
         // tanque encendido: azul marino oscuro con borde blanco, algo más grande que los demás
         ctx.fillStyle = 'rgba(255,253,248,.95)'; ctx.beginPath(); ctx.ellipse(q[0], q[1], rx + 1, ry + 1, 0, 0, Math.PI); ctx.lineTo(q[0] - rx - 1, y0); ctx.ellipse(q[0], y0, rx + 1, ry + 1, 0, Math.PI, 2 * Math.PI); ctx.closePath(); ctx.fill();
-        ctx.fillStyle = '#26364F'; ctx.fillRect(q[0] - rx, y0, 2 * rx, hh);
-        ctx.fillStyle = '#3B5274'; ctx.fillRect(q[0] - rx, y0, rx * .7, hh);
-        ctx.fillStyle = '#1B2639'; ctx.beginPath(); ctx.ellipse(q[0], q[1], rx, ry, 0, 0, Math.PI); ctx.fill();
-        ctx.fillStyle = '#4A6488'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
-        ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = .9; ctx.stroke();
+        ctx.fillStyle = '#C3C9CB'; ctx.fillRect(q[0] - rx, y0, 2 * rx, hh);
+        ctx.fillStyle = '#D9DEDF'; ctx.fillRect(q[0] - rx, y0, rx * .7, hh);
+        ctx.fillStyle = '#A9B1B5'; ctx.beginPath(); ctx.ellipse(q[0], q[1], rx, ry, 0, 0, Math.PI); ctx.fill();
+        // la tapita se pinta de azul (con un brillo claro), el cuerpo queda blanco
+        ctx.fillStyle = '#1E63D0'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
+        ctx.strokeStyle = '#123D7A'; ctx.lineWidth = .6; ctx.stroke();
+        ctx.fillStyle = 'rgba(150,200,255,.75)'; ctx.beginPath(); ctx.ellipse(q[0] - rx * .25, y0 - ry * .2, rx * .45, ry * .4, 0, 0, 2 * Math.PI); ctx.fill();
         // barra de tiempo con borde blanco
         ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 4.4; ctx.beginPath(); ctx.moveTo(q[0], y0 - 2.6); ctx.lineTo(q[0], y0 - 2.6 - hb); ctx.stroke(); ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = 2.2; ctx.stroke(); ctx.lineCap = 'butt';
         var p1 = Math.max(0, 1 - u / .7); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + (.85 * p1) + ')'; ctx.lineWidth = .8; ctx.beginPath(); ctx.ellipse(q[0], y0, rx + 8 * (1 - p1), ry + 3.4 * (1 - p1), 0, 0, 2 * Math.PI); ctx.stroke(); }

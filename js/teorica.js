@@ -462,7 +462,8 @@
       var t3 = el('text', { 'class': 'rc-dk', x: x0, y: yb + 12 }, g); t3.textContent = Math.round(EST.n) + ' partículas';
     }
     var A_MED = [MED.x - MED.r * .55, MED.y + MED.r * .55], A_MON = Ps([3.6, .2, Z0]), A_VTX = Ps(VTX), A_TAU = Ps(sobre(CARA, L_TAU * .6)), A_CAS = Ps(sobre(DEC, L_CRUCE * .5)), A_LAD = Ps([-2.4, alto(-2.4, 2.6), 2.6]), A_IMP = Ps(IMP), A_VAL = Ps([.3, 0, 2.2]);
-    ficha('fuente', { ancla: A_MED, k: 'Rayo cósmico · fuente lejana', tit: 'p + γ → Δ⁺ → n + π⁺', dib: dibSabores, dibH: 86,
+    var A_FUE = [MED.x - 20, MED.y - 18];   // vértice p + γ → Δ⁺ (donde queda su fantasma)
+    ficha('fuente', { ancla: A_FUE, k: 'Rayo cósmico · fuente lejana', tit: 'p + γ → Δ⁺ → n + π⁺', dib: dibSabores, dibH: 86,
       d: ['Un protón de ~2 × 10¹⁷ eV choca con un fotón', 'de su entorno. Luego π⁺ → μ⁺ ν_μ y μ⁺ → e⁺ ν_e ν̄_μ:', 'cada neutrino se lleva ≈ 5 % de la energía.', 'Sin carga, viajan en línea recta; al oscilar', 'en el camino también llegan ν_τ.'] });
     var A_OSC = (function () { var C = [MED.x - 20, MED.y - 18], A = [C[0] + .8 / Math.hypot(.8, .5) * 48, C[1] + .5 / Math.hypot(.8, .5) * 48], B = Ps(sobre(VTX, -1.55)); return [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3]; })();
     ficha('oscila', { ancla: A_OSC, k: 'Oscilación de sabor', tit: 'P(ν_μ→ν_τ) = sin²2θ · sin²(1,27 Δm²L/E)',
@@ -805,9 +806,10 @@
     // fantasmas: en cada punto donde algo cambia (o hay ficha) queda un rastro tenue de lo que pasa ahí,
     // para poder pasar el mouse en cualquier momento del bucle
     function fantasmas(t) {
-      var res = 'rgba(255,253,248,.82)', lat = .5 + .14 * Math.sin(t * 2.4);
-      [[OR.C, '45,150,200', 'Δ⁺'], [A_OSC, null, ''], [A_VTX, '181,106,30', 'τ⁻'], [A_TAU, '181,106,30', ''], [A_CAS, '206,32,104', 'e± γ'], [A_IMP, '96,30,80', 'Δt'], [[A_EST[0], A_EST[1] - 2], '45,150,200', '']].forEach(function (g) {
+      var res = 'rgba(255,253,248,.95)', lat = .86 + .1 * Math.sin(t * 2.4);
+      [[A_FUE, '45,150,200', 'Δ⁺'], [A_OSC, null, ''], [A_VTX, '181,106,30', 'τ⁻'], [A_TAU, '181,106,30', ''], [A_CAS, '206,32,104', 'e± γ'], [A_IMP, '96,30,80', 'Δt'], [[A_EST[0], A_EST[1] - 2], '45,150,200', '']].forEach(function (g) {
         var p = g[0]; if (foco && fichas[foco] && fichas[foco].ancla === p) return;
+        ctx.globalAlpha = 1; brillo(p[0], p[1], 16, '255,252,240', .75); if (g[1]) brillo(p[0], p[1], 12, g[1], .22 * lat);   // halo desvanecido: se nota sobre la roca o el pasto
         ctx.globalAlpha = lat;
         ctx.fillStyle = res; ctx.beginPath(); ctx.arc(p[0], p[1], 6, 0, 2 * Math.PI); ctx.fill();
         if (g[1]) { ctx.strokeStyle = 'rgba(' + g[1] + ',.85)'; ctx.lineWidth = 1.2; ctx.setLineDash([2, 2]); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = 'rgba(' + g[1] + ',.9)'; ctx.beginPath(); ctx.arc(p[0], p[1], 2, 0, 2 * Math.PI); ctx.fill(); }

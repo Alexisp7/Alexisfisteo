@@ -575,6 +575,12 @@
       ctx.lineCap = 'round'; trazo(e, h, gw, ancho + 2.2); trazo(e, h, g, ancho); ctx.lineCap = 'butt';
       return h;
     }
+    // hilo de luz que queda: halo celeste ancho, cuerpo celeste y núcleo claro (k escala su intensidad)
+    function rayo(a, b, k) {
+      ctx.lineCap = 'round';
+      trazo(a, b, 'rgba(90,180,225,' + (.1 * k) + ')', 7); trazo(a, b, 'rgba(90,180,225,' + (.32 * k) + ')', 2.2); trazo(a, b, 'rgba(230,248,255,' + (.75 * k) + ')', .7);
+      ctx.lineCap = 'butt';
+    }
     function fade(t) { return 1 - suave((t - T_FUN) / (LOOP - T_FUN - .2)); }
 
     // ── origen astrofísico: trayectorias rectas que se quedan dibujadas (como en una cámara de burbujas) ──
@@ -609,7 +615,7 @@
         if (t < q.t0) return;
         var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - T_OFIN) / .6)) * fd;   // todas las trazas se van juntas
         // como el camino principal, cada división deja un hilo celeste muy tenue que dura todo el bucle
-        if (!q.laser && q.lab !== 'π⁺') { var hc = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = fd; trazo(q.a, hc, 'rgba(90,180,225,.15)', 1.1); }
+        if (!q.laser && q.lab !== 'π⁺') { var hc = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = fd; rayo(q.a, hc, .6); }
         if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = .35 * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.2 : q.w * .8, q.g); }
         var al = (1 - suave((t - q.t1) / .35)) * fd; if (al <= 0) { ctx.globalAlpha = 1; return; }
         ctx.globalAlpha = al;
@@ -639,7 +645,7 @@
       var fd = fade(t), A = OR.D1, B = OR.E;
       // el camino completo, desde el protón: queda como un hilo celeste muy tenue hasta el suelo
       ctx.globalAlpha = fd;
-      [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); trazo(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 'rgba(90,180,225,.15)', 1.1); } });
+      [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); rayo(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 1); } });
       ctx.globalAlpha = 1;
       if (t > T_NU0 && fd > 0) {
         var u = cl((t - T_NU0) / (T_PAS - T_NU0), 0, 1), cn = u < .55 ? [50 + 70 * u / .55, 120 - 40 * u / .55, 190 - 20 * u / .55] : [120 + 50 * (u - .55) / .45, 80 - 25 * (u - .55) / .45, 170 - 45 * (u - .55) / .45];
@@ -647,7 +653,7 @@
         var hN = [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u];
         if (U_SUELO === null) U_SUELO = sueloNu(A, B);
         var hS = [A[0] + (B[0] - A[0]) * Math.min(u, U_SUELO), A[1] + (B[1] - A[1]) * Math.min(u, U_SUELO)];
-        ctx.globalAlpha = fd; trazo(A, hS, 'rgba(90,180,225,.15)', 1.1);   // su recorrido queda como un hilo celeste muy tenue
+        ctx.globalAlpha = fd; rayo(A, hS, 1);   // su recorrido queda como un hilo celeste muy tenue
         var aN = (1 - suave((t - T_PAS) / .3)) * fd;
         if (aN > 0) { ctx.globalAlpha = aN; var q = cometa(A, B, u, 70, cn, 1.6, 1); brillo(q[0], q[1], 12, cn, .8); ctx.fillStyle = 'rgb(' + cn + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 2.2, 0, 2 * Math.PI); ctx.fill(); }
         if (u > .5) {

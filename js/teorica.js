@@ -798,6 +798,14 @@
       // rótulo: separado del frente, hacia el lado contrario al eje (la cascada llega por la derecha)
       var lo = fa[0] < fb[0] ? fa : fb, ex = fa[0] - fb[0], ey = fa[1] - fb[1], el = Math.hypot(ex, ey) || 1;
       texto(ctx, 'FRENTE AJUSTADO', lo[0] - 7, lo[1] + 13, '#22201E', '700 9px "Space Mono", monospace', 'end');
+      // el cono va debajo del eje y sin borde blanco (no tapa la flecha)
+      var uc = suave((t - T_REC - 1) / .4) * fd;
+      if (uc > 0 && AJ) {
+        var dA = AJ.p68 * Math.PI / 180;
+        ctx.globalAlpha = uc; ctx.beginPath();
+        ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - L * Math.cos(ang - dA), b[1] - L * Math.sin(ang - dA)); ctx.lineTo(b[0] - L * Math.cos(ang + dA), b[1] - L * Math.sin(ang + dA)); ctx.closePath();
+        ctx.fillStyle = 'rgba(42,37,38,.22)'; ctx.fill();
+      }
       var ue = suave((t - T_REC - .5) / .5) * fd;
       if (ue > 0) {
         var lv = L * ue;
@@ -806,13 +814,6 @@
         ctx.beginPath(); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - 9 * Math.cos(ang - .35), b[1] - 9 * Math.sin(ang - .35)); ctx.lineTo(b[0] - 9 * Math.cos(ang + .35), b[1] - 9 * Math.sin(ang + .35)); ctx.closePath();
         ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 2.2; ctx.lineJoin = 'round'; ctx.stroke(); ctx.fillStyle = '#22201E'; ctx.fill();
         if (ue > .9) texto(ctx, 'EJE RECONSTRUIDO', b[0] - L * Math.cos(ang) * .62, b[1] - L * Math.sin(ang) * .62 - 12, '#22201E', '700 9px "Space Mono", monospace');
-      }
-      var uc = suave((t - T_REC - 1) / .4) * fd;
-      if (uc > 0 && AJ) {
-        var dA = AJ.p68 * Math.PI / 180;
-        ctx.globalAlpha = uc; ctx.beginPath();
-        ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - L * Math.cos(ang - dA), b[1] - L * Math.sin(ang - dA)); ctx.lineTo(b[0] - L * Math.cos(ang + dA), b[1] - L * Math.sin(ang + dA)); ctx.closePath();
-        ctx.fillStyle = 'rgba(42,37,38,.22)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,253,248,.85)'; ctx.lineWidth = .6; ctx.stroke();
       }
       ctx.globalAlpha = 1;
     }

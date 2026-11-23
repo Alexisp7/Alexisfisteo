@@ -667,7 +667,10 @@
     }
     // hilo de luz que queda: halo celeste ancho, cuerpo celeste y núcleo claro (k escala su intensidad)
     // hilos del rayo cósmico, su descomposición y la caída del ν: halo celeste detrás, azul translúcido y un hilo frambuesa muy fino
+    // 2 s después de terminar la caída del ν, los hilos quedan un poco más transparentes (mismo trazo, con su halo celeste)
+    var rayoK = 1;
     function rayo(a, b, k) {
+      k *= rayoK;
       ctx.lineCap = 'round';
       trazo(a, b, 'rgba(90,180,225,' + (.12 * k) + ')', 7); trazo(a, b, 'rgba(90,180,225,' + (.26 * k) + ')', 3.6);
       trazo(a, b, 'rgba(26,104,200,' + (.55 * k) + ')', 1.8); trazo(a, b, 'rgba(206,32,104,' + Math.min(1, 1.3 * k) + ')', .5);
@@ -1148,6 +1151,7 @@
       if (clave !== claveFondo) { claveFondo = clave; fctx.setTransform(1, 0, 0, 1, 0, 0); fctx.clearRect(0, 0, fondo.width, fondo.height); fctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky); pintaFondo(fctx, vb); }
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
+      rayoK = 1 - .45 * suave((t - T_PAS - 2) / .8);
       rioVivo(t); realce();
       medallon(t); neutrino(t); vinetaOscila(t); tau(t); cascada(t); senales(t); llegadas(t); elipseFrente(); tramosEncima(t); reconstruye(t); fantasmas(t);
       difumina(ctx);

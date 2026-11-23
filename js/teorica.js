@@ -742,7 +742,21 @@
     // trazas finas que nacen a lo largo del eje y se abren; hadrones/muones escasos, puntos ámbar más gruesos.
     var C_EM = '206,32,104';   // e± y γ: un continuo frambuesa (muchísimas partículas), contrasta con el pasto y el río
     var LOTES = [[], [], [], [], [], []], LL = [[], [], []], ESTELA = [], CAB = [], CABH = [];
+    // tramos que llegan: en primer plano, encima de tanques y barras, mientras el detector se los come
+    var LL_AL = 0;
+    function tramosEncima(t) {
+      if (t < T_DEC || LL_AL <= 0) return;
+      // llegadas: el continuo dirigido, con un velo ancho debajo para que se lea como muchas partículas juntas
+      LL.forEach(function (l, k) {
+        if (!l.length) return; var col = k === 2 ? '123,76,226' : k === 1 ? '229,110,17' : C_EM;
+        for (var pz = 1; pz < 2; pz++) {
+          ctx.strokeStyle = 'rgba(' + col + ',' + ((pz ? (k === 2 ? .45 : k ? .65 : .6) : (k ? .04 : .1)) * LL_AL) + ')'; ctx.lineWidth = pz ? (k ? 1 : .75) : 3.2;
+          ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
+        }
+      });
+    }
     function cascada(t) {
+      LL_AL = 0;
       if (t < T_DEC) return;
       var sf = frenteV(t), crec = cl(sf / L_CRUCE, 0, 1), fin = fade(t), sfx = t > T_LLEGA ? L_CRUCE + 1.7 * L_CRUCE / (T_LLEGA - T_DEC) * (t - T_LLEGA) : sf;   // tras llegar, el frente sigue y cada trazo se consume en el suelo
       if (fin <= 0) return;
@@ -765,14 +779,7 @@
         ctx.strokeStyle = k === 5 ? 'rgba(123,76,226,' + al + ')' : k === 4 ? 'rgba(229,110,17,' + al + ')' : 'rgba(' + C_EM + ',' + al + ')'; ctx.lineWidth = k === 5 ? .9 : k === 4 ? .9 : .5 + k * .13;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });
-      // llegadas: el continuo dirigido, con un velo ancho debajo para que se lea como muchas partículas juntas
-      LL.forEach(function (l, k) {
-        if (!l.length) return; var col = k === 2 ? '123,76,226' : k === 1 ? '229,110,17' : C_EM;
-        for (var pz = 1; pz < 2; pz++) {
-          ctx.strokeStyle = 'rgba(' + col + ',' + ((pz ? (k === 2 ? .45 : k ? .65 : .6) : (k ? .04 : .1)) * fin * resalta) + ')'; ctx.lineWidth = pz ? (k ? 1 : .75) : 3.2;
-          ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
-        }
-      });
+      LL_AL = fin * resalta;
       if (ESTELA.length) { ctx.strokeStyle = 'rgba(176,40,96,' + (.012 * fin * resalta) + ')'; ctx.lineWidth = .5; ctx.beginPath(); for (var e = 0; e < ESTELA.length; e += 4) { ctx.moveTo(ESTELA[e], ESTELA[e + 1]); ctx.lineTo(ESTELA[e + 2], ESTELA[e + 3]); } ctx.stroke(); }
       ctx.fillStyle = 'rgba(' + C_EM + ',' + ((t - T_DEC < .9 ? .92 : .85) * fin * (1 - .4 * crec)) + ')';
       for (var i = 0; i < CAB.length; i += 2) ctx.fillRect(CAB[i] - .9, CAB[i + 1] - .9, 1.8, 1.8);
@@ -985,7 +992,7 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
       rioVivo(t); realce();
-      medallon(t); neutrino(t); tau(t); cascada(t); senales(t); llegadas(t); reconstruye(t);
+      medallon(t); neutrino(t); tau(t); cascada(t); senales(t); llegadas(t); tramosEncima(t); reconstruye(t);
       difumina(ctx);
     }
 

@@ -505,13 +505,14 @@
       for (var j = DET.length - 1; j >= 0; j--) {
         var d = DET[j], q5 = Ps([d.x, d.y, d.z]);
         if (q5[0] < vb.x - 10 || q5[0] > vb.x + vb.width + 10) continue;
-        c.fillStyle = 'rgba(60,44,30,.25)'; c.beginPath(); c.ellipse(q5[0] + 2, q5[1] + .7, 4.4, 1.6, 0, 0, 2 * Math.PI); c.fill();
-        c.fillStyle = '#C3C9CB'; c.fillRect(q5[0] - 3.4, q5[1] - 4.4, 6.8, 4.4);
-        c.fillStyle = '#D9DEDF'; c.fillRect(q5[0] - 3.4, q5[1] - 4.4, 2.4, 4.4);
-        c.fillStyle = '#A9B1B5'; c.beginPath(); c.ellipse(q5[0], q5[1], 3.4, 1.35, 0, 0, Math.PI); c.fill();
-        c.fillStyle = '#F2F4F1'; c.beginPath(); c.ellipse(q5[0], q5[1] - 4.4, 3.4, 1.35, 0, 0, 2 * Math.PI); c.fill();
+        c.fillStyle = 'rgba(60,44,30,.25)'; c.beginPath(); c.ellipse(q5[0] + 3, q5[1] + 1, 6.6, 2.4, 0, 0, 2 * Math.PI); c.fill();
+        c.fillStyle = '#C3C9CB'; c.fillRect(q5[0] - 5.1, q5[1] - 6.6, 10.2, 6.6);
+        c.fillStyle = '#D9DEDF'; c.fillRect(q5[0] - 5.1, q5[1] - 6.6, 3.6, 6.6);
+        c.fillStyle = '#A9B1B5'; c.beginPath(); c.ellipse(q5[0], q5[1], 5.1, 2, 0, 0, Math.PI); c.fill();
+        c.fillStyle = '#F2F4F1'; c.beginPath(); c.ellipse(q5[0], q5[1] - 6.6, 5.1, 2, 0, 0, 2 * Math.PI); c.fill();
         c.strokeStyle = 'rgba(70,80,88,.4)'; c.lineWidth = .4; c.stroke();
       }
+      difumina(c, true);
       // origen astrofísico: sin viñeta, en el espacio sobre la maqueta (solo su rótulo es fijo)
       // a la izquierda de la recta del ν, sin tocarla
       var yO = OR.C[1] + 84, xO = OR.D1[0] + (yO - OR.D1[1]) * (OR.E[0] - OR.D1[0]) / (OR.E[1] - OR.D1[1]) - 18;
@@ -522,14 +523,14 @@
       c.fillStyle = 'rgba(70,54,42,.95)'; c.font = '700 11px "Space Mono", monospace'; c.fillText('TAMBO', TMB[0], TMB[1]);
       c.font = '400 9px "Space Mono", monospace'; c.fillStyle = 'rgba(92,70,54,.75)'; c.fillText('red de detectores en la ladera', TMB[0], TMB[1] + 13);
       c.strokeStyle = 'rgba(92,70,54,.3)'; c.lineWidth = .6; c.beginPath(); c.moveTo(EVT[0], EVT[1] + 5); c.lineTo(EVT[0] + 266, EVT[1] + 5); c.stroke();
-      difumina(c, true);
     }
     // la maqueta se disuelve hacia la izquierda, como la de Stern–Gerlach: empieza en la cordillera, sin corte duro
-    var DIF0 = 672, DIF1 = 905, DIFR0 = 1105, DIFR1 = 1280, DIFY = 340;
+    var DIF0 = 700, DIF1 = 950, DIFR0 = 1105, DIFR1 = 1280, DIFY = 340;
     function difumina(c, der) {
+      var D0 = der ? DIF0 : 600, D1 = der ? DIF1 : 720;
       c.save(); c.globalCompositeOperation = 'destination-out';
-      var g = c.createLinearGradient(DIF0, 0, DIF1, 0); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(.3, 'rgba(0,0,0,.8)'); g.addColorStop(.65, 'rgba(0,0,0,.35)'); g.addColorStop(1, 'rgba(0,0,0,0)');
-      c.fillStyle = g; c.fillRect(DIF0 - 400, -50, DIF1 - DIF0 + 400, 1100);
+      var g = c.createLinearGradient(D0, 0, D1, 0); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(.3, 'rgba(0,0,0,.8)'); g.addColorStop(.65, 'rgba(0,0,0,.35)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = g; c.fillRect(D0 - 400, -50, D1 - D0 + 400, 1100);
       // a la derecha solo se disuelve la maqueta (debajo del origen astrofísico)
       var g2 = c.createLinearGradient(DIFR0, 0, DIFR1, 0); g2.addColorStop(0, 'rgba(0,0,0,0)'); g2.addColorStop(.45, 'rgba(0,0,0,.5)'); g2.addColorStop(1, 'rgba(0,0,0,1)');
       if (der) { c.fillStyle = g2; c.fillRect(DIFR0, DIFY, 1600 - DIFR0, 1100); } c.restore();
@@ -721,7 +722,7 @@
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
         var a = Math.min(1, u / .15) * al0, hb = (5 + 6 * Math.log10(1 + d.n)) * suave(u / .5);
-        var y0 = q[1] - 4.4, rx = 3.6, ry = 1.45;
+        var y0 = q[1] - 6.6, rx = 5.3, ry = 2.1;
         ctx.globalAlpha = a;
         // como al señalar la ladera: solo la tapita se pinta, del color de su tiempo de llegada
         ctx.fillStyle = 'rgb(' + col + ')'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
@@ -803,7 +804,7 @@
         var x = BX0 + .05 + r() * (BX1 - BX0 - .1), z = Z0 + .03 + r() * (Z1 - Z0 - .06), y = alto(x, z);
         if (y > 1.45 && r() < .6) continue;
         if (y < .06 && Math.abs(x - .05 - .12 * Math.sin(z * 1.9)) < .075) continue;   // deja libre el cauce
-        var q = Ps([x, y, z]); if (cerca(q, 30)) continue;
+        var q = Ps([x, y, z]); if (cerca(q, 64)) continue;
         var prof = (z - Z0) / (Z1 - Z0), seco = cl((y - .1) / .5, 0, 1) * (.75 + .25 * r());
         MATAS.push({ x: q[0], y: q[1], l: (2.6 + 3.6 * r()) * (1 - .35 * prof), lean: (r() - .5) * 1.4, c: seco < .3 ? 0 : seco < .55 ? 1 : seco < .8 ? 2 : 3, s: r(), f: r() < .025 });
       }
@@ -839,7 +840,7 @@
       });
     }
     function realce() {
-      if (foco === 'ladera') DET.forEach(function (d) { var q = Ps([d.x, d.y, d.z]); ctx.fillStyle = 'rgba(50,130,180,.6)'; ctx.beginPath(); ctx.ellipse(q[0], q[1] - 4.4, 3.6, 1.5, 0, 0, 2 * Math.PI); ctx.fill(); });
+      if (foco === 'ladera') { ctx.fillStyle = '#5BB4E6'; ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = .9; DET.forEach(function (d) { var q = Ps([d.x, d.y, d.z]); ctx.beginPath(); ctx.ellipse(q[0], q[1] - 6.6, 5.1, 2, 0, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); }); }
       if (foco === 'valle') { ctx.strokeStyle = 'rgba(50,130,180,.7)'; ctx.lineWidth = 2.6; ctx.beginPath(); for (var z = Z0; z <= Z1; z += .05) { var q = rio(z); if (z === Z0) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]); } ctx.stroke(); }
     }
 

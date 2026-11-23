@@ -666,15 +666,11 @@
       return h;
     }
     // hilo de luz que queda: halo celeste ancho, cuerpo celeste y núcleo claro (k escala su intensidad)
-    // el rayo cósmico (protón): azul intenso con un hilo frambuesa delgado y nítido al centro
-    function rayoCR(a, b, k) {
-      ctx.lineCap = 'round';
-      trazo(a, b, 'rgba(40,110,205,' + (.12 * k) + ')', 7); trazo(a, b, 'rgba(26,104,200,' + (.78 * k) + ')', 2.4); trazo(a, b, 'rgba(206,32,104,' + k + ')', .75);
-      ctx.lineCap = 'butt';
-    }
+    // hilos del rayo cósmico, su descomposición y la caída del ν: halo celeste detrás, azul translúcido y un hilo frambuesa muy fino
     function rayo(a, b, k) {
       ctx.lineCap = 'round';
-      trazo(a, b, 'rgba(90,180,225,' + (.1 * k) + ')', 7); trazo(a, b, 'rgba(90,180,225,' + (.32 * k) + ')', 2.2); trazo(a, b, 'rgba(230,248,255,' + (.75 * k) + ')', .7);
+      trazo(a, b, 'rgba(90,180,225,' + (.12 * k) + ')', 7); trazo(a, b, 'rgba(90,180,225,' + (.26 * k) + ')', 3.6);
+      trazo(a, b, 'rgba(26,104,200,' + (.55 * k) + ')', 1.8); trazo(a, b, 'rgba(206,32,104,' + Math.min(1, 1.3 * k) + ')', .5);
       ctx.lineCap = 'butt';
     }
     function fade(t) { return 1 - suave((t - T_FUN) / (LOOP - T_FUN - .2)); }
@@ -712,13 +708,13 @@
         var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - T_OFIN) / .6)) * fd;   // todas las trazas se van juntas
         // como el camino principal, cada división deja un hilo celeste muy tenue que dura todo el bucle
         if (!q.laser && q.lab !== 'π⁺') { var hc = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = fd; rayo(q.a, hc, .6); }
-        if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = (q.laser ? .62 : .35) * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.9 : q.w * .8, q.g);
+        if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = (q.laser ? .45 : .35) * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.6 : q.w * .8, q.g);
           // rayo cósmico: azul más intenso con un hilo frambuesa delgado y nítido al centro
-          if (q.laser) { ctx.globalAlpha = .95 * rs; trazo(q.a, hq, 'rgba(206,32,104,1)', .7); } }
+          if (q.laser) { ctx.globalAlpha = .9 * rs; trazo(q.a, hq, 'rgba(206,32,104,1)', .4); } }
         var al = (1 - suave((t - q.t1) / .35)) * fd; if (al <= 0) { ctx.globalAlpha = 1; return; }
         ctx.globalAlpha = al;
         var b = cometa(q.a, q.b, u, q.laser ? 120 : 34, q.col, q.laser ? 2 : q.w + .3, 1);
-        if (q.laser) { var b2 = cometa(q.a, q.b, u, 90, '206,32,104', .8, 1); }
+        if (q.laser) { var b2 = cometa(q.a, q.b, u, 90, '206,32,104', .45, 1); }
         brillo(b[0], b[1], q.laser ? 16 : 9, q.col, .8); ctx.fillStyle = 'rgb(' + q.col + ')'; ctx.beginPath(); ctx.arc(b[0], b[1], q.laser ? 2.4 : 1.6, 0, 2 * Math.PI); ctx.fill();
         if (u > .25) rotulo(q.lab, b[0] + 5, b[1] - 5, 'rgba(' + q.col + ',1)', 14);
         ctx.globalAlpha = 1;
@@ -746,7 +742,7 @@
       var fd = fade(t), A = OR.D1, B = OR.E;
       // el camino completo, desde el protón: queda como un hilo celeste muy tenue hasta el suelo
       ctx.globalAlpha = fd;
-      [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); (g[0] === OR.S ? rayoCR : rayo)(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 1); } });
+      [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); rayo(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 1); } });
       ctx.globalAlpha = 1;
       if (t > T_NU0 && fd > 0) {
         // cae hasta el punto de la oscilación (u = .3), se detiene mientras corre la viñeta y cambia de sabor, y sigue
@@ -1158,21 +1154,24 @@
       construye();
     }
 
-    // construcción al entrar al curso: la maqueta se levanta de derecha a izquierda (del origen hacia TAMBO),
-    // con un frente fino de tinta frambuesa; el borde es suave, no un corte
-    var ARM = 1, ARM_T = 1.7, ARM_X0 = 1470, ARM_X1 = 330, ARM_ANCHO = 150, armVisto = 1;
+    // construcción al entrar al curso: la maqueta llega por piezas (franjas de la cordillera y el valle) que caen
+    // de derecha a izquierda y se acomodan con un pequeño rebote; rápido, sin deslizar ni desvanecer el conjunto
+    var ARM = 1, ARM_T = 1.05, ARM_N = 14, ARM_DUR = .42, ARM_CAIDA = 46, armVisto = 1;
+    function rebote(x) { x = cl(x, 0, 1); var c1 = 1.25, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
     function construye() {
-      if (ARM >= 1) { if (armVisto < 1) { armVisto = 1; [fondo, lienzo].forEach(function (cv) { cv.style.webkitMaskImage = cv.style.maskImage = ''; }); } return; }
-      armVisto = ARM;
-      var vb = svg.viewBox.baseVal, u = 1 - Math.pow(1 - ARM, 3), xf = ARM_X0 - (ARM_X0 - ARM_X1) * u;
-      var px = function (x) { return ((x - vb.x) / vb.width * W).toFixed(1) + 'px'; };
-      var m = 'linear-gradient(90deg, transparent ' + px(xf) + ', #000 ' + px(xf + ARM_ANCHO) + ')';
-      [fondo, lienzo].forEach(function (cv) { cv.style.webkitMaskImage = cv.style.maskImage = m; });
-      // frente de construcción: hilo frambuesa nítido con un halo tenue, que se apaga al terminar
-      var xl = xf + ARM_ANCHO * .55, al = 1 - suave((ARM - .82) / .18);
-      var g = ctx.createLinearGradient(0, 90, 0, 900); g.addColorStop(0, 'rgba(206,32,104,0)'); g.addColorStop(.35, 'rgba(206,32,104,' + (.85 * al) + ')'); g.addColorStop(1, 'rgba(206,32,104,' + (.5 * al) + ')');
-      ctx.save(); ctx.strokeStyle = g; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(xl, 90); ctx.lineTo(xl - 40, 900); ctx.stroke();
-      ctx.globalAlpha = .18 * al; ctx.lineWidth = 6; ctx.stroke(); ctx.restore();
+      if (ARM >= 1) { if (armVisto < 1) { armVisto = 1; fondo.style.visibility = ''; } return; }
+      armVisto = ARM; fondo.style.visibility = 'hidden';
+      var vb = svg.viewBox.baseVal, kx = W / vb.width * dpr, ky = H / vb.height * dpr;
+      var x0 = Math.max(0, (300 - vb.x) * kx), x1 = fondo.width, wp = (x1 - x0) / ARM_N, tA = ARM * ARM_T;
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'destination-over';
+      for (var i = 0; i < ARM_N; i++) {
+        var orden = ARM_N - 1 - i, t0 = orden / (ARM_N - 1) * (ARM_T - ARM_DUR), u = (tA - t0) / ARM_DUR;
+        if (u <= 0) continue;
+        var sx = Math.floor(x0 + i * wp), sw = Math.ceil(x0 + (i + 1) * wp) - sx, oy = -(1 - rebote(u)) * ARM_CAIDA * ky;
+        ctx.globalAlpha = suave(u * 2.4);
+        ctx.drawImage(fondo, sx, 0, sw, fondo.height, sx, oy, sw, fondo.height);
+      }
+      ctx.restore();
     }
 
     function lecturas(t) {

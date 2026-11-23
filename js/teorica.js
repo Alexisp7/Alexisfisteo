@@ -470,7 +470,7 @@
     ficha('oscila', { ancla: A_OSC, k: 'Oscilación de sabor', tit: 'P(ν_μ→ν_τ) = sin²2θ · sin²(1,27 Δm²L/E)',
       d: ['Un ν_μ es una mezcla de dos estados de masa', 'con Δm² ≈ 2,5 × 10⁻³ eV² y mezcla casi máxima.', 'Su desfase cambia el sabor: a 10 PeV un ciclo', 'completo mide ≈ 10¹⁰ km (unas 66 UA).', 'Tras megapársecs se promedia y llegan', 'ν_e : ν_μ : ν_τ ≈ 1 : 1 : 1. (Viñeta no a escala.)'] });
     ficha('monte', { ancla: A_MON, k: 'Blanco de roca', tit: 'Neutrinos rasantes',
-      d: ['A 10 PeV un neutrino recorre en promedio', '~4 000 km de roca antes de interactuar: la', 'Tierra entera lo absorbe, pero uno casi', 'horizontal cruza kilómetros de montaña y', 'puede interactuar cerca de la cara del valle.'] });
+      d: ['A 10 PeV un neutrino recorre en promedio', '~2 700 km de roca antes de interactuar: la', 'Tierra entera lo absorbe, pero uno casi', 'horizontal cruza kilómetros de montaña y', 'puede interactuar cerca de la cara del valle.'] });
     ficha('vertice', { ancla: A_VTX, k: 'Corriente cargada', tit: 'ν_τ + N → τ⁻ + X',
       d: ['El neutrino intercambia un bosón W con un', 'quark y se vuelve un tau, que se lleva ≈ 80 %', 'de la energía. El resto (X) es una lluvia de', 'hadrones que la roca absorbe. Debe ocurrir a', 'entre ~50 m y 5 km de la cara del valle.'] });
     ficha('tau', { ancla: A_TAU, k: 'Leptón tau', tit: 'λ = γ c τ ≈ 49 m × E/PeV', dib: dibTau, dibH: 72,

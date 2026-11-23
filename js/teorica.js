@@ -608,6 +608,8 @@
       OR.T.forEach(function (q) {
         if (t < q.t0) return;
         var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - T_OFIN) / .6)) * fd;   // todas las trazas se van juntas
+        // como el camino principal, cada división deja un hilo celeste muy tenue que dura todo el bucle
+        if (!q.laser && q.lab !== 'π⁺') { var hc = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = fd; trazo(q.a, hc, 'rgba(90,180,225,.15)', 1.1); }
         if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = .35 * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.2 : q.w * .8, q.g); }
         var al = (1 - suave((t - q.t1) / .35)) * fd; if (al <= 0) { ctx.globalAlpha = 1; return; }
         ctx.globalAlpha = al;

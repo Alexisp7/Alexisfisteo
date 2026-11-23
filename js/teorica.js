@@ -278,7 +278,19 @@
       var poly = [], N = 72, e = 0;
       for (var k2 = 0; k2 < N; k2++) { var dd = per * k2 / N; while (L[e + 1] < dd) e++; var h0 = hull[e], h1 = hull[(e + 1) % hull.length], f = (dd - L[e]) / Math.max(1e-6, L[e + 1] - L[e]); poly.push([h0[0] + (h1[0] - h0[0]) * f, h0[1] + (h1[1] - h0[1]) * f]); }
       var cx = 0, cy = 0; poly.forEach(function (q) { cx += q[0] / N; cy += q[1] / N; });
-      HUE.poly = poly; HUE.cx = cx; HUE.cy = cy;
+      // sombra del frente: proyección del disco a lo largo del eje sobre la ladera (centrada en el impacto),
+      // escalada para cubrir la misma área que los tanques con señal
+      var U = [IMP[0] - DEC[0], IMP[1] - DEC[1], IMP[2] - DEC[2]], uL = Math.hypot(U[0], U[1], U[2]); U = U.map(function (x) { return x / uL; });
+      var r0 = R_M * 1.4 + .02, SH = [];
+      for (i = 0; i < N; i++) {
+        var an = i / N * 2 * Math.PI, Q = [0, 1, 2].map(function (k) { return IMP[k] + r0 * (Math.cos(an) * E1[k] + Math.sin(an) * E2[k]); });
+        var lo2 = -3, hi2 = 3; for (var it = 0; it < 40; it++) { var md = (lo2 + hi2) / 2, X2 = Q[0] + md * U[0], Y2 = Q[1] + md * U[1], Z2 = Q[2] + md * U[2]; if (Y2 > alto(X2, Z2)) lo2 = md; else hi2 = md; }
+        SH.push(Ps([Q[0] + lo2 * U[0], Q[1] + lo2 * U[1] + .006, Q[2] + lo2 * U[2]]));
+      }
+      function area(pl) { var a = 0; for (var j = 0; j < pl.length; j++) { var p1 = pl[j], p2 = pl[(j + 1) % pl.length]; a += p1[0] * p2[1] - p2[0] * p1[1]; } return Math.abs(a / 2); }
+      var kS = Math.sqrt(area(poly) / Math.max(1, area(SH))), O = Ps(IMP);
+      HUE.sombra = SH.map(function (q) { return [O[0] + (q[0] - O[0]) * kS, O[1] + (q[1] - O[1]) * kS]; }); HUE.O = O; HUE.r0 = r0;
+      HUE.poly = HUE.sombra; HUE.cx = cx; HUE.cy = cy;
       return HUE;
     }
     function frenteV(t) { return t < T_DEC ? 0 : Math.min(L_CRUCE, fx(T_DEC + (t - T_DEC) * KV)); }
@@ -793,18 +805,20 @@
       if (!ELI) return;
       var sf = ELI.sf, crec = ELI.crec, fin = ELI.fin, t = ELI.t, lleg = suave((t - (T_DEC + (T_LLEGA - T_DEC) / KV) + .1) / .3);   // llegada del frente a la ladera
       var H = huella(), N = H.poly.length, i;
-      // el frente en el aire: disco delgado (≈ 2 R_M) perpendicular al eje, proyectado punto a punto; viaja con las partículas
-      // y en el último tramo su forma se ajusta a la huella; al llegar desaparece dejando la huella como rastro
+      // el frente en el aire: disco delgado (≈ 2 R_M) perpendicular al eje, proyectado punto a punto; viaja con las partículas.
+      // Su sombra a lo largo del eje cae sobre la ladera: aparece al acercarse y crece con él; al tocar el suelo el disco
+      // desaparece y la sombra queda como la huella
+      var rd = R_M * 1.4 * crec + .02;
       if (lleg < 1) {
-        var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), D = [];
-        for (i = 0; i < N; i++) { var an = i / N * 2 * Math.PI, ca = Math.cos(an) * rd, sa = Math.sin(an) * rd; D.push(Ps([c[0] + ca * E1[0] + sa * E2[0], c[1] + ca * E1[1] + sa * E2[1], c[2] + ca * E1[2] + sa * E2[2]])); }
-        var m = suave((sf / L_CRUCE - .65) / .35), mejor = 0, dm = 1e18;
-        if (m > 0) for (var sh = 0; sh < N; sh++) { var sd = 0; for (i = 0; i < N; i += 4) { var hq = H.poly[(i + sh) % N]; sd += Math.hypot(D[i][0] - pc[0] - hq[0] + H.cx, D[i][1] - pc[1] - hq[1] + H.cy); } if (sd < dm) { dm = sd; mejor = sh; } }
-        var ox = pc[0] + (H.cx - A_IMP[0]) * m, oy = pc[1] + (H.cy - A_IMP[1]) * m;   // el centro sigue al frente; solo se corrige el desfase entre eje y huella
+        var c = sobre(DEC, sf), m = suave((sf / L_CRUCE - .45) / .5), ks = rd / H.r0;
+        if (m > 0) {
+          ctx.beginPath(); for (i = 0; i <= N; i++) { var sq = H.sombra[i % N], x = H.O[0] + (sq[0] - H.O[0]) * ks, y = H.O[1] + (sq[1] - H.O[1]) * ks; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+          ctx.fillStyle = 'rgba(206,32,104,' + (.12 * m * fin) + ')'; ctx.fill(); ctx.strokeStyle = 'rgba(176,34,92,' + (.5 * m * fin) + ')'; ctx.lineWidth = .8; ctx.stroke();
+        }
         ctx.beginPath();
-        for (i = 0; i <= N; i++) { var dq = D[i % N], hp = H.poly[(i + mejor) % N], x = ox + (dq[0] - pc[0]) * (1 - m) + (hp[0] - H.cx) * m, y = oy + (dq[1] - pc[1]) * (1 - m) + (hp[1] - H.cy) * m; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+        for (i = 0; i <= N; i++) { var an = i / N * 2 * Math.PI, ca = Math.cos(an) * rd, sa = Math.sin(an) * rd, dq = Ps([c[0] + ca * E1[0] + sa * E2[0], c[1] + ca * E1[1] + sa * E2[1], c[2] + ca * E1[2] + sa * E2[2]]); if (i) ctx.lineTo(dq[0], dq[1]); else ctx.moveTo(dq[0], dq[1]); }
         ctx.fillStyle = 'rgba(206,32,104,' + (.06 * fin * (1 - lleg)) + ')'; ctx.fill();
-        ctx.strokeStyle = 'rgba(128,30,74,' + ((.55 + .3 * m) * fin * (1 - lleg)) + ')'; ctx.lineWidth = .9 + .3 * m; ctx.stroke();
+        ctx.strokeStyle = 'rgba(128,30,74,' + (.6 * fin * (1 - lleg)) + ')'; ctx.lineWidth = .9; ctx.stroke();
       }
       if (lleg <= 0) return;
       // huella en la ladera: contorno ceñido a los tanques que reciben partículas; queda como referencia

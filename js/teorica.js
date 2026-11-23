@@ -775,7 +775,7 @@
       // llegadas: el continuo dirigido, con un velo ancho debajo para que se lea como muchas partículas juntas
       LL.forEach(function (l, k) {
         if (!l.length) return; var col = k === 2 ? '123,76,226' : k === 1 ? '229,110,17' : C_EM;
-        for (var pz = 0; pz < 2; pz++) {
+        for (var pz = 1; pz < 2; pz++) {
           ctx.strokeStyle = 'rgba(' + col + ',' + ((pz ? (k === 2 ? .45 : k ? .65 : .6) : (k ? .04 : .1)) * fin * resalta) + ')'; ctx.lineWidth = pz ? (k ? 1 : .75) : 3.2;
           ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
         }

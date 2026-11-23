@@ -70,7 +70,7 @@
       pi: esfera('#D6C4F2', '#8A66C4', '#46307A', 'rgba(30,20,50,.6)'), mu: esfera('#C4E0EC', '#5A8EA8', '#28495A', 'rgba(20,30,40,.6)') };
 
     // ── cámara fija, oblicua: x a lo ancho, y arriba, z hacia el fondo del valle ──
-    var KZ = .12, KY = .42, CAM = { cx: 948, cy: 758, s: 96 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
+    var KZ = .12, KY = .42, CAM = { cx: 914, cy: 754, s: 103 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
     function P(x, y, z) { return [CAM.cx + CAM.s * (x + KZ * z), CAM.cy - CAM.s * (y + KY * z)]; }
     function Ps(p) { return P(p[0], p[1], p[2]); }
 
@@ -947,6 +947,14 @@
         var e0 = [b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv]; trazo(e0, b, 'rgba(255,253,248,.9)', 4.4, [6, 3]); trazo(e0, b, '#181415', 2.2, [6, 3]);
         ctx.beginPath(); ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - 9 * Math.cos(ang - .35), b[1] - 9 * Math.sin(ang - .35)); ctx.lineTo(b[0] - 9 * Math.cos(ang + .35), b[1] - 9 * Math.sin(ang + .35)); ctx.closePath();
         ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 2.2; ctx.lineJoin = 'round'; ctx.stroke(); ctx.fillStyle = '#22201E'; ctx.fill();
+        // profundidad del eje (gris): su caída vertical hasta la ladera; un velo entre el eje y su traza en el suelo
+        var AX = [], GR = [];
+        for (var k3 = 0; k3 <= 14; k3++) { var q3 = sobre(IMP, -1.75 * ue * k3 / 14); AX.push(Ps(q3)); GR.push(Ps([q3[0], Math.min(q3[1], alto(q3[0], q3[2])), q3[2]])); }
+        ctx.globalAlpha = ue; ctx.beginPath(); AX.forEach(function (q, j) { if (j) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); for (k3 = GR.length - 1; k3 >= 0; k3--) ctx.lineTo(GR[k3][0], GR[k3][1]); ctx.closePath();
+        ctx.fillStyle = 'rgba(120,116,112,.26)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(100,96,92,.95)'; ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]); ctx.beginPath(); GR.forEach(function (q, j) { if (j) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.stroke(); ctx.setLineDash([]);
+        ctx.strokeStyle = 'rgba(100,96,92,.85)'; ctx.lineWidth = 1; ctx.beginPath(); for (k3 = 2; k3 <= 14; k3 += 3) { ctx.moveTo(AX[k3][0], AX[k3][1]); ctx.lineTo(GR[k3][0], GR[k3][1]); } ctx.stroke();
+        var e0b = [b[0] - Math.cos(ang) * lv, b[1] - Math.sin(ang) * lv]; trazo(e0b, b, 'rgba(255,253,248,.9)', 4.4, [6, 3]); trazo(e0b, b, '#181415', 2.2, [6, 3]);   // el eje va encima del velo
         if (ue > .9) texto(ctx, 'EJE RECONSTRUIDO', b[0] - L * Math.cos(ang) * .62, b[1] - L * Math.sin(ang) * .62 - 12, '#22201E', '700 9px "Space Mono", monospace');
       }
       ctx.globalAlpha = 1;

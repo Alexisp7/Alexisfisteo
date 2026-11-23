@@ -781,7 +781,7 @@
         var nuF = Ps(sobre(DEC, Math.min(L_CRUCE * .97, frenteV(t) + .06))), qn = [nuF[0], nuF[1] + 10];   // viaja con el frente, un poco adelante
         // el ν_τ del decaimiento no deja traza: solo su cabeza, que acompaña a la cascada hasta casi los detectores
         var aV = al * (1 - suave((frenteV(t) / L_CRUCE - .85) / .12));
-        if (aV > 0) { ctx.globalAlpha = aV; ctx.fillStyle = '#A33F7C'; ctx.beginPath(); ctx.arc(qn[0], qn[1], 1.6, 0, 2 * Math.PI); ctx.fill(); rotulo('ν_τ', qn[0] + 3, qn[1] + 12, '#A33F7C', 13); }
+        if (aV > 0) { ctx.globalAlpha = aV; rotulo('ν_τ', qn[0] + 3, qn[1] + 12, '#A33F7C', 13); }
       }
       ctx.globalAlpha = 1;
     }

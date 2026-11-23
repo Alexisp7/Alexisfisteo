@@ -670,15 +670,15 @@
       // la traza que queda nace desvanecida a la derecha: no pasa bajo la ecuación de la página
       var gw = ctx.createLinearGradient(1222, 0, 1186, 0), gc = ctx.createLinearGradient(1222, 0, 1186, 0);
       gw.addColorStop(0, 'rgba(255,253,248,0)'); gw.addColorStop(1, 'rgba(255,253,248,.95)'); gc.addColorStop(0, 'rgba(170,55,125,0)'); gc.addColorStop(1, 'rgba(170,55,125,.95)');
-      trazo(a, cab, gw, 3.6, [5, 4]); trazo(a, cab, gc, 1.4, [5, 4]);
+      ctx.globalAlpha = al * (1 - suave((t - T_CARA) / .3)); trazo(a, cab, gw, 3.6, [5, 4]); trazo(a, cab, gc, 1.4, [5, 4]);
       if (t < T_VTX) { brillo(cab[0], cab[1], 14, '170,55,125', .6); ctx.fillStyle = '#B23C82'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2, 0, 2 * Math.PI); ctx.fill(); rotulo('ν_τ', cab[0] - 4, cab[1] - 12, '#9C2F6E', 20); }
       ctx.globalAlpha = 1;
     }
 
     function tau(t) {
       var vt = A_VTX, ui = t - T_VTX; if (ui < 0) return;
-      var al = fade(t);
-      ctx.globalAlpha = al;
+      var al = fade(t), roca = al * (1 - suave((t - T_CARA) / .3));   // lo que pasa dentro de la roca se apaga cuando el τ sale al aire
+      ctx.globalAlpha = roca;
       if (ui < 1.2) brillo(vt[0], vt[1], 46 * (1 - ui / 1.2) + 6, '235,140,60', .9 * (1 - ui / 1.2));
       var rr = semilla(3), cr = Math.min(1, ui / .5);
       ctx.strokeStyle = 'rgba(180,105,55,' + (.65 * (1 - suave((ui - 3) / 3))) + ')'; ctx.lineWidth = .7; ctx.beginPath();
@@ -689,7 +689,8 @@
       ctx.stroke();
       var sT = t < T_CARA ? L_ROCA * suave(ui / (T_CARA - T_VTX)) : L_ROCA + L_TAU * suave((t - T_CARA) / (T_DEC - T_CARA));
       var q1 = Ps(sobre(VTX, Math.min(sT, L_ROCA)));
-      trazoB(vt, q1, 'rgba(181,106,30,.95)', 1.8);
+      if (roca > 0) trazoB(vt, q1, 'rgba(181,106,30,.95)', 1.8);
+      ctx.globalAlpha = al;
       var cab = q1;
       if (sT > L_ROCA) { cab = Ps(sobre(VTX, sT)); trazoB(q1, cab, 'rgba(181,106,30,.95)', 1.8); }
       if (t < T_DEC) { brillo(cab[0], cab[1], 12, '220,110,60', .55); ctx.fillStyle = 'rgba(244,210,165,.3)'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 3.5, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = '#B8641E'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2.2, 0, 2 * Math.PI); ctx.fill(); rotulo('τ⁻', cab[0] - 6, cab[1] - 14, '#9A4E16', 20); }

@@ -406,8 +406,8 @@
       d: ['Cada partícula que entra al agua emite luz y el', 'fotomultiplicador suma pulsos de ~60 ns. El', 'disparo es el t_i del ajuste. A ' + coma(EST.rp, 0) + ' m del eje las', 'partículas llegan repartidas en decenas de ns.', 'Esquemático: sin modelo óptico ni electrónico.'] });
     ficha('llegadas', { ancla: [LT.x0 + 4, LT.y - 4], k: 'Registro del evento', tit: 'Tiempos de disparo', 
       d: ['Una marca por detector: su posición es el', 'tiempo de disparo desde el primero y su altura,', 'el logaritmo de las partículas. La ventana de', coma(T1H - T0H, 2) + ' µs no es la duración de la cascada: es', 'lo que tarda el frente en barrer la ladera,', 'inclinada respecto a él.'] });
-    var EVT = [720, 812];
-    var TMB = [710, 446];
+    var EVT = [800, 812];
+    var TMB = [792, 448];
     ficha('evento', { ancla: [EVT[0] + 4, EVT[1] - 10], k: 'Evento sintético 001 · ficha técnica', tit: 'Qué es simulado y qué no',
       d: ['E_ν 10 PeV · y 0,2 · E_τ 8 PeV · τ → hadrones', 'τ ' + coma(L_TAU * 1000, 0) + ' m · aire ' + coma(L_CRUCE, 2) + ' km · X ' + coma(X_IMP, 0) + ' g/cm²', 'llegan ' + cient(N_IMP) + ' e± · ' + VIVOS.length + ' estaciones', 'Calculado: λ_τ, Greisen, NKG, umbral, ajuste.', 'Parametrizado: Linsley y Matthews (extrapolados).', 'Ilustrativo: valle, medallón y trazas.', 'No son datos de TAMBO.'] });
 
@@ -525,10 +525,10 @@
       difumina(c, true);
     }
     // la maqueta se disuelve hacia la izquierda, como la de Stern–Gerlach: empieza en la cordillera, sin corte duro
-    var DIF0 = 608, DIF1 = 790, DIFR0 = 1105, DIFR1 = 1280, DIFY = 340;
+    var DIF0 = 672, DIF1 = 905, DIFR0 = 1105, DIFR1 = 1280, DIFY = 340;
     function difumina(c, der) {
       c.save(); c.globalCompositeOperation = 'destination-out';
-      var g = c.createLinearGradient(DIF0, 0, DIF1, 0); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(.55, 'rgba(0,0,0,.45)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      var g = c.createLinearGradient(DIF0, 0, DIF1, 0); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(.3, 'rgba(0,0,0,.8)'); g.addColorStop(.65, 'rgba(0,0,0,.35)'); g.addColorStop(1, 'rgba(0,0,0,0)');
       c.fillStyle = g; c.fillRect(DIF0 - 400, -50, DIF1 - DIF0 + 400, 1100);
       // a la derecha solo se disuelve la maqueta (debajo del origen astrofísico)
       var g2 = c.createLinearGradient(DIFR0, 0, DIFR1, 0); g2.addColorStop(0, 'rgba(0,0,0,0)'); g2.addColorStop(.45, 'rgba(0,0,0,.5)'); g2.addColorStop(1, 'rgba(0,0,0,1)');
@@ -599,8 +599,8 @@
       for (var i = 0; i < 30; i++) { var ra = MED.r * Math.sqrt(r()) * 1.1, an = r() * 2 * Math.PI, x = OR.C[0] + ra * Math.cos(an), y = OR.C[1] + ra * Math.sin(an) * .7; ctx.fillStyle = 'rgba(185,140,70,' + (.15 + .25 * (.5 + .5 * Math.sin(t * 2 + i))) + ')'; ctx.fillRect(x, y, 1.2, 1.2); }
       OR.T.forEach(function (q) {
         if (t < q.t0) return;
-        var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - q.t1) / 1.1)) * fd;
-        if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = .4 * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.2 : q.w * .8, q.g); }
+        var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - q.t1 - 1.6) / .6)) * fd;
+        if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = .35 * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.2 : q.w * .8, q.g); }
         var al = (1 - suave((t - q.t1) / .35)) * fd; if (al <= 0) { ctx.globalAlpha = 1; return; }
         ctx.globalAlpha = al;
         var b = cometa(q.a, q.b, u, q.laser ? 120 : 34, q.col, q.laser ? 2 : q.w + .3, 1);
@@ -609,7 +609,7 @@
         if (u > .25) rotulo(q.lab, b[0] + 5, b[1] - 5, 'rgba(' + q.col + ',1)', 14);
         ctx.globalAlpha = 1;
       });
-      ctx.globalAlpha = .9 * fd; texto(ctx, 'RAYO CÓSMICO · PROTÓN DE ~10¹⁷ eV', OR.S[0], OR.S[1] - 12, 'rgba(30,120,160,1)', '700 9px "Space Mono", monospace'); ctx.globalAlpha = 1;
+      ctx.globalAlpha = .9 * fd; texto(ctx, 'RAYO CÓSMICO · PROTÓN DE ~10¹⁷ eV', OR.S[0] + 110, OR.S[1] + 8, 'rgba(30,120,160,1)', '700 9px "Space Mono", monospace'); ctx.globalAlpha = 1;
       // vértices: destellos breves al dividirse
       [[OR.C, .55, 'Δ⁺'], [OR.D1, .75], [OR.D2, 1.05], [OR.N1, 1.25]].forEach(function (v) { var w = t - v[1]; if (w > 0 && w < .5) { brillo(v[0][0], v[0][1], 26 * (1 - w / .5) + 4, '240,150,70', .9 * (1 - w / .5)); if (v[2]) rotulo(v[2], v[0][0] - 14, v[0][1] + 20, '#A84A2E', 14); } });
     }
@@ -721,18 +721,11 @@
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
         var a = Math.min(1, u / .15) * al0, hb = (5 + 6 * Math.log10(1 + d.n)) * suave(u / .5);
-        var cr = 1 + .45 * suave(u / .25), rx = 3.4 * cr, ry = 1.35 * cr, hh = 4.4 * cr, y0 = q[1] - hh;
-        brillo(q[0], y0, 13, '255,252,240', .6 * a);
+        var y0 = q[1] - 4.4, rx = 3.6, ry = 1.45;
         ctx.globalAlpha = a;
-        // tanque encendido: azul marino oscuro con borde blanco, algo más grande que los demás
-        ctx.fillStyle = 'rgba(255,253,248,.95)'; ctx.beginPath(); ctx.ellipse(q[0], q[1], rx + 1, ry + 1, 0, 0, Math.PI); ctx.lineTo(q[0] - rx - 1, y0); ctx.ellipse(q[0], y0, rx + 1, ry + 1, 0, Math.PI, 2 * Math.PI); ctx.closePath(); ctx.fill();
-        ctx.fillStyle = '#C3C9CB'; ctx.fillRect(q[0] - rx, y0, 2 * rx, hh);
-        ctx.fillStyle = '#D9DEDF'; ctx.fillRect(q[0] - rx, y0, rx * .7, hh);
-        ctx.fillStyle = '#A9B1B5'; ctx.beginPath(); ctx.ellipse(q[0], q[1], rx, ry, 0, 0, Math.PI); ctx.fill();
-        // la tapita se pinta de azul (con un brillo claro), el cuerpo queda blanco
-        ctx.fillStyle = '#1E63D0'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
-        ctx.strokeStyle = '#123D7A'; ctx.lineWidth = .6; ctx.stroke();
-        ctx.fillStyle = 'rgba(150,200,255,.75)'; ctx.beginPath(); ctx.ellipse(q[0] - rx * .25, y0 - ry * .2, rx * .45, ry * .4, 0, 0, 2 * Math.PI); ctx.fill();
+        // como al señalar la ladera: solo la tapita se pinta, del color de su tiempo de llegada
+        ctx.fillStyle = 'rgb(' + col + ')'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(q[0] - rx * .25, y0 - ry * .2, rx * .45, ry * .4, 0, 0, 2 * Math.PI); ctx.fill();
         // barra de tiempo con borde blanco
         ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 4.4; ctx.beginPath(); ctx.moveTo(q[0], y0 - 2.6); ctx.lineTo(q[0], y0 - 2.6 - hb); ctx.stroke(); ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = 2.2; ctx.stroke(); ctx.lineCap = 'butt';
         var p1 = Math.max(0, 1 - u / .7); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + (.85 * p1) + ')'; ctx.lineWidth = .8; ctx.beginPath(); ctx.ellipse(q[0], y0, rx + 8 * (1 - p1), ry + 3.4 * (1 - p1), 0, 0, 2 * Math.PI); ctx.stroke(); }

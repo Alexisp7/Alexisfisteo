@@ -757,6 +757,44 @@
       ctx.globalAlpha = 1;
     }
 
+    // viñeta de la oscilación: el ν_μ es una mezcla de dos estados de masa (ν₂, ν₃) que avanzan con fases distintas;
+    // su desfase cambia el sabor. P(ν_μ→ν_τ) = sin²2θ · sin²(1,27 Δm² L/E), con θ ≈ 45° (mezcla casi máxima)
+    var T_OS0 = 1.55, T_OS1 = 3.55;
+    function vinetaOscila(t) {
+      var ap = suave((t - T_OS0 + .3) / .3) * (1 - suave((t - T_OS1 - .4) / .4)) * fade(t); if (ap <= 0) return;
+      var A = OR.D1, B = OR.E, m = [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3];
+      var R = 50, cx = m[0] + 16 + R + 22, cy = m[1] + 34 + R, p = suave(cl((t - T_OS0) / (T_OS1 - T_OS0), 0, 1));
+      function Pt(x) { var s = Math.sin(Math.PI / 2 * x); return s * s; }   // de 0 a media longitud de oscilación
+      ctx.save(); ctx.globalAlpha = ap;
+      ctx.fillStyle = 'rgba(255,253,248,.96)'; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.fill();
+      ctx.strokeStyle = 'rgba(92,70,54,.55)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, R - .5, 0, 2 * Math.PI); ctx.clip();
+      var x0 = cx - R * .78, x1 = cx + R * .78, W = x1 - x0, yb = cy + R * .38, H = R * .5;
+      // las dos componentes de masa: ondas de longitudes algo distintas que viajan con el paquete
+      var ph = t * 9;
+      [[1, 'rgba(70,120,190,.45)'], [1.5, 'rgba(160,55,125,.45)']].forEach(function (o) {
+        ctx.strokeStyle = o[1]; ctx.lineWidth = 1; ctx.beginPath();
+        for (var k = 0; k <= 40; k++) { var x = x0 + W * k / 40, xx = k / 40, env = Math.exp(-Math.pow((xx - p) / .16, 2)); var y = cy - R * .22 + 8 * env * Math.sin(xx * 26 * o[0] - ph); if (k) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+        ctx.stroke();
+      });
+      // ejes y curvas de probabilidad (μ en azul baja, τ en magenta sube) dibujadas hasta donde va el paquete
+      ctx.strokeStyle = 'rgba(92,70,54,.35)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(x0, yb); ctx.lineTo(x1, yb); ctx.moveTo(x0, yb); ctx.lineTo(x0, yb - H); ctx.stroke();
+      [[function (x) { return 1 - Pt(x); }, 'rgb(60,120,190)'], [Pt, 'rgb(170,55,125)']].forEach(function (c) {
+        ctx.strokeStyle = c[1]; ctx.lineWidth = 1.5; ctx.beginPath();
+        for (var k = 0; k <= 30; k++) { var xx = p * k / 30, x = x0 + W * xx, y = yb - H * c[0](xx); if (k) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+        ctx.stroke();
+      });
+      // el ν: una bolita cuyo color es la mezcla de sabores en ese punto (sector azul μ, sector magenta τ)
+      var P = Pt(p), bx = x0 + W * p, by = cy - R * .22, rb = 5;
+      ctx.fillStyle = 'rgb(60,120,190)'; ctx.beginPath(); ctx.arc(bx, by, rb, 0, 2 * Math.PI); ctx.fill();
+      if (P > .001) { ctx.fillStyle = 'rgb(170,55,125)'; ctx.beginPath(); ctx.moveTo(bx, by); ctx.arc(bx, by, rb, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * P); ctx.closePath(); ctx.fill(); }
+      ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(bx, by, rb, 0, 2 * Math.PI); ctx.stroke();
+      ctx.restore(); ctx.save(); ctx.globalAlpha = ap;
+      rotulo('ν_μ', cx - R * .5, cy - R * .64, 'rgb(60,120,190)', 14);
+      rotulo('ν_τ', cx + R * .3, cy - R * .64, 'rgb(170,55,125)', 14);
+      texto(ctx, 'P(μ→τ) = ' + Math.round(P * 100) + ' %', cx, cy + R + 13, 'rgba(92,70,54,.95)', '700 9px "Space Mono", monospace', 'center');
+      ctx.restore();
+    }
     function tau(t) {
       var vt = A_VTX, ui = t - T_VTX; if (ui < 0) return;
       var al = fade(t), roca = al * (1 - suave((t - T_CARA) / .3));   // lo que pasa dentro de la roca se apaga cuando el τ sale al aire
@@ -1073,7 +1111,7 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
       rioVivo(t); realce();
-      medallon(t); neutrino(t); tau(t); cascada(t); senales(t); llegadas(t); elipseFrente(); tramosEncima(t); reconstruye(t);
+      medallon(t); neutrino(t); vinetaOscila(t); tau(t); cascada(t); senales(t); llegadas(t); elipseFrente(); tramosEncima(t); reconstruye(t);
       difumina(ctx);
     }
 

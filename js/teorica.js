@@ -249,6 +249,25 @@
       }
     })();
     var KV = LLEG.reduce(function (m, R) { return Math.max(m, R.kv); }, 0);   // el frente y el ν van con los tramos más rápidos
+    // huella en la ladera (en pantalla): elipse que contiene la base de todos los tanques con señal; y ajuste plano
+    // de los tiempos t ≈ a + b·X + c·Y, cuya recta de nivel es la intersección del frente inclinado con la ladera
+    var HUE = null;
+    function huella() {
+      if (HUE) return HUE;
+      var P = VIVOS.map(function (v) { return Ps([v.x, v.y + .012, v.z]); }), n = P.length, mx = 0, my = 0;
+      P.forEach(function (q) { mx += q[0] / n; my += q[1] / n; });
+      var sxx = 0, syy = 0, sxy = 0; P.forEach(function (q) { var dx = q[0] - mx, dy = q[1] - my; sxx += dx * dx / n; syy += dy * dy / n; sxy += dx * dy / n; });
+      var th = .5 * Math.atan2(2 * sxy, sxx - syy), ca = Math.cos(th), sa = Math.sin(th), A = 1, B = 1;
+      P.forEach(function (q) { var dx = q[0] - mx, dy = q[1] - my; A = Math.max(A, Math.abs(dx * ca + dy * sa)); B = Math.max(B, Math.abs(-dx * sa + dy * ca)); });
+      A *= 1.18; B *= 1.18; var k = 1; P.forEach(function (q) { var dx = q[0] - mx, dy = q[1] - my, u = dx * ca + dy * sa, w = -dx * sa + dy * ca; k = Math.max(k, Math.sqrt(u * u / (A * A) + w * w / (B * B))); });
+      A = A * k + 10; B = B * k + 7;
+      var X = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], Y = [0, 0, 0];
+      VIVOS.forEach(function (v, i) { var r = [1, P[i][0] - mx, P[i][1] - my], y = tHit(v); for (var a = 0; a < 3; a++) { Y[a] += r[a] * y; for (var b = 0; b < 3; b++) X[a][b] += r[a] * r[b]; } });
+      function det(M) { return M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1]) - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0]) + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]); }
+      var D = det(X), co = [0, 1, 2].map(function (kk) { return det(X.map(function (row, i) { return row.map(function (x, j) { return j === kk ? Y[i] : x; }); })) / D; });
+      HUE = { mx: mx, my: my, ca: ca, sa: sa, A: A, B: B, a: co[0], b: co[1], c: co[2] };
+      return HUE;
+    }
     function frenteV(t) { return t < T_DEC ? 0 : Math.min(L_CRUCE, fx(T_DEC + (t - T_DEC) * KV)); }
     // tramo visible [cola, cabeza] en fracción del recorrido, y fracción ya comida en la llegada
     function tramoLleg(R, t) { var p = fx(T_DEC + (t - T_DEC) * R.kv); return [Math.max(0, p - R.Lk) / R.D, Math.min(p, R.D) / R.D, cl((p - R.D) / R.Lk, 0, 1)]; }
@@ -758,15 +777,31 @@
     // elipse del frente: se dibuja sobre tanques y barras; al terminar queda como referencia del área de impacto
     var ELI = null;
     function elipseFrente() {
-      // el frente: un disco delgado (≈ 2 R_M) que avanza a c
-      if (ELI) {
-        var sf = ELI.sf, crec = ELI.crec, fin = ELI.fin, lleg = suave((ELI.t - T_LLEGA) / .5);   // al llegar queda fija en la ladera: referencia de dónde cae la cascada
+      if (!ELI) return;
+      var sf = ELI.sf, crec = ELI.crec, fin = ELI.fin, t = ELI.t, lleg = suave((t - T_LLEGA + .25) / .4);
+      // el frente en el aire: un disco delgado (≈ 2 R_M) perpendicular al eje que avanza a c; se apaga al tocar la ladera
+      if (lleg < 1) {
         var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), p1 = Ps([c[0] + E2[0] * rd, c[1] + E2[1] * rd, c[2] + E2[2] * rd]), p2 = Ps([c[0] + E1[0] * rd, c[1] + E1[1] * rd, c[2] + E1[2] * rd]);
         var rx = Math.max(2, Math.hypot(p2[0] - pc[0], p2[1] - pc[1])), ry = Math.max(2, Math.hypot(p1[0] - pc[0], p1[1] - pc[1]));
-        ctx.globalCompositeOperation = 'source-over'; brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '176,40,96', .09 * fin * (1 - lleg)); ctx.globalCompositeOperation = 'source-over';
-        ctx.strokeStyle = 'rgba(128,30,74,' + ((.5 + .35 * lleg) * fin) + ')'; ctx.lineWidth = .8 + .5 * lleg;
+        brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '176,40,96', .09 * fin * (1 - lleg));
+        ctx.strokeStyle = 'rgba(128,30,74,' + (.5 * fin * (1 - lleg)) + ')'; ctx.lineWidth = .8;
         ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rx, ry, Math.atan2(p1[1] - pc[1], p1[0] - pc[0]) - Math.PI / 2, 0, 2 * Math.PI); ctx.stroke();
       }
+      if (lleg <= 0) return;
+      var H = huella();
+      // huella en la ladera: toda la zona donde caen partículas (contiene a todos los tanques con señal); queda como referencia
+      ctx.strokeStyle = 'rgba(128,30,74,' + (.8 * lleg * fin) + ')'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.ellipse(H.mx, H.my, H.A, H.B, Math.atan2(H.sa, H.ca), 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]);
+      // el frente sobre el suelo: recta donde el frente inclinado corta la ladera; barre la huella mientras llegan las señales
+      var g = Math.hypot(H.b, H.c); if (g < 1e-9) return;
+      var sw = suave((t - T_H0 + .3) / .3) * (1 - suave((t - T_H1 - .3) / .4)); if (sw <= 0) return;
+      var nx = H.b / g, ny = H.c / g, dd = (t - H.a) / g, cx = dd * nx, cy = dd * ny, px = -ny, py = nx;   // en coordenadas centradas en la huella
+      function aEl(x, y) { return [x * H.ca + y * H.sa, -x * H.sa + y * H.ca]; }
+      var c0 = aEl(cx, cy), d0 = aEl(px, py), qa = d0[0] * d0[0] / (H.A * H.A) + d0[1] * d0[1] / (H.B * H.B), qb = 2 * (c0[0] * d0[0] / (H.A * H.A) + c0[1] * d0[1] / (H.B * H.B)), qc = c0[0] * c0[0] / (H.A * H.A) + c0[1] * c0[1] / (H.B * H.B) - 1, di = qb * qb - 4 * qa * qc;
+      if (di <= 0) return;
+      var s1 = (-qb - Math.sqrt(di)) / (2 * qa), s2 = (-qb + Math.sqrt(di)) / (2 * qa);
+      ctx.strokeStyle = 'rgba(206,32,104,' + (.85 * sw * fin) + ')'; ctx.lineWidth = 1.8; ctx.beginPath();
+      ctx.moveTo(H.mx + cx + s1 * px, H.my + cy + s1 * py); ctx.lineTo(H.mx + cx + s2 * px, H.my + cy + s2 * py); ctx.stroke();
     }
     function cascada(t) {
       LL_AL = 0; ELI = null;

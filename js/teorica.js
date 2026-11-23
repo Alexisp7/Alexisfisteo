@@ -222,6 +222,37 @@
       return L_TAU / C_KM + T0H + (T1H - T0H) * cl((t - T_H0) / (T_H1 - T_H0), 0, 1);
     }
 
+    // ── llegada: el final de la cascada es un continuo de partículas dirigido a la ladera. Unos trazos van a los
+    // tanques con señal (más trazos cuantas más partículas recibe) y otros a puntos entre tanques. Al llegar,
+    // la cola sigue avanzando hasta el punto: el trazo se «consume» ahí. Lo que consume cada tanque es su barra.
+    function tFrente(s) { var u = (-.3 + Math.sqrt(.09 + 2.8 * s / L_CRUCE)) / 1.4; return T_DEC + cl(u, 0, 1) * (T_LLEGA - T_DEC); }
+    var LLEG = [], rL = semilla(29);
+    (function () {
+      var gs = VIVOS.map(function (v) { return Math.log(grosor(v.rp)); }), g0 = Math.min.apply(null, gs), g1 = Math.max.apply(null, gs);
+      function sale() { var s0 = L_CRUCE * (.55 + .33 * rL()), c = sobre(DEC, s0), r = R_M * .5 * rL(), ph = rL() * 2 * Math.PI; return { S: [c[0] + r * (Math.cos(ph) * E1[0] + Math.sin(ph) * E2[0]), c[1] + r * (Math.cos(ph) * E1[1] + Math.sin(ph) * E2[1]), c[2] + r * (Math.cos(ph) * E1[2] + Math.sin(ph) * E2[2])], ts: tFrente(s0) }; }
+      function tipo() { var x = rL(); return x < .1 ? 2 : x < .24 ? 1 : 0; }   // 0 e±/γ, 1 hadrón, 2 muón
+      VIVOS.forEach(function (d, i) {
+        var m = Math.round(4 + 7 * Math.log10(1 + d.n)), dur = .35 + 1.3 * (g1 > g0 ? (gs[i] - g0) / (g1 - g0) : .5);
+        d.lleg = [];
+        for (var j = 0; j < m; j++) {
+          var o = sale(), y = -Math.log((rL() + 1e-9) * (rL() + 1e-9)) / 4.7;   // retraso gamma (k = 2) dentro de la duración de la estación
+          var R = { S: o.S, T: [d.x, d.y + .012, d.z], ts: o.ts, ta: tHit(d) + dur * Math.min(1.6, y), k: tipo() };
+          LLEG.push(R); d.lleg.push(R);
+        }
+      });
+      // puntos entre tanques: suelo de la huella, desplazado media malla de un tanque al azar cercano al impacto
+      var cerca = DET.filter(function (d) { return Math.hypot(d.x - IMP[0], d.y - IMP[1], d.z - IMP[2]) < .62; });
+      for (var j = 0; j < 190 && cerca.length; j++) {
+        var b = cerca[Math.floor(rL() * cerca.length)], x = b.x + (rL() - .5) * PASO, z = b.z + (rL() - .5) * PASO, o = sale();
+        var nv = VIVOS.reduce(function (m, v) { var dd = Math.hypot(v.x - x, v.z - z); return dd < m[0] ? [dd, v] : m; }, [9, VIVOS[0]])[1];
+        LLEG.push({ S: o.S, T: [x, alto(x, z) + .004, z], ts: o.ts, ta: tHit(nv) + .1 + .9 * rL(), k: tipo() });
+      }
+      LLEG.forEach(function (R) { R.D = Math.hypot(R.T[0] - R.S[0], R.T[1] - R.S[1], R.T[2] - R.S[2]); R.ta = Math.max(R.ta, R.ts + .5); R.cola = .38; });
+    })();
+    // posición del trazo en t: cabeza h y cola h − cola (en fracción del recorrido); comido = cuánto de la cola ya entró
+    function tramoLleg(R, t) { var h = (t - R.ts) / (R.ta - R.ts); return [Math.max(0, h - R.cola), Math.min(1, h), cl((h - 1) / R.cola, 0, 1)]; }
+    function comido(d, t) { if (!d.lleg) return 0; var c = 0; d.lleg.forEach(function (R) { c += tramoLleg(R, t)[2]; }); return c / d.lleg.length; }
+
     // ── medallón de la fuente (arriba a la derecha) ──
     var MED = { x: 1110, y: 200, r: 110 };
     var LT = { x0: 905, x1: 1105, y: 428 };   // línea de llegadas
@@ -708,46 +739,62 @@
 
     // cascada: una población de partículas, no un haz. Componente electromagnética (e±, γ) en cian claro,
     // trazas finas que nacen a lo largo del eje y se abren; hadrones/muones escasos, puntos ámbar más gruesos.
-    var LOTES = [[], [], [], [], [], []], ESTELA = [], CAB = [], CABH = [];
+    var C_EM = '206,32,104';   // e± y γ: un continuo frambuesa (muchísimas partículas), contrasta con el pasto y el río
+    var LOTES = [[], [], [], [], [], []], LL = [[], [], []], ESTELA = [], CAB = [], CABH = [];
     function cascada(t) {
       if (t < T_DEC) return;
-      var sf = frente(t), crec = cl(sf / L_CRUCE, 0, 1), fin = (1 - .75 * suave((t - T_H1) / 1.2)) * fade(t);   // las líneas se quedan depositadas mientras se encienden los tanques
+      var sf = frente(t), crec = cl(sf / L_CRUCE, 0, 1), fin = fade(t), sfx = t > T_LLEGA ? L_CRUCE + 1.7 * L_CRUCE / (T_LLEGA - T_DEC) * (t - T_LLEGA) : sf;   // tras llegar, el frente sigue y cada trazo se consume en el suelo
       if (fin <= 0) return;
       var dens = .2 + .8 * suave((t - T_DEC - .5) / 1.4);   // semilla → abanico → fase madura
-      LOTES.forEach(function (l) { l.length = 0; }); ESTELA.length = 0; CAB.length = 0; CABH.length = 0;
+      LOTES.forEach(function (l) { l.length = 0; }); LL.forEach(function (l) { l.length = 0; }); ESTELA.length = 0; CAB.length = 0; CABH.length = 0;
       RAY.forEach(function (R) {
         if (sf < R.sb || R.q > (R.nuc ? .62 * dens : dens)) return;
-        var s1 = Math.min(sf, R.fin), s0 = Math.max(R.sb, s1 - R.tr * L_CRUCE * (R.mu ? .45 : R.oro ? .1 : R.a > .82 ? .3 : .11)); if (s1 <= s0) return;
+        var s1 = Math.min(sfx, R.fin), s0 = Math.max(R.sb, sfx - R.tr * L_CRUCE * (R.mu ? .45 : R.oro ? .1 : R.a > .82 ? .3 : .11)); if (s1 <= s0) return;
         var a = Ps(puntoRayo(R, s0)), b = Ps(puntoRayo(R, s1));
         if (s0 > R.sb && R.a < .5 && !R.mu) { var e0 = Ps(puntoRayo(R, R.sb)); ESTELA.push(e0[0], e0[1], a[0], a[1]); }
         LOTES[R.mu ? 5 : R.oro ? 4 : Math.min(3, Math.floor(R.a * 4))].push(a[0], a[1], b[0], b[1]);
-        if (s1 < R.fin && !R.mu) { if (R.oro) CABH.push(b[0], b[1], .8 + R.tr * .6); else if (R.a < .6) CAB.push(b[0], b[1]); }
+        if (sfx < R.fin && !R.mu) { if (R.oro) CABH.push(b[0], b[1], .8 + R.tr * .6); else if (R.a < .6) CAB.push(b[0], b[1]); }
       });
       var resalta = foco === 'cascada' ? 1.6 : 1;
       // halo claro bajo la cascada: la separa del pasto y de los tanques sin cambiar sus colores
-      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', (t > T_DEC + 1.3 ? .14 : .2) * fin * (1 - suave((t - T_H1) / 1)) * (1 - hk / 11)); }
+      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', (t > T_DEC + 1.3 ? .14 : .2) * fin * (1 - suave((t - T_LLEGA) / .8)) * (1 - hk / 11)); }
+      // trazos de llegada (a tanques y entre tanques): se consumen en su punto de llegada
+      LLEG.forEach(function (R) {
+        if (t < R.ts) return; var q = tramoLleg(R, t); if (q[0] >= q[1]) return;
+        var A = [R.S[0] + (R.T[0] - R.S[0]) * q[0], R.S[1] + (R.T[1] - R.S[1]) * q[0], R.S[2] + (R.T[2] - R.S[2]) * q[0]], B = [R.S[0] + (R.T[0] - R.S[0]) * q[1], R.S[1] + (R.T[1] - R.S[1]) * q[1], R.S[2] + (R.T[2] - R.S[2]) * q[1]];
+        var a = Ps(A), b = Ps(B); LL[R.k].push(a[0], a[1], b[0], b[1]);
+        if (q[1] < 1 && R.k === 0) CAB.push(b[0], b[1]);
+      });
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var cede = 1 - .88 * suave((t - (k === 5 ? T_H1 + .15 : T_H1)) / 1);
-        var al = cede * Math.min(1, (k === 5 ? .45 : k === 4 ? .7 : Math.max(3.3 * (.035 + k * .025) * (k === 3 ? 1.05 : 1) * (k >= 2 && t > T_DEC + 1.3 ? .88 : 1), .18 * (1 - crec) + .11 * crec)) * fin * resalta);
-        ctx.strokeStyle = k === 5 ? 'rgba(123,76,226,' + al + ')' : k === 4 ? 'rgba(229,110,17,' + al + ')' : 'rgba(0,109,204,' + al + ')'; ctx.lineWidth = k === 5 ? .9 : k === 4 ? .9 : .5 + k * .13;
+        var cede = 1;
+        var al = cede * Math.min(1, (k === 5 ? .28 : k === 4 ? .55 : Math.max(3.3 * (.035 + k * .025) * (k === 3 ? 1.05 : 1) * (k >= 2 && t > T_DEC + 1.3 ? .88 : 1), .18 * (1 - crec) + .11 * crec)) * fin * resalta);
+        ctx.strokeStyle = k === 5 ? 'rgba(123,76,226,' + al + ')' : k === 4 ? 'rgba(229,110,17,' + al + ')' : 'rgba(' + C_EM + ',' + al + ')'; ctx.lineWidth = k === 5 ? .9 : k === 4 ? .9 : .5 + k * .13;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });
-      if (ESTELA.length) { ctx.strokeStyle = 'rgba(40,120,165,' + (.012 * fin * resalta) + ')'; ctx.lineWidth = .5; ctx.beginPath(); for (var e = 0; e < ESTELA.length; e += 4) { ctx.moveTo(ESTELA[e], ESTELA[e + 1]); ctx.lineTo(ESTELA[e + 2], ESTELA[e + 3]); } ctx.stroke(); }
-      ctx.fillStyle = 'rgba(0,109,204,' + ((t - T_DEC < .9 ? .92 : .85) * fin * (1 - .4 * crec)) + ')';
-      for (var i = 0; i < CAB.length; i += 2) ctx.fillRect(CAB[i] - .7, CAB[i + 1] - .7, 1.4, 1.4);
+      // llegadas: el continuo dirigido, con un velo ancho debajo para que se lea como muchas partículas juntas
+      LL.forEach(function (l, k) {
+        if (!l.length) return; var col = k === 2 ? '123,76,226' : k === 1 ? '229,110,17' : C_EM;
+        for (var pz = 0; pz < 2; pz++) {
+          ctx.strokeStyle = 'rgba(' + col + ',' + ((pz ? (k === 2 ? .45 : k ? .65 : .6) : (k ? .04 : .1)) * fin * resalta) + ')'; ctx.lineWidth = pz ? (k ? 1 : .75) : 3.2;
+          ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
+        }
+      });
+      if (ESTELA.length) { ctx.strokeStyle = 'rgba(176,40,96,' + (.012 * fin * resalta) + ')'; ctx.lineWidth = .5; ctx.beginPath(); for (var e = 0; e < ESTELA.length; e += 4) { ctx.moveTo(ESTELA[e], ESTELA[e + 1]); ctx.lineTo(ESTELA[e + 2], ESTELA[e + 3]); } ctx.stroke(); }
+      ctx.fillStyle = 'rgba(' + C_EM + ',' + ((t - T_DEC < .9 ? .92 : .85) * fin * (1 - .4 * crec)) + ')';
+      for (var i = 0; i < CAB.length; i += 2) ctx.fillRect(CAB[i] - .9, CAB[i + 1] - .9, 1.8, 1.8);
       ctx.fillStyle = 'rgba(229,110,17,' + (.85 * fin) + ')';
       for (i = 0; i < CABH.length; i += 3) { ctx.beginPath(); ctx.arc(CABH[i], CABH[i + 1], CABH[i + 2] * .5 + .5, 0, 2 * Math.PI); ctx.fill(); }
       // eje: tenue, para no leerse como un láser
       var c0 = Ps(sobre(DEC, Math.max(0, sf - L_CRUCE * .3))), c1 = Ps(sobre(DEC, Math.min(sf, L_CRUCE)));
-      var gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]); gl.addColorStop(0, 'rgba(50,90,130,0)'); gl.addColorStop(1, 'rgba(50,90,130,' + (.18 * fin) + ')');
+      var gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]); gl.addColorStop(0, 'rgba(128,30,74,0)'); gl.addColorStop(1, 'rgba(128,30,74,' + (.18 * fin) + ')');
       ctx.strokeStyle = gl; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(c0[0], c0[1]); ctx.lineTo(c1[0], c1[1]); ctx.stroke();
       // el frente: un disco delgado (≈ 2 R_M) que avanza a c
       if (sf < L_CRUCE * 1.01) {
         var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), p1 = Ps([c[0] + E2[0] * rd, c[1] + E2[1] * rd, c[2] + E2[2] * rd]), p2 = Ps([c[0] + E1[0] * rd, c[1] + E1[1] * rd, c[2] + E1[2] * rd]);
         var rx = Math.max(2, Math.hypot(p2[0] - pc[0], p2[1] - pc[1])), ry = Math.max(2, Math.hypot(p1[0] - pc[0], p1[1] - pc[1]));
-        ctx.globalCompositeOperation = 'source-over'; brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '40,120,165', .09 * fin); ctx.globalCompositeOperation = 'source-over';
-        ctx.strokeStyle = 'rgba(50,90,130,' + (.5 * fin) + ')'; ctx.lineWidth = .8;
+        ctx.globalCompositeOperation = 'source-over'; brillo(pc[0], pc[1], Math.max(rx, ry) * 1.6 + 6, '176,40,96', .09 * fin); ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = 'rgba(128,30,74,' + (.5 * fin) + ')'; ctx.lineWidth = .8;
         ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rx, ry, Math.atan2(p1[1] - pc[1], p1[0] - pc[0]) - Math.PI / 2, 0, 2 * Math.PI); ctx.stroke();
       }
     }
@@ -769,7 +816,7 @@
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
-        var a = Math.min(1, u / .15) * al0, hb = (18 + 11 * Math.log10(1 + d.n)) * llena(d, u);   // barras altas: la reconstrucción negra se dibuja encima de ellas
+        var a = Math.min(1, u / .15) * al0, hb = (18 + 11 * Math.log10(1 + d.n)) * comido(d, t);   // barras altas: la reconstrucción negra se dibuja encima de ellas
         var y0 = q[1] - 5.6, rx = 4.1, ry = 1.6;
         ctx.globalAlpha = a;
         // como al señalar la ladera: solo la tapita se pinta, del color de su tiempo de llegada

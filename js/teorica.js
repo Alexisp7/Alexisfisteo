@@ -212,7 +212,7 @@
     RAY.forEach(function (R) { var s = R.sb; while (s < L_CRUCE * 1.15) { var q = puntoRayo(R, s); if (q[0] < 0 && alto(q[0], q[2]) > q[1]) break; s += .01; } R.fin = s; });
 
     // ── el bucle (s) ──
-    var T_VTX = 2.8, T_CARA = 3.7, T_DEC = 5, T_LLEGA = 8.5, T_H0 = 8.6, T_H1 = 10, T_REC = 10.2, T_FUN = 13.2, LOOP = 14.2;   // la caída del ν dura 0,8 s más
+    var T_VTX = 4.8, T_CARA = 5.7, T_DEC = 7, T_LLEGA = 10.5, T_H0 = 10.6, T_H1 = 12, T_REC = 12.2, T_FUN = 15.2, LOOP = 16.2;   // caída del ν con pausa de 2 s para la oscilación
     function frente(t) { if (t < T_DEC) return 0; var u = cl((t - T_DEC) / (T_LLEGA - T_DEC), 0, 1); return L_CRUCE * (.3 * u + .7 * u * u); }
     function tHit(d) { return T_H0 + (T_H1 - T_H0) * (T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0); }
     function microS(t) {
@@ -691,7 +691,7 @@
       ];
       return { C: C, S: S, D1: D1, D2: D2, N1: N1, E: E, T: T };
     })();
-    var T_OFIN = 4.75;   // las trazas del origen quedan medio transparentes hasta aquí y luego se desvanecen juntas
+    var T_OFIN = 6.75;   // las trazas del origen quedan medio transparentes hasta aquí y luego se desvanecen juntas
     function medallon(t) {
       var fd = fade(t), r = semilla(5);
       for (var i = 0; i < 30; i++) { var ra = MED.r * Math.sqrt(r()) * 1.1, an = r() * 2 * Math.PI, x = OR.C[0] + ra * Math.cos(an), y = OR.C[1] + ra * Math.sin(an) * .7; ctx.fillStyle = 'rgba(185,140,70,' + (.15 + .25 * (.5 + .5 * Math.sin(t * 2 + i))) + ')'; ctx.fillRect(x, y, 1.2, 1.2); }
@@ -716,7 +716,7 @@
 
     // el ν_μ que importa: una recta desde la desintegración del π⁺ hasta la roca; cambia de azul (ν_μ) a magenta (ν_τ)
     // por la oscilación y su trayectoria queda dibujada. Ya en la roca va hasta el vértice.
-    var T_PAS = 2.2, T_NU0 = .75, U_SUELO = null;
+    var T_PAS = 4.2, T_NU0 = .75, U_SUELO = null;
     // dónde toca la recta del ν el suelo de los Andes (en pantalla): ahí termina su hilo celeste
     function sueloNu(A, B) {
       for (var u = 0; u <= 1; u += .005) {
@@ -735,16 +735,19 @@
       [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); rayo(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 1); } });
       ctx.globalAlpha = 1;
       if (t > T_NU0 && fd > 0) {
-        var up = cl((t - T_NU0) / (T_PAS - T_NU0), 0, 1), u = up, cn = up < .55 ? [50 + 70 * up / .55, 120 - 40 * up / .55, 190 - 20 * up / .55] : [120 + 50 * (up - .55) / .45, 80 - 25 * (up - .55) / .45, 170 - 45 * (up - .55) / .45];
+        // cae hasta el punto de la oscilación (u = .3), se detiene mientras corre la viñeta y cambia de sabor, y sigue
+        var u = t < T_OS0 ? .3 * cl((t - T_NU0) / (T_OS0 - T_NU0), 0, 1) : t < T_OS1 ? .3 : .3 + .7 * cl((t - T_OS1) / (T_PAS - T_OS1), 0, 1);
+        var sP = Math.sin(Math.PI / 2 * suave(cl((t - T_OS0) / (T_OS1 - T_OS0), 0, 1))), mz = sP * sP, up = .5 + .5 * mz;
+        var cn = [60 + 110 * mz, 120 - 65 * mz, 190 - 65 * mz];
         cn = cn.map(Math.round).join(',');
         var hN = [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u];
         var hS = [A[0] + (B[0] - A[0]) * Math.min(u, uFinNu()), A[1] + (B[1] - A[1]) * Math.min(u, uFinNu())];   // el hilo celeste entra un poco en los Andes: hasta la altura de los detectores
         ctx.globalAlpha = fd; rayo(A, hS, 1);   // su recorrido queda como un hilo celeste muy tenue
         var aN = (1 - suave((t - T_PAS) / .3)) * fd;
-        if (aN > 0) { ctx.globalAlpha = aN; var q = cometa(A, B, u, 70, cn, 1.6, 1); brillo(q[0], q[1], 12, cn, .8); ctx.fillStyle = 'rgb(' + cn + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 2.2, 0, 2 * Math.PI); ctx.fill(); }
-        if (up > .5) {
+        if (aN > 0) { ctx.globalAlpha = aN; var q = cometa(A, B, u, 70, cn, 1.6, 1); brillo(q[0], q[1], 12 + (t > T_OS0 && t < T_OS1 ? 6 * (.5 + .5 * Math.sin(t * 9)) : 0), cn, .8); ctx.fillStyle = 'rgb(' + cn + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 2.2, 0, 2 * Math.PI); ctx.fill(); }
+        if (t > T_OS0 - .1) {
           var m = [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3];
-          ctx.globalAlpha = fd * suave((up - .5) / .3) * (1 - suave((t - T_VTX - .6) / .8));
+          ctx.globalAlpha = fd * suave((t - T_OS0 + .1) / .3) * (1 - suave((t - T_VTX - .6) / .8));
           texto(ctx, 'OSCILA EN EL CAMINO', m[0] + 16, m[1] - 4, 'rgba(92,70,54,.95)', '700 10px "Space Mono", monospace');
           rotulo('ν_μ → ν_τ', m[0] + 16, m[1] + 15, '#963270', 16);
         }
@@ -763,7 +766,7 @@
 
     // viñeta de la oscilación: el ν_μ es una mezcla de dos estados de masa (ν₂, ν₃) que avanzan con fases distintas;
     // su desfase cambia el sabor. P(ν_μ→ν_τ) = sin²2θ · sin²(1,27 Δm² L/E), con θ ≈ 45° (mezcla casi máxima)
-    var T_OS0 = 1.55, T_OS1 = 3.55;
+    var T_OS0 = 1.2, T_OS1 = 3.2;
     function vinetaOscila(t) {
       var ap = suave((t - T_OS0 + .3) / .3) * (1 - suave((t - T_OS1 - .4) / .4)) * fade(t); if (ap <= 0) return;
       var A = OR.D1, B = OR.E, m = [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3];

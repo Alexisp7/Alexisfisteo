@@ -511,6 +511,20 @@
         c.fillStyle = '#A9B1B5'; c.beginPath(); c.ellipse(q5[0], q5[1], 3.9, 1.5, 0, 0, Math.PI); c.fill();
         c.fillStyle = '#F2F4F1'; c.beginPath(); c.ellipse(q5[0], q5[1] - 5.6, 3.9, 1.5, 0, 0, 2 * Math.PI); c.fill();
         c.strokeStyle = 'rgba(70,80,88,.4)'; c.lineWidth = .4; c.stroke();
+        // matitas al pie de algunos tanques: les dan profundidad y aire entre ellos
+        var hz = Math.abs(Math.sin(j * 12.9898) * 43758.5453) % 1;
+        if (hz < .55) {
+          var nb = 2 + Math.floor(hz * 7) % 3, lado = hz < .27 ? -1 : 1;
+          c.lineWidth = .7; c.lineCap = 'round';
+          for (var m2 = 0; m2 < nb; m2++) {
+            var bx = q5[0] + lado * (2.2 + m2 * 1.6) - (m2 % 2) * lado * 3.8, by = q5[1] + .9 + (m2 % 2) * .4, lb = 3.2 + ((hz * 31 + m2 * 7) % 1) * 2.6;
+            c.strokeStyle = (m2 + j) % 3 ? 'rgba(86,140,52,1)' : 'rgba(150,170,70,1)';
+            c.beginPath();
+            for (var h2 = -1; h2 <= 1; h2++) { c.moveTo(bx + h2 * .5, by); c.quadraticCurveTo(bx + h2 * .4, by - lb * .6, bx + h2 * lb * .35 + lado * .3, by - lb * (1 - .15 * Math.abs(h2))); }
+            c.stroke();
+          }
+          c.lineCap = 'butt';
+        }
       }
       difumina(c, true);
       // origen astrofísico: sin viñeta, en el espacio sobre la maqueta (solo su rótulo es fijo)
@@ -728,7 +742,9 @@
         ctx.fillStyle = 'rgb(' + col + ')'; ctx.beginPath(); ctx.ellipse(q[0], y0, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
         ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(q[0] - rx * .25, y0 - ry * .2, rx * .45, ry * .4, 0, 0, 2 * Math.PI); ctx.fill();
         // barra de tiempo con borde blanco
-        ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 4.4; ctx.beginPath(); ctx.moveTo(q[0], y0 - 2.6); ctx.lineTo(q[0], y0 - 2.6 - hb); ctx.stroke(); ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = 2.2; ctx.stroke(); ctx.lineCap = 'butt';
+        // el borde blanco solo arriba: donde la barra toca su tapita no lleva delineado
+        if (hb > 4) { ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,253,248,.95)'; ctx.lineWidth = 4.4; ctx.beginPath(); ctx.moveTo(q[0], y0 - 4); ctx.lineTo(q[0], y0 - hb); ctx.stroke(); ctx.lineCap = 'butt'; }
+        ctx.strokeStyle = 'rgb(' + col + ')'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(q[0], y0); ctx.lineTo(q[0], y0 - hb); ctx.stroke();
         var p1 = Math.max(0, 1 - u / .7); if (p1 > 0) { ctx.strokeStyle = 'rgba(' + col + ',' + (.85 * p1) + ')'; ctx.lineWidth = .8; ctx.beginPath(); ctx.ellipse(q[0], y0, rx + 8 * (1 - p1), ry + 3.4 * (1 - p1), 0, 0, 2 * Math.PI); ctx.stroke(); }
         ctx.globalAlpha = 1;
       });

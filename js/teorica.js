@@ -715,10 +715,11 @@
       });
       var resalta = foco === 'cascada' ? 1.6 : 1;
       // halo claro bajo la cascada: la separa del pasto y de los tanques sin cambiar sus colores
-      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', (t > T_DEC + 1.3 ? .14 : .2) * fin * (1 - hk / 11)); }
+      for (var hk = 0; hk <= 10; hk++) { var sh = Math.max(0, sf - L_CRUCE * .55 * hk / 10), ph = Ps(sobre(DEC, Math.min(sh, L_CRUCE))); brillo(ph[0], ph[1], 8 + 18 * crec * (1 - hk / 12), '255,252,240', (t > T_DEC + 1.3 ? .14 : .2) * fin * (1 - suave((t - 7.5) / 1)) * (1 - hk / 11)); }
       LOTES.forEach(function (l, k) {
         if (!l.length) return;
-        var al = Math.min(1, (k === 5 ? .45 : k === 4 ? .7 : Math.max(3.3 * (.035 + k * .025) * (k === 3 ? 1.05 : 1) * (k >= 2 && t > T_DEC + 1.3 ? .88 : 1), .18 * (1 - crec) + .11 * crec)) * fin * resalta);
+        var cede = 1 - .88 * suave((t - (k === 5 ? 7.65 : 7.5)) / 1);
+        var al = cede * Math.min(1, (k === 5 ? .45 : k === 4 ? .7 : Math.max(3.3 * (.035 + k * .025) * (k === 3 ? 1.05 : 1) * (k >= 2 && t > T_DEC + 1.3 ? .88 : 1), .18 * (1 - crec) + .11 * crec)) * fin * resalta);
         ctx.strokeStyle = k === 5 ? 'rgba(123,76,226,' + al + ')' : k === 4 ? 'rgba(229,110,17,' + al + ')' : 'rgba(0,109,204,' + al + ')'; ctx.lineWidth = k === 5 ? .9 : k === 4 ? .9 : .5 + k * .13;
         ctx.beginPath(); for (var i = 0; i < l.length; i += 4) { ctx.moveTo(l[i], l[i + 1]); ctx.lineTo(l[i + 2], l[i + 3]); } ctx.stroke();
       });
@@ -744,6 +745,9 @@
     // mediciones: cada unidad con señal se enciende a su tiempo, con una barra ∝ log del número de partículas
     function senales(t) {
       var al0 = fade(t);
+      // jerarquía local: la malla inactiva cercana baja ~12 % de contraste mientras se mide (sin círculo visible)
+      var vel = suave((t - 8) / .25) * (1 - suave((t - 11.4) / .25)) * al0;
+      if (vel > 0) brillo(A_IMP[0] + 10, A_IMP[1] - 6, 95, '244,240,232', .5 * vel);
       VIVOS.forEach(function (d) {
         var u = t - tHit(d); if (u < 0) return;
         var q = Ps([d.x, d.y, d.z]), k = T1H > T0H ? (d.t - T0H) / (T1H - T0H) : 0, col = paleta(k);
@@ -787,7 +791,7 @@
       var fd = fade(t), uf = suave((t - T_REC) / .5) * fd; if (uf <= 0) return;
       var a = Ps(sobre(IMP, -1.75)), b = A_IMP, ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = Math.hypot(b[0] - a[0], b[1] - a[1]);
       var h = .5 * uf, fa = Ps([IMP[0] + E2[0] * h, IMP[1] + E2[1] * h, IMP[2] + E2[2] * h]), fb = Ps([IMP[0] - E2[0] * h, IMP[1] - E2[1] * h, IMP[2] - E2[2] * h]);
-      ctx.globalAlpha = uf; ctx.globalAlpha = uf * .72; trazo(fa, fb, 'rgba(255,255,255,.6)', 3, [5, 4]); trazo(fa, fb, '#231F20', 1.4, [5, 4]); ctx.globalAlpha = uf;
+      ctx.globalAlpha = uf; ctx.globalAlpha = uf * (.72 + .16 * suave((t - T_REC - 1) / .2) * (1 - suave((t - T_REC - 1.4) / .25))); trazo(fa, fb, 'rgba(255,255,255,.6)', 3, [5, 4]); trazo(fa, fb, '#231F20', 1.4, [5, 4]); ctx.globalAlpha = uf;
       [fa, fb].forEach(function (p) { ctx.fillStyle = 'rgba(255,253,248,.95)'; ctx.beginPath(); ctx.arc(p[0], p[1], 2.6, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = '#22201E'; ctx.beginPath(); ctx.arc(p[0], p[1], 1.5, 0, 2 * Math.PI); ctx.fill(); });
       // rótulo: separado del frente, hacia el lado contrario al eje (la cascada llega por la derecha)
       var lo = fa[0] < fb[0] ? fa : fb, ex = fa[0] - fb[0], ey = fa[1] - fb[1], el = Math.hypot(ex, ey) || 1;

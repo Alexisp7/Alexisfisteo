@@ -666,6 +666,12 @@
       return h;
     }
     // hilo de luz que queda: halo celeste ancho, cuerpo celeste y núcleo claro (k escala su intensidad)
+    // el rayo cósmico (protón): azul intenso con un hilo frambuesa delgado y nítido al centro
+    function rayoCR(a, b, k) {
+      ctx.lineCap = 'round';
+      trazo(a, b, 'rgba(40,110,205,' + (.12 * k) + ')', 7); trazo(a, b, 'rgba(26,104,200,' + (.78 * k) + ')', 2.4); trazo(a, b, 'rgba(206,32,104,' + k + ')', .75);
+      ctx.lineCap = 'butt';
+    }
     function rayo(a, b, k) {
       ctx.lineCap = 'round';
       trazo(a, b, 'rgba(90,180,225,' + (.1 * k) + ')', 7); trazo(a, b, 'rgba(90,180,225,' + (.32 * k) + ')', 2.2); trazo(a, b, 'rgba(230,248,255,' + (.75 * k) + ')', .7);
@@ -683,7 +689,7 @@
       var E = Ps(sobre(VTX, -1.55));
       // cada traza: desde, hasta, t de inicio, t de fin, color, ancho, guion, rótulo
       var T = [
-        { a: S, b: C, t0: 0, t1: .55, col: '45,183,232', w: 1.7, lab: 'p', laser: true },
+        { a: S, b: C, t0: 0, t1: .55, col: '26,104,200', w: 1.7, lab: 'p', laser: true },
         { a: G, b: C, t0: .2, t1: .55, col: '196,150,40', w: 1, g: [3, 3], lab: 'γ' },
         { a: C, b: N1, t0: .55, t1: 1.25, col: '120,108,94', w: 1.1, lab: 'n' },
         { a: C, b: D1, t0: .55, t1: .75, col: '120,80,200', w: 1.2, lab: 'π⁺' },
@@ -706,16 +712,18 @@
         var u = cl((t - q.t0) / (q.t1 - q.t0), 0, 1), rs = (1 - suave((t - T_OFIN) / .6)) * fd;   // todas las trazas se van juntas
         // como el camino principal, cada división deja un hilo celeste muy tenue que dura todo el bucle
         if (!q.laser && q.lab !== 'π⁺') { var hc = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = fd; rayo(q.a, hc, .6); }
-        if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = .35 * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.2 : q.w * .8, q.g); }
+        if (rs > 0) { var hq = [q.a[0] + (q.b[0] - q.a[0]) * u, q.a[1] + (q.b[1] - q.a[1]) * u]; ctx.globalAlpha = (q.laser ? .62 : .35) * rs; trazo(q.a, hq, 'rgba(' + q.col + ',1)', q.laser ? 1.9 : q.w * .8, q.g);
+          // rayo cósmico: azul más intenso con un hilo frambuesa delgado y nítido al centro
+          if (q.laser) { ctx.globalAlpha = .95 * rs; trazo(q.a, hq, 'rgba(206,32,104,1)', .7); } }
         var al = (1 - suave((t - q.t1) / .35)) * fd; if (al <= 0) { ctx.globalAlpha = 1; return; }
         ctx.globalAlpha = al;
         var b = cometa(q.a, q.b, u, q.laser ? 120 : 34, q.col, q.laser ? 2 : q.w + .3, 1);
-        if (q.laser) { var b2 = cometa(q.a, q.b, u, 60, '225,248,255', .7, .9); }
+        if (q.laser) { var b2 = cometa(q.a, q.b, u, 90, '206,32,104', .8, 1); }
         brillo(b[0], b[1], q.laser ? 16 : 9, q.col, .8); ctx.fillStyle = 'rgb(' + q.col + ')'; ctx.beginPath(); ctx.arc(b[0], b[1], q.laser ? 2.4 : 1.6, 0, 2 * Math.PI); ctx.fill();
         if (u > .25) rotulo(q.lab, b[0] + 5, b[1] - 5, 'rgba(' + q.col + ',1)', 14);
         ctx.globalAlpha = 1;
       });
-      ctx.globalAlpha = .9 * fd * suave(t / .25) * (1 - suave((t - T_OFIN) / .6)); if (ctx.globalAlpha > 0) texto(ctx, 'RAYO CÓSMICO · PROTÓN DE ~10¹⁷ eV', OR.S[0] + (OR.C[0] - OR.S[0]) * .42 + 6, OR.S[1] + (OR.C[1] - OR.S[1]) * .42 + 28, 'rgba(30,120,160,1)', '700 9px "Space Mono", monospace'); ctx.globalAlpha = 1;
+      ctx.globalAlpha = .9 * fd * suave(t / .25) * (1 - suave((t - T_OFIN) / .6)); if (ctx.globalAlpha > 0) texto(ctx, 'RAYO CÓSMICO · PROTÓN DE ~10¹⁷ eV', OR.S[0] + (OR.C[0] - OR.S[0]) * .42 - 60, OR.S[1] + (OR.C[1] - OR.S[1]) * .42 + 46, 'rgba(26,96,180,1)', '700 9px "Space Mono", monospace'); ctx.globalAlpha = 1;
       // vértices: destellos breves al dividirse
       [[OR.C, .55, 'Δ⁺'], [OR.D1, .75], [OR.D2, 1.05], [OR.N1, 1.25]].forEach(function (v) { var w = t - v[1]; if (w > 0 && w < .5) { brillo(v[0][0], v[0][1], 26 * (1 - w / .5) + 4, '240,150,70', .9 * (1 - w / .5)); if (v[2]) rotulo(v[2], v[0][0] - 14, v[0][1] + 20, '#A84A2E', 14); } });
     }
@@ -738,7 +746,7 @@
       var fd = fade(t), A = OR.D1, B = OR.E;
       // el camino completo, desde el protón: queda como un hilo celeste muy tenue hasta el suelo
       ctx.globalAlpha = fd;
-      [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); rayo(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 1); } });
+      [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); (g[0] === OR.S ? rayoCR : rayo)(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 1); } });
       ctx.globalAlpha = 1;
       if (t > T_NU0 && fd > 0) {
         // cae hasta el punto de la oscilación (u = .3), se detiene mientras corre la viñeta y cambia de sabor, y sigue
@@ -1147,6 +1155,24 @@
       rioVivo(t); realce();
       medallon(t); neutrino(t); vinetaOscila(t); tau(t); cascada(t); senales(t); llegadas(t); elipseFrente(); tramosEncima(t); reconstruye(t); fantasmas(t);
       difumina(ctx);
+      construye();
+    }
+
+    // construcción al entrar al curso: la maqueta se levanta de derecha a izquierda (del origen hacia TAMBO),
+    // con un frente fino de tinta frambuesa; el borde es suave, no un corte
+    var ARM = 1, ARM_T = 1.7, ARM_X0 = 1470, ARM_X1 = 330, ARM_ANCHO = 150, armVisto = 1;
+    function construye() {
+      if (ARM >= 1) { if (armVisto < 1) { armVisto = 1; [fondo, lienzo].forEach(function (cv) { cv.style.webkitMaskImage = cv.style.maskImage = ''; }); } return; }
+      armVisto = ARM;
+      var vb = svg.viewBox.baseVal, u = 1 - Math.pow(1 - ARM, 3), xf = ARM_X0 - (ARM_X0 - ARM_X1) * u;
+      var px = function (x) { return ((x - vb.x) / vb.width * W).toFixed(1) + 'px'; };
+      var m = 'linear-gradient(90deg, transparent ' + px(xf) + ', #000 ' + px(xf + ARM_ANCHO) + ')';
+      [fondo, lienzo].forEach(function (cv) { cv.style.webkitMaskImage = cv.style.maskImage = m; });
+      // frente de construcción: hilo frambuesa nítido con un halo tenue, que se apaga al terminar
+      var xl = xf + ARM_ANCHO * .55, al = 1 - suave((ARM - .82) / .18);
+      var g = ctx.createLinearGradient(0, 90, 0, 900); g.addColorStop(0, 'rgba(206,32,104,0)'); g.addColorStop(.35, 'rgba(206,32,104,' + (.85 * al) + ')'); g.addColorStop(1, 'rgba(206,32,104,' + (.5 * al) + ')');
+      ctx.save(); ctx.strokeStyle = g; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(xl, 90); ctx.lineTo(xl - 40, 900); ctx.stroke();
+      ctx.globalAlpha = .18 * al; ctx.lineWidth = 6; ctx.stroke(); ctx.restore();
     }
 
     function lecturas(t) {
@@ -1162,12 +1188,13 @@
     fig.rcFija = function (t) { T = t; fijo = true; }; fig.rcSuelta = function () { fijo = false; };
     fig.rcFoco = function (id) { Object.keys(fichas).forEach(function (k) { fichas[k].pon(k === id); }); foco = id || null; };
     fig.rcInfo = function () { var m = DET.reduce(function (b, d) { var r = Math.hypot(d.x - IMP[0], d.y - IMP[1], d.z - IMP[2]); return r < b[0] ? [r, d] : b; }, [9, null]); return { IMP: IMP, cerca: m, L_ROCA: L_ROCA, L_TAU: L_TAU, L_CRUCE: L_CRUCE, X_IMP: X_IMP, N: N_IMP, vivos: VIVOS.length, det: DET.length, dt: T1H - T0H }; };
-    new MutationObserver(function () { var on = fig.classList.contains('on'); if (raiz) raiz.classList.toggle('rc-noche', false); if (on && !fig.rcOn) T = 0; fig.rcOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
+    new MutationObserver(function () { var on = fig.classList.contains('on'); if (raiz) raiz.classList.toggle('rc-noche', false); if (on && !fig.rcOn) { T = 0; if (!quieto) ARM = 0; } fig.rcOn = on; }).observe(fig, { attributes: true, attributeFilter: ['class'] });
     if (quieto) T = T_REC + 1;
     return {
       tick: function (dt) {
         if (!fig.classList.contains('on')) return;
         if (!quieto && !fijo) { T += dt; if (T >= LOOP) T -= LOOP; }
+        if (ARM < 1) ARM = Math.min(1, ARM + dt / ARM_T);
         dibuja(T); lecturas(T);
       }
     };

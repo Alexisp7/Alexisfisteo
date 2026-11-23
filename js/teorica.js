@@ -266,6 +266,19 @@
       function det(M) { return M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1]) - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0]) + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]); }
       var D = det(X), co = [0, 1, 2].map(function (kk) { return det(X.map(function (row, i) { return row.map(function (x, j) { return j === kk ? Y[i] : x; }); })) / D; });
       HUE = { mx: mx, my: my, ca: ca, sa: sa, A: A, B: B, a: co[0], b: co[1], c: co[2] };
+      // contorno ceñido: envolvente convexa de los tanques con señal (cada uno como un círculo de su tamaño), remuestreada
+      var Q = []; P.forEach(function (q) { for (var j = 0; j < 12; j++) { var an = j / 12 * 2 * Math.PI; Q.push([q[0] + 5.6 * Math.cos(an), q[1] + 4.2 * Math.sin(an)]); } });
+      Q.sort(function (u, v) { return u[0] - v[0] || u[1] - v[1]; });
+      function cr(o, a, b) { return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); }
+      var lo = [], up = [];
+      Q.forEach(function (q) { while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); });
+      Q.slice().reverse().forEach(function (q) { while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); });
+      var hull = lo.slice(0, -1).concat(up.slice(0, -1)), per = 0, L = [0];
+      for (var i = 0; i < hull.length; i++) { var h2 = hull[(i + 1) % hull.length]; per += Math.hypot(h2[0] - hull[i][0], h2[1] - hull[i][1]); L.push(per); }
+      var poly = [], N = 72, e = 0;
+      for (var k2 = 0; k2 < N; k2++) { var dd = per * k2 / N; while (L[e + 1] < dd) e++; var h0 = hull[e], h1 = hull[(e + 1) % hull.length], f = (dd - L[e]) / Math.max(1e-6, L[e + 1] - L[e]); poly.push([h0[0] + (h1[0] - h0[0]) * f, h0[1] + (h1[1] - h0[1]) * f]); }
+      var cx = 0, cy = 0; poly.forEach(function (q) { cx += q[0] / N; cy += q[1] / N; });
+      HUE.poly = poly; HUE.cx = cx; HUE.cy = cy;
       return HUE;
     }
     function frenteV(t) { return t < T_DEC ? 0 : Math.min(L_CRUCE, fx(T_DEC + (t - T_DEC) * KV)); }
@@ -779,33 +792,37 @@
     function elipseFrente() {
       if (!ELI) return;
       var sf = ELI.sf, crec = ELI.crec, fin = ELI.fin, t = ELI.t, lleg = suave((t - (T_DEC + (T_LLEGA - T_DEC) / KV) + .1) / .3);   // llegada del frente a la ladera
-      // el frente en el aire: un disco delgado (≈ 2 R_M) perpendicular al eje que avanza a c; al acercarse se transforma
-      // en la huella sobre la ladera, y al llegar desaparece dejando esa huella como rastro
-      var H = huella();
+      var H = huella(), N = H.poly.length, i;
+      // el frente en el aire: disco delgado (≈ 2 R_M) perpendicular al eje, proyectado punto a punto; viaja con las partículas
+      // y en el último tramo su forma se ajusta a la huella; al llegar desaparece dejando la huella como rastro
       if (lleg < 1) {
-        var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), p1 = Ps([c[0] + E2[0] * rd, c[1] + E2[1] * rd, c[2] + E2[2] * rd]), p2 = Ps([c[0] + E1[0] * rd, c[1] + E1[1] * rd, c[2] + E1[2] * rd]);
-        var rx = Math.max(2, Math.hypot(p2[0] - pc[0], p2[1] - pc[1])), ry = Math.max(2, Math.hypot(p1[0] - pc[0], p1[1] - pc[1])), an = Math.atan2(p1[1] - pc[1], p1[0] - pc[0]) - Math.PI / 2;
-        var m = suave((sf / L_CRUCE - .5) / .5), aH = Math.atan2(H.sa, H.ca), da = aH - an;
-        da = ((da + Math.PI / 2) % Math.PI + Math.PI) % Math.PI - Math.PI / 2;   // misma elipse cada π
-        var ex = pc[0] + (H.mx - pc[0]) * m, ey = pc[1] + (H.my - pc[1]) * m, ea = an + da * m, erx = rx + (H.A - rx) * m, ery = ry + (H.B - ry) * m;
-        brillo(ex, ey, Math.max(erx, ery) * 1.2 + 6, '176,40,96', .09 * fin * (1 - lleg) * (1 - m * .6));
-        ctx.strokeStyle = 'rgba(128,30,74,' + ((.5 + .3 * m) * fin * (1 - lleg)) + ')'; ctx.lineWidth = .8 + .4 * m;
-        ctx.beginPath(); ctx.ellipse(ex, ey, erx, ery, ea, 0, 2 * Math.PI); ctx.stroke();
+        var c = sobre(DEC, sf), rd = R_M * 1.4 * crec + .02, pc = Ps(c), D = [];
+        for (i = 0; i < N; i++) { var an = i / N * 2 * Math.PI, ca = Math.cos(an) * rd, sa = Math.sin(an) * rd; D.push(Ps([c[0] + ca * E1[0] + sa * E2[0], c[1] + ca * E1[1] + sa * E2[1], c[2] + ca * E1[2] + sa * E2[2]])); }
+        var m = suave((sf / L_CRUCE - .65) / .35), mejor = 0, dm = 1e18;
+        if (m > 0) for (var sh = 0; sh < N; sh++) { var sd = 0; for (i = 0; i < N; i += 4) { var hq = H.poly[(i + sh) % N]; sd += Math.hypot(D[i][0] - pc[0] - hq[0] + H.cx, D[i][1] - pc[1] - hq[1] + H.cy); } if (sd < dm) { dm = sd; mejor = sh; } }
+        var ox = pc[0] + (H.cx - A_IMP[0]) * m, oy = pc[1] + (H.cy - A_IMP[1]) * m;   // el centro sigue al frente; solo se corrige el desfase entre eje y huella
+        ctx.beginPath();
+        for (i = 0; i <= N; i++) { var dq = D[i % N], hp = H.poly[(i + mejor) % N], x = ox + (dq[0] - pc[0]) * (1 - m) + (hp[0] - H.cx) * m, y = oy + (dq[1] - pc[1]) * (1 - m) + (hp[1] - H.cy) * m; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+        ctx.fillStyle = 'rgba(206,32,104,' + (.06 * fin * (1 - lleg)) + ')'; ctx.fill();
+        ctx.strokeStyle = 'rgba(128,30,74,' + ((.55 + .3 * m) * fin * (1 - lleg)) + ')'; ctx.lineWidth = .9 + .3 * m; ctx.stroke();
       }
       if (lleg <= 0) return;
-      // huella en la ladera: toda la zona donde caen partículas (contiene a todos los tanques con señal); queda como referencia
-      ctx.strokeStyle = 'rgba(176,34,92,' + (.85 * lleg * fin) + ')'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]);
-      ctx.beginPath(); ctx.ellipse(H.mx, H.my, H.A, H.B, Math.atan2(H.sa, H.ca), 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]);
+      // huella en la ladera: contorno ceñido a los tanques que reciben partículas; queda como referencia
+      ctx.strokeStyle = 'rgba(176,34,92,' + (.85 * lleg * fin) + ')'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]); ctx.beginPath();
+      for (i = 0; i <= N; i++) { var q = H.poly[i % N]; if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }
+      ctx.stroke(); ctx.setLineDash([]);
       // el frente sobre el suelo: recta donde el frente inclinado corta la ladera; barre la huella mientras llegan las señales
       var g = Math.hypot(H.b, H.c); if (g < 1e-9) return;
       var sw = suave((t - T_H0 + .3) / .3) * (1 - suave((t - T_H1 - .3) / .4)); if (sw <= 0) return;
-      var nx = H.b / g, ny = H.c / g, dd = (t - H.a) / g, cx = dd * nx, cy = dd * ny, px = -ny, py = nx;   // en coordenadas centradas en la huella
-      function aEl(x, y) { return [x * H.ca + y * H.sa, -x * H.sa + y * H.ca]; }
-      var c0 = aEl(cx, cy), d0 = aEl(px, py), qa = d0[0] * d0[0] / (H.A * H.A) + d0[1] * d0[1] / (H.B * H.B), qb = 2 * (c0[0] * d0[0] / (H.A * H.A) + c0[1] * d0[1] / (H.B * H.B)), qc = c0[0] * c0[0] / (H.A * H.A) + c0[1] * c0[1] / (H.B * H.B) - 1, di = qb * qb - 4 * qa * qc;
-      if (di <= 0) return;
-      var s1 = (-qb - Math.sqrt(di)) / (2 * qa), s2 = (-qb + Math.sqrt(di)) / (2 * qa);
+      var nx = H.b / g, ny = H.c / g, dd = (t - H.a) / g, bx = H.mx + dd * nx, by = H.my + dd * ny, px = -ny, py = nx, s1 = 1e9, s2 = -1e9;
+      for (i = 0; i < N; i++) {   // corte de la recta con el contorno
+        var a0 = H.poly[i], a1 = H.poly[(i + 1) % N], ex = a1[0] - a0[0], ey = a1[1] - a0[1], den = px * ey - py * ex; if (Math.abs(den) < 1e-9) continue;
+        var u = ((a0[0] - bx) * ey - (a0[1] - by) * ex) / den, v = ((a0[0] - bx) * py - (a0[1] - by) * px) / den;
+        if (v >= 0 && v <= 1) { s1 = Math.min(s1, u); s2 = Math.max(s2, u); }
+      }
+      if (s2 <= s1) return;
       ctx.strokeStyle = 'rgba(206,32,104,' + (.85 * sw * fin) + ')'; ctx.lineWidth = 1.8; ctx.beginPath();
-      ctx.moveTo(H.mx + cx + s1 * px, H.my + cy + s1 * py); ctx.lineTo(H.mx + cx + s2 * px, H.my + cy + s2 * py); ctx.stroke();
+      ctx.moveTo(bx + s1 * px, by + s1 * py); ctx.lineTo(bx + s2 * px, by + s2 * py); ctx.stroke();
     }
     function cascada(t) {
       LL_AL = 0; ELI = null;

@@ -464,6 +464,9 @@
     var A_MED = [MED.x - MED.r * .55, MED.y + MED.r * .55], A_MON = Ps([3.6, .2, Z0]), A_VTX = Ps(VTX), A_TAU = Ps(sobre(CARA, L_TAU * .6)), A_CAS = Ps(sobre(DEC, L_CRUCE * .5)), A_LAD = Ps([-2.4, alto(-2.4, 2.6), 2.6]), A_IMP = Ps(IMP), A_VAL = Ps([.3, 0, 2.2]);
     ficha('fuente', { ancla: A_MED, k: 'Rayo cósmico · fuente lejana', tit: 'p + γ → Δ⁺ → n + π⁺', dib: dibSabores, dibH: 86,
       d: ['Un protón de ~2 × 10¹⁷ eV choca con un fotón', 'de su entorno. Luego π⁺ → μ⁺ ν_μ y μ⁺ → e⁺ ν_e ν̄_μ:', 'cada neutrino se lleva ≈ 5 % de la energía.', 'Sin carga, viajan en línea recta; al oscilar', 'en el camino también llegan ν_τ.'] });
+    var A_OSC = (function () { var C = [MED.x - 20, MED.y - 18], A = [C[0] + .8 / Math.hypot(.8, .5) * 48, C[1] + .5 / Math.hypot(.8, .5) * 48], B = Ps(sobre(VTX, -1.55)); return [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3]; })();
+    ficha('oscila', { ancla: A_OSC, k: 'Oscilación de sabor', tit: 'P(ν_μ→ν_τ) = sin²2θ · sin²(1,27 Δm²L/E)',
+      d: ['Un ν_μ es una mezcla de dos estados de masa', 'con Δm² ≈ 2,5 × 10⁻³ eV² y mezcla casi máxima.', 'Su desfase cambia el sabor: a 10 PeV un ciclo', 'completo mide ≈ 10¹⁰ km (unas 66 UA).', 'Tras megapársecs se promedia y llegan', 'ν_e : ν_μ : ν_τ ≈ 1 : 1 : 1. (Viñeta no a escala.)'] });
     ficha('monte', { ancla: A_MON, k: 'Blanco de roca', tit: 'Neutrinos rasantes',
       d: ['A 10 PeV un neutrino recorre en promedio', '~4 000 km de roca antes de interactuar: la', 'Tierra entera lo absorbe, pero uno casi', 'horizontal cruza kilómetros de montaña y', 'puede interactuar cerca de la cara del valle.'] });
     ficha('vertice', { ancla: A_VTX, k: 'Corriente cargada', tit: 'ν_τ + N → τ⁻ + X',
@@ -507,6 +510,7 @@
       zona('huella', circulo(A_IMP[0], A_IMP[1], 24));
       zona('estacion', circulo(A_EST[0], A_EST[1] - 2, 9));
       zona('llegadas', poli([[LT.x0 - 10, LT.y - 40], [LT.x1 + 12, LT.y - 40], [LT.x1 + 12, LT.y + 22], [LT.x0 - 10, LT.y + 22]]));
+      zona('oscila', circulo(A_OSC[0], A_OSC[1], 18));
       zona('fuente', circulo(MED.x, MED.y, MED.r + 6));
     })();
 
@@ -723,7 +727,7 @@
     }
     // el hilo del ν entra un poco en los Andes: hasta la altura (en pantalla) de los detectores
     var U_FIN = null;
-    function uFinNu() { if (U_FIN === null) { var A = OR.D1, B = OR.E; U_FIN = Math.abs(B[1] - A[1]) > 1e-6 ? cl((A_IMP[1] - A[1]) / (B[1] - A[1]), .1, 1) : 1; } return U_FIN; }
+    function uFinNu() { if (U_FIN === null) { var A = OR.D1, B = OR.E; var uD = Math.abs(B[1] - A[1]) > 1e-6 ? cl((A_IMP[1] - A[1]) / (B[1] - A[1]), .1, 1) : 1, uS = sueloNu(A, B); U_FIN = uS + .5 * Math.max(0, uD - uS); } return U_FIN; }
     function neutrino(t) {
       var fd = fade(t), A = OR.D1, B = OR.E;
       // el camino completo, desde el protón: queda como un hilo celeste muy tenue hasta el suelo
@@ -794,6 +798,20 @@
       rotulo('ν_τ', cx + R * .3, cy - R * .64, 'rgb(170,55,125)', 14);
       texto(ctx, 'P(μ→τ) = ' + Math.round(P * 100) + ' %', cx, cy + R + 13, 'rgba(92,70,54,.95)', '700 9px "Space Mono", monospace', 'center');
       ctx.restore();
+    }
+    // fantasmas: en cada punto donde algo cambia (o hay ficha) queda un rastro tenue de lo que pasa ahí,
+    // para poder pasar el mouse en cualquier momento del bucle
+    function fantasmas(t) {
+      var res = 'rgba(255,253,248,.82)', lat = .5 + .14 * Math.sin(t * 2.4);
+      [[OR.C, '45,150,200', 'Δ⁺'], [A_OSC, null, ''], [A_VTX, '181,106,30', 'τ⁻'], [A_TAU, '181,106,30', ''], [A_CAS, '206,32,104', 'e± γ'], [A_IMP, '96,30,80', 'Δt'], [[A_EST[0], A_EST[1] - 2], '45,150,200', '']].forEach(function (g) {
+        var p = g[0]; if (foco && fichas[foco] && fichas[foco].ancla === p) return;
+        ctx.globalAlpha = lat;
+        ctx.fillStyle = res; ctx.beginPath(); ctx.arc(p[0], p[1], 6, 0, 2 * Math.PI); ctx.fill();
+        if (g[1]) { ctx.strokeStyle = 'rgba(' + g[1] + ',.85)'; ctx.lineWidth = 1.2; ctx.setLineDash([2, 2]); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = 'rgba(' + g[1] + ',.9)'; ctx.beginPath(); ctx.arc(p[0], p[1], 2, 0, 2 * Math.PI); ctx.fill(); }
+        else { ctx.fillStyle = 'rgb(60,120,190)'; ctx.beginPath(); ctx.arc(p[0], p[1], 4, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = 'rgb(170,55,125)'; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.arc(p[0], p[1], 4, -Math.PI / 2, Math.PI / 2); ctx.closePath(); ctx.fill(); }
+        if (g[2]) rotulo(g[2], p[0] + 8, p[1] - 5, 'rgba(' + g[1] + ',1)', 12);
+      });
+      ctx.globalAlpha = 1;
     }
     function tau(t) {
       var vt = A_VTX, ui = t - T_VTX; if (ui < 0) return;
@@ -1111,7 +1129,7 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.setTransform(kx, 0, 0, ky, -vb.x * kx, -vb.y * ky);
       rioVivo(t); realce();
-      medallon(t); neutrino(t); vinetaOscila(t); tau(t); cascada(t); senales(t); llegadas(t); elipseFrente(); tramosEncima(t); reconstruye(t);
+      medallon(t); neutrino(t); vinetaOscila(t); tau(t); cascada(t); senales(t); llegadas(t); elipseFrente(); tramosEncima(t); reconstruye(t); fantasmas(t);
       difumina(ctx);
     }
 

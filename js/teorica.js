@@ -692,7 +692,7 @@
       if (roca > 0) trazoB(vt, q1, 'rgba(181,106,30,.95)', 1.8);
       ctx.globalAlpha = al;
       var cab = q1;
-      if (sT > L_ROCA) { cab = Ps(sobre(VTX, sT)); trazoB(q1, cab, 'rgba(181,106,30,.95)', 1.8); }
+      if (sT > L_ROCA) { cab = Ps(sobre(VTX, sT)); if (t < T_DEC) cometa(q1, cab, 1, 34, '181,106,30', 1.8, .95); }   // en el aire solo la cabeza con estela corta: no queda ningún tramo suelto
       if (t < T_DEC) { brillo(cab[0], cab[1], 12, '220,110,60', .55); ctx.fillStyle = 'rgba(244,210,165,.3)'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 3.5, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = '#B8641E'; ctx.beginPath(); ctx.arc(cab[0], cab[1], 2.2, 0, 2 * Math.PI); ctx.fill(); rotulo('τ⁻', cab[0] - 6, cab[1] - 14, '#9A4E16', 20); }
       var ud = t - T_DEC;
       if (ud > 0) {

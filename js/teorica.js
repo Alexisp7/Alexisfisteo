@@ -71,7 +71,7 @@
 
     // ── cámara fija, oblicua: x a lo ancho, y arriba, z hacia el fondo del valle ──
     var VAR = ((/[?&]v=([abc])/i.exec(location.search) || [])[1] || 'A').toUpperCase();   // zona de barras: A elegida por Andreé (B y C quedan para comparar)
-    var KZ = .12, KY = .42, CAM = { cx: 944, cy: 772, s: 103 }, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
+    var KZ = .12, KY = .42, CAM = { cx: 904.3, cy: 772, s: 111.24 }   /* +8 % hacia la izquierda: borde derecho (x = 1440) fijo */, BX0 = -4.4, BX1 = 5, Z0 = -1, Z1 = 3.6;
     function P(x, y, z) { return [CAM.cx + CAM.s * (x + KZ * z), CAM.cy - CAM.s * (y + KY * z)]; }
     function Ps(p) { return P(p[0], p[1], p[2]); }
 
@@ -304,7 +304,7 @@
     function comido(d, t) { if (!d.lleg) return 0; var c = 0, s = 0; d.lleg.forEach(function (R) { c += tramoLleg(R, t)[2] * R.Lk; s += R.Lk; }); return c / s; }
 
     // ── medallón de la fuente (arriba a la derecha) ──
-    var MED = { x: 1110, y: 188, r: 110 };
+    var MED = { x: 1083.6, y: 188, r: 118.8 };   // +8 % con el mismo borde derecho fijo
     var LT = { x0: 905, x1: 1105, y: 428 };   // línea de llegadas
 
     // ── zonas al pasar el mouse y su ficha ──
@@ -466,7 +466,7 @@
     var A_FUE = [MED.x - 20, MED.y - 18];   // vértice p + γ → Δ⁺ (donde queda su fantasma)
     ficha('fuente', { ancla: A_FUE, k: 'Rayo cósmico · fuente lejana', tit: 'p + γ → Δ⁺ → n + π⁺', dib: dibSabores, dibH: 86,
       d: ['Un protón de ~2 × 10¹⁷ eV choca con un fotón', 'de su entorno. Luego π⁺ → μ⁺ ν_μ y μ⁺ → e⁺ ν_e ν̄_μ:', 'cada neutrino se lleva ≈ 5 % de la energía.', 'Sin carga, viajan en línea recta; al oscilar', 'en el camino también llegan ν_τ.'] });
-    var A_OSC = (function () { var C = [MED.x - 20, MED.y - 18], A = [C[0] + .8 / Math.hypot(.8, .5) * 48, C[1] + .5 / Math.hypot(.8, .5) * 48], B = Ps(sobre(VTX, -1.55)); return [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3]; })();
+    var A_OSC = (function () { var C = [MED.x - 20, MED.y - 18], A = [C[0] + .8 / Math.hypot(.8, .5) * 52, C[1] + .5 / Math.hypot(.8, .5) * 52], B = Ps(sobre(VTX, -1.55)); return [A[0] + (B[0] - A[0]) * .3, A[1] + (B[1] - A[1]) * .3]; })();
     ficha('oscila', { ancla: A_OSC, k: 'Oscilación de sabor', tit: 'P(ν_μ→ν_τ) = sin²2θ · sin²(1,27 Δm²L/E)',
       d: ['Un ν_μ es una mezcla de dos estados de masa', 'con Δm² ≈ 2,5 × 10⁻³ eV² y mezcla casi máxima.', 'Su desfase cambia el sabor: a 10 PeV un ciclo', 'completo mide ≈ 10¹⁰ km (unas 66 UA).', 'Tras megapársecs se promedia y llegan', 'ν_e : ν_μ : ν_τ ≈ 1 : 1 : 1. (Viñeta no a escala.)'] });
     ficha('monte', { ancla: A_MON, k: 'Blanco de roca', tit: 'Neutrinos rasantes',
@@ -677,9 +677,9 @@
     // p (rayo cósmico, láser celeste) + γ → Δ⁺ → n + π⁺;  π⁺ → μ⁺ + ν_μ;  μ⁺ → e⁺ + ν_e + ν̄_μ;  n → p + e⁻ + ν̄_e.
     // El ν_μ que nos importa sale recto hacia la montaña y oscila en el camino a ν_τ (no a escala).
     var OR = (function () {
-      var C = [MED.x - 20, MED.y - 18], S = [C[0] - 380, C[1] - 86], G = [C[0] + 150, C[1] + 26];
+      var C = [MED.x - 20, MED.y - 18], S = [C[0] - 410, C[1] - 93], G = [C[0] + 162, C[1] + 28];
       function pt(a, d, L) { var l = Math.hypot(d[0], d[1]); return [a[0] + d[0] / l * L, a[1] + d[1] / l * L]; }
-      var D1 = pt(C, [.8, .5], 48), D2 = pt(D1, [1, -.05], 62), N1 = pt(C, [1, -.42], 118);
+      var D1 = pt(C, [.8, .5], 52), D2 = pt(D1, [1, -.05], 67), N1 = pt(C, [1, -.42], 127);
       var E = Ps(sobre(VTX, -1.55));
       // cada traza: desde, hasta, t de inicio, t de fin, color, ancho, guion, rótulo
       var T = [
@@ -715,7 +715,7 @@
         if (u > .25) rotulo(q.lab, b[0] + 5, b[1] - 5, 'rgba(' + q.col + ',1)', 14);
         ctx.globalAlpha = 1;
       });
-      ctx.globalAlpha = .9 * fd * suave(t / .25) * (1 - suave((t - T_OFIN) / .6)); if (ctx.globalAlpha > 0) texto(ctx, 'RAYO CÓSMICO · PROTÓN DE ~10¹⁷ eV', OR.S[0] + 110, OR.S[1] + 8, 'rgba(30,120,160,1)', '700 9px "Space Mono", monospace'); ctx.globalAlpha = 1;
+      ctx.globalAlpha = .9 * fd * suave(t / .25) * (1 - suave((t - T_OFIN) / .6)); if (ctx.globalAlpha > 0) texto(ctx, 'RAYO CÓSMICO · PROTÓN DE ~10¹⁷ eV', OR.S[0] + (OR.C[0] - OR.S[0]) * .42 + 6, OR.S[1] + (OR.C[1] - OR.S[1]) * .42 + 28, 'rgba(30,120,160,1)', '700 9px "Space Mono", monospace'); ctx.globalAlpha = 1;
       // vértices: destellos breves al dividirse
       [[OR.C, .55, 'Δ⁺'], [OR.D1, .75], [OR.D2, 1.05], [OR.N1, 1.25]].forEach(function (v) { var w = t - v[1]; if (w > 0 && w < .5) { brillo(v[0][0], v[0][1], 26 * (1 - w / .5) + 4, '240,150,70', .9 * (1 - w / .5)); if (v[2]) rotulo(v[2], v[0][0] - 14, v[0][1] + 20, '#A84A2E', 14); } });
     }

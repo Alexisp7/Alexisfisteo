@@ -721,6 +721,9 @@
       }
       return 1;
     }
+    // el hilo del ν entra un poco en los Andes: hasta la altura (en pantalla) de los detectores
+    var U_FIN = null;
+    function uFinNu() { if (U_FIN === null) { var A = OR.D1, B = OR.E; U_FIN = Math.abs(B[1] - A[1]) > 1e-6 ? cl((A_IMP[1] - A[1]) / (B[1] - A[1]), .1, 1) : 1; } return U_FIN; }
     function neutrino(t) {
       var fd = fade(t), A = OR.D1, B = OR.E;
       // el camino completo, desde el protón: queda como un hilo celeste muy tenue hasta el suelo
@@ -728,11 +731,10 @@
       [[OR.S, OR.C, 0, .55], [OR.C, OR.D1, .55, .75]].forEach(function (g) { if (t > g[2]) { var w = cl((t - g[2]) / (g[3] - g[2]), 0, 1); rayo(g[0], [g[0][0] + (g[1][0] - g[0][0]) * w, g[0][1] + (g[1][1] - g[0][1]) * w], 1); } });
       ctx.globalAlpha = 1;
       if (t > T_NU0 && fd > 0) {
-        if (U_SUELO === null) U_SUELO = sueloNu(A, B);
-        var up = cl((t - T_NU0) / (T_PAS - T_NU0), 0, 1), u = up * U_SUELO, cn = up < .55 ? [50 + 70 * up / .55, 120 - 40 * up / .55, 190 - 20 * up / .55] : [120 + 50 * (up - .55) / .45, 80 - 25 * (up - .55) / .45, 170 - 45 * (up - .55) / .45];
+        var up = cl((t - T_NU0) / (T_PAS - T_NU0), 0, 1), u = up, cn = up < .55 ? [50 + 70 * up / .55, 120 - 40 * up / .55, 190 - 20 * up / .55] : [120 + 50 * (up - .55) / .45, 80 - 25 * (up - .55) / .45, 170 - 45 * (up - .55) / .45];
         cn = cn.map(Math.round).join(',');
         var hN = [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u];
-        var hS = [A[0] + (B[0] - A[0]) * Math.min(u, U_SUELO), A[1] + (B[1] - A[1]) * Math.min(u, U_SUELO)];
+        var hS = [A[0] + (B[0] - A[0]) * Math.min(u, uFinNu()), A[1] + (B[1] - A[1]) * Math.min(u, uFinNu())];   // el hilo celeste entra un poco en los Andes: hasta la altura de los detectores
         ctx.globalAlpha = fd; rayo(A, hS, 1);   // su recorrido queda como un hilo celeste muy tenue
         var aN = (1 - suave((t - T_PAS) / .3)) * fd;
         if (aN > 0) { ctx.globalAlpha = aN; var q = cometa(A, B, u, 70, cn, 1.6, 1); brillo(q[0], q[1], 12, cn, .8); ctx.fillStyle = 'rgb(' + cn + ')'; ctx.beginPath(); ctx.arc(q[0], q[1], 2.2, 0, 2 * Math.PI); ctx.fill(); }
@@ -745,8 +747,7 @@
         ctx.globalAlpha = 1;
       }
       if (t < T_PAS) return;
-      if (U_SUELO === null) U_SUELO = sueloNu(OR.D1, OR.E);
-      var uu = cl((t - T_PAS) / (T_VTX - T_PAS), 0, 1), a = [OR.D1[0] + (OR.E[0] - OR.D1[0]) * U_SUELO, OR.D1[1] + (OR.E[1] - OR.D1[1]) * U_SUELO], cab = [a[0] + (A_VTX[0] - a[0]) * uu, a[1] + (A_VTX[1] - a[1]) * uu], al = fade(t);   // en la roca: desde donde entra a la tierra hasta el vértice
+      var uu = cl((t - T_PAS) / (T_VTX - T_PAS), 0, 1), a = Ps(sobre(VTX, -1.55)), cab = Ps(sobre(VTX, -1.55 + 1.55 * uu)), al = fade(t);
       ctx.globalAlpha = al;
       // la traza que queda nace desvanecida a la derecha: no pasa bajo la ecuación de la página
       var gw = ctx.createLinearGradient(1222, 0, 1186, 0), gc = ctx.createLinearGradient(1222, 0, 1186, 0);
@@ -934,14 +935,14 @@
       var lo = fa[0] < fb[0] ? fa : fb, ex = fa[0] - fb[0], ey = fa[1] - fb[1], el = Math.hypot(ex, ey) || 1;
       texto(ctx, 'FRENTE AJUSTADO', lo[0] - 7, lo[1] + 13, '#22201E', '700 9px "Space Mono", monospace', 'end');
       // el cono va debajo del eje y sin borde blanco (no tapa la flecha)
-      var uc = suave((t - T_REC - 1) / .4) * fd;
+      var uc = suave((t - T_REC - 2) / .4) * fd;   // eje, profundidad y cono: 1 s después, cuando las barras ya terminaron
       if (uc > 0 && AJ) {
         var dA = AJ.p68 * Math.PI / 180;
         ctx.globalAlpha = uc; ctx.beginPath();
         ctx.moveTo(b[0], b[1]); ctx.lineTo(b[0] - L * Math.cos(ang - dA), b[1] - L * Math.sin(ang - dA)); ctx.lineTo(b[0] - L * Math.cos(ang + dA), b[1] - L * Math.sin(ang + dA)); ctx.closePath();
         ctx.fillStyle = 'rgba(42,37,38,.22)'; ctx.fill();
       }
-      var ue = suave((t - T_REC - .5) / .5) * fd;
+      var ue = suave((t - T_REC - 1.5) / .5) * fd;
       if (ue > 0) {
         var lv = L * ue;
         ctx.globalAlpha = ue;
